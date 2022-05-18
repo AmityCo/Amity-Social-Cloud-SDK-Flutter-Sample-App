@@ -1,5 +1,4 @@
-import 'package:amity_sdk/lib.dart';
-import 'package:amity_sdk/public/client/amity_social_client.dart';
+import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityCommentDeletion {
   /* begin_sample_code

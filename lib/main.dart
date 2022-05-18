@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
         backgroundColor: Colors.white,
         snackBarTheme:
             _themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
-        tabBarTheme: TabBarTheme(labelColor: Colors.black),
+        tabBarTheme: const TabBarTheme(labelColor: Colors.black),
       ),
       themeMode: ThemeMode.light,
 
