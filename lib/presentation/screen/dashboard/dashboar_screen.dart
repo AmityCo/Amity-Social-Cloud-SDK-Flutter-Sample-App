@@ -2,7 +2,6 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
-import 'package:flutter_social_sample_app/core/service_locator/service_locator.dart';
 import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -116,6 +115,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('Unregister notification'),
               ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  AmitySocialClient.newCommunityRepository()
+                      .getCommunity('f5a99abc1f275df3f4259b6ca0e3cb15')
+                      .then((value) {
+                    print(value);
+                  }).onError((error, stackTrace) {
+                    print('Error' + error.toString());
+                  });
+                },
+                child: const Text(
+                    'Get Community Id - f5a99abc1f275df3f4259b6ca0e3cb15'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.communityList);
+                },
+                child: const Text('Get Communities'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.createCommunity);
+                },
+                child: const Text('Create Community'),
+              ),
               const SizedBox(height: 200),
               TextButton(
                 onPressed: () {
@@ -125,17 +152,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: Text(
                   'Logout',
-                  style: _themeData.textTheme.subtitle1!
-                      .copyWith(color: Colors.red),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  sl.reset();
-                  print('Reset Get it instance');
-                },
-                child: Text(
-                  'Reset Get It',
                   style: _themeData.textTheme.subtitle1!
                       .copyWith(color: Colors.red),
                 ),

@@ -7,7 +7,7 @@ class AddCommentWidget extends StatelessWidget {
       : super(key: key);
   final AmityUser _amityUser;
   final _commentTextEditController = TextEditingController();
-  final ArgumentCallback<String> _addCommentCallback;
+  final ValueChanged<String> _addCommentCallback;
   @override
   Widget build(BuildContext context) {
     return Container(

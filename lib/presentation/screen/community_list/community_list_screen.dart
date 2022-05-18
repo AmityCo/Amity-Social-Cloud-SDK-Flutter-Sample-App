@@ -1,30 +1,34 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
+import 'package:flutter_social_sample_app/core/widget/community_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
-import 'package:go_router/go_router.dart';
 
-class UserFeedScreen extends StatefulWidget {
-  const UserFeedScreen({Key? key, required this.userId, this.showAppBar = true})
-      : super(key: key);
-  final String userId;
-  final bool showAppBar;
+class CommunityListScreen extends StatefulWidget {
+  CommunityListScreen({Key? key}) : super(key: key);
+
   @override
-  State<UserFeedScreen> createState() => _UserFeedScreenState();
+  State<CommunityListScreen> createState() => _CommunityListScreenState();
 }
 
-class _UserFeedScreenState extends State<UserFeedScreen> {
-  late PagingController<AmityPost> _controller;
-  final amityPosts = <AmityPost>[];
+class _CommunityListScreenState extends State<CommunityListScreen> {
+  late PagingController<AmityCommunity> _controller;
+  final amityCommunities = <AmityCommunity>[];
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+
+  String _keyboard = '';
+
+  final _debouncer = Debouncer(milliseconds: 500);
+
   @override
   void initState() {
     _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newFeedRepository()
-          .getUserFeed(widget.userId)
+      pageFuture: (token) => AmitySocialClient.newCommunityRepository()
+          .getCommunities()
+          .withKeyword(_keyboard.isEmpty ? null : _keyboard)
           .includeDeleted(false)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
@@ -32,8 +36,8 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
         () {
           if (_controller.error == null) {
             setState(() {
-              amityPosts.clear();
-              amityPosts.addAll(_controller.loadedItems);
+              amityCommunities.clear();
+              amityCommunities.addAll(_controller.loadedItems);
             });
           } else {
             //Error on pagination controller
@@ -66,13 +70,24 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.showAppBar
-          ? AppBar(title: Text('User Feed - ${widget.userId}'))
-          : null,
+      appBar: AppBar(title: const Text('Community List ')),
       body: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            child: TextFormField(
+              onChanged: (value) {
+                _debouncer.run(() {
+                  _keyboard = value;
+                  _controller.reset();
+                  _controller.fetchNextPage();
+                });
+              },
+              decoration: const InputDecoration(hintText: 'Enter Keybaord'),
+            ),
+          ),
           Expanded(
-            child: amityPosts.isNotEmpty
+            child: amityCommunities.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
                       _controller.reset();
@@ -80,18 +95,18 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
-                      itemCount: amityPosts.length,
+                      itemCount: amityCommunities.length,
                       itemBuilder: (context, index) {
-                        final amityPost = amityPosts[index];
-                        return FeedWidget(
-                          amityPost: amityPost,
-                          onCommentCallback: () {
-                            GoRouter.of(context).goNamed('commentUserFeed',
-                                params: {
-                                  'userId': widget.userId,
-                                  'postId': amityPost.postId!
-                                });
-                          },
+                        final amityCommunity = amityCommunities[index];
+                        return Container(
+                          margin: const EdgeInsets.all(12),
+                          child: CommunityWidget(
+                            amityCommunity: amityCommunity,
+                            // onCommentCallback: () {
+                            //   // GoRouter.of(context).goNamed('commentCommunityFeed',
+                            //   //     params: {'postId': amityPost.postId!});
+                            // },
+                          ),
                         );
                       },
                     ),
@@ -103,11 +118,11 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                         : const Text('No Post'),
                   ),
           ),
-          if (_controller.isFetching && amityPosts.isNotEmpty)
+          if (_controller.isFetching && amityCommunities.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
-            ),
+            )
         ],
       ),
     );
