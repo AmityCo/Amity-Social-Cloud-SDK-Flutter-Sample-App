@@ -43,7 +43,7 @@ class ReactionActionWidget extends StatelessWidget {
         },
         child: Center(
           child: CompositedTransformFollower(
-            offset: Offset(0, 24),
+            offset: const Offset(0, 24),
             link: layerLink,
             child: Container(
               padding: const EdgeInsets.all(12),
