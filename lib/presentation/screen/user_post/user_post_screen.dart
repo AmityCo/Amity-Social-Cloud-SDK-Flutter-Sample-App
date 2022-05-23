@@ -36,7 +36,7 @@ class _UserPostScreenState extends State<UserPostScreen> {
         },
       );
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 

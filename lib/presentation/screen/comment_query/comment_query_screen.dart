@@ -48,7 +48,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
         },
       );
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 

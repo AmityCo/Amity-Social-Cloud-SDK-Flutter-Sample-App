@@ -22,4 +22,13 @@ class AppRoute {
 
   static const communityMember = 'communityMember';
   static const communityMemmberRoute = 'communityMember/:communityId';
+
+  static const communityList = 'communityList';
+  static const communityListRoute = 'communityList';
+
+  static const createCommunity = 'createCommunity';
+  static const createCommunityRoute = 'createCommunity';
+
+  static const updateCommunity = 'updateCommunity';
+  static const updateCommunityRoute = 'updateCommunity/:communityId';
 }

@@ -8,8 +8,6 @@ import 'package:flutter_social_sample_app/presentation/screen/update_post/update
 import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-typedef ArgumentCallback<T> = void Function(T);
-
 class FeedWidget extends StatelessWidget {
   final AmityPost amityPost;
   final VoidCallback onCommentCallback;

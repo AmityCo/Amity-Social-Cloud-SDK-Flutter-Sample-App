@@ -10,7 +10,7 @@ class CommentWidget extends StatefulWidget {
   const CommentWidget(this.amityComment, this.onReply, {Key? key})
       : super(key: key);
   final AmityComment amityComment;
-  final ArgumentCallback<AmityComment> onReply;
+  final ValueChanged<AmityComment> onReply;
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
 }
