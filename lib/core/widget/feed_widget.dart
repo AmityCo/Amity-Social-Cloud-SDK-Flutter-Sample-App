@@ -72,7 +72,7 @@ class FeedWidget extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => UpdatePostScreen(
-                                    amityPost: amityPost,
+                                    amityPost: value,
                                   ),
                                 ),
                               );
