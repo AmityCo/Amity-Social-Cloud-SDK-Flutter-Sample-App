@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_comment_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget(this.amityComment, this.onReply, {Key? key})
@@ -186,7 +187,13 @@ class _CommentWidgetState extends State<CommentWidget> {
               ),
               onSelected: (index1) {
                 if (index1 == 1) {
-                  EditCommentDialog.show(context, amityComment: value);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => UpdateCommentScreen(
+                        amityComment: value,
+                      ),
+                    ),
+                  );
                 }
                 if (index1 == 2) {
                   value.delete();

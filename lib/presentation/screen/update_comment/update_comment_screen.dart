@@ -5,27 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 
-class UpdatePostScreen extends StatefulWidget {
-  final AmityPost amityPost;
-  const UpdatePostScreen({Key? key, required this.amityPost}) : super(key: key);
+class UpdateCommentScreen extends StatefulWidget {
+  final AmityComment amityComment;
+  const UpdateCommentScreen({Key? key, required this.amityComment})
+      : super(key: key);
 
   @override
-  State<UpdatePostScreen> createState() => _UpdatePostScreenState();
+  State<UpdateCommentScreen> createState() => _UpdateCommentScreenState();
 }
 
-class _UpdatePostScreenState extends State<UpdatePostScreen> {
-  final _postTextEditController = TextEditingController();
-  final _postMetadataEditController = TextEditingController();
+class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
+  final _commentTextEditController = TextEditingController();
+  final _commentMetadataEditController = TextEditingController();
 
   @override
   void initState() {
-    if (widget.amityPost.data is TextData) {
-      final data = widget.amityPost.data as TextData;
-      _postTextEditController.text = data.text ?? '';
+    if (widget.amityComment.data is CommentTextData) {
+      final data = widget.amityComment.data as CommentTextData;
+      _commentTextEditController.text = data.text ?? '';
     }
-    if (widget.amityPost.metadata != null) {
-      final metadataString = jsonEncode(widget.amityPost.metadata);
-      _postMetadataEditController.text = metadataString;
+    if (widget.amityComment.metadata != null) {
+      final metadataString = jsonEncode(widget.amityComment.metadata);
+      _commentMetadataEditController.text = metadataString;
     }
 
     super.initState();
@@ -35,7 +36,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Update Post')),
+      appBar: AppBar(title: const Text('Update Comment')),
       body: Container(
         margin: const EdgeInsets.all(20),
         child: Column(
@@ -43,14 +44,14 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
           children: [
             const SizedBox(height: 20),
             TextFormField(
-              controller: _postTextEditController,
+              controller: _commentTextEditController,
               decoration: const InputDecoration(
                 label: Text('Text*'),
               ),
             ),
             const SizedBox(height: 20),
             TextFormField(
-              controller: _postMetadataEditController,
+              controller: _commentMetadataEditController,
               decoration: const InputDecoration(
                 label: Text('Meta data'),
               ),
@@ -60,7 +61,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
             Center(
               child: TextButton(
                 onPressed: () async {
-                  ProgressDialog.show(context, asyncFunction: updatePost)
+                  ProgressDialog.show(context, asyncFunction: updateComment)
                       .then((value) {
                     Navigator.of(context).pop();
                   }).onError((error, stackTrace) {
@@ -74,7 +75,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                   child: RichText(
                       text: const TextSpan(children: [
                     TextSpan(text: 'Update'),
-                    TextSpan(text: ' Post'),
+                    TextSpan(text: ' Comment'),
                   ])),
                 ),
                 style: TextButton.styleFrom(
@@ -90,16 +91,12 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
     );
   }
 
-  Future updatePost() async {
+  Future updateComment() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final _text = _postTextEditController.text.trim();
-    final _metadataString = _postMetadataEditController.text.trim();
+    final _text = _commentTextEditController.text.trim();
+    final _metadataString = _commentMetadataEditController.text.trim();
     Map<String, dynamic> _metadata = jsonDecode(_metadataString);
-  
-    await widget.amityPost
-        .edit()
-        .text(_text)
-        .metadata(_metadata)
-        .update();
+
+    await widget.amityComment.edit().text(_text).metadata(_metadata).update();
   }
 }
