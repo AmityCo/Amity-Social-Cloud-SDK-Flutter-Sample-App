@@ -69,6 +69,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('Community Feed'),
               ),
+                 const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.communityMember, params: {
+                    'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'
+                  });
+                },
+                child: const Text('Community Members'),
+              ),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () async {

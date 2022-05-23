@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_community/create_community_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
@@ -74,6 +75,12 @@ class AppRouter {
                     CommentQueryScreen(state.params['postId']!),
               ),
             ],
+          ),
+          GoRoute(
+            name: AppRoute.communityMember,
+            path: AppRoute.communityMemmberRoute,
+            builder: (context, state) =>
+                CommunityMembercreen(communityId: state.params['communityId']!),
           ),
           GoRoute(
             name: AppRoute.userFeed,

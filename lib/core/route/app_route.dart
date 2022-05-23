@@ -20,6 +20,9 @@ class AppRoute {
   static const communityFeed = 'communityFeed';
   static const communityFeedRoute = 'communityFeed/:communityId';
 
+  static const communityMember = 'communityMember';
+  static const communityMemmberRoute = 'communityMember/:communityId';
+
   static const communityList = 'communityList';
   static const communityListRoute = 'communityList';
 
