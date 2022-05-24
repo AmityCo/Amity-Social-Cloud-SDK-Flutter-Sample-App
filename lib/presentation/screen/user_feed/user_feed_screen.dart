@@ -44,7 +44,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
         },
       );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 

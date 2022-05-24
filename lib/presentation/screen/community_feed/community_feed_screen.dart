@@ -43,7 +43,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         },
       );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 
