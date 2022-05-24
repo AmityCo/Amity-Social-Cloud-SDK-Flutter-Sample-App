@@ -33,7 +33,7 @@ class EditCommentDialog extends StatelessWidget {
                 onPressed: () {
                   // GoRouter.of(context).goNamed(AppRoute.login);
                   Navigator.of(context).pop();
-                  amityComment.edit().text(text!).update();
+                  amityComment.edit().text(text!).build().update();
                 },
                 child: const Text('Update'),
                 style: ElevatedButton.styleFrom(primary: Colors.red),

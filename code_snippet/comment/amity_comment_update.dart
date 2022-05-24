@@ -12,6 +12,7 @@ class AmityCommentUpdate {
     comment
         .edit()
         .text("Updated comment from me :D")
+        .build()
         .update()
         .then((value) => {
               //handle result
