@@ -97,6 +97,11 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
     final _metadataString = _commentMetadataEditController.text.trim();
     Map<String, dynamic> _metadata = jsonDecode(_metadataString);
 
-    await widget.amityComment.edit().text(_text).metadata(_metadata).update();
+    await widget.amityComment
+        .edit()
+        .text(_text)
+        .metadata(_metadata)
+        .build()
+        .update();
   }
 }

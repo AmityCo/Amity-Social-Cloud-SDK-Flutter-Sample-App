@@ -100,6 +100,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
         .edit()
         .text(_text)
         .metadata(_metadata)
+        .build()
         .update();
   }
 }
