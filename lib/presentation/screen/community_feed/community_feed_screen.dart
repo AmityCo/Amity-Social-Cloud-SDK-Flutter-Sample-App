@@ -6,9 +6,11 @@ import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
-  const CommunityFeedScreen({Key? key, required this.communityId})
+  const CommunityFeedScreen(
+      {Key? key, required this.communityId, this.showAppBar = true})
       : super(key: key);
   final String communityId;
+  final bool showAppBar;
   @override
   State<CommunityFeedScreen> createState() => _CommunityFeedScreenState();
 }
@@ -43,7 +45,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         },
       );
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 
@@ -65,7 +67,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Community Feed - ${widget.communityId}')),
+      appBar: widget.showAppBar
+          ? AppBar(title: Text('Community Feed - ${widget.communityId}'))
+          : null,
       body: Column(
         children: [
           Expanded(

@@ -4,16 +4,16 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 
-class UpdateCommunityScreen extends StatefulWidget {
-  UpdateCommunityScreen({Key? key, required this.communityId})
+class CommunityUpdateScreen extends StatefulWidget {
+  CommunityUpdateScreen({Key? key, required this.communityId})
       : super(key: key);
   final String communityId;
 
   @override
-  State<UpdateCommunityScreen> createState() => _UpdateCommunityScreenState();
+  State<CommunityUpdateScreen> createState() => _CommunityUpdateScreenState();
 }
 
-class _UpdateCommunityScreenState extends State<UpdateCommunityScreen> {
+class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
   final _formState = GlobalKey<FormState>();
 
   final _nameEditController = TextEditingController();

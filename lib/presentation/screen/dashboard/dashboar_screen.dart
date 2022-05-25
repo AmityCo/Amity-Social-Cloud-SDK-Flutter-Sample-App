@@ -69,12 +69,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('Community Feed'),
               ),
-                 const SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  GoRouter.of(context).goNamed(AppRoute.communityMember, params: {
-                    'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'
-                  });
+                  GoRouter.of(context).goNamed(AppRoute.communityMember,
+                      params: {
+                        'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'
+                      });
                 },
                 child: const Text('Community Members'),
               ),
@@ -124,34 +125,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('Unregister notification'),
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  AmitySocialClient.newCommunityRepository()
-                      .getCommunity('f5a99abc1f275df3f4259b6ca0e3cb15')
-                      .then((value) {
-                    print(value);
-                  }).onError((error, stackTrace) {
-                    print('Error' + error.toString());
-                  });
-                },
-                child: const Text(
-                    'Get Community Id - f5a99abc1f275df3f4259b6ca0e3cb15'),
-              ),
+              // const SizedBox(height: 20),
+              // TextButton(
+              //   onPressed: () {
+              //     AmitySocialClient.newCommunityRepository()
+              //         .getCommunity('f5a99abc1f275df3f4259b6ca0e3cb15')
+              //         .then((value) {
+              //       print(value);
+              //     }).onError((error, stackTrace) {
+              //       print('Error' + error.toString());
+              //     });
+              //   },
+              //   child: const Text(
+              //       'Get Community Id - f5a99abc1f275df3f4259b6ca0e3cb15'),
+              // ),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
                   GoRouter.of(context).goNamed(AppRoute.communityList);
                 },
-                child: const Text('Get Communities'),
+                child: const Text('Communities'),
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  GoRouter.of(context).goNamed(AppRoute.createCommunity);
-                },
-                child: const Text('Create Community'),
-              ),
+              // const SizedBox(height: 20),
+              // TextButton(
+              //   onPressed: () {
+              //     GoRouter.of(context).goNamed(AppRoute.createCommunity);
+              //   },
+              //   child: const Text('Create Community'),
+              // ),
               const SizedBox(height: 200),
               TextButton(
                 onPressed: () {
