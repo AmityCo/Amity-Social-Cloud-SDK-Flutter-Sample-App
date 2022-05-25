@@ -4,7 +4,6 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_comment_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -37,23 +36,29 @@ class _CommentWidgetState extends State<CommentWidget> {
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
 
-    return ValueListenableBuilder<AmityComment>(
-      valueListenable: widget.amityComment,
-      builder: (context, value, child) => !(value.isDeleted ?? false)
-          ? _getBody(context, value)
-          : Container(
-              margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_rounded),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Comment has been deleted',
-                    style: _themeData.textTheme.caption,
-                  )
-                ],
-              ),
-            ),
+    return StreamBuilder<AmityComment>(
+      stream: widget.amityComment.listen,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return !(snapshot.data!.isDeleted ?? false)
+              ? _getBody(context, snapshot.data!)
+              : Container(
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_rounded),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Comment has been deleted',
+                        style: _themeData.textTheme.caption,
+                      )
+                    ],
+                  ),
+                );
+        }
+        return Container();
+      },
     );
   }
 
