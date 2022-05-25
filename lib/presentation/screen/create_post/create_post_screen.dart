@@ -9,8 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key, required this.userId}) : super(key: key);
+  const CreatePostScreen({Key? key, required this.userId, this.communityId})
+      : super(key: key);
   final String userId;
+  final String? communityId;
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();

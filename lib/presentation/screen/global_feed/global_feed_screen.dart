@@ -42,7 +42,7 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
         },
       );
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 

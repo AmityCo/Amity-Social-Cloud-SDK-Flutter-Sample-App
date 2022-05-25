@@ -5,9 +5,11 @@ import 'package:flutter_social_sample_app/core/widget/community_member_widget.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 
 class CommunityMembercreen extends StatefulWidget {
-  const CommunityMembercreen({Key? key, required this.communityId})
+  const CommunityMembercreen(
+      {Key? key, required this.communityId, this.showAppBar = true})
       : super(key: key);
   final String communityId;
+  final bool showAppBar;
   @override
   State<CommunityMembercreen> createState() => _CommunityMemberScreenState();
 }
@@ -44,7 +46,7 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
         },
       );
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 
@@ -66,7 +68,9 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Community Members - ${widget.communityId}')),
+      appBar: widget.showAppBar
+          ? AppBar(title: Text('Community Members - ${widget.communityId}'))
+          : null,
       body: Column(
         children: [
           Expanded(
@@ -77,6 +81,7 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
                       _controller.fetchNextPage();
                     },
                     child: ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
                       controller: scrollcontroller,
                       itemCount: amityCommunityMembers.length,
                       itemBuilder: (context, index) {

@@ -18,20 +18,27 @@ class CommunityWidget extends StatelessWidget {
       );
     }
     return Container(
-      decoration: BoxDecoration(color: Colors.grey.withOpacity(.05)),
-      child: Column(
-        children: [
-          _CommunityInfoWidget(
-            amityCommunity: amityCommunity,
-          ),
-          const Divider(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: _CommunityOwnerWidget(
-              amityUser: amityCommunity.user!,
+      decoration: BoxDecoration(color: Colors.grey.withOpacity(.2)),
+      child: InkWell(
+        onTap: () {
+          GoRouter.of(context).goNamed(AppRoute.communityProfile,
+              params: {'communityId': amityCommunity.communityId!});
+          // params: {'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'});
+        },
+        child: Column(
+          children: [
+            _CommunityInfoWidget(
+              amityCommunity: amityCommunity,
             ),
-          )
-        ],
+            const Divider(),
+            Align(
+              alignment: Alignment.centerRight,
+              child: _CommunityOwnerWidget(
+                amityUser: amityCommunity.user!,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -69,24 +76,18 @@ class _CommunityInfoWidget extends StatelessWidget {
           ),
           const SizedBox(width: 18),
           Expanded(
-            child: InkWell(
-              onTap: () {
-                // GoRouter.of(context)
-                //     .goNamed(AppRoute.home, params: {'userId': userId});
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    amityCommunity.displayName ?? '',
-                    style: _themeData.textTheme.headline6,
-                  ),
-                  Text(
-                    amityCommunity.description ?? '',
-                    style: _themeData.textTheme.caption,
-                  ),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  amityCommunity.displayName ?? '',
+                  style: _themeData.textTheme.headline6,
+                ),
+                Text(
+                  amityCommunity.description ?? '',
+                  style: _themeData.textTheme.caption,
+                ),
+              ],
             ),
           ),
           if (amityCommunity.userId == AmityCoreClient.getUserId())

@@ -95,7 +95,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
     final _text = _postTextEditController.text.trim();
     final _metadataString = _postMetadataEditController.text.trim();
     Map<String, dynamic> _metadata = jsonDecode(_metadataString);
-  
+
     await widget.amityPost
         .edit()
         .text(_text)

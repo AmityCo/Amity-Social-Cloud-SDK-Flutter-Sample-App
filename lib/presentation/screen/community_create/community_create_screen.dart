@@ -4,14 +4,14 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 
-class CreateCommunityScreen extends StatefulWidget {
-  const CreateCommunityScreen({Key? key}) : super(key: key);
+class CommunityCreateScreen extends StatefulWidget {
+  const CommunityCreateScreen({Key? key}) : super(key: key);
 
   @override
-  State<CreateCommunityScreen> createState() => _CreateCommunityScreenState();
+  State<CommunityCreateScreen> createState() => _CommunityCreateScreenState();
 }
 
-class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
+class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   final _formState = GlobalKey<FormState>();
 
   final _nameEditController = TextEditingController();
@@ -19,7 +19,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   final _catsEditController = TextEditingController();
   final _userIdsEditController = TextEditingController();
 
-  bool _isPublic = false;
+  bool _isPublic = true;
 
   @override
   Widget build(BuildContext context) {
