@@ -47,6 +47,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                   child: Text("Delete (Hard)"),
                   value: 3,
                   enabled: false,
+                ),
+                PopupMenuItem(
+                  child: Text("Check my permission"),
+                  value: 4,
+                  enabled: true,
                 )
               ];
             },
@@ -64,6 +69,26 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                 //Delete Community
                 AmitySocialClient.newCommunityRepository()
                     .deleteCommunity(widget.communityId);
+              }
+              if (index == 4) {
+                EditTextDialog.show(context,
+                    title: 'Check my permission in this community',
+                    hintText: 'Enter permission name', onPress: (value) {
+                  final permissions =
+                      AmityPermission.values.where((v) => v.value == value);
+
+                  if (permissions.isEmpty) {
+                         ErrorDialog.show(context,
+                        title: 'Error', message: 'permission does not exist');
+                  } else {
+                    AmityCoreClient.hasPermission(permissions.first)
+                        .atCommunity(widget.communityId)
+                        .check()
+                        .then((hasPermission) => PositiveDialog.show(context,
+                            title: 'Permission',
+                            message: 'The permission "$value" is valid = $hasPermission'));
+                  }
+                });
               }
             },
           ),
@@ -125,10 +150,9 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                 hintText: 'Enter User Id', onPress: (value) {
               AmitySocialClient.newCommunityRepository()
                   .membership(widget.communityId)
-                  .addMembers(value)
-                  .then((value) {
+                  .addMembers([value]).then((value) {
                 PositiveDialog.show(context,
-                    title: 'Error', message: 'Member Added successfully');
+                    title: 'Complete', message: 'Member Added successfully');
               }).onError((error, stackTrace) {
                 ErrorDialog.show(context,
                     title: 'Error', message: error.toString());
