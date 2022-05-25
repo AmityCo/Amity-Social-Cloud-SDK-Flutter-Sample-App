@@ -1,6 +1,5 @@
 import 'package:amity_sdk/amity_sdk.dart';
 
-
 class AmityCommentUpdate {
   /* begin_sample_code
     gist_id: 893357a8ae37f04677e5704bfacec50d
@@ -12,6 +11,7 @@ class AmityCommentUpdate {
     comment
         .edit()
         .text("Updated comment from me :D")
+        .build()
         .update()
         .then((value) => {
               //handle result
