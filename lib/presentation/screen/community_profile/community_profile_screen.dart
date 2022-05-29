@@ -78,15 +78,17 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                       AmityPermission.values.where((v) => v.value == value);
 
                   if (permissions.isEmpty) {
-                         ErrorDialog.show(context,
+                    ErrorDialog.show(context,
                         title: 'Error', message: 'permission does not exist');
                   } else {
-                    AmityCoreClient.hasPermission(permissions.first)
-                        .atCommunity(widget.communityId)
-                        .check()
-                        .then((hasPermission) => PositiveDialog.show(context,
-                            title: 'Permission',
-                            message: 'The permission "$value" is valid = $hasPermission'));
+                    final hasPermission =
+                        AmityCoreClient.hasPermission(permissions.first)
+                            .atCommunity(widget.communityId)
+                            .check();
+                    PositiveDialog.show(context,
+                        title: 'Permission',
+                        message:
+                            'The permission "$value" is valid = $hasPermission');
                   }
                 });
               }

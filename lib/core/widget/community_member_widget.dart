@@ -1,6 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/community_member_info_row_widget.dart';
 
 typedef ArgumentCallback<T> = void Function(T);
 
@@ -36,11 +36,7 @@ class CommunityMemberWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  UserProfileInfoRowWidget(
-                    userId: value.user!.userId!,
-                    userAvatar: value.user!.avatarCustomUrl,
-                    userName: value.user!.displayName!,
-                  )
+                  CommunityMemberInfoRowWidget(communityMember: value)
                 ],
               ),
             ),
