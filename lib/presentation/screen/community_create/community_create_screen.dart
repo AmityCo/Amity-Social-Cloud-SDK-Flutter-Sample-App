@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
@@ -18,6 +20,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   final _desEditController = TextEditingController();
   final _catsEditController = TextEditingController();
   final _userIdsEditController = TextEditingController();
+  final _metadataEditController = TextEditingController();
 
   bool _isPublic = true;
 
@@ -90,6 +93,11 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
+                TextFormField(
+                  controller: _metadataEditController,
+                  decoration: const InputDecoration(
+                      hintText: 'Enter Community metadata'),
+                ),
                 ElevatedButton(
                   onPressed: () {
                     ProgressDialog.show(context,
@@ -114,10 +122,18 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   Future _createCommunity() async {
     String name = _nameEditController.text.trim();
     String des = _desEditController.text.trim();
+    final _metadataString = _metadataEditController.text.trim();
+    Map<String, dynamic> _metadata = {};
+    try {
+      _metadata = jsonDecode(_metadataString);
+    } catch (e) {
+      print('metadata decode failed');
+    }
 
     final communityCreator = AmitySocialClient.newCommunityRepository()
         .createCommunity(name)
         .description(des)
+        .metadata(_metadata)
         .isPublic(_isPublic);
 
     if (_catsEditController.text.isNotEmpty) {
