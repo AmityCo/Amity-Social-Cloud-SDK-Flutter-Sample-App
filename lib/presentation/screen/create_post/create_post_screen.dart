@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
@@ -23,6 +24,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   final _targetuserTextEditController = TextEditingController();
   final _postTextEditController = TextEditingController();
+  final _metadataEditController = TextEditingController();
 
   List<File> files = <File>[];
 
@@ -60,6 +62,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 controller: _postTextEditController,
                 decoration: const InputDecoration(
                   label: Text('Text*'),
+                ),
+              ),
+              TextFormField(
+                controller: _metadataEditController,
+                decoration: const InputDecoration(
+                  label: Text('Metadata'),
                 ),
               ),
               const SizedBox(height: 20),
@@ -186,16 +194,32 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (isTextPost) {
       final _targetUser = _targetuserTextEditController.text.trim();
       final _text = _postTextEditController.text.trim();
+      final _metadataString = _metadataEditController.text.trim();
+      Map<String, dynamic> _metadata = {};
+      try {
+        _metadata = jsonDecode(_metadataString);
+      } catch (e) {
+        print('metadata decode failed');
+      }
+
       await AmitySocialClient.newPostRepository()
           .createPost()
           .targetUser(_targetUser)
           .text(_text)
+          .metadata(_metadata)
           .post();
     }
 
     if (isImagePost) {
       final _targetUser = _targetuserTextEditController.text.trim();
       final _text = _postTextEditController.text.trim();
+      final _metadataString = _metadataEditController.text.trim();
+      Map<String, dynamic> _metadata = {};
+      try {
+        _metadata = jsonDecode(_metadataString);
+      } catch (e) {
+        print('metadata decode failed');
+      }
 
       List<AmityImage> _images = [];
       for (final _file in files) {
@@ -212,12 +236,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           .targetUser(_targetUser)
           .image(_images)
           .text(_text)
+          .metadata(_metadata)
           .post();
     }
 
     if (isVideoPost) {
       final _targetUser = _targetuserTextEditController.text.trim();
       final _text = _postTextEditController.text.trim();
+      final _metadataString = _metadataEditController.text.trim();
+      Map<String, dynamic> _metadata = {};
+      try {
+        _metadata = jsonDecode(_metadataString);
+      } catch (e) {
+        print('metadata decode failed');
+      }
 
       List<AmityVideo> _video = [];
       for (final _file in files) {
@@ -234,12 +266,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           .targetUser(_targetUser)
           .video(_video)
           .text(_text)
+          .metadata(_metadata)
           .post();
     }
 
     if (isFilePost) {
       final _targetUser = _targetuserTextEditController.text.trim();
       final _text = _postTextEditController.text.trim();
+      final _metadataString = _metadataEditController.text.trim();
+      Map<String, dynamic> _metadata = {};
+      try {
+        _metadata = jsonDecode(_metadataString);
+      } catch (e) {
+        print('metadata decode failed');
+      }
 
       List<AmityFile> _files = [];
       for (final _file in files) {
@@ -256,6 +296,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           .targetUser(_targetUser)
           .file(_files)
           .text(_text)
+          .metadata(_metadata)
           .post();
     }
   }

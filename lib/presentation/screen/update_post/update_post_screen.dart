@@ -94,8 +94,12 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
     final _text = _postTextEditController.text.trim();
     final _metadataString = _postMetadataEditController.text.trim();
-    Map<String, dynamic> _metadata = jsonDecode(_metadataString);
-
+    Map<String, dynamic> _metadata = {};
+    try {
+      _metadata = jsonDecode(_metadataString);
+    } catch (e) {
+      print('metadata decode failed');
+    }
     await widget.amityPost
         .edit()
         .text(_text)

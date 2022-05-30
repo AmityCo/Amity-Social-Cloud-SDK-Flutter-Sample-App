@@ -20,6 +20,7 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
   final _desEditController = TextEditingController();
   final _catsEditController = TextEditingController();
   final _userIdsEditController = TextEditingController();
+  final _metadataEditController = TextEditingController();
 
   bool _isPublic = false;
 
@@ -40,11 +41,12 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
               setValue = !setValue;
               _nameEditController.text = snapshot.data!.displayName!;
               _desEditController.text = snapshot.data!.description!;
-
               _isPublic = snapshot.data!.isPublic!;
-
               _catsEditController.text = snapshot.data!.categories!.join(',');
-              // _userIdsEditController.text = snapshot.data!.me!.join(',');
+              if (snapshot.data?.metadata != null) {
+                _metadataEditController.text =
+                    snapshot.data!.metadata.toString();
+              }
             }
 
             return Container(
@@ -94,19 +96,11 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    // SizedBox(
-                    //   height: 100,
-                    //   child: TextFormField(
-                    //     controller: _userIdsEditController,
-                    //     expands: true,
-                    //     maxLines: null,
-                    //     decoration: const InputDecoration(
-                    //       hintText: 'Enter Comma seperated user Ids',
-                    //       isDense: true,
-                    //     ),
-                    //   ),
-                    // ),
-                    // const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _metadataEditController,
+                      decoration: const InputDecoration(
+                          hintText: 'Enter Community metadata'),
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         ProgressDialog.show(context,
