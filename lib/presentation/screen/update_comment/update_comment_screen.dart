@@ -95,8 +95,12 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
     FocusManager.instance.primaryFocus?.unfocus();
     final _text = _commentTextEditController.text.trim();
     final _metadataString = _commentMetadataEditController.text.trim();
-    Map<String, dynamic> _metadata = jsonDecode(_metadataString);
-
+    Map<String, dynamic> _metadata = {};
+    try {
+      _metadata = jsonDecode(_metadataString);
+    } catch (e) {
+      print('metadata decode failed');
+    }
     await widget.amityComment
         .edit()
         .text(_text)
