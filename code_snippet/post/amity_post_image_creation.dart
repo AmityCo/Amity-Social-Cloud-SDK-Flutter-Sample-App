@@ -32,6 +32,9 @@ class AmityPostImageCreation {
     });
   }
 
+  //current post collection from feed repository
+  final _amityPosts = <AmityPost>[];
+
   void createImagePost(AmityImage uploadedImage) {
     AmitySocialClient.newPostRepository()
         .createPost()
@@ -42,6 +45,10 @@ class AmityPostImageCreation {
         .post()
         .then((AmityPost post) => {
               //handle result
+              //optional: to present the created post in to the current post collection
+              //you will need manually put the newly created post in to the collection
+              //for example :
+              _amityPosts.add(post)
             })
         .onError((error, stackTrace) => {
               //handle error

@@ -7,6 +7,10 @@ class AmityPostTextCreation {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter create text post example
     */
+
+  //current post collection from feed repository
+  final _amityPosts = <AmityPost>[];
+
   void createTextPost() {
     AmitySocialClient.newPostRepository()
         .createPost()
@@ -16,6 +20,10 @@ class AmityPostTextCreation {
         .post()
         .then((AmityPost post) => {
               //handle result
+              //optional: to present the created post in to the current post collection
+              //you will need manually put the newly created post in to the collection
+              //for example :
+              _amityPosts.add(post)
             })
         .onError((error, stackTrace) => {
               //handle error
