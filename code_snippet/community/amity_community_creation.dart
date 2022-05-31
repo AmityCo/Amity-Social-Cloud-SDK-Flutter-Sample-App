@@ -11,7 +11,7 @@ class AmityCommunityCreation {
     */
 
   //current parent community collection
-  final _amityCommunities = <AmityCommunity>[];
+  late PagingController<AmityCommunity> _controller;
 
   void createCommunity(AmityImage communityAvatar) {
     AmitySocialClient.newCommunityRepository()
@@ -29,7 +29,7 @@ class AmityCommunityCreation {
               //optional: to present the created comment in to the current replied comment collection
               //you will need manually put the newly created comment in to the collection
               //for example :
-              _amityCommunities.add(community)
+              _controller.add(community)
             })
         .onError((error, stackTrace) => {
               //handle error

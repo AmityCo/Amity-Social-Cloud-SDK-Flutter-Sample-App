@@ -7,7 +7,7 @@ class AmityCommunityMemberRemove {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter remove community member example
     */
-  final _amityCommunityMembers = <AmityCommunityMember>[];
+  late PagingController<AmityCommunityMember> _controller;
 
   void removeMembers(String communityId, List<String> removingMemberIds) {
     AmitySocialClient.newCommunityRepository()
@@ -19,7 +19,7 @@ class AmityCommunityMemberRemove {
               //optional: to remove the removed communityMember from the current post collection
               //you will need manually remove the removed communityMember from the collection
               //for example :
-              _amityCommunityMembers.removeWhere(
+              _controller.removeWhere(
                   (element) => removingMemberIds.contains(element.userId))
             })
         .onError((error, stackTrace) => {

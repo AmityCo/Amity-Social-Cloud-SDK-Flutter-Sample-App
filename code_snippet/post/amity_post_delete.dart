@@ -9,7 +9,7 @@ class AmityPostDelete {
     */
 
   //current post collection from feed repository
-  final _amityPosts = <AmityPost>[];
+  late PagingController<AmityPost> _controller;
 
   void deletePost(String postId) {
     AmitySocialClient.newPostRepository()
@@ -19,7 +19,7 @@ class AmityPostDelete {
       //optional: to remove the deleted post from the current post collection
       //you will need manually remove the deleted post from the collection
       //for example :
-      _amityPosts.removeWhere((element) => element.postId == postId);
+      _controller.removeWhere((element) => element.postId == postId);
     }).onError((error, stackTrace) {
       //handle error
     });
