@@ -7,7 +7,7 @@ class AmityCommunityUpdate {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter update community example
     */
-  void joinCommunity(String communityId, AmityImage updatingAvatar) {
+  void updateCommunity(String communityId, AmityImage updatingAvatar) {
     AmitySocialClient.newCommunityRepository()
         .updateCommunity(communityId)
         .avatar(updatingAvatar)
