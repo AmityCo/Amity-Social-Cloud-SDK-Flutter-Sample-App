@@ -17,29 +17,39 @@ class CommunityWidget extends StatelessWidget {
         child: Text('Community Deleted - ${amityCommunity.communityId}'),
       );
     }
-    return Container(
-      decoration: BoxDecoration(color: Colors.grey.withOpacity(.2)),
-      child: InkWell(
-        onTap: () {
-          GoRouter.of(context).goNamed(AppRoute.communityProfile,
-              params: {'communityId': amityCommunity.communityId!});
-          // params: {'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'});
-        },
-        child: Column(
-          children: [
-            _CommunityInfoWidget(
-              amityCommunity: amityCommunity,
-            ),
-            const Divider(),
-            Align(
-              alignment: Alignment.centerRight,
-              child: _CommunityOwnerWidget(
-                amityUser: amityCommunity.user!,
+    return StreamBuilder<AmityCommunity>(
+      stream: amityCommunity.listen,
+      initialData: amityCommunity,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final value = snapshot.data!;
+          return Container(
+            decoration: BoxDecoration(color: Colors.grey.withOpacity(.2)),
+            child: InkWell(
+              onTap: () {
+                GoRouter.of(context).goNamed(AppRoute.communityProfile,
+                    params: {'communityId': value.communityId!});
+                // params: {'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'});
+              },
+              child: Column(
+                children: [
+                  _CommunityInfoWidget(
+                    amityCommunity: value,
+                  ),
+                  const Divider(),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: _CommunityOwnerWidget(
+                      amityUser: value.user!,
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
+          );
+        }
+        return Container();
+      },
     );
   }
 }

@@ -20,6 +20,7 @@ class FeedWidget extends StatelessWidget {
     final _themeData = Theme.of(context);
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen,
+      initialData: amityPost,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final value = snapshot.data!;
@@ -180,24 +181,25 @@ class FeedWidget extends StatelessWidget {
               if (amityPost.isDeleted ?? false)
                 Positioned.fill(
                   child: Container(
-                      margin: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(.4),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              color: Colors.red.shade400,
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                            'Soft Deleted Amity Post',
-                            style: _themeData.textTheme.bodyText1!
-                                .copyWith(color: Colors.white),
-                          ),
+                    margin: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(.4),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: Colors.red.shade400,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Text(
+                          'Soft Deleted Amity Post',
+                          style: _themeData.textTheme.bodyText1!
+                              .copyWith(color: Colors.white),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                 )
             ],
           );

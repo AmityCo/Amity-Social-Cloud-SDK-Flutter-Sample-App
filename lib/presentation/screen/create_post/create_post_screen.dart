@@ -71,6 +71,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+              TextFormField(
+                controller: _metadataEditController,
+                decoration: const InputDecoration(
+                  label: Text('Meta data'),
+                ),
+              ),
+              const SizedBox(height: 20),
               Column(
                 children: List.generate(files.length, (index) {
                   final _file = files[index];
@@ -191,6 +198,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future createPost() async {
     FocusManager.instance.primaryFocus?.unfocus();
+
+    final _targetUser = _targetuserTextEditController.text.trim();
+    final _text = _postTextEditController.text.trim();
+
+    final _metadataString = _metadataEditController.text.trim();
+    if (_metadataString.isNotEmpty)
+      Map<String, dynamic> _metadata = jsonDecode(_metadataString);
+
     if (isTextPost) {
       final _targetUser = _targetuserTextEditController.text.trim();
       final _text = _postTextEditController.text.trim();

@@ -99,41 +99,54 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
       body: FutureBuilder<AmityCommunity>(
         future: AmitySocialClient.newCommunityRepository()
             .getCommunity(widget.communityId),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            _amityCommunity = snapshot.data!;
-            return Column(
-              children: [
-                _CommunityProfileHeaderWidget(amityCommunity: snapshot.data!),
-                DefaultTabController(
-                  length: 2,
-                  child: TabBar(
-                    controller: _tabController,
-                    tabs: const [
-                      Tab(
-                        text: 'Feed',
-                      ),
-                      Tab(
-                        text: 'Members',
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      CommunityFeedScreen(
-                          communityId: widget.communityId, showAppBar: false),
-                      CommunityMembercreen(
-                        communityId: widget.communityId,
-                        showAppBar: false,
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            );
+        builder: (context, futureSnapshot) {
+          if (futureSnapshot.hasData) {
+            _amityCommunity = futureSnapshot.data!;
+
+            return StreamBuilder<AmityCommunity>(
+                stream: _amityCommunity.listen,
+                initialData: _amityCommunity,
+                builder: (context, snapshot) {
+                  _amityCommunity = snapshot.data!;
+                  return NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) {
+                      return [
+                        SliverToBoxAdapter(
+                          child: _CommunityProfileHeaderWidget(
+                              amityCommunity: _amityCommunity),
+                        ),
+                        SliverToBoxAdapter(
+                          child: DefaultTabController(
+                            length: 2,
+                            child: TabBar(
+                              controller: _tabController,
+                              tabs: const [
+                                Tab(
+                                  text: 'Feed',
+                                ),
+                                Tab(
+                                  text: 'Members',
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ];
+                    },
+                    body: TabBarView(
+                      controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        CommunityFeedScreen(
+                            communityId: widget.communityId, showAppBar: false),
+                        CommunityMembercreen(
+                          communityId: widget.communityId,
+                          showAppBar: false,
+                        ),
+                      ],
+                    ),
+                  );
+                });
           }
           return const Center(
             child: CircularProgressIndicator(),
@@ -256,10 +269,20 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 onPressed: () {
                   if (!(amityCommunity.isJoined ?? true)) {
                     AmitySocialClient.newCommunityRepository()
-                        .joinCommunity(amityCommunity.communityId!);
+                        .joinCommunity(amityCommunity.communityId!)
+                        .then((value) {})
+                        .onError((error, stackTrace) {
+                      ErrorDialog.show(context,
+                          title: 'Error', message: error.toString());
+                    });
                   } else {
                     AmitySocialClient.newCommunityRepository()
-                        .leaveCommunity(amityCommunity.communityId!);
+                        .leaveCommunity(amityCommunity.communityId!)
+                        .then((value) {})
+                        .onError((error, stackTrace) {
+                      ErrorDialog.show(context,
+                          title: 'Error', message: error.toString());
+                    });
                   }
                 },
                 child:
