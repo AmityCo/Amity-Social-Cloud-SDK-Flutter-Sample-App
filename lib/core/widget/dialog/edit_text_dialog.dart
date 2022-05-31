@@ -17,8 +17,8 @@ class EditTextDialog extends StatelessWidget {
       {String? title,
       String? defString,
       String? hintText,
-      ValueChanged? onChange,
-      ValueChanged? onPress}) {
+      ValueChanged<String>? onChange,
+      ValueChanged<String>? onPress}) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -30,7 +30,7 @@ class EditTextDialog extends StatelessWidget {
               hintText: hintText ?? '',
               onChange: (value) {
                 text = value;
-                onChange?.call(text);
+                onChange?.call(text!);
               },
             ),
             actions: [
@@ -43,7 +43,7 @@ class EditTextDialog extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  onPress?.call(text);
+                  onPress?.call(text!);
                 },
                 child: const Text('Update'),
                 style: ElevatedButton.styleFrom(primary: Colors.red),
