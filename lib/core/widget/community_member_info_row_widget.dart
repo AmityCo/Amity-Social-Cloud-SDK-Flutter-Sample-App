@@ -1,10 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
-
-import 'dialog/positive_dialog.dart';
 
 class CommunityMemberInfoRowWidget extends StatelessWidget {
   const CommunityMemberInfoRowWidget(
@@ -23,7 +20,6 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
       initialData: communityMember,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          print(snapshot.data!);
           final value = snapshot.data!;
 
           return Container(
@@ -75,8 +71,6 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-               
-             
                 const Spacer(),
                 ...?options
               ],
@@ -87,76 +81,5 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
         return Container();
       },
     );
-  }
-
-  void _removeMember(BuildContext context, AmityCommunityMember value) {
-    AmitySocialClient.newCommunityRepository()
-        .membership(value.communityId!)
-        .removeMembers([value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Member removed successfully')
-            });
-  }
-
-  void _banMember(BuildContext context, AmityCommunityMember value) {
-    AmitySocialClient.newCommunityRepository()
-        .moderation(value.communityId!)
-        .banMember([value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Member banned successfully')
-            });
-  }
-
-  void _unbanMember(BuildContext context, AmityCommunityMember value) {
-    AmitySocialClient.newCommunityRepository()
-        .moderation(value.communityId!)
-        .unbanMember([value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Member unbanned successfully')
-            });
-  }
-
-  void _addRole(BuildContext context, String role, AmityCommunityMember value) {
-    AmitySocialClient.newCommunityRepository()
-        .moderation(value.communityId!)
-        .addRole(role, [value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Role added successfully')
-            });
-  }
-
-  void _removeRole(
-      BuildContext context, String role, AmityCommunityMember value) {
-    AmitySocialClient.newCommunityRepository()
-        .moderation(value.communityId!)
-        .removeRole(role, [value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Role removed successfully')
-            });
   }
 }

@@ -175,15 +175,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                       .text(text)
                       .send();
 
-                  // final _comment =
-                  //     await AmitySocialClient.newCommentRepository()
-                  //         .createComment()
-                  //         .post(widget._postId)
-                  //         .parentId(_replyToComment!.commentId!)
-                  //         .create()
-                  //         .text(text)
-                  //         .send();
-                  // _controller.addAtIndex(0, _comment);
                   setState(() {
                     _replyToComment = null;
                   });

@@ -71,6 +71,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     AmityCommentData data = value.data!;
     if (data is CommentTextData) text = data.text!;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
       child: Row(
@@ -128,7 +129,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         }
                       },
                       child: Text(
-                        '${widget.amityComment.reactionCount} Likes',
+                        '${value.reactionCount} Likes',
                         style: _themeData.textTheme.caption!.copyWith(),
                       ),
                     ),
@@ -226,132 +227,143 @@ class _CommentWidgetState extends State<CommentWidget> {
       children: List.generate(
         comments.length,
         (index) {
-          AmityUser _user = comments[index].user!;
-          bool _isFlagedByMe = comments[index].myReactions?.isNotEmpty ?? false;
-          AmityCommentData data = comments[index].data!;
-          if (data is CommentTextData) text = data.text!;
-          return !(comments[index].isDeleted ?? false)
-              ? Container(
-                  margin: const EdgeInsets.only(top: 12, bottom: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey.withOpacity(.3)),
-                        child: _user.avatarUrl != null
-                            ? Image.network(
-                                _user.avatarUrl!,
-                                fit: BoxFit.fill,
-                              )
-                            : Image.asset('assets/user_placeholder.png'),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
+          final amityComment = comments[index];
+          return StreamBuilder<AmityComment>(
+            stream: amityComment.listen,
+            initialData: amityComment,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final value = snapshot.data!;
+                AmityUser _user = value.user!;
+                bool _isFlagedByMe = value.myReactions?.isNotEmpty ?? false;
+                AmityCommentData data = value.data!;
+                if (data is CommentTextData) text = data.text!;
+
+                return !(value.isDeleted ?? false)
+                    ? Container(
+                        margin: const EdgeInsets.only(top: 12, bottom: 12),
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            RichText(
-                              text: TextSpan(
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey.withOpacity(.3)),
+                              child: _user.avatarUrl != null
+                                  ? Image.network(
+                                      _user.avatarUrl!,
+                                      fit: BoxFit.fill,
+                                    )
+                                  : Image.asset('assets/user_placeholder.png'),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TextSpan(
-                                    text: _user.displayName!,
-                                    style: _themeData.textTheme.bodyText1!
-                                        .copyWith(
-                                      fontWeight: FontWeight.bold,
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: _user.displayName!,
+                                          style: _themeData.textTheme.bodyText1!
+                                              .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const WidgetSpan(
+                                            child: SizedBox(width: 6)),
+                                        TextSpan(
+                                          text: text,
+                                          style: _themeData.textTheme.bodyText2!
+                                              .copyWith(),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                  const WidgetSpan(child: SizedBox(width: 6)),
-                                  TextSpan(
-                                    text: text,
-                                    style: _themeData.textTheme.bodyText2!
-                                        .copyWith(),
-                                  )
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        value.createdAt!.beforeTime(),
+                                        style: _themeData.textTheme.caption!
+                                            .copyWith(),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      InkWell(
+                                        onTap: () {
+                                          if (_isFlagedByMe) {
+                                            value
+                                                .react()
+                                                .removeReaction('like');
+                                          } else {
+                                            value.react().addReaction('like');
+                                          }
+                                        },
+                                        child: Text(
+                                          '${value.reactionCount} Likes',
+                                          style: _themeData.textTheme.caption!
+                                              .copyWith(),
+                                        ),
+                                      ),
+                                      // InkWell(
+                                      //   onTap: () {
+                                      //     widget.onReply(value);
+                                      //   },
+                                      //   child: Text(
+                                      //     'Reply',
+                                      //     style: _themeData.textTheme.caption!.copyWith(),
+                                      //   ),
+                                      // )
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Text(
-                                  comments[index].createdAt!.beforeTime(),
-                                  style:
-                                      _themeData.textTheme.caption!.copyWith(),
+                            if (_user.userId == AmityCoreClient.getUserId())
+                              PopupMenuButton(
+                                itemBuilder: (context) {
+                                  return const [
+                                    PopupMenuItem(
+                                      child: Text("Edit"),
+                                      value: 1,
+                                    ),
+                                    PopupMenuItem(
+                                      child: Text("Delete (Soft)"),
+                                      value: 2,
+                                    ),
+                                    PopupMenuItem(
+                                      child: Text("Delete (Hard)"),
+                                      value: 3,
+                                      enabled: false,
+                                    )
+                                  ];
+                                },
+                                child: const Icon(
+                                  Icons.more_vert_rounded,
+                                  size: 18,
                                 ),
-                                const SizedBox(width: 12),
-                                InkWell(
-                                  onTap: () {
-                                    if (_isFlagedByMe) {
-                                      comments[index]
-                                          .react()
-                                          .removeReaction('like');
-                                    } else {
-                                      comments[index]
-                                          .react()
-                                          .addReaction('like');
-                                    }
-                                  },
-                                  child: Text(
-                                    '${widget.amityComment.reactionCount} Likes',
-                                    style: _themeData.textTheme.caption!
-                                        .copyWith(),
-                                  ),
-                                ),
-                                // InkWell(
-                                //   onTap: () {
-                                //     widget.onReply(value);
-                                //   },
-                                //   child: Text(
-                                //     'Reply',
-                                //     style: _themeData.textTheme.caption!.copyWith(),
-                                //   ),
-                                // )
-                              ],
-                            ),
+                                onSelected: (index1) {
+                                  if (index1 == 1) {
+                                    EditCommentDialog.show(context,
+                                        amityComment: value);
+                                  }
+                                  if (index1 == 2) {
+                                    value.delete();
+                                  }
+                                },
+                              ),
                           ],
                         ),
-                      ),
-                      if (_user.userId == AmityCoreClient.getUserId())
-                        PopupMenuButton(
-                          itemBuilder: (context) {
-                            return const [
-                              PopupMenuItem(
-                                child: Text("Edit"),
-                                value: 1,
-                              ),
-                              PopupMenuItem(
-                                child: Text("Delete (Soft)"),
-                                value: 2,
-                              ),
-                              PopupMenuItem(
-                                child: Text("Delete (Hard)"),
-                                value: 3,
-                                enabled: false,
-                              )
-                            ];
-                          },
-                          child: const Icon(
-                            Icons.more_vert_rounded,
-                            size: 18,
-                          ),
-                          onSelected: (index1) {
-                            if (index1 == 1) {
-                              EditCommentDialog.show(context,
-                                  amityComment: comments[index]);
-                            }
-                            if (index1 == 2) {
-                              comments[index].delete();
-                            }
-                          },
-                        ),
-                    ],
-                  ),
-                )
-              : Container();
+                      )
+                    : Container();
+              }
+              return Container();
+            },
+          );
         },
       )..add(Container(
           padding: const EdgeInsets.only(left: 12, top: 8),

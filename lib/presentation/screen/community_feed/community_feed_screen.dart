@@ -21,12 +21,16 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+  AmityDataType? _dataType;
   @override
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newFeedRepository()
           .getCommunityFeed(widget.communityId)
           .includeDeleted(false)
+          .sortBy(_sortOption)
+          .types(_dataType == null ? [] : [_dataType!])
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -72,6 +76,92 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           : null,
       body: Column(
         children: [
+          Container(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        const PopupMenuItem(
+                          child: Text('All'),
+                          value: 1,
+                        ),
+                        PopupMenuItem(
+                          child: Text(AmityDataType.IMAGE.name),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child: Text(AmityDataType.VIDEO.name),
+                          value: 3,
+                        ),
+                        PopupMenuItem(
+                          child: Text(AmityDataType.TEXT.name),
+                          value: 4,
+                        )
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.filter_alt_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 1) {
+                        _dataType = null;
+                      }
+                      if (index == 2) {
+                        _dataType = AmityDataType.IMAGE;
+                      }
+                      if (index == 3) {
+                        _dataType = AmityDataType.VIDEO;
+                      }
+                      if (index == 4) {
+                        _dataType = AmityDataType.TEXT;
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child:
+                              Text(AmityUserFeedSortOption.FIRST_CREATED.name),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child:
+                              Text(AmityUserFeedSortOption.LAST_CREATED.name),
+                          value: 3,
+                        )
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.sort_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 2) {
+                        _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+                      }
+                      if (index == 3) {
+                        _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
