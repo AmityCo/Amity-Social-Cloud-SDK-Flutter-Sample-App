@@ -30,7 +30,7 @@ class CommunityMemberWidget extends StatelessWidget {
       margin: const EdgeInsets.all(2),
       padding: const EdgeInsets.all(2),
       child:
-          CommunityMemberInfoRowWidget(communityMember: amityCommunityMember),
+          CommunityMemberInfoRowWidget(communityMember: amityCommunityMember, options: options),
     );
   }
 }
