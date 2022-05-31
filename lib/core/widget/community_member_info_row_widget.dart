@@ -75,76 +75,8 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (value.userId != AmityCoreClient.getUserId())
-                  PopupMenuButton(
-                    itemBuilder: (context) {
-                      final isMemberBanned = value.isBanned ?? false;
-                      final canBanMember = AmityCoreClient.hasPermission(
-                              AmityPermission.BAN_COMMUNITY_USER)
-                          .atCommunity(value.communityId!)
-                          .check();
-                      final canRemoveMember = AmityCoreClient.hasPermission(
-                              AmityPermission.REMOVE_COMMUNITY_USER)
-                          .atCommunity(value.communityId!)
-                          .check();
-                      final canAddRole = AmityCoreClient.hasPermission(
-                              AmityPermission.CREATE_ROLE)
-                          .atCommunity(value.communityId!)
-                          .check();
-                      final canRemoveRole = AmityCoreClient.hasPermission(
-                              AmityPermission.DELETE_ROLE)
-                          .atCommunity(value.communityId!)
-                          .check();
-                      return [
-                        PopupMenuItem(
-                          child: const Text("Remove"),
-                          value: 1,
-                          enabled: canRemoveMember,
-                        ),
-                        PopupMenuItem(
-                          child: const Text("Ban"),
-                          value: 2,
-                          enabled: canBanMember && !isMemberBanned,
-                        ),
-                        PopupMenuItem(
-                          child: const Text("Unban"),
-                          value: 3,
-                          enabled: canBanMember && isMemberBanned,
-                        ),
-                        PopupMenuItem(
-                          child: const Text("Add role"),
-                          value: 4,
-                          enabled: canAddRole && !isMemberBanned,
-                        ),
-                        PopupMenuItem(
-                          child: const Text("Remove role"),
-                          value: 5,
-                          enabled: canRemoveRole && !isMemberBanned,
-                        )
-                      ];
-                    },
-                    child: const Icon(
-                      Icons.more_vert,
-                      size: 18,
-                    ),
-                    onSelected: (index) {
-                      if (index == 1) {
-                        _removeMember(context, value);
-                      }
-                      if (index == 2) {
-                        _banMember(context, value);
-                      }
-                      if (index == 3) {
-                        _unbanMember(context, value);
-                      }
-                      if (index == 4) {
-                        _addRole(context, 'community-moderator', value);
-                      }
-                      if (index == 5) {
-                        _removeRole(context, 'community-moderator', value);
-                      }
-                    },
-                  ),
+               
+             
                 const Spacer(),
                 ...?options
               ],

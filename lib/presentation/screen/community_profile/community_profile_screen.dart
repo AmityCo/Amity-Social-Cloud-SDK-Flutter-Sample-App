@@ -28,6 +28,10 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    final memberScreen = CommunityMembercreen(
+      communityId: widget.communityId,
+      showAppBar: false,
+    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Community Profile'),
@@ -102,7 +106,6 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
         builder: (context, futureSnapshot) {
           if (futureSnapshot.hasData) {
             _amityCommunity = futureSnapshot.data!;
-
             return StreamBuilder<AmityCommunity>(
                 stream: _amityCommunity.listen,
                 initialData: _amityCommunity,
@@ -139,10 +142,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                       children: [
                         CommunityFeedScreen(
                             communityId: widget.communityId, showAppBar: false),
-                        CommunityMembercreen(
-                          communityId: widget.communityId,
-                          showAppBar: false,
-                        ),
+                        memberScreen,
                       ],
                     ),
                   );
@@ -166,8 +166,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
               AmitySocialClient.newCommunityRepository()
                   .membership(widget.communityId)
                   .addMembers([value]).then((value) {
-                PositiveDialog.show(context,
-                    title: 'Complete', message: 'Member Added successfully');
+                memberScreen.screenState.addMembers(value);
               }).onError((error, stackTrace) {
                 ErrorDialog.show(context,
                     title: 'Error', message: error.toString());
