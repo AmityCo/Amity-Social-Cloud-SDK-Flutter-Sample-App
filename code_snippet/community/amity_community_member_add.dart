@@ -9,7 +9,6 @@ class AmityCommunityMemberAdd {
     */
   final _amityCommunityMembers = <AmityCommunityMember>[];
 
-  //create comment to a post
   void addMembers(String communityId) {
     AmitySocialClient.newCommunityRepository()
         .membership(communityId)

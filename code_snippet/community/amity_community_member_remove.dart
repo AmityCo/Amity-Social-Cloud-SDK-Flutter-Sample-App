@@ -9,7 +9,6 @@ class AmityCommunityMemberRemove {
     */
   final _amityCommunityMembers = <AmityCommunityMember>[];
 
-  //create comment to a post
   void removeMembers(String communityId, List<String> removingMemberIds) {
     AmitySocialClient.newCommunityRepository()
         .membership(communityId)
@@ -17,8 +16,8 @@ class AmityCommunityMemberRemove {
         .then((value) => {
               //handle result
               //success
-              //optional: to remove the deleted post from the current post collection
-              //you will need manually remove the deleted post from the collection
+              //optional: to remove the removed communityMember from the current post collection
+              //you will need manually remove the removed communityMember from the collection
               //for example :
               _amityCommunityMembers.removeWhere(
                   (element) => removingMemberIds.contains(element.userId))
