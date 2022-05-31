@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CommunityCreateScreen extends StatefulWidget {
   const CommunityCreateScreen({Key? key}) : super(key: key);
@@ -24,6 +26,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
   bool _isPublic = true;
 
+  XFile? _avatar;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,6 +41,54 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             key: _formState,
             child: Column(
               children: [
+                const SizedBox(height: 16),
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey.withOpacity(.3)),
+                  child: _avatar != null
+                      ? Image.file(
+                          File(
+                            _avatar!.path,
+                          ),
+                          fit: BoxFit.cover,
+                        )
+                      : InkWell(
+                          onTap: () async {
+                            final ImagePicker _picker = ImagePicker();
+                            // Pick an image
+                            final image = await _picker.pickImage(
+                                source: ImageSource.gallery);
+
+                            setState(() {
+                              _avatar = image;
+                            });
+                          },
+                          child: Stack(
+                            children: [
+                              Image.asset('assets/user_placeholder.png'),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  height: 32,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(.5),
+                                  ),
+                                  child: const Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                ),
+                const SizedBox(height: 32),
                 TextFormField(
                   controller: _nameEditController,
                   decoration:
@@ -120,6 +172,19 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   }
 
   Future _createCommunity() async {
+    AmityImage? _communityAvatar;
+    if (_avatar != null) {
+      AmityUploadResult<AmityImage> amityUploadResult =
+          await AmityCoreClient.newFileRepository()
+              .image(File(_avatar!.path))
+              .upload();
+      if (amityUploadResult is AmityUploadComplete) {
+        final amityUploadComplete = amityUploadResult as AmityUploadComplete;
+        _communityAvatar = amityUploadComplete.getFile as AmityImage;
+        // _images.add(amityUploadComplete.getFile as AmityImage);
+      }
+    }
+
     String name = _nameEditController.text.trim();
     String des = _desEditController.text.trim();
     final _metadataString = _metadataEditController.text.trim();
@@ -142,6 +207,10 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
     if (_userIdsEditController.text.isNotEmpty) {
       communityCreator.userIds(_userIdsEditController.text.trim().split(','));
+    }
+
+    if (_communityAvatar != null) {
+      communityCreator.avatar(_communityAvatar);
     }
 
     await communityCreator.create();

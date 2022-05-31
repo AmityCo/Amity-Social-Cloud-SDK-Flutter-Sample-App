@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/community_member_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
 class CommunityMembercreen extends StatefulWidget {
   const CommunityMembercreen(
@@ -90,6 +91,42 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
                         return CommunityMemberWidget(
                           amityCommunityMember: amityCommunityMember,
                           onMemberCallback: () {},
+                          options: [
+                            PopupMenuButton(
+                              itemBuilder: (context) {
+                                return const [
+                                  PopupMenuItem(
+                                    child: Text("Delete"),
+                                    value: 1,
+                                  ),
+                                ];
+                              },
+                              child: const Icon(
+                                Icons.more_vert,
+                                size: 18,
+                              ),
+                              onSelected: (index) {
+                                if (index == 1) {
+                                  AmitySocialClient.newCommunityRepository()
+                                      .membership(widget.communityId)
+                                      .removeMembers([
+                                    amityCommunityMember.userId!
+                                  ]).then((value) {
+                                    PositiveDialog.show(context,
+                                        title: 'Delete',
+                                        message: 'Member Deleted successfully');
+                                  }).onError((error, stackTrace) {
+                                    ErrorDialog.show(context,
+                                        title: 'Error',
+                                        message: error.toString());
+                                  });
+                                  //Open Edit Community
+                                  // GoRouter.of(context).goNamed(AppRoute.updateCommunity,
+                                  //     params: {'communityId': widget.communityId});
+                                }
+                              },
+                            ),
+                          ],
                         );
                       },
                     ),

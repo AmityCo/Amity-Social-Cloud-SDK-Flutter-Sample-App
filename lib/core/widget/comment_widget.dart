@@ -38,6 +38,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     return StreamBuilder<AmityComment>(
       stream: widget.amityComment.listen,
+      initialData: widget.amityComment,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return !(snapshot.data!.isDeleted ?? false)
@@ -219,13 +220,14 @@ class _CommentWidgetState extends State<CommentWidget> {
   Widget _getChildCommentWidget(
       BuildContext context, List<AmityComment> comments) {
     final _themeData = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(
         comments.length,
         (index) {
           AmityUser _user = comments[index].user!;
-
+          bool _isFlagedByMe = comments[index].myReactions?.isNotEmpty ?? false;
           AmityCommentData data = comments[index].data!;
           if (data is CommentTextData) text = data.text!;
           return !(comments[index].isDeleted ?? false)
@@ -281,6 +283,24 @@ class _CommentWidgetState extends State<CommentWidget> {
                                       _themeData.textTheme.caption!.copyWith(),
                                 ),
                                 const SizedBox(width: 12),
+                                InkWell(
+                                  onTap: () {
+                                    if (_isFlagedByMe) {
+                                      comments[index]
+                                          .react()
+                                          .removeReaction('like');
+                                    } else {
+                                      comments[index]
+                                          .react()
+                                          .addReaction('like');
+                                    }
+                                  },
+                                  child: Text(
+                                    '${widget.amityComment.reactionCount} Likes',
+                                    style: _themeData.textTheme.caption!
+                                        .copyWith(),
+                                  ),
+                                ),
                                 // InkWell(
                                 //   onTap: () {
                                 //     widget.onReply(value);

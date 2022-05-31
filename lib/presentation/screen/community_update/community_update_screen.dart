@@ -24,7 +24,28 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
 
   bool _isPublic = false;
 
-  bool setValue = false;
+  // bool setValue = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId)
+        .then((value) {
+      setState(() {
+        _nameEditController.text = value.displayName!;
+        _desEditController.text = value.description!;
+
+        _isPublic = value.isPublic!;
+
+        _catsEditController.text = value.categories!.join(',');
+      });
+    }).onError((error, stackTrace) {
+      ErrorDialog.show(context, title: 'Error', message: error.toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,97 +53,83 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
       appBar: AppBar(
         title: const Text('Update Community'),
       ),
-      body: FutureBuilder<AmityCommunity>(
-        future: AmitySocialClient.newCommunityRepository()
-            .getCommunity(widget.communityId),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (!setValue) {
-              setValue = !setValue;
-              _nameEditController.text = snapshot.data!.displayName!;
-              _desEditController.text = snapshot.data!.description!;
-              _isPublic = snapshot.data!.isPublic!;
-              _catsEditController.text = snapshot.data!.categories!.join(',');
-              if (snapshot.data?.metadata != null) {
-                _metadataEditController.text =
-                    snapshot.data!.metadata.toString();
-              }
-            }
-
-            return Container(
-              padding: const EdgeInsets.all(12),
-              child: Form(
-                key: _formState,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _nameEditController,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter Community Name'),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      height: 100,
-                      child: TextFormField(
-                        controller: _desEditController,
-                        expands: true,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter Community Description',
-                          isDense: true,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    CheckboxListTile(
-                      value: _isPublic,
-                      onChanged: (value) {
-                        _isPublic = value!;
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text('Make Community public'),
-                    ),
-                    SizedBox(
-                      height: 80,
-                      child: TextFormField(
-                        controller: _catsEditController,
-                        expands: true,
-                        maxLines: null,
-                        decoration: const InputDecoration(
-                          hintText: 'Enter Comma seperated Category Ids',
-                          isDense: true,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _metadataEditController,
-                      decoration: const InputDecoration(
-                          hintText: 'Enter Community metadata'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        ProgressDialog.show(context,
-                                asyncFunction: _updateCommunity)
-                            .then((value) {
-                          GoRouter.of(context).pop();
-                        }).onError((error, stackTrace) {
-                          ErrorDialog.show(context,
-                              title: 'Error', message: error.toString());
-                        });
-                      },
-                      child: const Text('Update Community'),
-                    )
-                  ],
+      body: Container(
+        padding: const EdgeInsets.all(12),
+        child: Form(
+          key: _formState,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _nameEditController,
+                decoration:
+                    const InputDecoration(hintText: 'Enter Community Name'),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                height: 100,
+                child: TextFormField(
+                  controller: _desEditController,
+                  expands: true,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Community Description',
+                    isDense: true,
+                  ),
                 ),
               ),
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
+              const SizedBox(height: 12),
+              CheckboxListTile(
+                value: _isPublic,
+                onChanged: (value) {
+                  setState(() {
+                    _isPublic = value!;
+                  });
+                },
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Make Community public'),
+              ),
+              SizedBox(
+                height: 80,
+                child: TextFormField(
+                  controller: _catsEditController,
+                  expands: true,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Comma seperated Category Ids',
+                    isDense: true,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // SizedBox(
+              //   height: 100,
+              //   child: TextFormField(
+              //     controller: _userIdsEditController,
+              //     expands: true,
+              //     maxLines: null,
+              //     decoration: const InputDecoration(
+              //       hintText: 'Enter Comma seperated user Ids',
+              //       isDense: true,
+              //     ),
+              //   ),
+              // ),
+              // const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: () {
+                  ProgressDialog.show(context, asyncFunction: _updateCommunity)
+                      .then((value) {
+                    GoRouter.of(context).pop();
+                  }).onError((error, stackTrace) {
+                    ErrorDialog.show(context,
+                        title: 'Error', message: error.toString());
+                  });
+                },
+                child: const Text('Update Community'),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
