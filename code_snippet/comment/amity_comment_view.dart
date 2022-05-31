@@ -1,5 +1,5 @@
 import 'package:amity_sdk/amity_sdk.dart';
-
+import 'package:flutter/widgets.dart';
 
 class AmityCommentView {
   /* begin_sample_code
@@ -14,5 +14,17 @@ class AmityCommentView {
       String? commentText = data.text;
     }
   }
+
+ //example of using AmityComment with StreamBuilder
+  void observeComment(AmityComment comment) {
+    StreamBuilder<AmityComment>(
+        stream: comment.listen,
+        builder: (context, snapshot) {
+          // update widget
+          // eg. widget.text = comment.data.text
+          return Container();
+        });
+  }
+
   /* end_sample_code */
 }

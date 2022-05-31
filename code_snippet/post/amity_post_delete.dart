@@ -7,11 +7,19 @@ class AmityPostDelete {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter get post example
     */
+
+  //current post collection from feed repository
+  late PagingController<AmityPost> _controller;
+
   void deletePost(String postId) {
     AmitySocialClient.newPostRepository()
         .deletePost(postId: postId)
         .then((value) {
       //success
+      //optional: to remove the deleted post from the current post collection
+      //you will need manually remove the deleted post from the collection
+      //for example :
+      _controller.removeWhere((element) => element.postId == postId);
     }).onError((error, stackTrace) {
       //handle error
     });

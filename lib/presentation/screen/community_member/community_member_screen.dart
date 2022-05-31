@@ -6,13 +6,17 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
 class CommunityMembercreen extends StatefulWidget {
-  const CommunityMembercreen(
+  CommunityMembercreen(
       {Key? key, required this.communityId, this.showAppBar = true})
       : super(key: key);
   final String communityId;
   final bool showAppBar;
+  late _CommunityMemberScreenState screenState;
   @override
-  State<CommunityMembercreen> createState() => _CommunityMemberScreenState();
+  State<CommunityMembercreen> createState() {
+    screenState = _CommunityMemberScreenState();
+    return screenState;
+  }
 }
 
 class _CommunityMemberScreenState extends State<CommunityMembercreen> {
@@ -47,13 +51,21 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
         },
       );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 
     scrollcontroller.addListener(pagination);
 
     super.initState();
+  }
+
+  void addMembers(List<AmityCommunityMember> members) {
+    _controller.addAll(members);
+  }
+
+  void removeMembers(List<String> userIds) {
+    _controller.removeWhere((member) => userIds.contains(member.userId));
   }
 
   void pagination() {
@@ -94,11 +106,59 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
                           options: [
                             PopupMenuButton(
                               itemBuilder: (context) {
-                                return const [
+                                final isMemberBanned =
+                                    amityCommunityMember.isBanned ?? false;
+                                final canBanMember =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission.BAN_COMMUNITY_USER)
+                                        .atCommunity(
+                                            amityCommunityMember.communityId!)
+                                        .check();
+                                final canRemoveMember =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission
+                                                .REMOVE_COMMUNITY_USER)
+                                        .atCommunity(
+                                            amityCommunityMember.communityId!)
+                                        .check();
+                                final canAddRole =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission.CREATE_ROLE)
+                                        .atCommunity(
+                                            amityCommunityMember.communityId!)
+                                        .check();
+                                final canRemoveRole =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission.DELETE_ROLE)
+                                        .atCommunity(
+                                            amityCommunityMember.communityId!)
+                                        .check();
+                                return [
                                   PopupMenuItem(
-                                    child: Text("Delete"),
+                                    child: const Text("Remove"),
                                     value: 1,
+                                    enabled: canRemoveMember,
                                   ),
+                                  PopupMenuItem(
+                                    child: const Text("Ban"),
+                                    value: 2,
+                                    enabled: canBanMember && !isMemberBanned,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Unban"),
+                                    value: 3,
+                                    enabled: canBanMember && isMemberBanned,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Add role"),
+                                    value: 4,
+                                    enabled: canAddRole && !isMemberBanned,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Remove role"),
+                                    value: 5,
+                                    enabled: canRemoveRole && !isMemberBanned,
+                                  )
                                 ];
                               },
                               child: const Icon(
@@ -107,25 +167,24 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
                               ),
                               onSelected: (index) {
                                 if (index == 1) {
-                                  AmitySocialClient.newCommunityRepository()
-                                      .membership(widget.communityId)
-                                      .removeMembers([
-                                    amityCommunityMember.userId!
-                                  ]).then((value) {
-                                    PositiveDialog.show(context,
-                                        title: 'Delete',
-                                        message: 'Member Deleted successfully');
-                                  }).onError((error, stackTrace) {
-                                    ErrorDialog.show(context,
-                                        title: 'Error',
-                                        message: error.toString());
-                                  });
-                                  //Open Edit Community
-                                  // GoRouter.of(context).goNamed(AppRoute.updateCommunity,
-                                  //     params: {'communityId': widget.communityId});
+                                  _removeMember(context, amityCommunityMember);
+                                }
+                                if (index == 2) {
+                                  _banMember(context, amityCommunityMember);
+                                }
+                                if (index == 3) {
+                                  _unbanMember(context, amityCommunityMember);
+                                }
+                                if (index == 4) {
+                                  _addRole(context, 'community-moderator',
+                                      amityCommunityMember);
+                                }
+                                if (index == 5) {
+                                  _removeRole(context, 'community-moderator',
+                                      amityCommunityMember);
                                 }
                               },
-                            ),
+                            )
                           ],
                         );
                       },
@@ -146,5 +205,75 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
         ],
       ),
     );
+  }
+
+  void _removeMember(BuildContext context, AmityCommunityMember member) {
+    AmitySocialClient.newCommunityRepository()
+        .membership(member.communityId!)
+        .removeMembers([member.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              removeMembers([member.userId!])
+            });
+  }
+
+  void _banMember(BuildContext context, AmityCommunityMember value) {
+    AmitySocialClient.newCommunityRepository()
+        .moderation(value.communityId!)
+        .banMember([value.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              PositiveDialog.show(context,
+                  title: 'Complete', message: 'Member banned successfully')
+            });
+  }
+
+  void _unbanMember(BuildContext context, AmityCommunityMember value) {
+    AmitySocialClient.newCommunityRepository()
+        .moderation(value.communityId!)
+        .unbanMember([value.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              PositiveDialog.show(context,
+                  title: 'Complete', message: 'Member unbanned successfully')
+            });
+  }
+
+  void _addRole(BuildContext context, String role, AmityCommunityMember value) {
+    AmitySocialClient.newCommunityRepository()
+        .moderation(value.communityId!)
+        .addRole(role, [value.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              PositiveDialog.show(context,
+                  title: 'Complete', message: 'Role added successfully')
+            });
+  }
+
+  void _removeRole(
+      BuildContext context, String role, AmityCommunityMember value) {
+    AmitySocialClient.newCommunityRepository()
+        .moderation(value.communityId!)
+        .removeRole(role, [value.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              PositiveDialog.show(context,
+                  title: 'Complete', message: 'Role removed successfully')
+            });
   }
 }

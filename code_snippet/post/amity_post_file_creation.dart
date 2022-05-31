@@ -32,6 +32,9 @@ class AmityPostFileCreation {
     });
   }
 
+  //current post collection from feed repository
+  late PagingController<AmityPost> _controller;
+
   void createFilePost(AmityFile uploadedFile) {
     AmitySocialClient.newPostRepository()
         .createPost()
@@ -42,6 +45,10 @@ class AmityPostFileCreation {
         .post()
         .then((AmityPost post) => {
               //handle result
+              //optional: to present the created post in to the current post collection
+              //you will need manually put the newly created post in to the collection
+              //for example :
+              _controller.add(post)
             })
         .onError((error, stackTrace) => {
               //handle error
