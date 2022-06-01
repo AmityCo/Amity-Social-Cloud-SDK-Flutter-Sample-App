@@ -51,7 +51,7 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
         },
       );
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 

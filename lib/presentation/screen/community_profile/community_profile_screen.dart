@@ -162,10 +162,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
             //show add member action
             EditTextDialog.show(context,
                 title: 'Add Member',
-                hintText: 'Enter User Id', onPress: (value) {
+                hintText: 'Enter Comma seperated user Ids', onPress: (value) {
               AmitySocialClient.newCommunityRepository()
                   .membership(widget.communityId)
-                  .addMembers([value]).then((value) {
+                  .addMembers(value.split(','))
+                  .then((value) {
                 memberScreen.screenState.addMembers(value);
               }).onError((error, stackTrace) {
                 ErrorDialog.show(context,
@@ -259,6 +260,19 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
           Text(
             amityCommunity.description ?? '',
             style: _themeData.textTheme.caption,
+          ),
+          const SizedBox(height: 18),
+          FutureBuilder<List<String>>(
+            future: amityCommunity.getCurentUserRoles(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('Rolse - ${snapshot.data!.join(',')}');
+              }
+              if (snapshot.hasError) {
+                // print(snapshot.error.toString());
+              }
+              return Container();
+            },
           ),
           const SizedBox(height: 18),
           Center(

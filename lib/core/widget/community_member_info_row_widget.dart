@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:go_router/go_router.dart';
 
-
 class CommunityMemberInfoRowWidget extends StatelessWidget {
   const CommunityMemberInfoRowWidget(
       {Key? key, required this.communityMember, this.options})
@@ -20,7 +19,6 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
       initialData: communityMember,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          print(snapshot.data!);
           final value = snapshot.data!;
           final rolesText = (value.roles ?? ['']).toString();
           return Container(
