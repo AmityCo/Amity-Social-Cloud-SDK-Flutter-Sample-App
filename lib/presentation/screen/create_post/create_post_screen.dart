@@ -10,9 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key, required this.userId, this.communityId})
+  const CreatePostScreen({Key? key, this.userId, this.communityId})
       : super(key: key);
-  final String userId;
+  final String? userId;
   final String? communityId;
 
   @override
@@ -35,13 +35,25 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   void initState() {
-    _targetuserTextEditController.text = widget.userId;
+    if (widget.userId != null) {
+      _targetuserTextEditController.text = widget.userId!;
+    }
+    if (widget.communityId != null) {
+      _targetuserTextEditController.text = widget.communityId!;
+    }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
+    final _isCommunityPost = widget.communityId != null;
+    var targetLabel = '';
+    if (_isCommunityPost) {
+      targetLabel = 'Target community';
+    } else {
+      targetLabel = 'Target user';
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Create Post')),
       body: Builder(builder: (context) {
@@ -53,8 +65,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             children: [
               TextFormField(
                 controller: _targetuserTextEditController,
-                decoration: const InputDecoration(
-                  label: Text('Target User'),
+                enabled: !_isCommunityPost,
+                decoration: InputDecoration(
+                  label: Text(targetLabel),
                 ),
               ),
               const SizedBox(height: 20),
@@ -68,13 +81,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 controller: _metadataEditController,
                 decoration: const InputDecoration(
                   label: Text('Metadata'),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _metadataEditController,
-                decoration: const InputDecoration(
-                  label: Text('Meta data'),
                 ),
               ),
               const SizedBox(height: 20),
@@ -198,44 +204,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future createPost() async {
     FocusManager.instance.primaryFocus?.unfocus();
-
-    final _targetUser = _targetuserTextEditController.text.trim();
+    final _target = _targetuserTextEditController.text.trim();
     final _text = _postTextEditController.text.trim();
-
+    final _isCommunityPost = widget.communityId != null;
     final _metadataString = _metadataEditController.text.trim();
-    if (_metadataString.isNotEmpty)
-      Map<String, dynamic> _metadata = jsonDecode(_metadataString);
+    Map<String, dynamic> _metadata = {};
+    try {
+      _metadata = jsonDecode(_metadataString);
+    } catch (e) {
+      print('metadata decode failed');
+    }
 
     if (isTextPost) {
-      final _targetUser = _targetuserTextEditController.text.trim();
-      final _text = _postTextEditController.text.trim();
-      final _metadataString = _metadataEditController.text.trim();
-      Map<String, dynamic> _metadata = {};
-      try {
-        _metadata = jsonDecode(_metadataString);
-      } catch (e) {
-        print('metadata decode failed');
+      if (_isCommunityPost) {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetCommunity(_target)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      } else {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetUser(_target)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
       }
-
-      await AmitySocialClient.newPostRepository()
-          .createPost()
-          .targetUser(_targetUser)
-          .text(_text)
-          .metadata(_metadata)
-          .post();
     }
 
     if (isImagePost) {
-      final _targetUser = _targetuserTextEditController.text.trim();
-      final _text = _postTextEditController.text.trim();
-      final _metadataString = _metadataEditController.text.trim();
-      Map<String, dynamic> _metadata = {};
-      try {
-        _metadata = jsonDecode(_metadataString);
-      } catch (e) {
-        print('metadata decode failed');
-      }
-
       List<AmityImage> _images = [];
       for (final _file in files) {
         AmityUploadResult<AmityImage> amityUploadResult =
@@ -246,26 +244,26 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       }
 
-      await AmitySocialClient.newPostRepository()
-          .createPost()
-          .targetUser(_targetUser)
-          .image(_images)
-          .text(_text)
-          .metadata(_metadata)
-          .post();
+      if (_isCommunityPost) {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetCommunity(_target)
+            .image(_images)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      } else {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetUser(_target)
+            .image(_images)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      }
     }
 
     if (isVideoPost) {
-      final _targetUser = _targetuserTextEditController.text.trim();
-      final _text = _postTextEditController.text.trim();
-      final _metadataString = _metadataEditController.text.trim();
-      Map<String, dynamic> _metadata = {};
-      try {
-        _metadata = jsonDecode(_metadataString);
-      } catch (e) {
-        print('metadata decode failed');
-      }
-
       List<AmityVideo> _video = [];
       for (final _file in files) {
         AmityUploadResult<AmityVideo> amityUploadResult =
@@ -276,26 +274,26 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       }
 
-      await AmitySocialClient.newPostRepository()
-          .createPost()
-          .targetUser(_targetUser)
-          .video(_video)
-          .text(_text)
-          .metadata(_metadata)
-          .post();
+      if (_isCommunityPost) {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetCommunity(_target)
+            .video(_video)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      } else {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetUser(_target)
+            .video(_video)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      }
     }
 
     if (isFilePost) {
-      final _targetUser = _targetuserTextEditController.text.trim();
-      final _text = _postTextEditController.text.trim();
-      final _metadataString = _metadataEditController.text.trim();
-      Map<String, dynamic> _metadata = {};
-      try {
-        _metadata = jsonDecode(_metadataString);
-      } catch (e) {
-        print('metadata decode failed');
-      }
-
       List<AmityFile> _files = [];
       for (final _file in files) {
         AmityUploadResult<AmityFile> amityUploadResult =
@@ -305,14 +303,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           _files.add(amityUploadComplete.getFile as AmityFile);
         }
       }
-
-      await AmitySocialClient.newPostRepository()
-          .createPost()
-          .targetUser(_targetUser)
-          .file(_files)
-          .text(_text)
-          .metadata(_metadata)
-          .post();
+      if (_isCommunityPost) {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetCommunity(_target)
+            .file(_files)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      } else {
+        await AmitySocialClient.newPostRepository()
+            .createPost()
+            .targetUser(_target)
+            .file(_files)
+            .text(_text)
+            .metadata(_metadata)
+            .post();
+      }
     }
   }
 }
