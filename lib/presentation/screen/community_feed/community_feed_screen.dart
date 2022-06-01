@@ -22,7 +22,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   final scrollcontroller = ScrollController();
   bool loading = false;
   AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
-  AmityDataType? _dataType;
+  List<AmityDataType> _dataType = [];
   @override
   void initState() {
     _controller = PagingController(
@@ -30,7 +30,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           .getCommunityFeed(widget.communityId)
           .includeDeleted(false)
           .sortBy(_sortOption)
-          .types(_dataType == null ? [] : [_dataType!])
+          .types(_dataType)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -84,21 +84,20 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                   child: PopupMenuButton(
                     itemBuilder: (context) {
                       return [
-                        const PopupMenuItem(
-                          child: Text('All'),
-                          value: 1,
-                        ),
-                        PopupMenuItem(
+                        CheckedPopupMenuItem(
                           child: Text(AmityDataType.IMAGE.name),
                           value: 2,
+                          checked: _dataType.contains(AmityDataType.IMAGE),
                         ),
-                        PopupMenuItem(
+                        CheckedPopupMenuItem(
                           child: Text(AmityDataType.VIDEO.name),
                           value: 3,
+                          checked: _dataType.contains(AmityDataType.VIDEO),
                         ),
-                        PopupMenuItem(
-                          child: Text(AmityDataType.TEXT.name),
+                        CheckedPopupMenuItem(
+                          child: Text(AmityDataType.FILE.name),
                           value: 4,
+                          checked: _dataType.contains(AmityDataType.FILE),
                         )
                       ];
                     },
@@ -108,16 +107,28 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                     ),
                     onSelected: (index) {
                       if (index == 1) {
-                        _dataType = null;
+                        _dataType.clear();
                       }
                       if (index == 2) {
-                        _dataType = AmityDataType.IMAGE;
+                        if (_dataType.contains(AmityDataType.IMAGE)) {
+                          _dataType.remove(AmityDataType.IMAGE);
+                        } else {
+                          _dataType.add(AmityDataType.IMAGE);
+                        }
                       }
                       if (index == 3) {
-                        _dataType = AmityDataType.VIDEO;
+                        if (_dataType.contains(AmityDataType.VIDEO)) {
+                          _dataType.remove(AmityDataType.VIDEO);
+                        } else {
+                          _dataType.add(AmityDataType.VIDEO);
+                        }
                       }
                       if (index == 4) {
-                        _dataType = AmityDataType.TEXT;
+                        if (_dataType.contains(AmityDataType.FILE)) {
+                          _dataType.remove(AmityDataType.FILE);
+                        } else {
+                          _dataType.add(AmityDataType.FILE);
+                        }
                       }
 
                       _controller.reset();
