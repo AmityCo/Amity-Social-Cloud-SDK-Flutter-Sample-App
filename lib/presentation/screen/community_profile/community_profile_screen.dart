@@ -157,7 +157,15 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
         onPressed: () {
           if (_tabController.index == 0) {
             //show create post for community
-            ErrorDialog.show(context, title: 'Error', message: 'Not Supported');
+            GoRouter.of(context).goNamed(AppRoute.createCommunityPostPost,
+                params: {'communityId': widget.communityId});
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => CreatePostScreen(
+            //       communityId: widget.communityId,
+            //     ),
+            //   ),
+            // );
           } else {
             //show add member action
             EditTextDialog.show(context,
