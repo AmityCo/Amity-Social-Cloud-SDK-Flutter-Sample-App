@@ -6,7 +6,6 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityProfileScreen extends StatefulWidget {
@@ -158,13 +157,15 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
         onPressed: () {
           if (_tabController.index == 0) {
             //show create post for community
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CreatePostScreen(
-                  communityId: widget.communityId,
-                ),
-              ),
-            );
+            GoRouter.of(context).goNamed(AppRoute.createCommunityPostPost,
+                params: {'communityId': widget.communityId});
+            // Navigator.of(context).push(
+            //   MaterialPageRoute(
+            //     builder: (context) => CreatePostScreen(
+            //       communityId: widget.communityId,
+            //     ),
+            //   ),
+            // );
           } else {
             //show add member action
             EditTextDialog.show(context,

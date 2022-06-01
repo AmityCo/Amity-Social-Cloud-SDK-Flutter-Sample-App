@@ -21,7 +21,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
-  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.LAST_CREATED;
   List<AmityDataType> _dataType = [];
   @override
   void initState() {

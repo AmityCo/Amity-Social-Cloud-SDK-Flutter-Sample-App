@@ -103,12 +103,19 @@ class AppRouter {
             builder: (context, state) => CommunityListScreen(),
             routes: [
               GoRoute(
-                name: AppRoute.communityProfile,
-                path: AppRoute.communityProfileRoute,
-                builder: (context, state) => CommunityProfileScreen(
-                  communityId: state.params['communityId']!,
-                ),
-              ),
+                  name: AppRoute.communityProfile,
+                  path: AppRoute.communityProfileRoute,
+                  builder: (context, state) => CommunityProfileScreen(
+                        communityId: state.params['communityId']!,
+                      ),
+                  routes: [
+                    GoRoute(
+                      name: AppRoute.createCommunityPostPost,
+                      path: AppRoute.createCommunityPostPostRoute,
+                      builder: (context, state) => CreatePostScreen(
+                          communityId: state.params['communityId']!),
+                    ),
+                  ]),
               GoRoute(
                 name: AppRoute.updateCommunity,
                 path: AppRoute.updateCommunityRoute,

@@ -21,7 +21,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
   final scrollcontroller = ScrollController();
   bool loading = false;
 
-  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.LAST_CREATED;
   List<AmityDataType> _dataType = [];
 
   @override
@@ -80,63 +80,63 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
           Container(
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: PopupMenuButton(
-                    itemBuilder: (context) {
-                      return [
-                        CheckedPopupMenuItem(
-                          child: Text(AmityDataType.IMAGE.name),
-                          value: 2,
-                          checked: _dataType.contains(AmityDataType.IMAGE),
-                        ),
-                        CheckedPopupMenuItem(
-                          child: Text(AmityDataType.VIDEO.name),
-                          value: 3,
-                          checked: _dataType.contains(AmityDataType.VIDEO),
-                        ),
-                        CheckedPopupMenuItem(
-                          child: Text(AmityDataType.FILE.name),
-                          value: 4,
-                          checked: _dataType.contains(AmityDataType.FILE),
-                        )
-                      ];
-                    },
-                    child: const Icon(
-                      Icons.filter_alt_rounded,
-                      size: 18,
-                    ),
-                    onSelected: (index) {
-                      if (index == 1) {
-                        _dataType.clear();
-                      }
-                      if (index == 2) {
-                        if (_dataType.contains(AmityDataType.IMAGE)) {
-                          _dataType.remove(AmityDataType.IMAGE);
-                        } else {
-                          _dataType.add(AmityDataType.IMAGE);
-                        }
-                      }
-                      if (index == 3) {
-                        if (_dataType.contains(AmityDataType.VIDEO)) {
-                          _dataType.remove(AmityDataType.VIDEO);
-                        } else {
-                          _dataType.add(AmityDataType.VIDEO);
-                        }
-                      }
-                      if (index == 4) {
-                        if (_dataType.contains(AmityDataType.FILE)) {
-                          _dataType.remove(AmityDataType.FILE);
-                        } else {
-                          _dataType.add(AmityDataType.FILE);
-                        }
-                      }
+                // Container(
+                //   padding: const EdgeInsets.all(8),
+                //   child: PopupMenuButton(
+                //     itemBuilder: (context) {
+                //       return [
+                //         CheckedPopupMenuItem(
+                //           child: Text(AmityDataType.IMAGE.name),
+                //           value: 2,
+                //           checked: _dataType.contains(AmityDataType.IMAGE),
+                //         ),
+                //         CheckedPopupMenuItem(
+                //           child: Text(AmityDataType.VIDEO.name),
+                //           value: 3,
+                //           checked: _dataType.contains(AmityDataType.VIDEO),
+                //         ),
+                //         CheckedPopupMenuItem(
+                //           child: Text(AmityDataType.FILE.name),
+                //           value: 4,
+                //           checked: _dataType.contains(AmityDataType.FILE),
+                //         )
+                //       ];
+                //     },
+                //     child: const Icon(
+                //       Icons.filter_alt_rounded,
+                //       size: 18,
+                //     ),
+                //     onSelected: (index) {
+                //       if (index == 1) {
+                //         _dataType.clear();
+                //       }
+                //       if (index == 2) {
+                //         if (_dataType.contains(AmityDataType.IMAGE)) {
+                //           _dataType.remove(AmityDataType.IMAGE);
+                //         } else {
+                //           _dataType.add(AmityDataType.IMAGE);
+                //         }
+                //       }
+                //       if (index == 3) {
+                //         if (_dataType.contains(AmityDataType.VIDEO)) {
+                //           _dataType.remove(AmityDataType.VIDEO);
+                //         } else {
+                //           _dataType.add(AmityDataType.VIDEO);
+                //         }
+                //       }
+                //       if (index == 4) {
+                //         if (_dataType.contains(AmityDataType.FILE)) {
+                //           _dataType.remove(AmityDataType.FILE);
+                //         } else {
+                //           _dataType.add(AmityDataType.FILE);
+                //         }
+                //       }
 
-                      _controller.reset();
-                      _controller.fetchNextPage();
-                    },
-                  ),
-                ),
+                //       _controller.reset();
+                //       _controller.fetchNextPage();
+                //     },
+                //   ),
+                // ),
                 Container(
                   padding: const EdgeInsets.all(8),
                   child: PopupMenuButton(

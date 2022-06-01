@@ -11,6 +11,9 @@ class AppRoute {
   static const createPost = 'createPost';
   static const createPostRoute = 'createPost/:userId';
 
+  static const createCommunityPostPost = 'createCommunityPost';
+  static const createCommunityPostPostRoute = 'createCommunityPost';
+
   static const userFeed = 'userFeed';
   static const userFeedRoute = 'userFeed/:userId';
 
