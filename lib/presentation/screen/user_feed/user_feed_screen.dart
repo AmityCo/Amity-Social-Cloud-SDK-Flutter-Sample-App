@@ -22,7 +22,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
   bool loading = false;
 
   AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
-  AmityDataType? _dataType;
+  List<AmityDataType> _dataType = [];
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
           .getUserFeed(widget.userId)
           .includeDeleted(false)
           .sortBy(_sortOption)
-          .types(_dataType == null ? [] : [_dataType!])
+          .types(_dataType)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -85,21 +85,20 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                   child: PopupMenuButton(
                     itemBuilder: (context) {
                       return [
-                        const PopupMenuItem(
-                          child: Text('All'),
-                          value: 1,
-                        ),
-                        PopupMenuItem(
+                        CheckedPopupMenuItem(
                           child: Text(AmityDataType.IMAGE.name),
                           value: 2,
+                          checked: _dataType.contains(AmityDataType.IMAGE),
                         ),
-                        PopupMenuItem(
+                        CheckedPopupMenuItem(
                           child: Text(AmityDataType.VIDEO.name),
                           value: 3,
+                          checked: _dataType.contains(AmityDataType.VIDEO),
                         ),
-                        PopupMenuItem(
-                          child: Text(AmityDataType.TEXT.name),
+                        CheckedPopupMenuItem(
+                          child: Text(AmityDataType.FILE.name),
                           value: 4,
+                          checked: _dataType.contains(AmityDataType.FILE),
                         )
                       ];
                     },
@@ -109,16 +108,28 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                     ),
                     onSelected: (index) {
                       if (index == 1) {
-                        _dataType = null;
+                        _dataType.clear();
                       }
                       if (index == 2) {
-                        _dataType = AmityDataType.IMAGE;
+                        if (_dataType.contains(AmityDataType.IMAGE)) {
+                          _dataType.remove(AmityDataType.IMAGE);
+                        } else {
+                          _dataType.add(AmityDataType.IMAGE);
+                        }
                       }
                       if (index == 3) {
-                        _dataType = AmityDataType.VIDEO;
+                        if (_dataType.contains(AmityDataType.VIDEO)) {
+                          _dataType.remove(AmityDataType.VIDEO);
+                        } else {
+                          _dataType.add(AmityDataType.VIDEO);
+                        }
                       }
                       if (index == 4) {
-                        _dataType = AmityDataType.TEXT;
+                        if (_dataType.contains(AmityDataType.FILE)) {
+                          _dataType.remove(AmityDataType.FILE);
+                        } else {
+                          _dataType.add(AmityDataType.FILE);
+                        }
                       }
 
                       _controller.reset();
