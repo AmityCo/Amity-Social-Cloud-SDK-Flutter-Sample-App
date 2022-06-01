@@ -176,12 +176,10 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
                                   _unbanMember(context, amityCommunityMember);
                                 }
                                 if (index == 4) {
-                                  _addRole(context, 'community-moderator',
-                                      amityCommunityMember);
+                                  _addRole(context, amityCommunityMember);
                                 }
                                 if (index == 5) {
-                                  _removeRole(context, 'community-moderator',
-                                      amityCommunityMember);
+                                  _removeRole(context, amityCommunityMember);
                                 }
                               },
                             )
@@ -248,32 +246,43 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
             });
   }
 
-  void _addRole(BuildContext context, String role, AmityCommunityMember value) {
+  void _addRole(BuildContext context, AmityCommunityMember member) {
     AmitySocialClient.newCommunityRepository()
-        .moderation(value.communityId!)
-        .addRole(role, [value.userId!])
+        .moderation(member.communityId!)
+        .addRole('community-moderator', [member.userId!])
         .onError((error, stackTrace) => {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())
             })
         .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Role added successfully')
+              AmitySocialClient.newCommunityRepository()
+                  .moderation(member.communityId!)
+                  .addRole('channel-moderator', [member.userId!]).then(
+                      (value) => {
+                            PositiveDialog.show(context,
+                                title: 'Complete',
+                                message: 'Role added successfully')
+                          })
             });
   }
 
-  void _removeRole(
-      BuildContext context, String role, AmityCommunityMember value) {
+  void _removeRole(BuildContext context, AmityCommunityMember member) {
     AmitySocialClient.newCommunityRepository()
-        .moderation(value.communityId!)
-        .removeRole(role, [value.userId!])
+        .moderation(member.communityId!)
+        .removeRole('community-moderator', [member.userId!])
         .onError((error, stackTrace) => {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())
             })
         .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Role removed successfully')
+              AmitySocialClient.newCommunityRepository()
+                  .moderation(member.communityId!)
+                  .removeRole('channel-moderator', [member.userId!]).then(
+                      (value) => {
+                            PositiveDialog.show(context,
+                                title: 'Complete',
+                                message: 'Role removed successfully')
+                          })
             });
   }
 }
