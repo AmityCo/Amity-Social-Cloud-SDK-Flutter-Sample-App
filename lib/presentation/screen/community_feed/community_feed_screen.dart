@@ -21,16 +21,19 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
-  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+  AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
   List<AmityDataType> _dataType = [];
   @override
   void initState() {
     _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newFeedRepository()
-          .getCommunityFeed(widget.communityId)
-          .includeDeleted(false)
-          .sortBy(_sortOption)
-          .types(_dataType)
+      pageFuture: (token) => AmitySocialClient.newPostRepository()
+          .getPosts()
+          .targetCommunity(widget.communityId)
+          // .feedType(feedType: feedType)
+          .includeDeleted(includeDeleted: false)
+          // .sortBy(_sortOption)
+          .types(postTypes: _dataType)
+          .sortBy(sortOption: _sortOption)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -159,10 +162,10 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                     ),
                     onSelected: (index) {
                       if (index == 2) {
-                        _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+                        _sortOption = AmityCommentSortOption.FIRST_CREATED;
                       }
                       if (index == 3) {
-                        _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+                        _sortOption = AmityCommentSortOption.LAST_CREATED;
                       }
 
                       _controller.reset();
@@ -187,10 +190,6 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
                           amityPost: amityPost,
-                          onCommentCallback: () {
-                            GoRouter.of(context).goNamed('commentCommunityFeed',
-                                params: {'postId': amityPost.postId!});
-                          },
                         );
                       },
                     ),

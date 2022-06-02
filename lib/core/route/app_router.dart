@@ -36,12 +36,12 @@ class AppRouter {
                 builder: (context, state) =>
                     CreatePostScreen(userId: state.params['userId']!),
               ),
-              GoRoute(
-                name: 'commentUserProfileFeed',
-                path: 'comment/:postId',
-                builder: (context, state) =>
-                    CommentQueryScreen(state.params['postId']!),
-              ),
+              // GoRoute(
+              //   name: 'commentUserProfileFeed',
+              //   path: 'comment/:postId',
+              //   builder: (context, state) =>
+              //       CommentQueryScreen(state.params['postId']!),
+              // ),
             ],
           ),
           GoRoute(
@@ -51,31 +51,32 @@ class AppRouter {
                 CreatePostScreen(userId: state.params['userId']!),
           ),
           GoRoute(
+            name: AppRoute.commentList,
+            path: AppRoute.commentListRoute,
+            builder: (context, state) {
+              print('From location - ' + state.location);
+              return CommentQueryScreen(state.queryParams['postId']!);
+            },
+          ),
+          GoRoute(
             name: AppRoute.globalFeed,
             path: AppRoute.globalFeedRoute,
             builder: (context, state) => const GlobalFeedScreen(),
-            routes: [
-              GoRoute(
-                name: 'commentGlobalFeed',
-                path: 'comment/:postId',
-                builder: (context, state) =>
-                    CommentQueryScreen(state.params['postId']!),
-              ),
-            ],
+            routes: [],
           ),
           GoRoute(
             name: AppRoute.communityFeed,
             path: AppRoute.communityFeedRoute,
             builder: (context, state) =>
                 CommunityFeedScreen(communityId: state.params['communityId']!),
-            routes: [
-              GoRoute(
-                name: 'commentCommunityFeed',
-                path: 'comment/:postId',
-                builder: (context, state) =>
-                    CommentQueryScreen(state.params['postId']!),
-              ),
-            ],
+            // routes: [
+            //   GoRoute(
+            //     name: 'commentCommunityFeed',
+            //     path: 'comment/:postId',
+            //     builder: (context, state) =>
+            //         CommentQueryScreen(state.params['postId']!),
+            //   ),
+            // ],
           ),
           GoRoute(
             name: AppRoute.communityMember,
@@ -88,14 +89,14 @@ class AppRouter {
             path: AppRoute.userFeedRoute,
             builder: (context, state) =>
                 UserFeedScreen(userId: state.params['userId']!),
-            routes: [
-              GoRoute(
-                name: 'commentUserFeed',
-                path: 'comment/:postId',
-                builder: (context, state) =>
-                    CommentQueryScreen(state.params['postId']!),
-              ),
-            ],
+            // routes: [
+            //   GoRoute(
+            //     name: 'commentUserFeed',
+            //     path: 'comment/:postId',
+            //     builder: (context, state) =>
+            //         CommentQueryScreen(state.params['postId']!),
+            //   ),
+            // ],
           ),
           GoRoute(
             name: AppRoute.communityList,

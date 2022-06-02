@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class GlobalFeedScreen extends StatefulWidget {
   const GlobalFeedScreen({Key? key}) : super(key: key);
@@ -81,10 +80,6 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
                           amityPost: amityPost,
-                          onCommentCallback: () {
-                            GoRouter.of(context).goNamed('commentGlobalFeed',
-                                params: {'postId': amityPost.postId!});
-                          },
                         );
                       },
                     ),

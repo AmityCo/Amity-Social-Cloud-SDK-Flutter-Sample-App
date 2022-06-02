@@ -1,19 +1,19 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_post/update_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeedWidget extends StatelessWidget {
   final AmityPost amityPost;
-  final VoidCallback onCommentCallback;
-  const FeedWidget(
-      {Key? key, required this.amityPost, required this.onCommentCallback})
-      : super(key: key);
+  // final VoidCallback onCommentCallback;
+  const FeedWidget({Key? key, required this.amityPost}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +170,10 @@ class FeedWidget extends StatelessWidget {
                     FeedReactionActionWidget(
                         key: UniqueKey(),
                         amityPost: value,
-                        onCommentCallback: onCommentCallback),
+                        onCommentCallback: () {
+                          GoRouter.of(context).pushNamed(AppRoute.commentList,
+                              queryParams: {'postId': amityPost.postId!});
+                        }),
                     const SizedBox(height: 12),
                     AddCommentWidget(AmityCoreClient.getCurrentUser(), (text) {
                       value.comment().create().text(text).send();
