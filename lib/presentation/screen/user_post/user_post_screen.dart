@@ -2,7 +2,6 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class UserPostScreen extends StatefulWidget {
   const UserPostScreen({Key? key, required this.userId, this.showAppBar = true})
@@ -80,11 +79,6 @@ class _UserPostScreenState extends State<UserPostScreen> {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
                           amityPost: amityPost,
-                          onCommentCallback: () {
-                            GoRouter.of(context).goNamed(
-                                'commentUserProfileFeed',
-                                params: {'postId': amityPost.postId!});
-                          },
                         );
                       },
                     ),

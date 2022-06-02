@@ -8,17 +8,28 @@ class AppRoute {
   static const profile = 'profile';
   static const profileRoute = 'profile/:userId';
 
+  static const globalFeed = 'globalFeed';
+  static const globalFeedRoute = 'globalFeed';
+
+  static const userFeed = 'userFeed';
+  static const userFeedRoute = 'userFeed/:userId';
+
+  static const commentList = 'commentList';
+  static const commentListRoute = 'commentList';
+
+  //Create Post Routes
   static const createPost = 'createPost';
   static const createPostRoute = 'createPost/:userId';
 
   static const createCommunityPostPost = 'createCommunityPost';
   static const createCommunityPostPostRoute = 'createCommunityPost';
 
-  static const userFeed = 'userFeed';
-  static const userFeedRoute = 'userFeed/:userId';
+  //community Routes
+  static const communityList = 'communityList';
+  static const communityListRoute = 'communityList';
 
-  static const globalFeed = 'globalFeed';
-  static const globalFeedRoute = 'globalFeed';
+  static const communityProfile = 'communityProfile';
+  static const communityProfileRoute = 'communityProfile/:communityId';
 
   static const communityFeed = 'communityFeed';
   static const communityFeedRoute = 'communityFeed/:communityId';
@@ -26,15 +37,9 @@ class AppRoute {
   static const communityMember = 'communityMember';
   static const communityMemmberRoute = 'communityMember/:communityId';
 
-  static const communityList = 'communityList';
-  static const communityListRoute = 'communityList';
-
   static const createCommunity = 'createCommunity';
   static const createCommunityRoute = 'createCommunity';
 
   static const updateCommunity = 'updateCommunity';
   static const updateCommunityRoute = 'updateCommunity/:communityId';
-
-  static const communityProfile = 'communityProfile';
-  static const communityProfileRoute = 'communityProfile/:communityId';
 }

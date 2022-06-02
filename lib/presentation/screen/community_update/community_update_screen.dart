@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
@@ -102,19 +104,12 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              // SizedBox(
-              //   height: 100,
-              //   child: TextFormField(
-              //     controller: _userIdsEditController,
-              //     expands: true,
-              //     maxLines: null,
-              //     decoration: const InputDecoration(
-              //       hintText: 'Enter Comma seperated user Ids',
-              //       isDense: true,
-              //     ),
-              //   ),
-              // ),
-              // const SizedBox(height: 12),
+              TextFormField(
+                controller: _metadataEditController,
+                decoration:
+                    const InputDecoration(hintText: 'Enter Community metadata'),
+              ),
+              const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () {
                   ProgressDialog.show(context, asyncFunction: _updateCommunity)
@@ -138,10 +133,19 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
     String name = _nameEditController.text.trim();
     String des = _desEditController.text.trim();
 
+    final _metadataString = _metadataEditController.text.trim();
+    Map<String, dynamic> _metadata = {};
+    try {
+      _metadata = jsonDecode(_metadataString);
+    } catch (e) {
+      print('metadata decode failed');
+    }
+
     final communityCreator = AmitySocialClient.newCommunityRepository()
         .updateCommunity(widget.communityId)
         .displayName(name)
         .description(des)
+        .metadata(_metadata)
         .isPublic(_isPublic);
 
     if (_catsEditController.text.isNotEmpty) {

@@ -4,6 +4,7 @@ import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class CommentQueryScreen extends StatefulWidget {
   const CommentQueryScreen(this._postId, {Key? key}) : super(key: key);
@@ -69,6 +70,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Location - ' + GoRouter.of(context).location);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Comment Feed'),
