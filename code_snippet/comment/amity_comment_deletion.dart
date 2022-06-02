@@ -15,8 +15,8 @@ class AmityCommentDeletion {
         .delete()
         .then((value) => {
               //success
-              //optional: to remove the deleted post from the current post collection
-              //you will need manually remove the deleted post from the collection
+              //optional: to remove the deleted comment from the current post collection
+              //you will need manually remove the deleted comment from the collection
               //for example :
               _amityComments.removeWhere(
                   (element) => element.commentId == comment.commentId)

@@ -26,8 +26,8 @@ class AmityCommunityCreation {
         .create()
         .then((AmityCommunity community) => {
               //handle result
-              //optional: to present the created comment in to the current replied comment collection
-              //you will need manually put the newly created comment in to the collection
+              //optional: to present the created community in to the current community collection
+              //you will need manually put the newly created community in to the collection
               //for example :
               _controller.add(community)
             })

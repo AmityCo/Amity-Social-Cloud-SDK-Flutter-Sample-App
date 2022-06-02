@@ -16,7 +16,7 @@ class AmityCommunityMemberRemove {
         .then((value) => {
               //handle result
               //success
-              //optional: to remove the removed communityMember from the current post collection
+              //optional: to remove the removed communityMember from the current communityMember collection
               //you will need manually remove the removed communityMember from the collection
               //for example :
               _controller.removeWhere(
