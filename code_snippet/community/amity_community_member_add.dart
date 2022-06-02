@@ -15,7 +15,7 @@ class AmityCommunityMemberAdd {
         .addMembers(['userId1', 'userId2'])
         .then((members) => {
               //handle result
-              //optional: to present the added communityMember in to the current replied comment collection
+              //optional: to present the added communityMember in to the current communityMember collection
               //you will need manually put the newly added communityMember in to the collection
               //for example :
               _controller.addAll(members)

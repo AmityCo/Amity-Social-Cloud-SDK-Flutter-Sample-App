@@ -7,7 +7,7 @@ class AmityCommunityLeave {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter leave community example
     */
-  void joinCommunity(String communityId) {
+  void leaveCommunity(String communityId) {
     AmitySocialClient.newCommunityRepository()
         .leaveCommunity(communityId)
         .then((value) => {
