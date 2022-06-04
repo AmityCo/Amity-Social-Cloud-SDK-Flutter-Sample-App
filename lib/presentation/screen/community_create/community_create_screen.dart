@@ -3,14 +3,20 @@ import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CommunityCreateScreen extends StatefulWidget {
-  const CommunityCreateScreen({Key? key}) : super(key: key);
-
+  const CommunityCreateScreen({
+    Key? key,
+    this.categoryIds = const [],
+    this.userIds = const [],
+  }) : super(key: key);
+  final List<String>? categoryIds;
+  final List<String>? userIds;
   @override
   State<CommunityCreateScreen> createState() => _CommunityCreateScreenState();
 }
@@ -29,7 +35,20 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   XFile? _avatar;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (widget.categoryIds != null) {
+      _catsEditController.text = widget.categoryIds!.join(',');
+    }
+
+    if (widget.userIds != null) {
+      _userIdsEditController.text = widget.userIds!.join(',');
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Community'),
@@ -121,13 +140,20 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 ),
                 SizedBox(
                   height: 80,
-                  child: TextFormField(
-                    controller: _catsEditController,
-                    expands: true,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter Comma seperated Category Ids',
-                      isDense: true,
+                  child: InkWell(
+                    onTap: () {
+                      GoRouter.of(context)
+                          .pushNamed(AppRoute.communityCategory);
+                    },
+                    child: TextFormField(
+                      controller: _catsEditController,
+                      expands: true,
+                      maxLines: null,
+                      enabled: false,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter Comma seperated Category Ids',
+                        isDense: true,
+                      ),
                     ),
                   ),
                 ),
@@ -202,11 +228,19 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
         .isPublic(_isPublic);
 
     if (_catsEditController.text.isNotEmpty) {
-      communityCreator.categoryIds(_catsEditController.text.trim().split(','));
+      communityCreator.categoryIds(_catsEditController.text
+          .trim()
+          .split(',')
+          .map((e) => e.trim())
+          .toList());
     }
 
     if (_userIdsEditController.text.isNotEmpty) {
-      communityCreator.userIds(_userIdsEditController.text.trim().split(','));
+      communityCreator.userIds(_userIdsEditController.text
+          .trim()
+          .split(',')
+          .map((e) => e.trim())
+          .toList());
     }
 
     if (_communityAvatar != null) {

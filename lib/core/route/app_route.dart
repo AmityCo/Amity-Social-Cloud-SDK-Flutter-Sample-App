@@ -40,6 +40,9 @@ class AppRoute {
   static const createCommunity = 'createCommunity';
   static const createCommunityRoute = 'createCommunity';
 
+  static const communityCategory = 'communityCategory';
+  static const communityCategoryRoute = 'communityCategory';
+
   static const updateCommunity = 'updateCommunity';
   static const updateCommunityRoute = 'updateCommunity/:communityId';
 }
