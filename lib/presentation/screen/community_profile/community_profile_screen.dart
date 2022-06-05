@@ -303,7 +303,23 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                     Text(!(amityCommunity.isJoined ?? true) ? 'Join' : 'Leave'),
               ),
             ),
-          )
+          ),
+          if (amityCommunity
+                  .hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
+              amityCommunity.isPostReviewEnabled!)
+            Center(
+              child: SizedBox(
+                width: 260,
+                child: ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(
+                        AppRoute.communityInReviewPost,
+                        params: {'communityId': amityCommunity.communityId!});
+                  },
+                  child: const Text('Review Post'),
+                ),
+              ),
+            )
         ],
       ),
     );
