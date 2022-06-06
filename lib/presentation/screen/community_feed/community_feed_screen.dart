@@ -6,9 +6,11 @@ import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
-  const CommunityFeedScreen({Key? key, required this.communityId})
+  const CommunityFeedScreen(
+      {Key? key, required this.communityId, this.showAppBar = true})
       : super(key: key);
   final String communityId;
+  final bool showAppBar;
   @override
   State<CommunityFeedScreen> createState() => _CommunityFeedScreenState();
 }
@@ -19,12 +21,19 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+  AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
+  List<AmityDataType> _dataType = [];
   @override
   void initState() {
     _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newFeedRepository()
-          .getCommunityFeed(widget.communityId)
-          .includeDeleted(false)
+      pageFuture: (token) => AmitySocialClient.newPostRepository()
+          .getPosts()
+          .targetCommunity(widget.communityId)
+          // .feedType(feedType: feedType)
+          .includeDeleted(includeDeleted: false)
+          // .sortBy(_sortOption)
+          .types(postTypes: _dataType)
+          .sortBy(sortOption: _sortOption)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -43,7 +52,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         },
       );
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 
@@ -65,9 +74,108 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Community Feed - ${widget.communityId}')),
+      appBar: widget.showAppBar
+          ? AppBar(title: Text('Community Feed - ${widget.communityId}'))
+          : null,
       body: Column(
         children: [
+          Container(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        CheckedPopupMenuItem(
+                          child: Text(AmityDataType.IMAGE.name),
+                          value: 2,
+                          checked: _dataType.contains(AmityDataType.IMAGE),
+                        ),
+                        CheckedPopupMenuItem(
+                          child: Text(AmityDataType.VIDEO.name),
+                          value: 3,
+                          checked: _dataType.contains(AmityDataType.VIDEO),
+                        ),
+                        CheckedPopupMenuItem(
+                          child: Text(AmityDataType.FILE.name),
+                          value: 4,
+                          checked: _dataType.contains(AmityDataType.FILE),
+                        )
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.filter_alt_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 1) {
+                        _dataType.clear();
+                      }
+                      if (index == 2) {
+                        if (_dataType.contains(AmityDataType.IMAGE)) {
+                          _dataType.remove(AmityDataType.IMAGE);
+                        } else {
+                          _dataType.add(AmityDataType.IMAGE);
+                        }
+                      }
+                      if (index == 3) {
+                        if (_dataType.contains(AmityDataType.VIDEO)) {
+                          _dataType.remove(AmityDataType.VIDEO);
+                        } else {
+                          _dataType.add(AmityDataType.VIDEO);
+                        }
+                      }
+                      if (index == 4) {
+                        if (_dataType.contains(AmityDataType.FILE)) {
+                          _dataType.remove(AmityDataType.FILE);
+                        } else {
+                          _dataType.add(AmityDataType.FILE);
+                        }
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child:
+                              Text(AmityUserFeedSortOption.FIRST_CREATED.name),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child:
+                              Text(AmityUserFeedSortOption.LAST_CREATED.name),
+                          value: 3,
+                        )
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.sort_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 2) {
+                        _sortOption = AmityCommentSortOption.FIRST_CREATED;
+                      }
+                      if (index == 3) {
+                        _sortOption = AmityCommentSortOption.LAST_CREATED;
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
@@ -82,10 +190,6 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
                           amityPost: amityPost,
-                          onCommentCallback: () {
-                            GoRouter.of(context).goNamed('commentCommunityFeed',
-                                params: {'postId': amityPost.postId!});
-                          },
                         );
                       },
                     ),

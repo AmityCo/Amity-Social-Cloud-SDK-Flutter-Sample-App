@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
@@ -13,12 +15,17 @@ class UpdatePostScreen extends StatefulWidget {
 
 class _UpdatePostScreenState extends State<UpdatePostScreen> {
   final _postTextEditController = TextEditingController();
+  final _postMetadataEditController = TextEditingController();
 
   @override
   void initState() {
     if (widget.amityPost.data is TextData) {
       final data = widget.amityPost.data as TextData;
       _postTextEditController.text = data.text ?? '';
+    }
+    if (widget.amityPost.metadata != null) {
+      final metadataString = jsonEncode(widget.amityPost.metadata);
+      _postMetadataEditController.text = metadataString;
     }
 
     super.initState();
@@ -39,6 +46,13 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
               controller: _postTextEditController,
               decoration: const InputDecoration(
                 label: Text('Text*'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: _postMetadataEditController,
+              decoration: const InputDecoration(
+                label: Text('Meta data'),
               ),
             ),
             const Spacer(),
@@ -79,7 +93,18 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
   Future updatePost() async {
     FocusManager.instance.primaryFocus?.unfocus();
     final _text = _postTextEditController.text.trim();
-
-    await widget.amityPost.edit().text(_text).update();
+    final _metadataString = _postMetadataEditController.text.trim();
+    Map<String, dynamic> _metadata = {};
+    try {
+      _metadata = jsonDecode(_metadataString);
+    } catch (e) {
+      print('metadata decode failed');
+    }
+    await widget.amityPost
+        .edit()
+        .text(_text)
+        .metadata(_metadata)
+        .build()
+        .update();
   }
 }

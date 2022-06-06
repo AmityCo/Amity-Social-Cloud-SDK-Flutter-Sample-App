@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -20,12 +21,18 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+
+  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+  List<AmityDataType> _dataType = [];
+
   @override
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newFeedRepository()
           .getUserFeed(widget.userId)
           .includeDeleted(false)
+          .sortBy(_sortOption)
+          .types(_dataType)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -44,7 +51,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
         },
       );
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
     });
 
@@ -71,6 +78,103 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
           : null,
       body: Column(
         children: [
+          Container(
+            child: Row(
+              children: [
+                // Container(
+                //   padding: const EdgeInsets.all(8),
+                //   child: PopupMenuButton(
+                //     itemBuilder: (context) {
+                //       return [
+                //         CheckedPopupMenuItem(
+                //           child: Text(AmityDataType.IMAGE.name),
+                //           value: 2,
+                //           checked: _dataType.contains(AmityDataType.IMAGE),
+                //         ),
+                //         CheckedPopupMenuItem(
+                //           child: Text(AmityDataType.VIDEO.name),
+                //           value: 3,
+                //           checked: _dataType.contains(AmityDataType.VIDEO),
+                //         ),
+                //         CheckedPopupMenuItem(
+                //           child: Text(AmityDataType.FILE.name),
+                //           value: 4,
+                //           checked: _dataType.contains(AmityDataType.FILE),
+                //         )
+                //       ];
+                //     },
+                //     child: const Icon(
+                //       Icons.filter_alt_rounded,
+                //       size: 18,
+                //     ),
+                //     onSelected: (index) {
+                //       if (index == 1) {
+                //         _dataType.clear();
+                //       }
+                //       if (index == 2) {
+                //         if (_dataType.contains(AmityDataType.IMAGE)) {
+                //           _dataType.remove(AmityDataType.IMAGE);
+                //         } else {
+                //           _dataType.add(AmityDataType.IMAGE);
+                //         }
+                //       }
+                //       if (index == 3) {
+                //         if (_dataType.contains(AmityDataType.VIDEO)) {
+                //           _dataType.remove(AmityDataType.VIDEO);
+                //         } else {
+                //           _dataType.add(AmityDataType.VIDEO);
+                //         }
+                //       }
+                //       if (index == 4) {
+                //         if (_dataType.contains(AmityDataType.FILE)) {
+                //           _dataType.remove(AmityDataType.FILE);
+                //         } else {
+                //           _dataType.add(AmityDataType.FILE);
+                //         }
+                //       }
+
+                //       _controller.reset();
+                //       _controller.fetchNextPage();
+                //     },
+                //   ),
+                // ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          child:
+                              Text(AmityUserFeedSortOption.FIRST_CREATED.name),
+                          value: 2,
+                        ),
+                        PopupMenuItem(
+                          child:
+                              Text(AmityUserFeedSortOption.LAST_CREATED.name),
+                          value: 3,
+                        )
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.sort_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 2) {
+                        _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+                      }
+                      if (index == 3) {
+                        _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
@@ -85,13 +189,6 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
                           amityPost: amityPost,
-                          onCommentCallback: () {
-                            GoRouter.of(context).goNamed('commentUserFeed',
-                                params: {
-                                  'userId': widget.userId,
-                                  'postId': amityPost.postId!
-                                });
-                          },
                         );
                       },
                     ),

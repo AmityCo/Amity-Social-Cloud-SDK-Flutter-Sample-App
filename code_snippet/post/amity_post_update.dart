@@ -8,11 +8,18 @@ class AmityPostUpdate {
     description: Flutter update post example
     */
   void updatePost(AmityPost post) {
-    post.edit().text('updated post content').update().then((value) {
-      //success
-    }).onError((error, stackTrace) {
-      //handle error
-    });
+    post
+        .edit()
+        .text('updated post content')
+        .metadata({'key': 'value'}) //for extra metadata
+        .build()
+        .update()
+        .then((value) {
+          //success
+        })
+        .onError((error, stackTrace) {
+          //handle error
+        });
   }
   /* end_sample_code */
 }

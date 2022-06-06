@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 
 class ReactionActionWidget extends StatelessWidget {
   const ReactionActionWidget(
@@ -8,11 +7,11 @@ class ReactionActionWidget extends StatelessWidget {
       required this.onTapReaction,
       required this.removeCallback})
       : super(key: key);
-  final ArgumentCallback<String> onTapReaction;
+  final ValueChanged<String> onTapReaction;
   final VoidCallback removeCallback;
   final LayerLink layerLink;
   static void showAsOverLay(BuildContext context, LayerLink link,
-      ArgumentCallback<String> onTapReaction) {
+      ValueChanged<String> onTapReaction) {
     OverlayState _state = Overlay.of(context)!;
     late OverlayEntry _entry;
 

@@ -1,4 +1,5 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:flutter/widgets.dart';
 
 class AmityPostGet {
   /* begin_sample_code
@@ -15,6 +16,17 @@ class AmityPostGet {
     }).onError<AmityException>((error, stackTrace) {
       //handle error
     });
+  }
+
+  //example of using AmityPost with StreamBuilder
+  void observeComment(AmityPost post) {
+    StreamBuilder<AmityPost>(
+        stream: post.listen,
+        builder: (context, snapshot) {
+          // update widget
+          // eg. widget.text = post.postId
+          return Container();
+        });
   }
   /* end_sample_code */
 }
