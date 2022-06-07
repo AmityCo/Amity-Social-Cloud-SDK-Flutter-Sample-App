@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
   const CommunityFeedScreen(
@@ -29,11 +28,12 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
       pageFuture: (token) => AmitySocialClient.newPostRepository()
           .getPosts()
           .targetCommunity(widget.communityId)
-          // .feedType(feedType: feedType)
-          .includeDeleted(includeDeleted: false)
+          .feedType(AmityFeedType.PUBLISHED)
+          .includeDeleted(false)
           // .sortBy(_sortOption)
-          .types(postTypes: _dataType)
-          .sortBy(sortOption: _sortOption)
+          .types(_dataType)
+          .sortBy(_sortOption)
+          .onlyParent(false)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
