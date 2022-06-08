@@ -62,9 +62,10 @@ class _CommunityInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
-    final _hasPermission = AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY)
-              .atCommunity(amityCommunity.communityId ?? '')
-              .check();
+    final _hasPermission =
+        AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY)
+            .atCommunity(amityCommunity.communityId ?? '')
+            .check();
     return Container(
       padding: const EdgeInsets.all(8),
       // decoration: BoxDecoration(
@@ -97,7 +98,11 @@ class _CommunityInfoWidget extends StatelessWidget {
                   style: _themeData.textTheme.headline6,
                 ),
                 Text(
-                  amityCommunity.description ?? '',
+                  'descritpion: ${amityCommunity.description ?? ''}',
+                  style: _themeData.textTheme.caption,
+                ),
+                Text(
+                  'tags: ${amityCommunity.tags.toString()}',
                   style: _themeData.textTheme.caption,
                 ),
               ],
