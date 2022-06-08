@@ -4,6 +4,7 @@ import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/community_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
 
@@ -26,7 +27,8 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
   final _debouncer = Debouncer(milliseconds: 500);
 
   AmityCommunityFilter _filter = AmityCommunityFilter.ALL;
-  AmityCommunitySortOption _sort = AmityCommunitySortOption.DISPLAY_NAME;
+  AmityCommunitySortOption _sort = AmityCommunitySortOption.LAST_CREATED;
+  List<String>? _tags;
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
           .withKeyword(_keyboard.isEmpty ? null : _keyboard)
           .sortBy(_sort)
           .filter(_filter)
+          .tags(_tags ?? [])
           .includeDeleted(false)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
@@ -179,6 +182,23 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                     },
                   ),
                 ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: InkWell(
+                    child: const Icon(Icons.tag, size: 18),
+                    onTap: () {
+                      EditTextDialog.show(context,
+                          title: 'Enter tags, separate by comma',
+                          hintText: 'type tags here', onPress: (value) {
+                        if (value.isNotEmpty) {
+                          _tags = value.trim().split(',');
+                          _controller.reset();
+                          _controller.fetchNextPage();
+                        }
+                      });
+                    },
+                  ),
+                )
               ],
             ),
           ),
