@@ -28,6 +28,12 @@ class AppRoute {
   static const communityList = 'communityList';
   static const communityListRoute = 'communityList';
 
+  static const communityTrendingList = 'communityTrendingList';
+  static const communityTrendingListRoute = 'communityTrendingList';
+
+  static const communityRecommendedList = 'communityRecommendedList';
+  static const communityRecommendedListRoute = 'communityRecommendedList';
+
   static const communityProfile = 'communityProfile';
   static const communityProfileRoute = 'communityProfile/:communityId';
 
