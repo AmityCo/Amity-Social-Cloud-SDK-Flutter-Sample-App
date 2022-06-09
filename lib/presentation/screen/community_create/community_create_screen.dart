@@ -23,6 +23,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   final _catsEditController = TextEditingController();
   final _userIdsEditController = TextEditingController();
   final _metadataEditController = TextEditingController();
+  final _tagsEditController = TextEditingController();
 
   bool _isPublic = true;
 
@@ -122,6 +123,18 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 SizedBox(
                   height: 80,
                   child: TextFormField(
+                    controller: _tagsEditController,
+                    expands: true,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter Comma seperated tags',
+                      isDense: true,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 80,
+                  child: TextFormField(
                     controller: _catsEditController,
                     expands: true,
                     maxLines: null,
@@ -204,7 +217,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     if (_catsEditController.text.isNotEmpty) {
       communityCreator.categoryIds(_catsEditController.text.trim().split(','));
     }
-
+    if (_tagsEditController.text.isNotEmpty) {
+      communityCreator.tags(_tagsEditController.text.trim().split(','));
+    }
     if (_userIdsEditController.text.isNotEmpty) {
       communityCreator.userIds(_userIdsEditController.text.trim().split(','));
     }
