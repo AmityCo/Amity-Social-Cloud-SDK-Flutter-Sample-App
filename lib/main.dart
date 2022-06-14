@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_router.dart';
 import 'package:flutter_social_sample_app/core/service_locator/service_locator.dart';
@@ -12,16 +13,20 @@ import 'package:image_picker/image_picker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  await Firebase.initializeApp(
-    // Replace with actual values
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU",
-      appId: "1:1056361182889:android:9f2e636fda6efff5ac1bb8",
-      messagingSenderId: "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU",
-      projectId: "1056361182889",
-    ),
-  );
+
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      // Replace with actual values
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU",
+        appId: "1:1056361182889:android:9f2e636fda6efff5ac1bb8",
+        messagingSenderId: "AIzaSyBtsRMyP3H1REHoNrK_TrNiwgVh11koWRU",
+        projectId: "1056361182889",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
 
   await AppServiceLocator.initServiceLocator();
 
