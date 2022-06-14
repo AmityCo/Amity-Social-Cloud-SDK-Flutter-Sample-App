@@ -26,6 +26,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   final _tagsEditController = TextEditingController();
 
   bool _isPublic = true;
+  bool _isPostReviewEnable = false;
 
   XFile? _avatar;
 
@@ -120,6 +121,17 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Make Community public'),
                 ),
+                CheckboxListTile(
+                  value: _isPostReviewEnable,
+                  onChanged: (value) {
+                    setState(() {
+                      _isPostReviewEnable = value!;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Post Review Enable'),
+                ),
                 SizedBox(
                   height: 80,
                   child: TextFormField(
@@ -212,7 +224,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
         .createCommunity(name)
         .description(des)
         .metadata(_metadata)
-        .isPublic(_isPublic);
+        .isPublic(_isPublic)
+        .isPostReviewEnabled(_isPostReviewEnable);
 
     if (_catsEditController.text.isNotEmpty) {
       communityCreator.categoryIds(_catsEditController.text.trim().split(','));
