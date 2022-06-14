@@ -120,6 +120,13 @@ class AppRouter {
                           communityId: state.params['communityId']!),
                     ),
                     GoRoute(
+                      name: AppRoute.updateCommunity,
+                      path: AppRoute.updateCommunityRoute,
+                      builder: (context, state) => CommunityUpdateScreen(
+                        communityId: state.params['communityId']!,
+                      ),
+                    ),
+                    GoRoute(
                       name: AppRoute.communityInReviewPost,
                       path: AppRoute.communityInReviewPostRoute,
                       builder: (context, state) =>
@@ -127,13 +134,6 @@ class AppRouter {
                               communityId: state.params['communityId']!),
                     ),
                   ]),
-              GoRoute(
-                name: AppRoute.updateCommunity,
-                path: AppRoute.updateCommunityRoute,
-                builder: (context, state) => CommunityUpdateScreen(
-                  communityId: state.params['communityId']!,
-                ),
-              ),
               GoRoute(
                 name: AppRoute.createCommunity,
                 path: AppRoute.createCommunityRoute,

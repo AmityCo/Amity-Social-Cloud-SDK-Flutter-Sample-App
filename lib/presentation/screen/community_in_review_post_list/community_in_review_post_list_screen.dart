@@ -29,8 +29,8 @@ class _CommunityInReviewPostListScreenState
       pageFuture: (token) => AmitySocialClient.newPostRepository()
           .getPosts()
           .targetCommunity(widget.communityId)
-          .feedType(feedType: AmityFeedType.PUBLISHED)
-          .includeDeleted(includeDeleted: false)
+          .feedType(AmityFeedType.REVIEWING)
+          .includeDeleted(false)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
