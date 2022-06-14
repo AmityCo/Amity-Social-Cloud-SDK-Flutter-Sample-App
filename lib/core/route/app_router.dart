@@ -5,6 +5,8 @@ import 'package:flutter_social_sample_app/presentation/screen/community_create/c
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_list/community_recommend_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_list/community_trending_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
@@ -138,6 +140,16 @@ class AppRouter {
                 builder: (context, state) => const CommunityCreateScreen(),
               ),
             ],
+          ),
+          GoRoute(
+            name: AppRoute.communityTrendingList,
+            path: AppRoute.communityTrendingListRoute,
+            builder: (context, state) => const CommunityTrendingListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.communityRecommendedList,
+            path: AppRoute.communityRecommendedListRoute,
+            builder: (context, state) => const CommunityRecommendListScreen(),
           ),
         ],
       ),

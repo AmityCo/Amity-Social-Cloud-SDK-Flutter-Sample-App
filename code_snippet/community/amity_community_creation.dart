@@ -18,6 +18,7 @@ class AmityCommunityCreation {
         .createCommunity('Community Name')
         .description('Community Description')
         .avatar(communityAvatar)
+        .tags(['tag1', 'tag2'])
         .isPublic(true) //to choose wether it's public or not
         .metadata({'key': 'value'}) //for extra metadata
         .userIds([

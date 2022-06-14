@@ -153,6 +153,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               //   },
               //   child: const Text('Create Community'),
               // ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.communityTrendingList);
+                },
+                child: const Text('Trending Communities'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.communityRecommendedList);
+                },
+                child: const Text('Recommended Communities'),
+              ),
               const SizedBox(height: 200),
               TextButton(
                 onPressed: () {
