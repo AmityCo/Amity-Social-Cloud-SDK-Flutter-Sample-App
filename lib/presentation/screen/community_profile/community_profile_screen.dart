@@ -323,6 +323,20 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 ),
               ),
             )
+          else
+            Center(
+              child: SizedBox(
+                width: 260,
+                child: ElevatedButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(
+                        AppRoute.communityPendingPost,
+                        params: {'communityId': amityCommunity.communityId!});
+                  },
+                  child: const Text('Pending Post'),
+                ),
+              ),
+            )
         ],
       ),
     );

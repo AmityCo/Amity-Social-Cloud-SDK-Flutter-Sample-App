@@ -8,6 +8,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_list/com
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_recommend_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_trending_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
@@ -131,6 +132,13 @@ class AppRouter {
                       path: AppRoute.communityInReviewPostRoute,
                       builder: (context, state) =>
                           CommunityInReviewPostListScreen(
+                              communityId: state.params['communityId']!),
+                    ),
+                    GoRoute(
+                      name: AppRoute.communityPendingPost,
+                      path: AppRoute.communityPendingPostRoute,
+                      builder: (context, state) =>
+                          CommunityPendingPostListScreen(
                               communityId: state.params['communityId']!),
                     ),
                   ]),
