@@ -38,10 +38,12 @@ class _CommunityMemberScreenState extends State<CommunityMembercreen> {
     )..addListener(
         () {
           if (_controller.error == null) {
-            setState(() {
-              amityCommunityMembers.clear();
-              amityCommunityMembers.addAll(_controller.loadedItems);
-            });
+            if (mounted) {
+              setState(() {
+                amityCommunityMembers.clear();
+                amityCommunityMembers.addAll(_controller.loadedItems);
+              });
+            }
           } else {
             //Error on pagination controller
             setState(() {});

@@ -33,7 +33,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           // .sortBy(_sortOption)
           .types(_dataType)
           .sortBy(_sortOption)
-          .onlyParent(false)
+          .onlyParent(true)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
