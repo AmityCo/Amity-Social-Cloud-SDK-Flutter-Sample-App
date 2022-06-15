@@ -40,6 +40,9 @@ class AppRoute {
   static const communityInReviewPost = 'communityInReviewPost';
   static const communityInReviewPostRoute = 'communityInReviewPost';
 
+  static const communityPendingPost = 'communityPendingPost';
+  static const communityPendingPostRoute = 'communityPendingPost';
+
   static const communityFeed = 'communityFeed';
   static const communityFeedRoute = 'communityFeed/:communityId';
 
