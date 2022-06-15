@@ -17,18 +17,32 @@ class _LoginScreenState extends State<LoginScreen> {
   final _serverUrlTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    _userIdTextController.text = 'victimAndroid';
-    _displayNameTextController.text = 'Victim Android';
-
     //STAGING Server
-    _apiKeyTextController.text =
-        'b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
+    // _userIdTextController.text = 'victimAndroid';
+    // _displayNameTextController.text = 'Victim Android';
+    // _apiKeyTextController.text =
+    //     'b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
 
     //SG Server
+    //1
+    // _userIdTextController.text = 'johnwick2';
+    // _displayNameTextController.text = 'John Wick';
     // _apiKeyTextController.text =
-    //     'b3bee90c39d9a5644831d84e5a0d1688d100ddebef3c6e78';
+    //     'b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f';
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
+
+    //2
+    _userIdTextController.text = 'userB_80835352';
+    _displayNameTextController.text = 'User userB_80835352';
+    _apiKeyTextController.text =
+        'b3bee90c39d9a5644831d84e5a0d1688d100ddebef3c6e78';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
+
+    //US Server
+    // _apiKeyTextController.text =
+    //     'b0eeed0f3fd2a4311d658d1f030e168884008ce0e8673924';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.US.value;
 
     ThemeData _themeData = Theme.of(context);
     return SafeArea(

@@ -128,7 +128,8 @@ class FeedWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FeedContentWidget(amityPostData: value.data!),
+                          if (value.data != null)
+                            FeedContentWidget(amityPostData: value.data!),
                           const SizedBox(height: 8),
                           if (value.children != null)
                             Wrap(

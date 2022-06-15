@@ -28,8 +28,20 @@ class AppRoute {
   static const communityList = 'communityList';
   static const communityListRoute = 'communityList';
 
+  static const communityTrendingList = 'communityTrendingList';
+  static const communityTrendingListRoute = 'communityTrendingList';
+
+  static const communityRecommendedList = 'communityRecommendedList';
+  static const communityRecommendedListRoute = 'communityRecommendedList';
+
   static const communityProfile = 'communityProfile';
   static const communityProfileRoute = 'communityProfile/:communityId';
+
+  static const communityInReviewPost = 'communityInReviewPost';
+  static const communityInReviewPostRoute = 'communityInReviewPost';
+
+  static const communityPendingPost = 'communityPendingPost';
+  static const communityPendingPostRoute = 'communityPendingPost';
 
   static const communityFeed = 'communityFeed';
   static const communityFeedRoute = 'communityFeed/:communityId';
@@ -44,5 +56,5 @@ class AppRoute {
   static const communityCategoryRoute = 'communityCategory';
 
   static const updateCommunity = 'updateCommunity';
-  static const updateCommunityRoute = 'updateCommunity/:communityId';
+  static const updateCommunityRoute = 'updateCommunity';
 }

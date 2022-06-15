@@ -4,8 +4,12 @@ import 'package:flutter_social_sample_app/presentation/screen/comment_query/comm
 import 'package:flutter_social_sample_app/presentation/screen/community_category_list/community_category_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_list/community_recommend_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_list/community_trending_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
@@ -117,14 +121,28 @@ class AppRouter {
                       builder: (context, state) => CreatePostScreen(
                           communityId: state.params['communityId']!),
                     ),
+                    GoRoute(
+                      name: AppRoute.updateCommunity,
+                      path: AppRoute.updateCommunityRoute,
+                      builder: (context, state) => CommunityUpdateScreen(
+                        communityId: state.params['communityId']!,
+                      ),
+                    ),
+                    GoRoute(
+                      name: AppRoute.communityInReviewPost,
+                      path: AppRoute.communityInReviewPostRoute,
+                      builder: (context, state) =>
+                          CommunityInReviewPostListScreen(
+                              communityId: state.params['communityId']!),
+                    ),
+                    GoRoute(
+                      name: AppRoute.communityPendingPost,
+                      path: AppRoute.communityPendingPostRoute,
+                      builder: (context, state) =>
+                          CommunityPendingPostListScreen(
+                              communityId: state.params['communityId']!),
+                    ),
                   ]),
-              GoRoute(
-                name: AppRoute.updateCommunity,
-                path: AppRoute.updateCommunityRoute,
-                builder: (context, state) => CommunityUpdateScreen(
-                  communityId: state.params['communityId']!,
-                ),
-              ),
               GoRoute(
                 name: AppRoute.createCommunity,
                 path: AppRoute.createCommunityRoute,
@@ -140,6 +158,16 @@ class AppRouter {
                     const CommunityCategoryListScreen(),
               ),
             ],
+          ),
+          GoRoute(
+            name: AppRoute.communityTrendingList,
+            path: AppRoute.communityTrendingListRoute,
+            builder: (context, state) => const CommunityTrendingListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.communityRecommendedList,
+            path: AppRoute.communityRecommendedListRoute,
+            builder: (context, state) => const CommunityRecommendListScreen(),
           ),
         ],
       ),
