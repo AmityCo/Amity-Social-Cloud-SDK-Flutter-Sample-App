@@ -5,7 +5,9 @@ class PositiveDialog extends StatelessWidget {
   const PositiveDialog({Key? key, required this.message}) : super(key: key);
 
   static Future show(BuildContext context,
-      {required String title, required String message}) {
+      {required String title,
+      required String message,
+      VoidCallback? onPostiveCallback}) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -16,6 +18,7 @@ class PositiveDialog extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                onPostiveCallback?.call();
               },
               child: const Text('Ok'),
             ),

@@ -85,6 +85,7 @@ class _CommunityPendingPostListScreenState
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
+                      physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: amityPosts.length,
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
