@@ -23,6 +23,7 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
   final _catsEditController = TextEditingController();
   final _userIdsEditController = TextEditingController();
   final _metadataEditController = TextEditingController();
+  final _tagsEditController = TextEditingController();
 
   bool _isPublic = false;
   bool _isPostReviewEnable = false;
@@ -39,11 +40,13 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
         .then((value) {
       setState(() {
         _nameEditController.text = value.displayName!;
-        _desEditController.text = value.description!;
+        _desEditController.text = value.description ?? '';
 
-        _isPublic = value.isPublic!;
+        _isPublic = value.isPublic ?? false;
+        _isPostReviewEnable = value.isPostReviewEnabled ?? false;
 
-        _catsEditController.text = value.categories!.join(',');
+        _catsEditController.text = (value.categories ?? []).join(',');
+        _metadataEditController.text = value.metadata?.toString() ?? '';
       });
     }).onError((error, stackTrace) {
       ErrorDialog.show(context, title: 'Error', message: error.toString());
@@ -102,6 +105,18 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
                 title: const Text('Post Review Enable'),
+              ),
+              SizedBox(
+                height: 80,
+                child: TextFormField(
+                  controller: _tagsEditController,
+                  expands: true,
+                  maxLines: null,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Comma seperated tags',
+                    isDense: true,
+                  ),
+                ),
               ),
               SizedBox(
                 height: 80,
@@ -165,9 +180,9 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
       communityCreator.categoryIds(_catsEditController.text.trim().split(','));
     }
 
-    // if (_userIdsEditController.text.isNotEmpty) {
-    //   communityCreator.userIds(_userIdsEditController.text.trim().split(','));
-    // }
+    if (_tagsEditController.text.isNotEmpty) {
+      communityCreator.tags(_tagsEditController.text.trim().split(','));
+    }
 
     await communityCreator.update();
   }

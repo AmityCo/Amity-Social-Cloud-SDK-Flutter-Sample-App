@@ -20,9 +20,13 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   late AmityCommunity _amityCommunity;
+  Future<AmityCommunity>? _future;
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+
+    _future = AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId);
     super.initState();
   }
 
@@ -101,8 +105,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
         ],
       ),
       body: FutureBuilder<AmityCommunity>(
-        future: AmitySocialClient.newCommunityRepository()
-            .getCommunity(widget.communityId),
+        future: _future,
         builder: (context, futureSnapshot) {
           if (futureSnapshot.hasData) {
             _amityCommunity = futureSnapshot.data!;

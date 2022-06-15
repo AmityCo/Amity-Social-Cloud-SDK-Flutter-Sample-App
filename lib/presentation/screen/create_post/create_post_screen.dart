@@ -5,6 +5,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -169,7 +170,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   onPressed: () async {
                     ProgressDialog.show(context, asyncFunction: createPost)
                         .then((value) {
-                      Navigator.of(context).pop();
+                      PositiveDialog.show(context,
+                          title: 'Post Created',
+                          message: 'Post Created Successfully');
                     }).onError((error, stackTrace) {
                       ErrorDialog.show(context,
                           title: 'Error', message: error.toString());
