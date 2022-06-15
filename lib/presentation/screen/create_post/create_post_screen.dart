@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
@@ -172,7 +173,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         .then((value) {
                       PositiveDialog.show(context,
                           title: 'Post Created',
-                          message: 'Post Created Successfully');
+                          message: 'Post Created Successfully',
+                          onPostiveCallback: () {
+                        GoRouter.of(context).pop();
+                      });
                     }).onError((error, stackTrace) {
                       ErrorDialog.show(context,
                           title: 'Error', message: error.toString());
