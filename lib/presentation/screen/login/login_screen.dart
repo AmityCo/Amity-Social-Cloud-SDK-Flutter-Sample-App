@@ -17,23 +17,24 @@ class _LoginScreenState extends State<LoginScreen> {
   final _serverUrlTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    _userIdTextController.text = 'Fon-Android';
-    _displayNameTextController.text = 'Fon-Android';
-
     //STAGING Server
+    // _userIdTextController.text = 'victimAndroid';
+    // _displayNameTextController.text = 'Victim Android';
     // _apiKeyTextController.text =
     //     'b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b';
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
 
     //SG Server
+    _userIdTextController.text = 'johnwick2';
+    _displayNameTextController.text = 'John Wick';
     _apiKeyTextController.text =
         'b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f';
     _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
 
     //US Server
-    _apiKeyTextController.text =
-        'b0eeed0f3fd2a4311d658d1f030e168884008ce0e8673924';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.US.value;
+    // _apiKeyTextController.text =
+    //     'b0eeed0f3fd2a4311d658d1f030e168884008ce0e8673924';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.US.value;
 
     ThemeData _themeData = Theme.of(context);
     return SafeArea(
