@@ -151,12 +151,6 @@ class AppRouter {
                   userIds: state.queryParams['userIds']?.split(','),
                 ),
               ),
-              GoRoute(
-                name: AppRoute.communityCategory,
-                path: AppRoute.communityCategoryRoute,
-                builder: (context, state) =>
-                    const CommunityCategoryListScreen(),
-              ),
             ],
           ),
           GoRoute(

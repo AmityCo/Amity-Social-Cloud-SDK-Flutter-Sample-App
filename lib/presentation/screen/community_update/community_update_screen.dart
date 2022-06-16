@@ -4,10 +4,11 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_category_list/community_category_list_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityUpdateScreen extends StatefulWidget {
-  CommunityUpdateScreen({Key? key, required this.communityId})
+  const CommunityUpdateScreen({Key? key, required this.communityId})
       : super(key: key);
   final String communityId;
 
@@ -45,8 +46,11 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
         _isPublic = value.isPublic ?? false;
         _isPostReviewEnable = value.isPostReviewEnabled ?? false;
 
-        _catsEditController.text = (value.categories ?? []).join(',');
-        _metadataEditController.text = value.metadata?.toString() ?? '';
+        _catsEditController.text =
+            (value.categories ?? []).map((e) => e!.categoryId).join(',');
+        _metadataEditController.text =
+            value.metadata != null ? jsonEncode(value.metadata) : '';
+        _tagsEditController.text = (value.tags ?? []).join(',');
       });
     }).onError((error, stackTrace) {
       ErrorDialog.show(context, title: 'Error', message: error.toString());
@@ -59,97 +63,118 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
       appBar: AppBar(
         title: const Text('Update Community'),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(12),
-        child: Form(
-          key: _formState,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _nameEditController,
-                decoration:
-                    const InputDecoration(hintText: 'Enter Community Name'),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                height: 100,
-                child: TextFormField(
-                  controller: _desEditController,
-                  expands: true,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter Community Description',
-                    isDense: true,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          child: Form(
+            key: _formState,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameEditController,
+                  decoration:
+                      const InputDecoration(hintText: 'Enter Community Name'),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 100,
+                  child: TextFormField(
+                    controller: _desEditController,
+                    expands: true,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter Community Description',
+                      isDense: true,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              CheckboxListTile(
-                value: _isPublic,
-                onChanged: (value) {
-                  setState(() {
-                    _isPublic = value!;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Make Community public'),
-              ),
-              CheckboxListTile(
-                value: _isPostReviewEnable,
-                onChanged: (value) {
-                  setState(() {
-                    _isPostReviewEnable = value!;
-                  });
-                },
-                controlAffinity: ListTileControlAffinity.leading,
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Post Review Enable'),
-              ),
-              SizedBox(
-                height: 80,
-                child: TextFormField(
-                  controller: _tagsEditController,
-                  expands: true,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter Comma seperated tags',
-                    isDense: true,
+                const SizedBox(height: 12),
+                CheckboxListTile(
+                  value: _isPublic,
+                  onChanged: (value) {
+                    setState(() {
+                      _isPublic = value!;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Make Community public'),
+                ),
+                CheckboxListTile(
+                  value: _isPostReviewEnable,
+                  onChanged: (value) {
+                    setState(() {
+                      _isPostReviewEnable = value!;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Post Review Enable'),
+                ),
+                SizedBox(
+                  height: 80,
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CommunityCategoryListScreen(
+                                selectedCategoryIds: _catsEditController.text
+                                        .trim()
+                                        .isNotEmpty
+                                    ? _catsEditController.text.trim().split(',')
+                                    : null);
+                          }).then((value) {
+                        _catsEditController.text = value;
+                      });
+                    },
+                    child: TextFormField(
+                      controller: _catsEditController,
+                      expands: true,
+                      maxLines: null,
+                      enabled: false,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter Comma seperated Category Ids',
+                        isDense: true,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 80,
-                child: TextFormField(
-                  controller: _catsEditController,
-                  expands: true,
-                  maxLines: null,
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _metadataEditController,
                   decoration: const InputDecoration(
-                    hintText: 'Enter Comma seperated Category Ids',
-                    isDense: true,
+                      hintText: 'Enter Community metadata'),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  height: 80,
+                  child: TextFormField(
+                    controller: _tagsEditController,
+                    expands: true,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter Comma seperated tags',
+                      isDense: true,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _metadataEditController,
-                decoration:
-                    const InputDecoration(hintText: 'Enter Community metadata'),
-              ),
-              const SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () {
-                  ProgressDialog.show(context, asyncFunction: _updateCommunity)
-                      .then((value) {
-                    GoRouter.of(context).pop();
-                  }).onError((error, stackTrace) {
-                    ErrorDialog.show(context,
-                        title: 'Error', message: error.toString());
-                  });
-                },
-                child: const Text('Update Community'),
-              )
-            ],
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    ProgressDialog.show(context,
+                            asyncFunction: _updateCommunity)
+                        .then((value) {
+                      GoRouter.of(context).pop();
+                    }).onError((error, stackTrace) {
+                      ErrorDialog.show(context,
+                          title: 'Error', message: error.toString());
+                    });
+                  },
+                  child: const Text('Update Community'),
+                )
+              ],
+            ),
           ),
         ),
       ),

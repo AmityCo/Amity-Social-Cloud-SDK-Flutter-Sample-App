@@ -2,13 +2,15 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 
 class CommunityCategoryWidget extends StatefulWidget {
-  CommunityCategoryWidget(
-      {Key? key,
-      required this.amityCommunityCategory,
-      required this.valueChanged})
-      : super(key: key);
+  const CommunityCategoryWidget({
+    Key? key,
+    required this.amityCommunityCategory,
+    required this.valueChanged,
+    this.selected = false,
+  }) : super(key: key);
   final AmityCommunityCategory amityCommunityCategory;
   final ValueChanged valueChanged;
+  final bool selected;
   @override
   State<CommunityCategoryWidget> createState() =>
       _CommunityCategoryWidgetState();
@@ -16,6 +18,13 @@ class CommunityCategoryWidget extends StatefulWidget {
 
 class _CommunityCategoryWidgetState extends State<CommunityCategoryWidget> {
   bool _value = false;
+  @override
+  void initState() {
+    _value = widget.selected;
+    print(_value);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
