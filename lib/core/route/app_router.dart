@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_category_list/community_category_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
@@ -145,7 +146,16 @@ class AppRouter {
               GoRoute(
                 name: AppRoute.createCommunity,
                 path: AppRoute.createCommunityRoute,
-                builder: (context, state) => const CommunityCreateScreen(),
+                builder: (context, state) => CommunityCreateScreen(
+                  categoryIds: state.queryParams['categoryIds']?.split(','),
+                  userIds: state.queryParams['userIds']?.split(','),
+                ),
+              ),
+              GoRoute(
+                name: AppRoute.communityCategory,
+                path: AppRoute.communityCategoryRoute,
+                builder: (context, state) =>
+                    const CommunityCategoryListScreen(),
               ),
             ],
           ),
