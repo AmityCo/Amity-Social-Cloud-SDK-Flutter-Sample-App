@@ -20,7 +20,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
-  AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
+  AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
   List<AmityDataType> _dataType = [];
   @override
   void initState() {
@@ -162,10 +162,10 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                     ),
                     onSelected: (index) {
                       if (index == 2) {
-                        _sortOption = AmityCommentSortOption.FIRST_CREATED;
+                        _sortOption = AmityPostSortOption.FIRST_CREATED;
                       }
                       if (index == 3) {
-                        _sortOption = AmityCommentSortOption.LAST_CREATED;
+                        _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
                       _controller.reset();

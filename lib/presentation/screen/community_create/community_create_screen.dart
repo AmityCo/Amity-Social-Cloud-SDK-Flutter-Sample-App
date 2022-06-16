@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_category_list/community_category_list_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -167,8 +167,18 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                   height: 80,
                   child: InkWell(
                     onTap: () {
-                      GoRouter.of(context)
-                          .pushNamed(AppRoute.communityCategory);
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CommunityCategoryListScreen(
+                                selectedCategoryIds: _catsEditController.text
+                                        .trim()
+                                        .isNotEmpty
+                                    ? _catsEditController.text.trim().split(',')
+                                    : null);
+                          }).then((value) {
+                        _catsEditController.text = value;
+                      });
                     },
                     child: TextFormField(
                       controller: _catsEditController,
