@@ -21,7 +21,7 @@ class AmityPostGet {
   //example of using AmityPost with StreamBuilder
   void observeComment(AmityPost post) {
     StreamBuilder<AmityPost>(
-        stream: post.listen,
+        stream: post.listen.stream,
         builder: (context, snapshot) {
           // update widget
           // eg. widget.text = post.postId

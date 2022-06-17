@@ -19,7 +19,7 @@ class FeedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
     return StreamBuilder<AmityPost>(
-      stream: amityPost.listen,
+      stream: amityPost.listen.stream,
       initialData: amityPost,
       builder: (context, snapshot) {
         if (snapshot.hasData) {

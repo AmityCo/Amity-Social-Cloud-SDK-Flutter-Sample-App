@@ -18,7 +18,7 @@ class CommunityWidget extends StatelessWidget {
       );
     }
     return StreamBuilder<AmityCommunity>(
-      stream: amityCommunity.listen,
+      stream: amityCommunity.listen.stream,
       initialData: amityCommunity,
       builder: (context, snapshot) {
         if (snapshot.hasData) {

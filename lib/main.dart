@@ -118,6 +118,7 @@ class _MyAppState extends State<MyApp> {
                   //
                   AmitySocialClient.newPostRepository()
                       .getPostStream('9cf90cd06d874b8e72c7a0057a330de4')
+                      .stream
                       .listen((event) {
                     log(event.toString());
                   }).onError((error, stackTrace) {

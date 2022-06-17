@@ -37,7 +37,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     final _themeData = Theme.of(context);
 
     return StreamBuilder<AmityComment>(
-      stream: widget.amityComment.listen,
+      stream: widget.amityComment.listen.stream,
       initialData: widget.amityComment,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -229,7 +229,7 @@ class _CommentWidgetState extends State<CommentWidget> {
         (index) {
           final amityComment = comments[index];
           return StreamBuilder<AmityComment>(
-            stream: amityComment.listen,
+            stream: amityComment.listen.stream,
             initialData: amityComment,
             builder: (context, snapshot) {
               if (snapshot.hasData) {

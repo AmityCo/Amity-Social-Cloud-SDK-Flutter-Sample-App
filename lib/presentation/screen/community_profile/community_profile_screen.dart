@@ -110,7 +110,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
           if (futureSnapshot.hasData) {
             _amityCommunity = futureSnapshot.data!;
             return StreamBuilder<AmityCommunity>(
-                stream: _amityCommunity.listen,
+                stream: _amityCommunity.listen.stream,
                 initialData: _amityCommunity,
                 builder: (context, snapshot) {
                   _amityCommunity = snapshot.data!;
