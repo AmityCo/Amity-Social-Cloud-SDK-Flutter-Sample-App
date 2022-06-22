@@ -70,38 +70,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Following List'),
-        actions: const [
-          // PopupMenuButton(
-          //   itemBuilder: (context) {
-          //     return [
-          //       PopupMenuItem(
-          //         child: Text(AmityCommentSortOption.LAST_CREATED.apiKey),
-          //         value: 1,
-          //       ),
-          //       PopupMenuItem(
-          //         child: Text(AmityCommentSortOption.FIRST_CREATED.apiKey),
-          //         value: 2,
-          //       ),
-          //     ];
-          //   },
-          //   child: const Icon(
-          //     Icons.sort_rounded,
-          //     size: 24,
-          //   ),
-          //   onSelected: (index1) {
-          //     if (index1 == 1) {
-          //       _sortOption = AmityCommentSortOption.LAST_CREATED;
-          //       _controller.reset();
-          //       _controller.fetchNextPage();
-          //     }
-          //     if (index1 == 2) {
-          //       _sortOption = AmityCommentSortOption.FIRST_CREATED;
-          //       _controller.reset();
-          //       _controller.fetchNextPage();
-          //     }
-          //   },
-          // )
-        ],
+        actions: const [],
       ),
       body: Column(
         children: [
