@@ -257,70 +257,70 @@ class _MyAppState extends State<MyApp> {
               },
               child: const Text('Follow Info 87'),
             ),
-            TextButton(
-              onPressed: () async {
-                AmityCoreClient.newUserRepository()
-                    .relationship()
-                    .me()
-                    .getFollowers()
-                    .query()
-                    .then((value) {
-                  log(value.toString());
-                  // log(value.toString());
-                }).onError<AmityException>((error, stackTrace) {
-                  log(error.message.toString());
-                });
-              },
-              child: const Text('Get my follower'),
-            ),
-            TextButton(
-              onPressed: () async {
-                AmityCoreClient.newUserRepository()
-                    .relationship()
-                    .me()
-                    .getFollowings()
-                    .query()
-                    .then((value) {
-                  log(value.toString());
-                  // log(value.toString());
-                }).onError<AmityException>((error, stackTrace) {
-                  log(error.message.toString());
-                });
-              },
-              child: const Text('Get my following'),
-            ),
-            TextButton(
-              onPressed: () async {
-                AmityCoreClient.newUserRepository()
-                    .relationship()
-                    .user('victimiOS')
-                    .getFollowers()
-                    .query()
-                    .then((value) {
-                  log(value.toString());
-                  // log(value.toString());
-                }).onError<AmityException>((error, stackTrace) {
-                  log(error.message.toString());
-                });
-              },
-              child: const Text('Get victimiOS followers'),
-            ),
-            TextButton(
-              onPressed: () async {
-                AmityCoreClient.newUserRepository()
-                    .relationship()
-                    .user('victimiOS')
-                    .getFollowings()
-                    .query()
-                    .then((value) {
-                  log(value.toString());
-                  // log(value.toString());
-                }).onError<AmityException>((error, stackTrace) {
-                  log(error.message.toString());
-                });
-              },
-              child: const Text('Get victimiOS following'),
-            ),
+            // TextButton(
+            //   onPressed: () async {
+            //     AmityCoreClient.newUserRepository()
+            //         .relationship()
+            //         .me()
+            //         .getFollowers()
+            //         .query()
+            //         .then((value) {
+            //       log(value.toString());
+            //       // log(value.toString());
+            //     }).onError<AmityException>((error, stackTrace) {
+            //       log(error.message.toString());
+            //     });
+            //   },
+            //   child: const Text('Get my follower'),
+            // ),
+            // TextButton(
+            //   onPressed: () async {
+            //     AmityCoreClient.newUserRepository()
+            //         .relationship()
+            //         .me()
+            //         .getFollowings()
+            //         .query()
+            //         .then((value) {
+            //       log(value.toString());
+            //       // log(value.toString());
+            //     }).onError<AmityException>((error, stackTrace) {
+            //       log(error.message.toString());
+            //     });
+            //   },
+            //   child: const Text('Get my following'),
+            // ),
+            // TextButton(
+            //   onPressed: () async {
+            //     AmityCoreClient.newUserRepository()
+            //         .relationship()
+            //         .user('victimiOS')
+            //         .getFollowers()
+            //         .query()
+            //         .then((value) {
+            //       log(value.toString());
+            //       // log(value.toString());
+            //     }).onError<AmityException>((error, stackTrace) {
+            //       log(error.message.toString());
+            //     });
+            //   },
+            //   child: const Text('Get victimiOS followers'),
+            // ),
+            // TextButton(
+            //   onPressed: () async {
+            //     AmityCoreClient.newUserRepository()
+            //         .relationship()
+            //         .user('victimiOS')
+            //         .getFollowings()
+            //         .query()
+            //         .then((value) {
+            //       log(value.toString());
+            //       // log(value.toString());
+            //     }).onError<AmityException>((error, stackTrace) {
+            //       log(error.message.toString());
+            //     });
+            //   },
+            //   child: const Text('Get victimiOS following'),
+            // ),
             TextButton(
               onPressed: () async {
                 AmitySocialClient.newPostRepository()

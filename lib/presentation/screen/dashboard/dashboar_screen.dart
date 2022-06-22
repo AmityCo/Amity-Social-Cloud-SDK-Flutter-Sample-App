@@ -2,6 +2,8 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -99,29 +101,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   }
 
                   final token = await messaging.getToken();
-                  // AmityCoreClient.registerDeviceNotification(token!)
-                  //     .then((value) {
-                  //   PositiveDialog.show(context,
-                  //       title: 'Success',
-                  //       message: 'Device Register Successfully');
-                  // }).onError((error, stackTrace) {
-                  //   ErrorDialog.show(context,
-                  //       title: 'Error', message: error.toString());
-                  // });
+                  AmityCoreClient.registerDeviceNotification(token!)
+                      .then((value) {
+                    PositiveDialog.show(context,
+                        title: 'Success',
+                        message: 'Device Register Successfully');
+                  }).onError((error, stackTrace) {
+                    ErrorDialog.show(context,
+                        title: 'Error', message: error.toString());
+                  });
                 },
                 child: const Text('Register notification'),
               ),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  // AmityCoreClient.unregisterDeviceNotification().then((value) {
-                  //   PositiveDialog.show(context,
-                  //       title: 'Success',
-                  //       message: 'Device Unregister Successfully');
-                  // }).onError((error, stackTrace) {
-                  //   ErrorDialog.show(context,
-                  //       title: 'Error', message: error.toString());
-                  // });
+                  AmityCoreClient.unregisterDeviceNotification().then((value) {
+                    PositiveDialog.show(context,
+                        title: 'Success',
+                        message: 'Device Unregister Successfully');
+                  }).onError((error, stackTrace) {
+                    ErrorDialog.show(context,
+                        title: 'Error', message: error.toString());
+                  });
                 },
                 child: const Text('Unregister notification'),
               ),
@@ -163,7 +165,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  GoRouter.of(context).goNamed(AppRoute.communityRecommendedList);
+                  GoRouter.of(context)
+                      .goNamed(AppRoute.communityRecommendedList);
                 },
                 child: const Text('Recommended Communities'),
               ),

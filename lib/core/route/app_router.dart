@@ -1,7 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/community_category_list/community_category_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
@@ -14,8 +13,12 @@ import 'package:flutter_social_sample_app/presentation/screen/community_profile/
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/login/login_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/my_follower_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/my_following_list/my_following_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -41,12 +44,28 @@ class AppRouter {
                 builder: (context, state) =>
                     CreatePostScreen(userId: state.params['userId']!),
               ),
-              // GoRoute(
-              //   name: 'commentUserProfileFeed',
-              //   path: 'comment/:postId',
-              //   builder: (context, state) =>
-              //       CommentQueryScreen(state.params['postId']!),
-              // ),
+              GoRoute(
+                name: AppRoute.followersUser,
+                path: AppRoute.followersUserRoute,
+                builder: (context, state) =>
+                    FollowerListScreen(userId: state.params['userId']!),
+              ),
+              GoRoute(
+                name: AppRoute.followingsUser,
+                path: AppRoute.followingsUserRoute,
+                builder: (context, state) =>
+                    FollowingListScreen(userId: state.params['userId']!),
+              ),
+              GoRoute(
+                name: AppRoute.followersMy,
+                path: AppRoute.followersMyRoute,
+                builder: (context, state) => const MyFollowerListScreen(),
+              ),
+              GoRoute(
+                name: AppRoute.followingsMy,
+                path: AppRoute.followeringsMyRoute,
+                builder: (context, state) => const MyFollowingListScreen(),
+              ),
             ],
           ),
           GoRoute(

@@ -5,9 +5,6 @@ class AppRoute {
   static const login = 'login';
   static const loginRoute = '/login';
 
-  static const profile = 'profile';
-  static const profileRoute = 'profile/:userId';
-
   static const globalFeed = 'globalFeed';
   static const globalFeedRoute = 'globalFeed';
 
@@ -24,7 +21,7 @@ class AppRoute {
   static const createCommunityPostPost = 'createCommunityPost';
   static const createCommunityPostPostRoute = 'createCommunityPost';
 
-  //community Routes
+  //community flow routes
   static const communityList = 'communityList';
   static const communityListRoute = 'communityList';
 
@@ -57,4 +54,20 @@ class AppRoute {
 
   static const updateCommunity = 'updateCommunity';
   static const updateCommunityRoute = 'updateCommunity';
+
+  //User profile flow routes
+  static const profile = 'profile';
+  static const profileRoute = 'profile/:userId';
+
+  static const followersUser = 'followersUser';
+  static const followersUserRoute = 'followersUser';
+
+  static const followingsUser = 'followingsUser';
+  static const followingsUserRoute = 'followingsUser';
+
+  static const followersMy = 'followersMy';
+  static const followersMyRoute = 'followersMy';
+
+  static const followingsMy = 'followingsMy';
+  static const followeringsMyRoute = 'followingsMy';
 }
