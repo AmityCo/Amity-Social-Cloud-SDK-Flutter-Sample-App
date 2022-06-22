@@ -45,7 +45,7 @@ class UserProfileInfoRowWidget extends StatelessWidget {
           InkWell(
             onTap: () {
               GoRouter.of(context)
-                  .goNamed(AppRoute.home, params: {'userId': userId});
+                  .goNamed(AppRoute.profile, params: {'userId': userId});
             },
             child: Column(
               children: [

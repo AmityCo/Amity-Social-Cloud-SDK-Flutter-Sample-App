@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_post/user_post_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -24,9 +26,18 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   AmityUser? _amityUser;
 
+  late bool _isOwnerProfile;
+
+  late Future<AmityUser> _future;
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
+
+    _future = AmityCoreClient.newUserRepository().getUser(widget.userId);
+
+    _isOwnerProfile = AmityCoreClient.getUserId() == widget.userId;
+
     super.initState();
   }
 
@@ -40,11 +51,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
           title: const Text('User Profile'),
         ),
         body: FutureBuilder<AmityUser>(
-          future: AmityCoreClient.newUserRepository().getUser(widget.userId),
+          future: _future,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              // ErrorDialog.show(context,
-              //     title: 'Error', message: snapshot.error.toString());
               return Center(
                 child: Text(snapshot.error.toString()),
               );
@@ -105,10 +114,262 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                           ),
                         ),
                         const SizedBox(width: 16),
-                        Text(
-                          '${amityUser!.userId}',
-                          style: _themeData.textTheme.headline5!
-                              .copyWith(fontWeight: FontWeight.bold),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              Text(
+                                '${amityUser!.userId}',
+                                style: _themeData.textTheme.headline5!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 16),
+                              _isOwnerProfile
+                                  ? FutureBuilder<AmityMyFollowInfo>(
+                                      future: amityUser.me().getFollowInfo(),
+                                      builder: (context, snapshot) {
+                                        return Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    GoRouter.of(context)
+                                                        .goNamed(
+                                                            AppRoute
+                                                                .followersMy,
+                                                            params: {
+                                                          'userId':
+                                                              widget.userId
+                                                        });
+                                                  },
+                                                  child: RichText(
+                                                    textAlign: TextAlign.center,
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Followers\n',
+                                                          style: _themeData
+                                                              .textTheme
+                                                              .subtitle1,
+                                                        ),
+                                                        TextSpan(
+                                                          text: snapshot.hasData
+                                                              ? '${snapshot.data!.followerCount}'
+                                                              : '0',
+                                                          style: _themeData
+                                                              .textTheme
+                                                              .subtitle1,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    GoRouter.of(context)
+                                                        .goNamed(
+                                                            AppRoute
+                                                                .followingsMy,
+                                                            params: {
+                                                          'userId':
+                                                              widget.userId
+                                                        });
+                                                  },
+                                                  child: RichText(
+                                                    textAlign: TextAlign.center,
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Following\n',
+                                                          style: _themeData
+                                                              .textTheme
+                                                              .subtitle1,
+                                                        ),
+                                                        TextSpan(
+                                                          text: snapshot.hasData
+                                                              ? '${snapshot.data!.followingCount}'
+                                                              : '0',
+                                                          style: _themeData
+                                                              .textTheme
+                                                              .subtitle1,
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                RichText(
+                                                  textAlign: TextAlign.center,
+                                                  text: TextSpan(
+                                                    children: [
+                                                      TextSpan(
+                                                        text: 'Pending\n',
+                                                        style: _themeData
+                                                            .textTheme
+                                                            .subtitle1,
+                                                      ),
+                                                      TextSpan(
+                                                        text: snapshot.hasData
+                                                            ? '${snapshot.data!.pendingRequestCount}'
+                                                            : '0',
+                                                        style: _themeData
+                                                            .textTheme
+                                                            .subtitle1,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Container(
+                                              width: 160,
+                                              margin: const EdgeInsets.only(
+                                                  top: 12),
+                                              child: ElevatedButton(
+                                                onPressed: () {},
+                                                child:
+                                                    const Text('Edit Profile'),
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    )
+                                  : FutureBuilder<AmityUserFollowInfo>(
+                                      future: amityUser
+                                          .relationship()
+                                          .getFollowInfo(),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return Container();
+                                        }
+                                        return StreamBuilder<
+                                                AmityUserFollowInfo>(
+                                            initialData: snapshot.data,
+                                            stream: snapshot.data!.listen,
+                                            builder: (context, snapshot) {
+                                              return Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          GoRouter.of(context)
+                                                              .goNamed(
+                                                                  AppRoute
+                                                                      .followersUser,
+                                                                  params: {
+                                                                'userId': widget
+                                                                    .userId
+                                                              });
+                                                        },
+                                                        child: RichText(
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Followers\n',
+                                                                style: _themeData
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                              ),
+                                                              TextSpan(
+                                                                text: snapshot
+                                                                        .hasData
+                                                                    ? '${snapshot.data!.followerCount}'
+                                                                    : '0',
+                                                                style: _themeData
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          GoRouter.of(context)
+                                                              .goNamed(
+                                                                  AppRoute
+                                                                      .followingsUser,
+                                                                  params: {
+                                                                'userId': widget
+                                                                    .userId
+                                                              });
+                                                        },
+                                                        child: RichText(
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text:
+                                                                    'Following\n',
+                                                                style: _themeData
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                              ),
+                                                              TextSpan(
+                                                                text: snapshot
+                                                                        .hasData
+                                                                    ? '${snapshot.data!.followingCount}'
+                                                                    : '0',
+                                                                style: _themeData
+                                                                    .textTheme
+                                                                    .subtitle1,
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    width: 160,
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            top: 12),
+                                                    child: ElevatedButton(
+                                                      onPressed: () {
+                                                        if (snapshot.hasData) {
+                                                          if (snapshot.data!
+                                                                  .status !=
+                                                              AmityFollowStatus
+                                                                  .ACCEPTED) {
+                                                            amityUser
+                                                                .relationship()
+                                                                .follow();
+                                                          } else {
+                                                            amityUser
+                                                                .relationship()
+                                                                .unfollow();
+                                                          }
+                                                        }
+                                                      },
+                                                      child: Text(snapshot
+                                                              .hasData
+                                                          ? snapshot.data!
+                                                                      .status !=
+                                                                  AmityFollowStatus
+                                                                      .ACCEPTED
+                                                              ? 'Follow'
+                                                              : 'Unfollow'
+                                                          : 'Follow'),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                      },
+                                    )
+                            ],
+                          ),
                         ),
                       ],
                     ),
