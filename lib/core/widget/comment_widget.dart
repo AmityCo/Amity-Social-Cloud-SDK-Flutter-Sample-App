@@ -147,7 +147,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                 const SizedBox(height: 6),
                 if (value.childrenNumber! > 0)
                   Container(
-                    // color: Colors.red,
                     margin: const EdgeInsets.only(left: 12),
                     child: !_viewMoreReply
                         ? InkWell(

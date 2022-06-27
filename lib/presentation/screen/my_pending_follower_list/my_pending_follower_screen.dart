@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
 class MyPendingFollowerScreen extends StatefulWidget {
   const MyPendingFollowerScreen({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
           .relationship()
           .me()
           .getFollowers()
+          .status(AmityFollowStatusFilter.PENDING)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -69,7 +71,7 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Follower List'),
+        title: const Text('Pending List'),
         actions: const [],
       ),
       body: Column(
@@ -88,10 +90,12 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
                       itemBuilder: (context, index) {
                         final amityFollowRelationship =
                             amityFollowRelationships[index];
-                        return Container(
-                          child: Text(
-                              '${amityFollowRelationship.sourceUserId}_${amityFollowRelationship.targetUserId}'),
-                        );
+                        // return Container(
+                        //   child: Text(
+                        //       '${amityFollowRelationship.sourceUserId}_${amityFollowRelationship.targetUserId}'),
+                        // );
+                        return MyPendingFollowerInfoWidget(
+                            amityFollowRelationship: amityFollowRelationship);
                       },
                     ),
                   )
@@ -109,6 +113,114 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
             ),
         ],
       ),
+    );
+  }
+}
+
+class MyPendingFollowerInfoWidget extends StatelessWidget {
+  const MyPendingFollowerInfoWidget(
+      {Key? key, required this.amityFollowRelationship})
+      : super(key: key);
+  final AmityFollowRelationship amityFollowRelationship;
+  @override
+  Widget build(BuildContext context) {
+    final _themeData = Theme.of(context);
+    return StreamBuilder<AmityFollowRelationship>(
+      initialData: amityFollowRelationship,
+      stream: amityFollowRelationship.listen,
+      builder: (context, snapshot) {
+        final data = snapshot.data!;
+
+        // if (data.status != AmityFollowStatus.ACCEPTED) {
+        //   return Container();
+        // }
+
+        return Container(
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.blueGrey.shade50,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.withOpacity(.3)),
+                    child: data.targetUser!.avatarUrl != null
+                        ? Image.network(
+                            data.targetUser!.avatarUrl!,
+                            fit: BoxFit.fill,
+                          )
+                        : data.targetUser!.avatarCustomUrl != null
+                            ? Image.network(
+                                data.targetUser!.avatarCustomUrl!,
+                                fit: BoxFit.fill,
+                              )
+                            : Image.asset('assets/user_placeholder.png'),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    data.targetUser!.displayName ?? 'No Display name',
+                    style: _themeData.textTheme.bodyText2,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        data.accept().then((value) {
+                          PositiveDialog.show(context,
+                              title: 'Accepted',
+                              message: 'Acceped the follow reauest');
+                        }).onError((error, stackTrace) {
+                          ErrorDialog.show(context,
+                              title: 'Error',
+                              message:
+                                  'Error in accept the follow request ${error.toString()}');
+                        });
+                      },
+                      child: const Text('Accept'),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 120,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        data.decline().then((value) {
+                          PositiveDialog.show(context,
+                              title: 'Decline',
+                              message: 'Decline the follow request');
+                        }).onError((error, stackTrace) {
+                          ErrorDialog.show(context,
+                              title: 'Error',
+                              message:
+                                  'Error in Decline the follow request ${error.toString()}');
+                        });
+                      },
+                      child: const Text('Denied'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

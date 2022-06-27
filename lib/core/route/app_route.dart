@@ -70,4 +70,7 @@ class AppRoute {
 
   static const followingsMy = 'followingsMy';
   static const followeringsMyRoute = 'followingsMy';
+
+  static const followersPendingMy = 'followersPendingMy';
+  static const followersPendingMyRoute = 'followersPendingMy';
 }
