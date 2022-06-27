@@ -30,6 +30,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
       pageFuture: (token) => AmitySocialClient.newCommentRepository()
           .getComments()
           .post(widget._postId)
+          // .parentId('62b9474b31574f00dac90f51')
           .sortBy(_sortOption)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
@@ -134,7 +135,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                     alignment: Alignment.center,
                     child: _controller.isFetching
                         ? const CircularProgressIndicator()
-                        : const Text('No Post'),
+                        : const Text('No Comment'),
                   ),
           ),
           if (_controller.isFetching && amityComments.isNotEmpty)

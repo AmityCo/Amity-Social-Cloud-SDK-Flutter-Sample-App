@@ -199,25 +199,36 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                                     ),
                                                   ),
                                                 ),
-                                                RichText(
-                                                  textAlign: TextAlign.center,
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text: 'Pending\n',
-                                                        style: _themeData
-                                                            .textTheme
-                                                            .subtitle1,
-                                                      ),
-                                                      TextSpan(
-                                                        text: snapshot.hasData
-                                                            ? '${snapshot.data!.pendingRequestCount}'
-                                                            : '0',
-                                                        style: _themeData
-                                                            .textTheme
-                                                            .subtitle1,
-                                                      )
-                                                    ],
+                                                InkWell(
+                                                  onTap: () {
+                                                    GoRouter.of(context).goNamed(
+                                                        AppRoute
+                                                            .followersPendingMy,
+                                                        params: {
+                                                          'userId':
+                                                              widget.userId
+                                                        });
+                                                  },
+                                                  child: RichText(
+                                                    textAlign: TextAlign.center,
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Pending\n',
+                                                          style: _themeData
+                                                              .textTheme
+                                                              .subtitle1,
+                                                        ),
+                                                        TextSpan(
+                                                          text: snapshot.hasData
+                                                              ? '${snapshot.data!.pendingRequestCount}'
+                                                              : '0',
+                                                          style: _themeData
+                                                              .textTheme
+                                                              .subtitle1,
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ],

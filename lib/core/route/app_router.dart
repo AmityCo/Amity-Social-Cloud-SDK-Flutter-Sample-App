@@ -19,6 +19,7 @@ import 'package:flutter_social_sample_app/presentation/screen/global_feed/global
 import 'package:flutter_social_sample_app/presentation/screen/login/login_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/my_follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_following_list/my_following_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -65,6 +66,11 @@ class AppRouter {
                 name: AppRoute.followingsMy,
                 path: AppRoute.followeringsMyRoute,
                 builder: (context, state) => const MyFollowingListScreen(),
+              ),
+              GoRoute(
+                name: AppRoute.followersPendingMy,
+                path: AppRoute.followersPendingMyRoute,
+                builder: (context, state) => const MyPendingFollowerScreen(),
               ),
             ],
           ),
