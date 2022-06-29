@@ -104,8 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   AmityCoreClient.registerDeviceNotification(token!)
                       .then((value) {
                     PositiveDialog.show(context,
-                        title: 'Success',
-                        message: 'Device Register Successfully');
+                        title: 'Success', message: token);
                   }).onError((error, stackTrace) {
                     ErrorDialog.show(context,
                         title: 'Error', message: error.toString());

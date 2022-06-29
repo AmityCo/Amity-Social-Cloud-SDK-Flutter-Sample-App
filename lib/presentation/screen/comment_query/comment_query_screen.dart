@@ -30,7 +30,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
       pageFuture: (token) => AmitySocialClient.newCommentRepository()
           .getComments()
           .post(widget._postId)
-          // .parentId('62b9474b31574f00dac90f51')
           .sortBy(_sortOption)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
@@ -123,11 +122,15 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                       itemCount: amityComments.length,
                       itemBuilder: (context, index) {
                         final amityComment = amityComments[index];
-                        return CommentWidget(amityComment, (value) {
-                          setState(() {
-                            _replyToComment = value;
-                          });
-                        });
+                        return CommentWidget(
+                          widget._postId,
+                          amityComment,
+                          (value) {
+                            setState(() {
+                              _replyToComment = value;
+                            });
+                          },
+                        );
                       },
                     ),
                   )
