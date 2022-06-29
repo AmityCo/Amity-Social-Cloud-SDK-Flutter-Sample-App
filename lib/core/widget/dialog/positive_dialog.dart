@@ -30,6 +30,6 @@ class PositiveDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(message);
+    return SelectableText(message);
   }
 }
