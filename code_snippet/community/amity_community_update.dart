@@ -13,6 +13,8 @@ class AmityCommunityUpdate {
         .avatar(updatingAvatar)
         .displayName('updated name')
         .description('updated description')
+        .tags(['tag1', 'tag2'])
+        .categoryIds(['categoryId1', 'categoryId2'])
         .isPublic(false)
         .isPostReviewEnabled(false)
         .metadata({'updateKey': 'updateValue'})
