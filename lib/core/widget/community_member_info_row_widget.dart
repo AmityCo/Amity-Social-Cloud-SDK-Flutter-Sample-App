@@ -46,7 +46,7 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
                 const SizedBox(width: 18),
                 InkWell(
                   onTap: () {
-                    GoRouter.of(context).goNamed(AppRoute.home,
+                    GoRouter.of(context).goNamed(AppRoute.profile,
                         params: {'userId': value.userId ?? ''});
                   },
                   child: Column(

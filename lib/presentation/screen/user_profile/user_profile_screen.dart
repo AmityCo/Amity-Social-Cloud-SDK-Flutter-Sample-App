@@ -350,9 +350,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                                       onPressed: () {
                                                         if (snapshot.hasData) {
                                                           if (snapshot.data!
-                                                                  .status !=
+                                                                  .status ==
                                                               AmityFollowStatus
-                                                                  .ACCEPTED) {
+                                                                  .NONE) {
                                                             amityUser
                                                                 .relationship()
                                                                 .follow();
@@ -366,11 +366,16 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                                       child: Text(snapshot
                                                               .hasData
                                                           ? snapshot.data!
-                                                                      .status !=
+                                                                      .status ==
                                                                   AmityFollowStatus
                                                                       .ACCEPTED
-                                                              ? 'Follow'
-                                                              : 'Unfollow'
+                                                              ? 'Unfollow'
+                                                              : snapshot.data!
+                                                                          .status ==
+                                                                      AmityFollowStatus
+                                                                          .PENDING
+                                                                  ? 'Cancel Request'
+                                                                  : 'Follow'
                                                           : 'Follow'),
                                                     ),
                                                   ),
