@@ -17,6 +17,7 @@ class AmityFollowWithdrawRequest {
         })
         .onError((error, stackTrace) => {
           //handle error
-        });
+        }); 
   }
+    /* end_sample_code */
 }
