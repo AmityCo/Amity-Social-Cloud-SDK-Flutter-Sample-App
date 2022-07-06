@@ -73,4 +73,10 @@ class AppRoute {
 
   static const followersPendingMy = 'followersPendingMy';
   static const followersPendingMyRoute = 'followersPendingMy';
+
+  static const postReaction = 'postReaction';
+  static const postReactionRoute = 'postReaction/:postId';
+
+  static const commentReaction = 'commentReaction';
+  static const commentReactionRoute = 'commentReaction/:commentId';
 }

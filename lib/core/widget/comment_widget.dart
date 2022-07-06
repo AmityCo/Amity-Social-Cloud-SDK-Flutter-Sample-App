@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/nested_comment_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget(this.postId, this.amityComment, this.onReply, {Key? key})
@@ -128,6 +130,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                         } else {
                           value.react().addReaction('like');
                         }
+                      },
+                      onLongPress: () {
+                        GoRouter.of(context).pushNamed(AppRoute.commentReaction,
+                            params: {'commentId': value.commentId!});
                       },
                       child: Text(
                         '${value.reactionCount} Likes',

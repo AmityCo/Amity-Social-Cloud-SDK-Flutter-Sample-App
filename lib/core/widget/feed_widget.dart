@@ -320,7 +320,13 @@ class FeedReactionInfoWidget extends StatelessWidget {
       child: Row(
         children: [
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              GoRouter.of(context).pushNamed(AppRoute.postReaction,
+                  params: {'postId': amityPost.postId!});
+              // amityPost.getReaction().getPagingData().then((value) {
+              //   print(value);
+              // });
+            },
             icon: Image.asset(
               'assets/ic_liked.png',
               height: 18,
