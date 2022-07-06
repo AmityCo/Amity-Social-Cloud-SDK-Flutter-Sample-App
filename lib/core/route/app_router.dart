@@ -21,7 +21,7 @@ import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/m
 import 'package:flutter_social_sample_app/presentation/screen/my_following_list/my_following_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/reaction_post/reaction_list_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
 import 'package:go_router/go_router.dart';
