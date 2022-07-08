@@ -1,8 +1,10 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class MyFollowerListScreen extends StatefulWidget {
   const MyFollowerListScreen({Key? key}) : super(key: key);
@@ -128,54 +130,60 @@ class MyFollowerInfoWidget extends StatelessWidget {
             return Container();
           }
 
-          return Container(
-            margin: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.blueGrey.shade50,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.withOpacity(.3)),
-                  child: data.targetUser!.avatarUrl != null
-                      ? Image.network(
-                          data.targetUser!.avatarUrl!,
-                          fit: BoxFit.fill,
-                        )
-                      : data.targetUser!.avatarCustomUrl != null
-                          ? Image.network(
-                              data.targetUser!.avatarCustomUrl!,
-                              fit: BoxFit.fill,
-                            )
-                          : Image.asset('assets/user_placeholder.png'),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  data.targetUser!.displayName ?? 'No Display name',
-                  style: _themeData.textTheme.bodyText2,
-                ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () {
-                    data.removeFollower().then((value) {
-                      PositiveDialog.show(context,
-                          title: 'Unfollow', message: 'User Unfollow');
-                    }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error',
-                          message: 'Error in Unfollow ${error.toString()}');
-                    });
-                  },
-                  child: const Text('Remove'),
-                )
-              ],
+          return InkWell(
+            onTap: () {
+              GoRouter.of(context).pushNamed(AppRoute.profile,
+                  params: {'userId': data.targetUserId!});
+            },
+            child: Container(
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blueGrey.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.withOpacity(.3)),
+                    child: data.targetUser!.avatarUrl != null
+                        ? Image.network(
+                            data.targetUser!.avatarUrl!,
+                            fit: BoxFit.fill,
+                          )
+                        : data.targetUser!.avatarCustomUrl != null
+                            ? Image.network(
+                                data.targetUser!.avatarCustomUrl!,
+                                fit: BoxFit.fill,
+                              )
+                            : Image.asset('assets/user_placeholder.png'),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    data.targetUser!.displayName ?? 'No Display name',
+                    style: _themeData.textTheme.bodyText2,
+                  ),
+                  const Spacer(),
+                  ElevatedButton(
+                    onPressed: () {
+                      data.removeFollower().then((value) {
+                        PositiveDialog.show(context,
+                            title: 'Unfollow', message: 'User Unfollow');
+                      }).onError((error, stackTrace) {
+                        ErrorDialog.show(context,
+                            title: 'Error',
+                            message: 'Error in Unfollow ${error.toString()}');
+                      });
+                    },
+                    child: const Text('Remove'),
+                  )
+                ],
+              ),
             ),
           );
         });

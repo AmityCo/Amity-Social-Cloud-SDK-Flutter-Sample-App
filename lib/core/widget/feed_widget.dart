@@ -44,7 +44,8 @@ class FeedWidget extends StatelessWidget {
                   children: [
                     UserProfileInfoRowWidget(
                       userId: value.postedUser!.userId!,
-                      userAvatar: value.postedUser!.avatarCustomUrl,
+                      userAvatar: value.postedUser?.avatarUrl ??
+                          value.postedUser!.avatarCustomUrl,
                       userName: value.postedUser!.displayName!,
                       options: [
                         if (amityPost.postedUserId ==
