@@ -1,7 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
-import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_widget.dart';
 
@@ -19,14 +18,6 @@ class _ReactionListPostScreenState extends State<ReactionListPostScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
-
-  String _keyboard = '';
-
-  final _debouncer = Debouncer(milliseconds: 500);
-
-  // AmityCommunityFilter _filter = AmityCommunityFilter.ALL;
-  // AmityCommunitySortOption _sort = AmityCommunitySortOption.LAST_CREATED;
-  // List<String>? _tags;
 
   @override
   void initState() {
@@ -75,7 +66,7 @@ class _ReactionListPostScreenState extends State<ReactionListPostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Community List ')),
+      appBar: AppBar(title: const Text('Post Reactions')),
       body: Column(
         children: [
           Expanded(

@@ -32,7 +32,11 @@ class UserProfileInfoRowWidget extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-                shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+              shape: BoxShape.circle,
+              color: Colors.grey.withOpacity(
+                .3,
+              ),
+            ),
             child: userAvatar != null
                 ? Image.network(
                     userAvatar!,
