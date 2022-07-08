@@ -22,6 +22,7 @@ import 'package:flutter_social_sample_app/presentation/screen/my_following_list/
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -73,7 +74,7 @@ class AppRouter {
                 name: AppRoute.followersPendingMy,
                 path: AppRoute.followersPendingMyRoute,
                 builder: (context, state) => const MyPendingFollowerScreen(),
-              ),
+              )
             ],
           ),
           GoRoute(
@@ -179,6 +180,11 @@ class AppRouter {
                 ),
               ),
             ],
+          ),
+          GoRoute(
+            name: AppRoute.tokenExchange,
+            path: AppRoute.tokenExchangeRoute,
+            builder: (context, state) => const TokenExchangeScreen(),
           ),
           GoRoute(
             name: AppRoute.communityTrendingList,
