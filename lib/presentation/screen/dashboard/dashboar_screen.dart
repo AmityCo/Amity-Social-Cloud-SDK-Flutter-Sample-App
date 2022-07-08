@@ -169,6 +169,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('Recommended Communities'),
               ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.tokenExchange);
+                },
+                child: const Text('Token exchange'),
+              ),
               const SizedBox(height: 200),
               TextButton(
                 onPressed: () {
