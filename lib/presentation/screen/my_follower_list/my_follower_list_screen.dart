@@ -133,7 +133,7 @@ class MyFollowerInfoWidget extends StatelessWidget {
           return InkWell(
             onTap: () {
               GoRouter.of(context).pushNamed(AppRoute.profile,
-                  params: {'userId': data.targetUserId!});
+                  params: {'userId': data.sourceUserId!});
             },
             child: Container(
               margin: const EdgeInsets.all(12),
@@ -150,14 +150,14 @@ class MyFollowerInfoWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.grey.withOpacity(.3)),
-                    child: data.targetUser!.avatarUrl != null
+                    child: data.sourceUser!.avatarUrl != null
                         ? Image.network(
-                            data.targetUser!.avatarUrl!,
+                            data.sourceUser!.avatarUrl!,
                             fit: BoxFit.fill,
                           )
-                        : data.targetUser!.avatarCustomUrl != null
+                        : data.sourceUser!.avatarCustomUrl != null
                             ? Image.network(
-                                data.targetUser!.avatarCustomUrl!,
+                                data.sourceUser!.avatarCustomUrl!,
                                 fit: BoxFit.fill,
                               )
                             : Image.asset('assets/user_placeholder.png'),
@@ -165,7 +165,7 @@ class MyFollowerInfoWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    data.targetUser!.displayName ?? 'No Display name',
+                    data.sourceUser!.displayName ?? 'No Display name',
                     style: _themeData.textTheme.bodyText2,
                   ),
                   const Spacer(),
