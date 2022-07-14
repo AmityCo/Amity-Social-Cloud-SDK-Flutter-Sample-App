@@ -70,7 +70,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     final _themeData = Theme.of(context);
     AmityUser _user = value.user!;
 
-    bool _isFlagedByMe = value.myReactions?.isNotEmpty ?? false;
+    bool _isLikedByMe = value.myReactions?.isNotEmpty ?? false;
 
     AmityCommentData data = value.data!;
     if (data is CommentTextData) text = data.text!;
@@ -125,7 +125,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     const SizedBox(width: 12),
                     InkWell(
                       onTap: () {
-                        if (_isFlagedByMe) {
+                        if (_isLikedByMe) {
                           value.react().removeReaction('like');
                         } else {
                           value.react().addReaction('like');
