@@ -35,8 +35,12 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
           } else {
             //Error on pagination controller
             setState(() {});
+            print(_controller.stacktrace);
             ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+                title: 'Error',
+                message: _controller.error.toString() +
+                    '\n' +
+                    _controller.stacktrace.toString());
           }
         },
       );
@@ -88,7 +92,7 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
                     alignment: Alignment.center,
                     child: _controller.isFetching
                         ? const CircularProgressIndicator()
-                        : const Text('No Post'),
+                        : const Text('No Global Post'),
                   ),
           ),
           if (_controller.isFetching && amityPosts.isNotEmpty)

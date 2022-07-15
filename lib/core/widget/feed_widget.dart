@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/poll_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_post/update_post_screen.dart';
@@ -297,6 +298,19 @@ class FeedContentWidget extends StatelessWidget {
         label: Text(
           data.fileInfo.fileName,
           style: _themeData.textTheme.bodyText1!.copyWith(color: Colors.blue),
+        ),
+      );
+    }
+
+    if (amityPostData is PollData) {
+      final data = amityPostData as PollData;
+      return Container(
+        // color: Colors.green,
+        child: Column(
+          children: [
+            Text('>>>>> ' + data.pollId + ' <<<<<<'),
+            PollWidget(data: data)
+          ],
         ),
       );
     }
