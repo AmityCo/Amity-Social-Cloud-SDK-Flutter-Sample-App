@@ -17,6 +17,7 @@ class EditTextDialog extends StatelessWidget {
       {String? title,
       String? defString,
       String? hintText,
+      String? buttonText,
       ValueChanged<String>? onChange,
       ValueChanged<String>? onPress}) {
     return showDialog(
@@ -45,7 +46,7 @@ class EditTextDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                   onPress?.call(text!);
                 },
-                child: const Text('Update'),
+                child: Text(buttonText ?? 'Update'),
                 style: ElevatedButton.styleFrom(primary: Colors.red),
               ),
             ],

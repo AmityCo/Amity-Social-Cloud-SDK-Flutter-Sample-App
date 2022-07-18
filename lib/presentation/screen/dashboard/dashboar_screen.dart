@@ -99,6 +99,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.createPollPost);
+                },
+                child: const Text('Create Poll Post'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
                   GoRouter.of(context).goNamed(AppRoute.communityMember,
                       params: {
                         'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'

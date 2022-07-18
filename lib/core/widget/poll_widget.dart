@@ -72,7 +72,7 @@ class _PollWidgetState extends State<PollWidget> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                    '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString()} left')
+                    '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString() + ' left'}')
               ],
             );
           }

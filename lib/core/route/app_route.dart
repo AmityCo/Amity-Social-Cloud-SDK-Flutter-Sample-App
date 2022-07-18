@@ -86,4 +86,7 @@ class AppRoute {
 
   static const postDetail = 'postDetail';
   static const postDetailRoute = 'postDetail/:postId';
+
+  static const createPollPost = 'createPollPost';
+  static const createPollPostRoute = 'createPollPost';
 }

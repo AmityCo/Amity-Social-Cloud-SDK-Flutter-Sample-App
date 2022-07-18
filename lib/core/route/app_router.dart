@@ -11,6 +11,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_member/c
 import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
@@ -214,6 +215,11 @@ class AppRouter {
             path: AppRoute.postDetailRoute,
             builder: (context, state) =>
                 PostDetailScreen(postId: state.params['postId']!),
+          ),
+          GoRoute(
+            name: AppRoute.createPollPost,
+            path: AppRoute.createPollPostRoute,
+            builder: (context, state) => const CreatePollPostScreen(),
           ),
         ],
       ),
