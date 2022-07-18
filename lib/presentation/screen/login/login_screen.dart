@@ -33,10 +33,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
 
     //2
-    _userIdTextController.text = 'bb01';
-    _displayNameTextController.text = 'BB01';
+    _userIdTextController.text = 'johnwick2';
+    _displayNameTextController.text = 'johnwick2';
     _apiKeyTextController.text =
-        'b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25';
+        'b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f';
     _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
 
     //US Server
