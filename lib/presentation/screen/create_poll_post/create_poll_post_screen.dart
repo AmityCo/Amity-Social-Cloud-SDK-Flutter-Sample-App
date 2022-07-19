@@ -5,12 +5,16 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/loading_button.dart';
 
 class CreatePollPostScreen extends StatefulWidget {
-  const CreatePollPostScreen({Key? key}) : super(key: key);
+  const CreatePollPostScreen({Key? key, this.userId, this.communityId})
+      : super(key: key);
+  final String? userId;
+  final String? communityId;
   @override
   State<CreatePollPostScreen> createState() => _CreatePollPostScreenState();
 }
 
 class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
+  final _targetuserTextEditController = TextEditingController();
   final _pollQuestionTextController = TextEditingController();
   final _pollScheduleTextController = TextEditingController(text: '1');
   bool _multiSelection = false;
@@ -18,6 +22,15 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
+
+    final _isCommunityPost = widget.communityId != null;
+    var targetLabel = '';
+    if (_isCommunityPost) {
+      targetLabel = 'Target community';
+    } else {
+      targetLabel = 'Target user';
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Poll Post'),
@@ -25,12 +38,14 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
           LoadingButton(
               onPressed: () async {
                 try {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  final _target = _targetuserTextEditController.text.trim();
                   String question = _pollQuestionTextController.text.trim();
                   int closeIn =
                       int.parse(_pollScheduleTextController.text.trim()) *
                           86400000;
 
-                  await AmitySocialClient.newPollRepository()
+                  final amityPoll = await AmitySocialClient.newPollRepository()
                       .createPoll(question: question)
                       .answers(
                           answers: _option
@@ -42,6 +57,24 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                               : AmityPollAnswerType.SINGLE)
                       .closedIn(closedIn: Duration(milliseconds: closeIn))
                       .create();
+                  if (_isCommunityPost) {
+                    final amityPost =
+                        await AmitySocialClient.newPostRepository()
+                            .createPost()
+                            .targetCommunity(_target)
+                            .poll(amityPoll.pollId!)
+                            .text(amityPoll.question!)
+                            .post();
+                  } else {
+                    final amityPost =
+                        await AmitySocialClient.newPostRepository()
+                            .createPost()
+                            .targetUser(_target)
+                            .poll(amityPoll.pollId!)
+                            .text(amityPoll.question!)
+                            .post();
+                  }
+
                   CommonSnackbar.showPositiveSnackbar(
                       context, 'Success', 'Poll Post Created Successfully');
                 } catch (error, stackTrace) {
@@ -58,6 +91,14 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            TextFormField(
+              controller: _targetuserTextEditController,
+              enabled: !_isCommunityPost,
+              decoration: InputDecoration(
+                label: Text(targetLabel),
+              ),
+            ),
+            const SizedBox(height: 12),
             Text(
               'Poll Question',
               style: _themeData.textTheme.subtitle1!.copyWith(
