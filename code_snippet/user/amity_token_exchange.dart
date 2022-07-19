@@ -9,7 +9,7 @@ class AmityTokenExchange {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter exchange token example
     */
-  void login(String _userId, String _displayname, String _secureToken) {
+  void createUserToken(String _userId, String _displayname, String _secureToken) {
     AmityUserTokenManager(
             apiKey: "your api key", endpoint: AmityRegionalHttpEndpoint.SG)
         //displayname and secureToken are optional
