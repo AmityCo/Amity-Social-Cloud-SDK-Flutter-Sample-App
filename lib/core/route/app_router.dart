@@ -11,6 +11,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_member/c
 import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_social_sample_app/presentation/screen/login/login_screen
 import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/my_follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_following_list/my_following_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/post_detail/post_detail_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
@@ -207,6 +209,17 @@ class AppRouter {
             path: AppRoute.commentReactionRoute,
             builder: (context, state) => ReactionListCommentScreen(
                 commentId: state.params['commentId']!),
+          ),
+          GoRoute(
+            name: AppRoute.postDetail,
+            path: AppRoute.postDetailRoute,
+            builder: (context, state) =>
+                PostDetailScreen(postId: state.params['postId']!),
+          ),
+          GoRoute(
+            name: AppRoute.createPollPost,
+            path: AppRoute.createPollPostRoute,
+            builder: (context, state) => const CreatePollPostScreen(),
           ),
         ],
       ),

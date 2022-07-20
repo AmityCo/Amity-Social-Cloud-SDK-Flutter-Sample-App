@@ -83,4 +83,10 @@ class AppRoute {
   //Token exchange Routes
   static const tokenExchange = 'tokenExchange';
   static const tokenExchangeRoute = 'tokenExchange';
+
+  static const postDetail = 'postDetail';
+  static const postDetailRoute = 'postDetail/:postId';
+
+  static const createPollPost = 'createPollPost';
+  static const createPollPostRoute = 'createPollPost';
 }

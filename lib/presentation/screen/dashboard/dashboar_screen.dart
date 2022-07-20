@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -14,6 +15,16 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    AmitySocialClient.newPostRepository()
+        .getPost('62cbe2e938443200da3e7f73')
+        .then((value) {
+      print(value.toString());
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
@@ -70,6 +81,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   });
                 },
                 child: const Text('Community Feed'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  EditTextDialog.show(
+                    context,
+                    hintText: 'Enter Comment Id',
+                    onPress: (value) {
+                      GoRouter.of(context).goNamed(AppRoute.postDetail,
+                          params: {'postId': value});
+                    },
+                  );
+                },
+                child: const Text('Get Post'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.createPollPost);
+                },
+                child: const Text('Create Poll Post'),
               ),
               const SizedBox(height: 20),
               TextButton(
