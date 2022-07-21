@@ -81,6 +81,12 @@ class _PollWidgetState extends State<PollWidget> {
                   );
                 });
           }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
           return const Center(
             child: CircularProgressIndicator(),
           );
