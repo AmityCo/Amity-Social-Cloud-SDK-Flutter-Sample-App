@@ -105,9 +105,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   String userId = _userIdTextController.text.trim();
                   String userDisplayName =
                       _displayNameTextController.text.trim();
-                  await AmityCoreClient.login(userId)
+                  final user = await AmityCoreClient.login(userId)
                       .displayName(userDisplayName)
                       .submit();
+
+                  print(user.toString());
 
                   GoRouter.of(context).go(AppRoute.homeRoute);
                   // Go.of(context).Navigator.of(context).pushReplacement(

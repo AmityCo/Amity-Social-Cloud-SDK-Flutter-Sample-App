@@ -85,19 +85,31 @@ class _PollWidgetState extends State<PollWidget> {
                             '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString() + ' left'}'),
                         const Spacer(),
                         InkWell(
-                            onTap: () {
-                              value
-                                  .delete()
-                                  .then((value) =>
-                                      CommonSnackbar.showPositiveSnackbar(
-                                          context,
-                                          'Success',
-                                          'Poll Deleted Succssfully'))
-                                  .onError((error, stackTrace) =>
-                                      CommonSnackbar.showNagativeSnackbar(
-                                          context, 'Error', error.toString()));
-                            },
-                            child: const Icon(Icons.delete))
+                          onTap: () {
+                            value
+                                .close()
+                                .then((value) =>
+                                    CommonSnackbar.showPositiveSnackbar(context,
+                                        'Success', 'Poll Closed Succssfully'))
+                                .onError((error, stackTrace) =>
+                                    CommonSnackbar.showNagativeSnackbar(
+                                        context, 'Error', error.toString()));
+                          },
+                          child: const Icon(Icons.timer_off_outlined),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            value
+                                .delete()
+                                .then((value) =>
+                                    CommonSnackbar.showPositiveSnackbar(context,
+                                        'Success', 'Poll Deleted Succssfully'))
+                                .onError((error, stackTrace) =>
+                                    CommonSnackbar.showNagativeSnackbar(
+                                        context, 'Error', error.toString()));
+                          },
+                          child: const Icon(Icons.delete),
+                        )
                       ],
                     )
                   ],
