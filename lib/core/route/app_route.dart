@@ -14,6 +14,9 @@ class AppRoute {
   static const commentList = 'commentList';
   static const commentListRoute = 'commentList';
 
+  static const landing = 'landing';
+  static const landingRoute = '/landing';
+
   //Create Post Routes
   static const createPost = 'createPost';
   static const createPostRoute = 'createPost/:userId';

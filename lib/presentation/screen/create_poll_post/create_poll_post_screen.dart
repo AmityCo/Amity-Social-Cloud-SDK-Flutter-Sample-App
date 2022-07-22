@@ -27,8 +27,12 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
     var targetLabel = '';
     if (_isCommunityPost) {
       targetLabel = 'Target community';
+      _targetuserTextEditController.text = widget.communityId!;
     } else {
       targetLabel = 'Target user';
+      if (widget.userId != null) {
+        _targetuserTextEditController.text = widget.userId!;
+      }
     }
 
     return Scaffold(

@@ -208,6 +208,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('Token exchange'),
               ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  GoRouter.of(context).goNamed(AppRoute.landing);
+                },
+                child: const Text('New Landing'),
+              ),
               const SizedBox(height: 200),
               TextButton(
                 onPressed: () {
