@@ -13,85 +13,109 @@ class PollWidget extends StatefulWidget {
 class _PollWidgetState extends State<PollWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(6),
-          ),
-          border: Border.all(color: Colors.grey.withOpacity(.5))),
-      child: FutureBuilder<AmityPoll>(
-        future: widget.data.getPoll(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            final valueFuture = snapshot.data;
-            // print(DateTime.now().toUtc().toIso8601String());
-            // print(value!.closedAt!.toIso8601String());
-            return StreamBuilder<AmityPoll>(
-                initialData: valueFuture!,
-                stream: valueFuture.listen.stream,
-                builder: (context, snapshot) {
-                  final value = snapshot.data!;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: List.generate(
-                            value.answers!.length,
-                            (index) => Container(
-                              margin: const EdgeInsets.symmetric(vertical: 4),
-                              child: InkWell(
-                                onTap: () {
-                                  AmitySocialClient.newPollRepository().vote(
-                                    pollId: value.pollId!,
-                                    answerIds: [value.answers![index].id!],
-                                  ).then((value) {
-                                    CommonSnackbar.showPositiveSnackbar(context,
-                                        'Success', 'Vote process successfully');
-                                  }).onError((error, stackTrace) {
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Error', error.toString());
-                                  });
-                                },
-                                child: VoteCountWidget(
-                                  title: value.answers![index].data ?? '',
-                                  votePrecentile:
-                                      value.answers![index].voteCount! /
-                                          value.totalVote,
-                                  voteCount:
-                                      value.answers![index].voteCount ?? 0,
-                                  isMyVote:
-                                      value.answers![index].isVotedByUser ??
-                                          false,
-                                  showResult:
-                                      (value.isVoted ?? false) || value.isClose,
-                                ),
+    return FutureBuilder<AmityPoll>(
+      future: widget.data.getPoll(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData && snapshot.data != null) {
+          final valueFuture = snapshot.data;
+
+          if (valueFuture?.isDeleted ?? false) {
+            return Container();
+          }
+
+          return StreamBuilder<AmityPoll>(
+            initialData: valueFuture!,
+            stream: valueFuture.listen.stream,
+            builder: (context, snapshot) {
+              final value = snapshot.data!;
+              return Container(
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(6),
+                  ),
+                  border: Border.all(
+                    color: Colors.grey.withOpacity(.5),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: List.generate(
+                          value.answers!.length,
+                          (index) => Container(
+                            margin: const EdgeInsets.symmetric(vertical: 4),
+                            child: InkWell(
+                              onTap: () {
+                                AmitySocialClient.newPollRepository().vote(
+                                  pollId: value.pollId!,
+                                  answerIds: [value.answers![index].id!],
+                                ).then((value) {
+                                  CommonSnackbar.showPositiveSnackbar(context,
+                                      'Success', 'Vote process successfully');
+                                }).onError((error, stackTrace) {
+                                  CommonSnackbar.showNagativeSnackbar(
+                                      context, 'Error', error.toString());
+                                });
+                              },
+                              child: VoteCountWidget(
+                                title: value.answers![index].data ?? '',
+                                votePrecentile:
+                                    value.answers![index].voteCount! /
+                                        value.totalVote,
+                                voteCount: value.answers![index].voteCount ?? 0,
+                                isMyVote: value.answers![index].isVotedByUser ??
+                                    false,
+                                showResult:
+                                    (value.isVoted ?? false) || value.isClose,
                               ),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                          '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString() + ' left'}')
-                    ],
-                  );
-                });
-          }
-
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-          return const Center(
-            child: CircularProgressIndicator(),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Text(
+                            '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString() + ' left'}'),
+                        const Spacer(),
+                        InkWell(
+                            onTap: () {
+                              value
+                                  .delete()
+                                  .then((value) =>
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context,
+                                          'Success',
+                                          'Poll Deleted Succssfully'))
+                                  .onError((error, stackTrace) =>
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context, 'Error', error.toString()));
+                            },
+                            child: const Icon(Icons.delete))
+                      ],
+                    )
+                  ],
+                ),
+              );
+            },
           );
-        },
-      ),
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityProfileScreen extends StatefulWidget {
@@ -159,9 +160,49 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_tabController.index == 0) {
-            //show create post for community
-            GoRouter.of(context).goNamed(AppRoute.createCommunityPostPost,
-                params: {'communityId': widget.communityId});
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Please Select Post Type'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          //show create post for community
+                          GoRouter.of(context).goNamed(
+                              AppRoute.createCommunityPostPost,
+                              params: {'communityId': widget.communityId});
+                        },
+                        child: const Text('Post'),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          //show create post for community
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return CreatePollPostScreen(
+                                  communityId: widget.communityId);
+                            },
+                          ));
+                        },
+                        child: const Text('Poll Post'),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  ElevatedButton(onPressed: () {}, child: const Text('Cancel'))
+                ],
+              ),
+            );
           } else {
             //show add member action
             EditTextDialog.show(context,
