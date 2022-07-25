@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/loading_button.dart';
@@ -46,7 +47,8 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                   final _target = _targetuserTextEditController.text.trim();
                   String question = _pollQuestionTextController.text.trim();
                   int closeInDays =
-                      int.parse(_pollScheduleTextController.text.trim());
+                      int.tryParse(_pollScheduleTextController.text.trim()) ??
+                          1;
 
                   if (closeInDays > 30) {
                     CommonSnackbar.showNagativeSnackbar(context, 'Error',
@@ -157,6 +159,8 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
               ),
               TextFormField(
                 controller: _pollScheduleTextController,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   hintText: 'Days',
                 ),
