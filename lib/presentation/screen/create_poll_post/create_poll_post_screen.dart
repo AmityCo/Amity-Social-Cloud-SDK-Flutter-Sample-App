@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/loading_button.dart';
@@ -46,11 +47,17 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                   final _target = _targetuserTextEditController.text.trim();
                   String question = _pollQuestionTextController.text.trim();
                   int closeInDays =
-                      int.parse(_pollScheduleTextController.text.trim());
+                      int.tryParse(_pollScheduleTextController.text.trim()) ??
+                          1;
 
                   if (closeInDays > 30) {
                     CommonSnackbar.showNagativeSnackbar(context, 'Error',
                         'Close days can\'t be more then 30 days');
+                    return;
+                  }
+                  if (_option.length < 2) {
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', 'Please add more then 2 option');
                     return;
                   }
                   // *
@@ -152,11 +159,13 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                 ),
               ),
               Text(
-                'Poll will close after the end of chosen time frame. You can setup upto 30 days',
+                'Poll will close after the end of chosen time frame. You can setup upto 30 days (by default 1 day)',
                 style: _themeData.textTheme.caption!.copyWith(),
               ),
               TextFormField(
                 controller: _pollScheduleTextController,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   hintText: 'Days',
                 ),
@@ -209,9 +218,28 @@ class _AddAnswerWidgetState extends State<AddAnswerWidget> {
                   minVerticalPadding: 2,
                   dense: false,
                   trailing: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _option.remove(s);
+                      widget.valueChanged(_option);
+                      setState(() {});
+                    },
                     icon: Icon(Icons.cancel),
                   ),
+                  onTap: () {
+                    EditTextDialog.show(context,
+                        title: 'Option',
+                        hintText: 'Enter Option here',
+                        defString: s,
+                        buttonText: 'OK', onPress: (value) {
+                      setState(() {
+                        if (_option.contains(s)) {
+                          _option.remove(s);
+                          _option.add(value);
+                        }
+                        widget.valueChanged(_option);
+                      });
+                    });
+                  },
                 ),
               );
             },
