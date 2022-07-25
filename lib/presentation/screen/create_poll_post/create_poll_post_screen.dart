@@ -202,7 +202,7 @@ class _AddAnswerWidgetState extends State<AddAnswerWidget> {
             ),
           ),
           Text(
-            'Create atleast two option',
+            'Create at least two option',
             style: _themeData.textTheme.caption!.copyWith(),
           ),
           const SizedBox(height: 8),
