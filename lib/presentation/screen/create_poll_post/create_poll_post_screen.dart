@@ -45,9 +45,16 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                   FocusManager.instance.primaryFocus?.unfocus();
                   final _target = _targetuserTextEditController.text.trim();
                   String question = _pollQuestionTextController.text.trim();
-                  int closeIn =
-                      int.parse(_pollScheduleTextController.text.trim()) *
-                          86400000;
+                  int closeInDays =
+                      int.parse(_pollScheduleTextController.text.trim());
+
+                  if (closeInDays > 30) {
+                    CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                        'Close days can\'t be more then 30 days');
+                    return;
+                  }
+                  // *
+                  // 86400000;
 
                   final amityPoll = await AmitySocialClient.newPollRepository()
                       .createPoll(question: question)
@@ -59,7 +66,9 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                           answerType: _multiSelection
                               ? AmityPollAnswerType.MULTIPLE
                               : AmityPollAnswerType.SINGLE)
-                      .closedIn(closedIn: Duration(milliseconds: closeIn))
+                      .closedIn(
+                          closedIn:
+                              Duration(milliseconds: closeInDays * 86400000))
                       .create();
                   if (_isCommunityPost) {
                     final amityPost =
@@ -90,68 +99,70 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
               text: 'POST'),
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextFormField(
-              controller: _targetuserTextEditController,
-              enabled: !_isCommunityPost,
-              decoration: InputDecoration(
-                label: Text(targetLabel),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _targetuserTextEditController,
+                enabled: !_isCommunityPost,
+                decoration: InputDecoration(
+                  label: Text(targetLabel),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Poll Question',
-              style: _themeData.textTheme.subtitle1!.copyWith(
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 12),
+              Text(
+                'Poll Question',
+                style: _themeData.textTheme.subtitle1!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            TextFormField(
-              controller: _pollQuestionTextController,
-              maxLength: 5000,
-              decoration: const InputDecoration(
-                hintText: 'Question',
+              TextFormField(
+                controller: _pollQuestionTextController,
+                maxLength: 5000,
+                decoration: const InputDecoration(
+                  hintText: 'Question',
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            AddAnswerWidget(
-              valueChanged: (value) {
-                _option = value;
-              },
-            ),
-            const SizedBox(height: 12),
-            CheckboxListTile(
-              title: const Text('Multiple Selection'),
-              subtitle: const Text('Allow user to select multiple option'),
-              value: _multiSelection,
-              contentPadding: EdgeInsets.zero,
-              onChanged: (value) {
-                setState(() {
-                  _multiSelection = value ?? false;
-                });
-              },
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Schedule Poll (Option)',
-              style: _themeData.textTheme.subtitle1!.copyWith(
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 12),
+              AddAnswerWidget(
+                valueChanged: (value) {
+                  _option = value;
+                },
               ),
-            ),
-            Text(
-              'Poll will close after the end of chosen time frame. You can setup upto 30 days',
-              style: _themeData.textTheme.caption!.copyWith(),
-            ),
-            TextFormField(
-              controller: _pollScheduleTextController,
-              decoration: const InputDecoration(
-                hintText: 'Days',
+              const SizedBox(height: 12),
+              CheckboxListTile(
+                title: const Text('Multiple Selection'),
+                subtitle: const Text('Allow user to select multiple option'),
+                value: _multiSelection,
+                contentPadding: EdgeInsets.zero,
+                onChanged: (value) {
+                  setState(() {
+                    _multiSelection = value ?? false;
+                  });
+                },
               ),
-            ),
-          ],
+              const SizedBox(height: 12),
+              Text(
+                'Schedule Poll (Option)',
+                style: _themeData.textTheme.subtitle1!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Poll will close after the end of chosen time frame. You can setup upto 30 days',
+                style: _themeData.textTheme.caption!.copyWith(),
+              ),
+              TextFormField(
+                controller: _pollScheduleTextController,
+                decoration: const InputDecoration(
+                  hintText: 'Days',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
