@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -85,38 +86,38 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 48),
               TextButton(
                 onPressed: () async {
-                  FocusManager.instance.primaryFocus!.unfocus();
-                  // Setup the Amity Option First
-                  String apikey = _apiKeyTextController.text.trim();
-                  String serverUrl = _serverUrlTextController.text.trim();
-                  final data = await AmityCoreClient.setup(
-                    option: AmityCoreClientOption(
-                        apiKey: apikey,
-                        httpEndpoint: AmityRegionalHttpEndpoint.values
-                            .where((element) => element.value == serverUrl)
-                            .first,
-                        showLogs: true),
-                    sycInitialization: true,
-                  );
+                  try {
+                    FocusManager.instance.primaryFocus!.unfocus();
+                    // Setup the Amity Option First
+                    String apikey = _apiKeyTextController.text.trim();
+                    String serverUrl = _serverUrlTextController.text.trim();
+                    final data = await AmityCoreClient.setup(
+                      option: AmityCoreClientOption(
+                          apiKey: apikey,
+                          httpEndpoint: AmityRegionalHttpEndpoint.values
+                              .where((element) => element.value == serverUrl)
+                              .first,
+                          showLogs: true),
+                      sycInitialization: true,
+                    );
 
-                  // await Future.delayed(Duration(seconds: 1));
+                    // await Future.delayed(Duration(seconds: 1));
 
-                  //Login the user
-                  String userId = _userIdTextController.text.trim();
-                  String userDisplayName =
-                      _displayNameTextController.text.trim();
-                  final user = await AmityCoreClient.login(userId)
-                      .displayName(userDisplayName)
-                      .submit();
+                    //Login the user
+                    String userId = _userIdTextController.text.trim();
+                    String userDisplayName =
+                        _displayNameTextController.text.trim();
+                    final user = await AmityCoreClient.login(userId)
+                        .displayName(userDisplayName)
+                        .submit();
 
-                  print(user.toString());
+                    print(user.toString());
 
-                  GoRouter.of(context).go(AppRoute.homeRoute);
-                  // Go.of(context).Navigator.of(context).pushReplacement(
-                  //       MaterialPageRoute(
-                  //         builder: (context) => const DashboardScreen(),
-                  //       ),
-                  //     );
+                    GoRouter.of(context).go(AppRoute.homeRoute);
+                  } catch (error) {
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
+                  }
                 },
                 child: Container(
                   width: 200,
