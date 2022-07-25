@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/duration_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/loading_button.dart';
 
 class PollWidget extends StatefulWidget {
   const PollWidget({Key? key, required this.data}) : super(key: key);
@@ -11,6 +12,8 @@ class PollWidget extends StatefulWidget {
 }
 
 class _PollWidgetState extends State<PollWidget> {
+  /// incase of multiple choice answer, cache the answer.
+  final answerIds = <String>[];
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<AmityPoll>(
@@ -51,16 +54,41 @@ class _PollWidgetState extends State<PollWidget> {
                             margin: const EdgeInsets.symmetric(vertical: 4),
                             child: InkWell(
                               onTap: () {
-                                AmitySocialClient.newPollRepository().vote(
-                                  pollId: value.pollId!,
-                                  answerIds: [value.answers![index].id!],
-                                ).then((value) {
-                                  CommonSnackbar.showPositiveSnackbar(context,
-                                      'Success', 'Vote process successfully');
-                                }).onError((error, stackTrace) {
-                                  CommonSnackbar.showNagativeSnackbar(
-                                      context, 'Error', error.toString());
-                                });
+                                /// dont allow use to vote if he already voted
+                                if (value.isVoted ?? false) {
+                                  CommonSnackbar.showNagativeSnackbar(context,
+                                      'Error', 'Already voted for this poll');
+                                  return;
+                                }
+
+                                /// dont allow user to vote if poll is already closed.
+                                if (value.isClose) {
+                                  CommonSnackbar.showNagativeSnackbar(context,
+                                      'Error', 'Poll is closed already');
+                                  return;
+                                }
+
+                                if (value.answerType ==
+                                    AmityPollAnswerType.SINGLE) {
+                                  AmitySocialClient.newPollRepository().vote(
+                                    pollId: value.pollId!,
+                                    answerIds: [value.answers![index].id!],
+                                  ).then((value) {
+                                    CommonSnackbar.showPositiveSnackbar(context,
+                                        'Success', 'Vote process successfully');
+                                  }).onError((error, stackTrace) {
+                                    CommonSnackbar.showNagativeSnackbar(
+                                        context, 'Error', error.toString());
+                                  });
+                                } else {
+                                  setState(() {});
+                                  if (answerIds
+                                      .contains(value.answers![index].id!)) {
+                                    answerIds.remove(value.answers![index].id!);
+                                  } else {
+                                    answerIds.add(value.answers![index].id!);
+                                  }
+                                }
                               },
                               child: VoteCountWidget(
                                 title: value.answers![index].data ?? '',
@@ -72,6 +100,10 @@ class _PollWidgetState extends State<PollWidget> {
                                     false,
                                 showResult:
                                     (value.isVoted ?? false) || value.isClose,
+                                isSelected: (value.answerType ==
+                                        AmityPollAnswerType.MULTIPLE) &&
+                                    answerIds
+                                        .contains(value.answers![index].id),
                               ),
                             ),
                           ),
@@ -84,6 +116,37 @@ class _PollWidgetState extends State<PollWidget> {
                         Text(
                             '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString() + ' left'}'),
                         const Spacer(),
+                        if (value.answerType == AmityPollAnswerType.MULTIPLE &&
+                            !(value.isVoted ?? false))
+                          SizedBox(
+                              height: 24,
+                              child: LoadingButton(
+                                  onPressed: () async {
+                                    if (answerIds.isNotEmpty) {
+                                      await AmitySocialClient
+                                              .newPollRepository()
+                                          .vote(
+                                        pollId: value.pollId!,
+                                        answerIds: answerIds,
+                                      )
+                                          .then((value) {
+                                        CommonSnackbar.showPositiveSnackbar(
+                                            context,
+                                            'Success',
+                                            'Vote process successfully');
+                                      }).onError((error, stackTrace) {
+                                        CommonSnackbar.showNagativeSnackbar(
+                                            context, 'Error', error.toString());
+                                      });
+                                    } else {
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context,
+                                          'Error',
+                                          'Please select Answer first');
+                                    }
+                                  },
+                                  text: 'Vote')),
+                        const SizedBox(width: 12),
                         InkWell(
                           onTap: () {
                             value
@@ -97,6 +160,7 @@ class _PollWidgetState extends State<PollWidget> {
                           },
                           child: const Icon(Icons.timer_off_outlined),
                         ),
+                        const SizedBox(width: 12),
                         InkWell(
                           onTap: () {
                             value
@@ -139,13 +203,17 @@ class VoteCountWidget extends StatefulWidget {
       required this.votePrecentile,
       required this.voteCount,
       this.isMyVote = false,
-      this.showResult = false})
+      this.showResult = false,
+      this.isSelected = false})
       : super(key: key);
   final String title;
   final double votePrecentile;
   final int voteCount;
   final bool isMyVote;
   final bool showResult;
+
+  /// flag to only use in case of multiple answer type, to check if this answer is selected
+  final bool isSelected;
 
   @override
   State<VoteCountWidget> createState() => _VoteCountWidgetState();
@@ -213,7 +281,9 @@ class _VoteCountWidgetState extends State<VoteCountWidget> {
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(20)),
-                border: Border.all(color: Colors.blue, width: isHover ? 2 : 1),
+                border: Border.all(
+                    color: Colors.blue,
+                    width: isHover || widget.isSelected ? 2.5 : 1),
               ),
               alignment: Alignment.center,
               child: Row(
@@ -232,24 +302,3 @@ class _VoteCountWidgetState extends State<VoteCountWidget> {
     );
   }
 }
-
- // Container(
-          //   height: 12,
-          //   width: double.maxFinite,
-          //   alignment: Alignment.centerLeft,
-          //   margin: const EdgeInsets.symmetric(vertical: 6),
-          //   decoration: const BoxDecoration(
-          //       borderRadius: BorderRadius.all(Radius.circular(4)),
-          //       color: Colors.black26),
-          //   child: LayoutBuilder(
-          //     builder: (context, constraints) {
-          //       return Container(
-          //         width: constraints.maxWidth * 0.5,
-          //         decoration: const BoxDecoration(
-          //             borderRadius: BorderRadius.all(Radius.circular(4)),
-          //             color: Colors.blue),
-          //       );
-          //     },
-          //   ),
-          // ),
-          // Text('$voteCount Votes')
