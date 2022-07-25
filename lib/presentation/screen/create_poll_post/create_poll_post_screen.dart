@@ -55,6 +55,11 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                         'Close days can\'t be more then 30 days');
                     return;
                   }
+                  if (_option.length < 2) {
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', 'Please add more then 2 option');
+                    return;
+                  }
                   // *
                   // 86400000;
 
@@ -154,7 +159,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                 ),
               ),
               Text(
-                'Poll will close after the end of chosen time frame. You can setup upto 30 days',
+                'Poll will close after the end of chosen time frame. You can setup upto 30 days (by default 1 day)',
                 style: _themeData.textTheme.caption!.copyWith(),
               ),
               TextFormField(
@@ -213,9 +218,28 @@ class _AddAnswerWidgetState extends State<AddAnswerWidget> {
                   minVerticalPadding: 2,
                   dense: false,
                   trailing: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _option.remove(s);
+                      widget.valueChanged(_option);
+                      setState(() {});
+                    },
                     icon: Icon(Icons.cancel),
                   ),
+                  onTap: () {
+                    EditTextDialog.show(context,
+                        title: 'Option',
+                        hintText: 'Enter Option here',
+                        defString: s,
+                        buttonText: 'OK', onPress: (value) {
+                      setState(() {
+                        if (_option.contains(s)) {
+                          _option.remove(s);
+                          _option.add(value);
+                        }
+                        widget.valueChanged(_option);
+                      });
+                    });
+                  },
                 ),
               );
             },
