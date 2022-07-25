@@ -16,30 +16,32 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       appBar: AppBar(
         title: Text('Post Detail - ${widget.postId}'),
       ),
-      body: Container(
-        margin: const EdgeInsets.all(12),
-        alignment: Alignment.topCenter,
-        child: Column(
-          children: [
-            Text('Post Id - ${widget.postId}'),
-            FutureBuilder<AmityPost>(
-              future: AmitySocialClient.newPostRepository()
-                  .getPost('62cbe2e938443200da3e7f73'),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return FeedWidget(amityPost: snapshot.data!);
-                }
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(snapshot.error.toString()),
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.all(12),
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              Text('Post Id - ${widget.postId}'),
+              FutureBuilder<AmityPost>(
+                future: AmitySocialClient.newPostRepository()
+                    .getPost('62cbe2e938443200da3e7f73'),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return FeedWidget(amityPost: snapshot.data!);
+                  }
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.error.toString()),
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                }
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            ),
-          ],
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
