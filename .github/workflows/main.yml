@@ -1,0 +1,21 @@
+name: Test, Build and Release apk
+on: push
+jobs:
+  build:
+    name: Build APK
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: develop
+      - uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - run: flutter --version
+      - run: flutter clean
+      - run: flutter pub get
+      # - run: flutter test
+      - run: flutter build apk --release
