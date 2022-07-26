@@ -5,17 +5,23 @@ jobs:
     name: Build APK
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repo - Sample App
+        uses: actions/checkout@v3
         with:
           repository: AmityCo/Amity-Social-Cloud-SDK-Flutter-Sample-App
           ref: develop
-      - uses: actions/setup-java@v3
+
+      - name: Jave setup
+        uses: actions/setup-java@v3
         with:
           distribution: "zulu"
           java-version: "11"
-      - uses: subosito/flutter-action@v2
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2.5.0
         with:
           channel: "stable"
+
       - run: flutter --version
       - run: flutter clean
       - run: flutter pub get
