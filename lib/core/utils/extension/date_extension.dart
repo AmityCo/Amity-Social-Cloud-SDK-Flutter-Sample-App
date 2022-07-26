@@ -16,6 +16,9 @@ extension DateExtension on DateTime {
     if (duration.inMinutes > 0) {
       return '${duration.inMinutes}m';
     }
+    if (duration.inSeconds > 0) {
+      return '${duration.inSeconds}s';
+    }
     return '${duration.inSeconds}s';
   }
 }
