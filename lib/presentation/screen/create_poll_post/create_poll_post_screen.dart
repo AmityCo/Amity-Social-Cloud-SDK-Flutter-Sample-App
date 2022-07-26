@@ -46,13 +46,13 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                   FocusManager.instance.primaryFocus?.unfocus();
                   final _target = _targetuserTextEditController.text.trim();
                   String question = _pollQuestionTextController.text.trim();
-                  int closeInDays =
+                  int closeInMins =
                       int.tryParse(_pollScheduleTextController.text.trim()) ??
-                          1;
+                          60;
 
-                  if (closeInDays > 30) {
+                  if (closeInMins > 43200) {
                     CommonSnackbar.showNagativeSnackbar(context, 'Error',
-                        'Close days can\'t be more then 30 days');
+                        'Close days can\'t be more then 30 days (30*1440 min)');
                     return;
                   }
                   if (_option.length < 2) {
@@ -74,8 +74,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                               ? AmityPollAnswerType.MULTIPLE
                               : AmityPollAnswerType.SINGLE)
                       .closedIn(
-                          closedIn:
-                              Duration(milliseconds: closeInDays * 86400000))
+                          closedIn: Duration(milliseconds: closeInMins * 60000))
                       .create();
                   if (_isCommunityPost) {
                     final amityPost =
@@ -159,7 +158,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                 ),
               ),
               Text(
-                'Poll will close after the end of chosen time frame. You can setup upto 30 days (by default 1 day)',
+                'Poll will close after the end of chosen time frame in min. You can setup upto 30 days (max 30 * 1440 min) (by default 60 min)',
                 style: _themeData.textTheme.caption!.copyWith(),
               ),
               TextFormField(
@@ -167,7 +166,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  hintText: 'Days',
+                  hintText: 'Mins',
                 ),
               ),
             ],
