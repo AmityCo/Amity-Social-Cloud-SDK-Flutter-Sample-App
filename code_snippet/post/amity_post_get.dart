@@ -19,7 +19,7 @@ class AmityPostGet {
   }
 
   //example of using AmityPost with StreamBuilder
-  void observeComment(AmityPost post) {
+  void observePost(AmityPost post) {
     StreamBuilder<AmityPost>(
         stream: post.listen,
         builder: (context, snapshot) {
