@@ -7,7 +7,7 @@ class AmityPollClose {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter close poll example
     */
-  void votePoll() {
+  void closePoll() {
     AmitySocialClient.newPollRepository()
         .closePoll(pollId: 'pollId')
         .then((value) {

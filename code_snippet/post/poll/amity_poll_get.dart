@@ -23,7 +23,6 @@ class AmityPollGet {
           final AmityPostData? amityPostData = childPost.data;
           if (amityPostData != null) {
             final pollData = amityPostData as PollData;
-            //to get the full image url without transcoding
             pollData.getPoll().then((AmityPoll poll) {
               //handle poll data here
             });
