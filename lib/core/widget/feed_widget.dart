@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/poll_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
@@ -421,10 +422,6 @@ class FeedReactionActionWidget extends StatelessWidget {
           ),
           TextButton.icon(
             onPressed: onCommentCallback,
-            // onPressed: () {
-            //   GoRouter.of(context).goNamed('commentGlobalFeed',
-            //       params: {'postId': amityPost.postId!});
-            // },
             icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
             label: Text(
               'Comment',
@@ -433,13 +430,21 @@ class FeedReactionActionWidget extends StatelessWidget {
             ),
           ),
           Visibility(
-            visible: false,
+            visible: true,
             child: TextButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                amityPost.report().flag().then((value) {
+                  CommonSnackbar.showPositiveSnackbar(
+                      context, 'Success', 'Flag the Post');
+                }).onError((error, stackTrace) {
+                  CommonSnackbar.showNagativeSnackbar(
+                      context, 'Error', error.toString());
+                });
+              },
               icon: const ImageIcon(AssetImage('assets/ic_flag.png')),
               // icon: Image.asset('assets/ic_comment.png'),
               label: Text(
-                'Flag',
+                amityPost.isFlaggedByMeCheck() ? 'Falgged' : 'Flag',
                 style: _themeData.textTheme.subtitle1!.copyWith(
                     color: Colors.black54, fontWeight: FontWeight.w600),
               ),

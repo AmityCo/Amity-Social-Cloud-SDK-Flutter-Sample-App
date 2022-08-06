@@ -4,6 +4,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/nested_comment_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -142,13 +143,22 @@ class _CommentWidgetState extends State<CommentWidget> {
                     ),
                     const SizedBox(width: 12),
                     InkWell(
-                        onTap: () {
-                          widget.onReply(value);
-                        },
-                        child: Text(
-                          'Reply',
-                          style: _themeData.textTheme.caption!.copyWith(),
-                        ))
+                      onTap: () {
+                        widget.onReply(value);
+                      },
+                      child: Text(
+                        'Reply',
+                        style: _themeData.textTheme.caption!.copyWith(),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    InkWell(
+                      onTap: () {},
+                      child: Text(
+                        '${value.flagCount} Flag',
+                        style: _themeData.textTheme.caption!.copyWith(),
+                      ),
+                    )
                   ],
                 ),
                 const SizedBox(height: 6),
@@ -199,44 +209,59 @@ class _CommentWidgetState extends State<CommentWidget> {
               ],
             ),
           ),
-          if (_user.userId == AmityCoreClient.getUserId())
-            PopupMenuButton(
-              itemBuilder: (context) {
-                return const [
-                  PopupMenuItem(
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return [
+                if (_user.userId == AmityCoreClient.getUserId())
+                  const PopupMenuItem(
                     child: Text("Edit"),
                     value: 1,
                   ),
-                  PopupMenuItem(
+                if (_user.userId == AmityCoreClient.getUserId())
+                  const PopupMenuItem(
                     child: Text("Delete (Soft)"),
                     value: 2,
                   ),
-                  PopupMenuItem(
+                if (_user.userId == AmityCoreClient.getUserId())
+                  const PopupMenuItem(
                     child: Text("Delete (Hard)"),
                     value: 3,
                     enabled: false,
-                  )
-                ];
-              },
-              child: const Icon(
-                Icons.more_vert_rounded,
-                size: 18,
-              ),
-              onSelected: (index1) {
-                if (index1 == 1) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => UpdateCommentScreen(
-                        amityComment: value,
-                      ),
-                    ),
-                  );
-                }
-                if (index1 == 2) {
-                  value.delete();
-                }
-              },
+                  ),
+                const PopupMenuItem(
+                  child: Text("Flag"),
+                  value: 4,
+                ),
+              ];
+            },
+            child: const Icon(
+              Icons.more_vert_rounded,
+              size: 18,
             ),
+            onSelected: (index1) {
+              if (index1 == 1) {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => UpdateCommentScreen(
+                      amityComment: value,
+                    ),
+                  ),
+                );
+              }
+              if (index1 == 2) {
+                value.delete();
+              }
+              if (index1 == 4) {
+                value.report().flag().then((_) {
+                  CommonSnackbar.showPositiveSnackbar(
+                      context, 'Success', 'Flag the Comment ');
+                }).onError((error, stackTrace) {
+                  CommonSnackbar.showNagativeSnackbar(
+                      context, 'Error', error.toString());
+                });
+              }
+            },
+          ),
         ],
       ),
     );
