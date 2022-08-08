@@ -433,18 +433,34 @@ class FeedReactionActionWidget extends StatelessWidget {
             visible: true,
             child: TextButton.icon(
               onPressed: () {
-                amityPost.report().flag().then((value) {
-                  CommonSnackbar.showPositiveSnackbar(
-                      context, 'Success', 'Flag the Post');
-                }).onError((error, stackTrace) {
-                  CommonSnackbar.showNagativeSnackbar(
-                      context, 'Error', error.toString());
-                });
+                if (amityPost.isFlaggedByMe) {
+                  amityPost.report().unflag().then((value) {
+                    CommonSnackbar.showPositiveSnackbar(
+                        context, 'Success', 'Unflagged the Post');
+                  }).onError((error, stackTrace) {
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
+                  });
+                } else {
+                  amityPost.report().flag().then((value) {
+                    CommonSnackbar.showPositiveSnackbar(
+                        context, 'Success', 'Flag the Post');
+                  }).onError((error, stackTrace) {
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
+                  });
+                }
               },
-              icon: const ImageIcon(AssetImage('assets/ic_flag.png')),
+              icon: amityPost.isFlaggedByMe
+                  ? const ImageIcon(
+                      AssetImage('assets/ic_flagged.png'),
+                    )
+                  : const ImageIcon(
+                      AssetImage('assets/ic_flag.png'),
+                    ),
               // icon: Image.asset('assets/ic_comment.png'),
               label: Text(
-                amityPost.isFlaggedByMeCheck() ? 'Falgged' : 'Flag',
+                amityPost.isFlaggedByMe ? 'Falgged' : 'Flag',
                 style: _themeData.textTheme.subtitle1!.copyWith(
                     color: Colors.black54, fontWeight: FontWeight.w600),
               ),
