@@ -204,39 +204,81 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                 ],
                               ),
                             ),
-                            if (_user.userId == AmityCoreClient.getUserId())
-                              PopupMenuButton(
-                                itemBuilder: (context) {
-                                  return const [
-                                    PopupMenuItem(
+                            PopupMenuButton(
+                              itemBuilder: (context) {
+                                return [
+                                  if (_user.userId ==
+                                      AmityCoreClient.getUserId())
+                                    const PopupMenuItem(
                                       child: Text("Edit"),
                                       value: 1,
                                     ),
-                                    PopupMenuItem(
+                                  if (_user.userId ==
+                                      AmityCoreClient.getUserId())
+                                    const PopupMenuItem(
                                       child: Text("Delete (Soft)"),
                                       value: 2,
                                     ),
-                                    PopupMenuItem(
+                                  if (_user.userId ==
+                                      AmityCoreClient.getUserId())
+                                    const PopupMenuItem(
                                       child: Text("Delete (Hard)"),
                                       value: 3,
                                       enabled: false,
-                                    )
-                                  ];
-                                },
-                                child: const Icon(
-                                  Icons.more_vert_rounded,
-                                  size: 18,
-                                ),
-                                onSelected: (index1) {
-                                  if (index1 == 1) {
-                                    EditCommentDialog.show(context,
-                                        amityComment: value);
-                                  }
-                                  if (index1 == 2) {
-                                    value.delete();
-                                  }
-                                },
+                                    ),
+                                  PopupMenuItem(
+                                    child: Text(value.isFlaggedByMe
+                                        ? 'Unflagged'
+                                        : 'Flag'),
+                                    value: 4,
+                                  ),
+                                ];
+                              },
+                              child: const Icon(
+                                Icons.more_vert_rounded,
+                                size: 18,
                               ),
+                              onSelected: (index1) {
+                                if (index1 == 1) {
+                                  EditCommentDialog.show(context,
+                                      amityComment: value);
+                                }
+                                if (index1 == 2) {
+                                  value.delete();
+                                }
+                                if (index1 == 4) {
+                                  if (value.isFlaggedByMe) {
+                                    value
+                                        .report()
+                                        .unflag()
+                                        .then((value) =>
+                                            CommonSnackbar.showPositiveSnackbar(
+                                                context,
+                                                'Success',
+                                                'UnFlag the Comment'))
+                                        .onError((error, stackTrace) =>
+                                            CommonSnackbar.showNagativeSnackbar(
+                                                context,
+                                                'Error',
+                                                error.toString()));
+                                  } else {
+                                    value
+                                        .report()
+                                        .flag()
+                                        .then((value) =>
+                                            CommonSnackbar.showPositiveSnackbar(
+                                                context,
+                                                'Success',
+                                                'Flag the Comment'))
+                                        .onError((error, stackTrace) =>
+                                            CommonSnackbar.showNagativeSnackbar(
+                                                context,
+                                                'Error',
+                                                error.toString()));
+                                  }
+                                }
+                              },
+                            ),
                           ],
                         ),
                       )

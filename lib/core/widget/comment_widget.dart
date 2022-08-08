@@ -253,8 +253,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                     value: 3,
                     enabled: false,
                   ),
-                const PopupMenuItem(
-                  child: Text("Flag"),
+                PopupMenuItem(
+                  child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                   value: 4,
                 ),
               ];
@@ -277,13 +277,25 @@ class _CommentWidgetState extends State<CommentWidget> {
                 value.delete();
               }
               if (index1 == 4) {
-                value.report().flag().then((_) {
-                  CommonSnackbar.showPositiveSnackbar(
-                      context, 'Success', 'Flag the Comment ');
-                }).onError((error, stackTrace) {
-                  CommonSnackbar.showNagativeSnackbar(
-                      context, 'Error', error.toString());
-                });
+                if (value.isFlaggedByMe) {
+                  value
+                      .report()
+                      .unflag()
+                      .then((value) => CommonSnackbar.showPositiveSnackbar(
+                          context, 'Success', 'UnFlag the Comment'))
+                      .onError((error, stackTrace) =>
+                          CommonSnackbar.showNagativeSnackbar(
+                              context, 'Error', error.toString()));
+                } else {
+                  value
+                      .report()
+                      .flag()
+                      .then((value) => CommonSnackbar.showPositiveSnackbar(
+                          context, 'Success', 'Flag the Comment'))
+                      .onError((error, stackTrace) =>
+                          CommonSnackbar.showNagativeSnackbar(
+                              context, 'Error', error.toString()));
+                }
               }
             },
           ),
