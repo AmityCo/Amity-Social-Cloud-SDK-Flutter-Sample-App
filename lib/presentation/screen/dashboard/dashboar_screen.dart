@@ -215,7 +215,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 },
                 child: const Text('New Landing'),
               ),
-              const SizedBox(height: 200),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
+                  AmityCoreClient.disconnect();
+                },
+                child: const Text('Disconnect socket'),
+              ),
+              const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
                   AmityCoreClient.logout().then((value) {
