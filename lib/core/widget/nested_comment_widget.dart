@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_comment_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
@@ -153,15 +154,51 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                               .copyWith(),
                                         ),
                                       ),
-                                      // InkWell(
-                                      //   onTap: () {
-                                      //     widget.onReply(value);
-                                      //   },
-                                      //   child: Text(
-                                      //     'Reply',
-                                      //     style: _themeData.textTheme.caption!.copyWith(),
-                                      //   ),
-                                      // )
+                                      const SizedBox(width: 12),
+                                      InkWell(
+                                        onTap: () {
+                                          if (value.isFlaggedByMe) {
+                                            value
+                                                .report()
+                                                .unflag()
+                                                .then((value) => CommonSnackbar
+                                                    .showPositiveSnackbar(
+                                                        context,
+                                                        'Success',
+                                                        'UnFlag the Comment'))
+                                                .onError((error, stackTrace) =>
+                                                    CommonSnackbar
+                                                        .showNagativeSnackbar(
+                                                            context,
+                                                            'Error',
+                                                            error.toString()));
+                                          } else {
+                                            value
+                                                .report()
+                                                .flag()
+                                                .then((value) => CommonSnackbar
+                                                    .showPositiveSnackbar(
+                                                        context,
+                                                        'Success',
+                                                        'Flag the Comment'))
+                                                .onError((error, stackTrace) =>
+                                                    CommonSnackbar
+                                                        .showNagativeSnackbar(
+                                                            context,
+                                                            'Error',
+                                                            error.toString()));
+                                          }
+                                        },
+                                        child: Text(
+                                          '${value.flagCount} Flag',
+                                          style: _themeData.textTheme.caption!
+                                              .copyWith(
+                                                  fontWeight:
+                                                      value.isFlaggedByMe
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal),
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ],

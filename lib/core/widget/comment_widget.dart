@@ -153,10 +153,35 @@ class _CommentWidgetState extends State<CommentWidget> {
                     ),
                     const SizedBox(width: 12),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        if (value.isFlaggedByMe) {
+                          value
+                              .report()
+                              .unflag()
+                              .then((value) =>
+                                  CommonSnackbar.showPositiveSnackbar(
+                                      context, 'Success', 'UnFlag the Comment'))
+                              .onError((error, stackTrace) =>
+                                  CommonSnackbar.showNagativeSnackbar(
+                                      context, 'Error', error.toString()));
+                        } else {
+                          value
+                              .report()
+                              .flag()
+                              .then((value) =>
+                                  CommonSnackbar.showPositiveSnackbar(
+                                      context, 'Success', 'Flag the Comment'))
+                              .onError((error, stackTrace) =>
+                                  CommonSnackbar.showNagativeSnackbar(
+                                      context, 'Error', error.toString()));
+                        }
+                      },
                       child: Text(
                         '${value.flagCount} Flag',
-                        style: _themeData.textTheme.caption!.copyWith(),
+                        style: _themeData.textTheme.caption!.copyWith(
+                            fontWeight: value.isFlaggedByMe
+                                ? FontWeight.bold
+                                : FontWeight.normal),
                       ),
                     )
                   ],
