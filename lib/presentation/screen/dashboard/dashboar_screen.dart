@@ -211,11 +211,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
+                  AmityChatClient.newMessageRepository()
+                      .getMessages('prod23')
+                      .getPagingData();
+                  // GoRouter.of(context).goNamed(AppRoute.tokenExchange);
+                },
+                child: const Text('Messsage'),
+              ),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: () {
                   GoRouter.of(context).goNamed(AppRoute.landing);
                 },
                 child: const Text('New Landing'),
               ),
-              const SizedBox(height: 200),
+              const Spacer(),
               TextButton(
                 onPressed: () {
                   AmityCoreClient.logout().then((value) {
