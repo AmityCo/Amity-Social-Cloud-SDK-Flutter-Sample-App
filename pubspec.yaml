@@ -26,6 +26,7 @@ dependencies:
   firebase_core: ^1.15.0
   firebase_messaging: ^11.2.14
   get_it: ^7.2.0
+  uuid: ^3.0.6
 
   amity_sdk:
     path: ../Amity-Social-Cloud-SDK-Flutter-Internal
