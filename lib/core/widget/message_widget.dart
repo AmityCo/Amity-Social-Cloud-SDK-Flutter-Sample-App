@@ -75,12 +75,16 @@ class MessageWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Row(
-                  children: const [
-                    // Text(
-                    //   value.createdAt!.beforeTime(),
-                    //   style: _themeData.textTheme.caption!.copyWith(),
-                    // ),
-                    // const SizedBox(width: 12),
+                  children: [
+                    Text(
+                      value.createdAt!.toIso8601String(),
+                      style: _themeData.textTheme.caption!.copyWith(),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      value.syncState!.value.toUpperCase(),
+                      style: _themeData.textTheme.caption!.copyWith(),
+                    ),
                     // InkWell(
                     //   onTap: () {
                     //     if (_isLikedByMe) {

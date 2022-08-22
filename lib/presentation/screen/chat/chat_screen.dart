@@ -84,7 +84,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   await AmityChatClient.newMessageRepository()
                       .createMessage(widget.channelId)
                       .text(text)
-                      .send();
+                      .send()
+                      .then((value) {
+                    scrollcontroller.jumpTo(0);
+                  });
                   // _controller.addAtIndex(0, _comment);
                   return;
                 },
