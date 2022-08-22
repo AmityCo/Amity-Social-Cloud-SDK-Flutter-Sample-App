@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
@@ -221,6 +222,12 @@ class AppRouter {
             name: AppRoute.createPollPost,
             path: AppRoute.createPollPostRoute,
             builder: (context, state) => const CreatePollPostScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.chat,
+            path: AppRoute.chatRoute,
+            builder: (context, state) =>
+                ChatScreen(channelId: state.params['channelId']!),
           ),
         ],
       ),
