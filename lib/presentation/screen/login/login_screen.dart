@@ -19,11 +19,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     //STAGING Server
-    // _userIdTextController.text = 'victimAndroid';
-    // _displayNameTextController.text = 'Victim Android';
-    // _apiKeyTextController.text =
-    //     'b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b';
-    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
+    _userIdTextController.text = 'victimAndroid';
+    _displayNameTextController.text = 'Victim Android';
+    _apiKeyTextController.text =
+        'b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
 
     //SG Server
     //1
@@ -34,11 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
 
     //2
-    _userIdTextController.text = 'bb01';
-    _displayNameTextController.text = 'BB01';
-    _apiKeyTextController.text =
-        'b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
+    // _userIdTextController.text = 'bb01';
+    // _displayNameTextController.text = 'BB01';
+    // _apiKeyTextController.text =
+    //     'b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
 
     //US Server
     // _apiKeyTextController.text =
@@ -110,9 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     final user = await AmityCoreClient.login(userId)
                         .displayName(userDisplayName)
                         .submit();
-
-                    print(user.toString());
-
                     GoRouter.of(context).go(AppRoute.homeRoute);
                   } catch (error) {
                     CommonSnackbar.showNagativeSnackbar(

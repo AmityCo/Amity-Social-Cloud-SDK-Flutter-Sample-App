@@ -6,7 +6,6 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:go_router/go_router.dart';
-import 'package:uuid/uuid.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -18,11 +17,6 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
-    AmitySocialClient.newPostRepository()
-        .getPost('62cbe2e938443200da3e7f73')
-        .then((value) {
-      print(value.toString());
-    });
     super.initState();
   }
 
@@ -227,14 +221,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    AmityChatClient.newMessageRepository()
-                        .createMessage('prod23')
-                        .text(Uuid().v4())
-                        .send()
-                        .then((value) {});
-                    // GoRouter.of(context).goNamed(AppRoute.tokenExchange);
+                    // EditTextDialog.show(context, hintText: 'Enter Channel Name',
+                    //     onPress: (value) {
+                    GoRouter.of(context)
+                        .goNamed(AppRoute.chat, params: {'channelId': 'n108'});
+                    // });
                   },
-                  child: const Text('Send Messsage'),
+                  child: const Text('Chat Screen'),
                 ),
                 const SizedBox(height: 20),
                 TextButton(
