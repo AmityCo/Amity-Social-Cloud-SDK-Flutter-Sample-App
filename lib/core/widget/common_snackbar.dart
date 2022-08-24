@@ -33,7 +33,8 @@ class CommonSnackbar {
   }
 
   static void showNagativeSnackbar(
-      BuildContext context, String title, String message) {
+      BuildContext context, String title, String message,
+      {Duration duration = const Duration(seconds: 3)}) {
     final _themeData = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -56,6 +57,7 @@ class CommonSnackbar {
             ),
           ],
         ),
+        duration: duration,
         backgroundColor: Colors.red,
       ),
     );

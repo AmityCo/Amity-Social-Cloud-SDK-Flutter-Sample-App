@@ -221,11 +221,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    // EditTextDialog.show(context, hintText: 'Enter Channel Name',
-                    //     onPress: (value) {
-                    GoRouter.of(context)
-                        .goNamed(AppRoute.chat, params: {'channelId': 'n108'});
-                    // });
+                    EditTextDialog.show(context,
+                        hintText: 'Enter Channel Name',
+                        buttonText: 'Join', onPress: (value) {
+                      GoRouter.of(context)
+                          .goNamed(AppRoute.chat, params: {'channelId': value});
+                    });
                   },
                   child: const Text('Chat Screen'),
                 ),

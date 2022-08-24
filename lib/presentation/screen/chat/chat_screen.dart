@@ -1,7 +1,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/add_message_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/message_widget.dart';
+import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.channelId}) : super(key: key);
@@ -20,12 +22,30 @@ class _ChatScreenState extends State<ChatScreen> {
     messageLiveCollection = AmityChatClient.newMessageRepository()
         .getMessages(widget.channelId)
         .stackFromEnd(true)
-        .getLiveCollection(pageSize: 20);
+        .getLiveCollection(pageSize: 20)
+      ..onError((error, stacktrac) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                content: Text('${error.toString()}'),
+                title: Text('Error'),
+                actions: [
+                  ElevatedButton(
+                      onPressed: () {
+                        GoRouter.of(context).pop();
+                      },
+                      child: Text('Back'))
+                ],
+              );
+            });
+      });
 
     messageLiveCollection.asStream().listen((event) {
       print(event.map((e) => "${e.channelSegment}, ").toList());
       setState(() {
-        amityMessages = event;
+        if (mounted) amityMessages = event;
       });
     });
 
@@ -87,6 +107,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       .send()
                       .then((value) {
                     scrollcontroller.jumpTo(0);
+                  }).onError((error, stackTrace) {
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
                   });
                   // _controller.addAtIndex(0, _comment);
                   return;
