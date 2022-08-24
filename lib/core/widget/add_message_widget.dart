@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 
 class AddMessageWidget extends StatelessWidget {
   AddMessageWidget(this._amityUser, this._addCommentCallback, {Key? key})
@@ -36,6 +37,7 @@ class AddMessageWidget extends StatelessWidget {
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: TextFormField(
                 controller: _commentTextEditController,
+                // maxLength: 20000,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
@@ -49,8 +51,18 @@ class AddMessageWidget extends StatelessWidget {
             onPressed: () {
               FocusManager.instance.primaryFocus!.unfocus();
               final text = _commentTextEditController.text.trim();
-              _addCommentCallback.call(text);
-              _commentTextEditController.text = '';
+              if (text.isNotEmpty) {
+                _addCommentCallback.call(text);
+                _commentTextEditController.text = '';
+              } else {
+                CommonSnackbar.showNagativeSnackbar(
+                  context,
+                  'Error',
+                  'Please enter message',
+                  duration: const Duration(seconds: 1),
+                );
+              }
+
               // _amityPost
               //     .comment()
               //     .create()
