@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:image_downloader/image_downloader.dart';
 
 class MessageWidget extends StatelessWidget {
-  const MessageWidget({Key? key, required this.message}) : super(key: key);
+  MessageWidget({Key? key, required this.message}) : super(key: key);
   final AmityMessage message;
   @override
   Widget build(BuildContext context) {
@@ -66,29 +70,18 @@ class MessageWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: _user.displayName!,
-                        style: _themeData.textTheme.bodyText1!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const WidgetSpan(child: SizedBox(width: 6)),
-                      _notSupportedDataType
-                          ? TextSpan(
-                              text:
-                                  'DataType Not Supported : ${message.type?.value}',
-                              style: _themeData.textTheme.bodyText2!.copyWith(),
-                            )
-                          : TextSpan(
-                              text: text,
-                              style: _themeData.textTheme.bodyText2!.copyWith(),
-                            )
-                    ],
+                Text(
+                  _user.displayName!,
+                  style: _themeData.textTheme.bodyText1!.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                _notSupportedDataType
+                    ? Text(
+                        'DataType Not Supported : ${message.type?.value}',
+                        style: _themeData.textTheme.bodyText2!.copyWith(),
+                      )
+                    : _getContentWidget(context, data!),
                 const SizedBox(height: 6),
                 Row(
                   children: [
@@ -109,6 +102,129 @@ class MessageWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _getContentWidget(BuildContext context, AmityMessageData data) {
+    final _themeData = Theme.of(context);
+    if (data is MessageTextData) {
+      return Text(
+        data.text!,
+        style: _themeData.textTheme.bodyText2!.copyWith(),
+      );
+    }
+    if (data is MessageImageData) {
+      return Column(
+        children: [
+          SizedBox(
+            width: 100,
+            height: 100,
+            child: data.image.hasLocalPreview
+                ? Image.file(
+                    File(data.image.getFilePath!),
+                    fit: BoxFit.cover,
+                  )
+                : Stack(
+                    children: [
+                      Image.network(
+                        data.image.getUrl(AmityImageSize.MEDIUM),
+                        fit: BoxFit.cover,
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withOpacity(.3)),
+                          child: InkWell(
+                            child: const Icon(
+                              Icons.download,
+                              color: Colors.white,
+                            ),
+                            onTap: () async {
+                              var imageId = await ImageDownloader.downloadImage(
+                                  data.image.getUrl(AmityImageSize.MEDIUM));
+                              if (imageId == null) {
+                                return;
+                              }
+
+                              // Below is a method of obtaining saved image information.
+                              var fileName =
+                                  await ImageDownloader.findName(imageId);
+                              var path =
+                                  await ImageDownloader.findPath(imageId);
+
+                              print(fileName);
+                              print(path);
+
+                              CommonSnackbar.showPositiveSnackbar(
+                                  context, 'Success', 'Image Save $fileName');
+
+                              // await GallerySaver.saveImage(path!).then(
+                              //   (value) {
+                              //     CommonSnackbar.showPositiveSnackbar(context,
+                              //         'Success', 'Image Saved in Gallary');
+                              //   },
+                              // ).onError((error, stackTrace) {
+                              //   CommonSnackbar.showNagativeSnackbar(
+                              //       context, 'Error', error.toString());
+                              // });
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+          ),
+          if (data.caption != null && data.caption!.isNotEmpty)
+            Text(
+              '${data.caption}',
+              style: _themeData.textTheme.bodyText2,
+            ),
+        ],
+      );
+    }
+
+    if (data is MessageFileData) {
+      return RichText(
+        text: TextSpan(children: [
+          TextSpan(
+            text: '${data.caption ?? ''} \n',
+            style: _themeData.textTheme.bodyText2,
+          ),
+          WidgetSpan(
+              child: data.file.hasLocalPreview
+                  ? TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.attach_file_rounded),
+                      label: Text(
+                        data.file.getFilePath!.split('/').last,
+                      ),
+                    )
+                  : TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.attach_file_rounded),
+                      label: Text(
+                        data.file.getUrl.split('/').last,
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.all(12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        primary: Colors.black,
+                        backgroundColor: Colors.grey.shade300,
+                      ),
+                    ))
+        ]),
+      );
+    }
+
+    return Text(
+      'Still not supported',
+      style: _themeData.textTheme.bodyText2!.copyWith(),
     );
   }
 }
