@@ -100,18 +100,46 @@ class _ChatScreenState extends State<ChatScreen> {
               margin: const EdgeInsets.all(12),
               child: AddMessageWidget(
                 AmityCoreClient.getCurrentUser(),
-                (text) async {
+                (value) async {
+                  if (value.image != null) {
+                    await AmityChatClient.newMessageRepository()
+                        .createMessage(widget.channelId)
+                        .image(Uri(path: value.image!.path))
+                        .caption(value.message!)
+                        .send()
+                        .then((value) {
+                      scrollcontroller.jumpTo(0);
+                    }).onError((error, stackTrace) {
+                      CommonSnackbar.showNagativeSnackbar(
+                          context, 'Error', error.toString());
+                    });
+                    return;
+                  }
+                  if (value.file != null) {
+                    await AmityChatClient.newMessageRepository()
+                        .createMessage(widget.channelId)
+                        .file(Uri(path: value.file!.path))
+                        .caption(value.message!)
+                        .send()
+                        .then((value) {
+                      scrollcontroller.jumpTo(0);
+                    }).onError((error, stackTrace) {
+                      CommonSnackbar.showNagativeSnackbar(
+                          context, 'Error', error.toString());
+                    });
+                    return;
+                  }
                   await AmityChatClient.newMessageRepository()
                       .createMessage(widget.channelId)
-                      .text(text)
+                      .text(value.message!)
                       .send()
                       .then((value) {
                     scrollcontroller.jumpTo(0);
                   }).onError((error, stackTrace) {
+                    print(stackTrace.toString());
                     CommonSnackbar.showNagativeSnackbar(
                         context, 'Error', error.toString());
                   });
-                  // _controller.addAtIndex(0, _comment);
                   return;
                 },
               ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 
@@ -67,6 +69,7 @@ class MessageWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
+                  textAlign: TextAlign.start,
                   text: TextSpan(
                     children: [
                       TextSpan(
@@ -82,10 +85,7 @@ class MessageWidget extends StatelessWidget {
                                   'DataType Not Supported : ${message.type?.value}',
                               style: _themeData.textTheme.bodyText2!.copyWith(),
                             )
-                          : TextSpan(
-                              text: text,
-                              style: _themeData.textTheme.bodyText2!.copyWith(),
-                            )
+                          : WidgetSpan(child: _getContentWidget(context, data!))
                     ],
                   ),
                 ),
@@ -109,6 +109,80 @@ class MessageWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _getContentWidget(BuildContext context, AmityMessageData data) {
+    final _themeData = Theme.of(context);
+    if (data is MessageTextData) {
+      return Text(
+        data.text!,
+        style: _themeData.textTheme.bodyText2!.copyWith(),
+      );
+    }
+    if (data is MessageImageData) {
+      return RichText(
+        text: TextSpan(children: [
+          TextSpan(
+            text: '${data.caption ?? ''} \n',
+            style: _themeData.textTheme.bodyText2,
+          ),
+          WidgetSpan(
+              child: SizedBox(
+            width: 100,
+            height: 100,
+            child: data.image.hasLocalPreview
+                ? Image.file(
+                    File(data.image.getFilePath!),
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    data.image.getUrl(AmityImageSize.MEDIUM),
+                    fit: BoxFit.cover,
+                  ),
+          ))
+        ]),
+      );
+    }
+
+    if (data is MessageFileData) {
+      return RichText(
+        text: TextSpan(children: [
+          TextSpan(
+            text: '${data.caption ?? ''} \n',
+            style: _themeData.textTheme.bodyText2,
+          ),
+          WidgetSpan(
+              child: data.file.hasLocalPreview
+                  ? TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.attach_file_rounded),
+                      label: Text(
+                        data.file.getFilePath!.split('/').last,
+                      ),
+                    )
+                  : TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.attach_file_rounded),
+                      label: Text(
+                        data.file.getUrl.split('/').last,
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.all(12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        primary: Colors.black,
+                        backgroundColor: Colors.grey.shade300,
+                      ),
+                    ))
+        ]),
+      );
+    }
+
+    return Text(
+      'Still not supported',
+      style: _themeData.textTheme.bodyText2!.copyWith(),
     );
   }
 }
