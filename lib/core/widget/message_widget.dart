@@ -114,9 +114,11 @@ class MessageWidget extends StatelessWidget {
       );
     }
     if (data is MessageImageData) {
+
       return Column(
         children: [
           SizedBox(
+
             width: 100,
             height: 100,
             child: data.image.hasLocalPreview
@@ -124,6 +126,7 @@ class MessageWidget extends StatelessWidget {
                     File(data.image.getFilePath!),
                     fit: BoxFit.cover,
                   )
+
                 : Stack(
                     children: [
                       Image.network(
@@ -184,6 +187,7 @@ class MessageWidget extends StatelessWidget {
               style: _themeData.textTheme.bodyText2,
             ),
         ],
+
       );
     }
 
