@@ -82,7 +82,7 @@ class MessageWidget extends StatelessWidget {
                         style: _themeData.textTheme.bodyText2!.copyWith(),
                       )
                     : _getContentWidget(context, data!),
-                const SizedBox(height: 6),
+                // const SizedBox(height: 6),
                 Row(
                   children: [
                     Text(
@@ -107,79 +107,86 @@ class MessageWidget extends StatelessWidget {
 
   Widget _getContentWidget(BuildContext context, AmityMessageData data) {
     final _themeData = Theme.of(context);
+
     if (data is MessageTextData) {
       return Text(
         data.text!,
         style: _themeData.textTheme.bodyText2!.copyWith(),
       );
     }
+
     if (data is MessageImageData) {
-
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-
-            width: 100,
-            height: 100,
-            child: data.image.hasLocalPreview
-                ? Image.file(
-                    File(data.image.getFilePath!),
-                    fit: BoxFit.cover,
-                  )
-
-                : Stack(
-                    children: [
-                      Image.network(
-                        data.image.getUrl(AmityImageSize.MEDIUM),
-                        fit: BoxFit.cover,
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          margin: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black.withOpacity(.3)),
-                          child: InkWell(
-                            child: const Icon(
-                              Icons.download,
-                              color: Colors.white,
-                            ),
-                            onTap: () async {
-                              var imageId = await ImageDownloader.downloadImage(
-                                  data.image.getUrl(AmityImageSize.MEDIUM));
-                              if (imageId == null) {
-                                return;
-                              }
-
-                              // Below is a method of obtaining saved image information.
-                              var fileName =
-                                  await ImageDownloader.findName(imageId);
-                              var path =
-                                  await ImageDownloader.findPath(imageId);
-
-                              print(fileName);
-                              print(path);
-
-                              CommonSnackbar.showPositiveSnackbar(
-                                  context, 'Success', 'Image Save $fileName');
-
-                              // await GallerySaver.saveImage(path!).then(
-                              //   (value) {
-                              //     CommonSnackbar.showPositiveSnackbar(context,
-                              //         'Success', 'Image Saved in Gallary');
-                              //   },
-                              // ).onError((error, stackTrace) {
-                              //   CommonSnackbar.showNagativeSnackbar(
-                              //       context, 'Error', error.toString());
-                              // });
-                            },
+          Container(
+            // color: Colors.red,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: data.image.hasLocalPreview
+                  ? Image.file(
+                      File(data.image.getFilePath!),
+                      fit: BoxFit.cover,
+                    )
+                  : Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.network(
+                            data.image.getUrl(AmityImageSize.MEDIUM),
+                            fit: BoxFit.cover,
                           ),
                         ),
-                      )
-                    ],
-                  ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            margin: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withOpacity(.3)),
+                            child: InkWell(
+                              child: const Icon(
+                                Icons.download,
+                                color: Colors.white,
+                              ),
+                              onTap: () async {
+                                var imageId =
+                                    await ImageDownloader.downloadImage(data
+                                        .image
+                                        .getUrl(AmityImageSize.MEDIUM));
+                                if (imageId == null) {
+                                  return;
+                                }
+
+                                // Below is a method of obtaining saved image information.
+                                var fileName =
+                                    await ImageDownloader.findName(imageId);
+                                var path =
+                                    await ImageDownloader.findPath(imageId);
+
+                                print(fileName);
+                                print(path);
+
+                                CommonSnackbar.showPositiveSnackbar(
+                                    context, 'Success', 'Image Save $fileName');
+
+                                // await GallerySaver.saveImage(path!).then(
+                                //   (value) {
+                                //     CommonSnackbar.showPositiveSnackbar(context,
+                                //         'Success', 'Image Saved in Gallary');
+                                //   },
+                                // ).onError((error, stackTrace) {
+                                //   CommonSnackbar.showNagativeSnackbar(
+                                //       context, 'Error', error.toString());
+                                // });
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+            ),
           ),
           if (data.caption != null && data.caption!.isNotEmpty)
             Text(
@@ -187,42 +194,81 @@ class MessageWidget extends StatelessWidget {
               style: _themeData.textTheme.bodyText2,
             ),
         ],
-
       );
     }
 
     if (data is MessageFileData) {
-      return RichText(
-        text: TextSpan(children: [
-          TextSpan(
-            text: '${data.caption ?? ''} \n',
-            style: _themeData.textTheme.bodyText2,
-          ),
-          WidgetSpan(
-              child: data.file.hasLocalPreview
-                  ? TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.attach_file_rounded),
-                      label: Text(
-                        data.file.getFilePath!.split('/').last,
-                      ),
-                    )
-                  : TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.attach_file_rounded),
-                      label: Text(
-                        data.file.getUrl.split('/').last,
-                      ),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          data.file.hasLocalPreview
+              ? TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.attach_file_rounded),
+                  label: Text(
+                    data.file.getFilePath!.split('/').last,
+                  ),
+                )
+              : Container(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: const Icon(Icons.attach_file_rounded),
+                    title: Text(
+                      data.file.fileName,
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withOpacity(.3)),
+                      child: InkWell(
+                        child: const Icon(
+                          Icons.download,
+                          color: Colors.white,
                         ),
-                        primary: Colors.black,
-                        backgroundColor: Colors.grey.shade300,
+                        onTap: () async {
+                          var fileId = await ImageDownloader.downloadImage(
+                              data.file.getUrl);
+                          if (fileId == null) {
+                            return;
+                          }
+
+                          // Below is a method of obtaining saved image information.
+                          var fileName = await ImageDownloader.findName(fileId);
+                          var path = await ImageDownloader.findPath(fileId);
+
+                          print(fileName);
+                          print(path);
+                        },
                       ),
-                    ))
-        ]),
+                    ),
+                    tileColor: Colors.red,
+                    focusColor: Colors.red,
+                    selectedColor: Colors.red,
+                  ),
+                ),
+          // TextButton.icon(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.attach_file_rounded),
+          //     label: Text(
+          //       data.file.getUrl.split('/').last,
+          //     ),
+          //     style: TextButton.styleFrom(
+          //       padding: const EdgeInsets.all(12),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(12),
+          //       ),
+          //       primary: Colors.black,
+          //       backgroundColor: Colors.grey.shade300,
+          //     ),
+          //   ),
+          if (data.caption != null && data.caption!.isNotEmpty)
+            Text(
+              '${data.caption}',
+              style: _themeData.textTheme.bodyText2,
+            ),
+        ],
       );
     }
 
