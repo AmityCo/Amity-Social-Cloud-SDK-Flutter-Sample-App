@@ -23,6 +23,8 @@ class MessageWidget extends StatelessWidget {
 
     bool _isLikedByMe = value.myReactions?.isNotEmpty ?? false;
 
+    // if (value.messageId == '631882bd09045c4fc8281a57') print(value.toString());
+
     AmityMessageData? data = value.data;
     if (data != null) {
       if (data is MessageTextData) text = data.text!;
@@ -33,6 +35,10 @@ class MessageWidget extends StatelessWidget {
     if (value.isDeleted ?? false) {
       return Container(
         margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade200,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Row(
           children: [
             const Icon(Icons.info_rounded),
@@ -46,60 +52,163 @@ class MessageWidget extends StatelessWidget {
       );
     }
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-      // decoration: BoxDecoration(color: Colors.red),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onLongPress: () {
+        _reactionDialog(context);
+      },
+      child: Stack(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
             decoration: BoxDecoration(
-                shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
-            child: _user.avatarUrl != null
-                ? Image.network(
-                    _user.avatarUrl!,
-                    fit: BoxFit.fill,
-                  )
-                : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: const [
+                BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)
+              ],
+            ),
+            // color: Colors.red,
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _user.displayName!,
-                  style: _themeData.textTheme.bodyText1!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey.withOpacity(.3)),
+                  child: _user.avatarUrl != null
+                      ? Image.network(
+                          _user.avatarUrl!,
+                          fit: BoxFit.fill,
+                        )
+                      : Image.asset('assets/user_placeholder.png'),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
-                _notSupportedDataType
-                    ? Text(
-                        'DataType Not Supported : ${message.type?.value}',
-                        style: _themeData.textTheme.bodyText2!.copyWith(),
-                      )
-                    : _getContentWidget(context, data!),
-                // const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Text(
-                      value.createdAt?.toLocal().toIso8601String() ??
-                          DateTime.now().toLocal().toIso8601String(),
-                      style: _themeData.textTheme.caption!.copyWith(),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      value.syncState!.value.toUpperCase(),
-                      style: _themeData.textTheme.caption!.copyWith(),
-                    ),
-                  ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _user.displayName!,
+                        style: _themeData.textTheme.bodyText1!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      _notSupportedDataType
+                          ? Text(
+                              'DataType Not Supported : ${message.type?.value}',
+                              style: _themeData.textTheme.bodyText2!.copyWith(),
+                            )
+                          : _getContentWidget(context, data!),
+                      // const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Text(
+                            value.createdAt?.toLocal().toIso8601String() ??
+                                DateTime.now().toLocal().toIso8601String(),
+                            style: _themeData.textTheme.caption!.copyWith(),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            value.syncState!.value.toUpperCase(),
+                            style: _themeData.textTheme.caption!.copyWith(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
+          if (_isLikedByMe)
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Stack(
+                  children: [
+                    if (value.myReactions!.contains('like'))
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blue.shade100,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 1,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            message
+                                .react()
+                                .removeReaction('like')
+                                .then((value) {
+                              CommonSnackbar.showPositiveSnackbar(context,
+                                  'Success', 'Reaction Removed Successfully');
+                            }).onError(
+                              (error, stackTrace) {
+                                CommonSnackbar.showNagativeSnackbar(
+                                    context,
+                                    'Fail',
+                                    'Reaction Removed Failed ${error.toString()}');
+                              },
+                            );
+                          },
+                          icon: Image.asset(
+                            'assets/ic_liked.png',
+                            height: 18,
+                            width: 18,
+                          ),
+                        ),
+                      ),
+                    if (value.myReactions!.contains('love'))
+                      Container(
+                        margin: const EdgeInsets.only(left: 30),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.blue.shade100,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 1,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            message
+                                .react()
+                                .removeReaction('love')
+                                .then((value) {
+                              CommonSnackbar.showPositiveSnackbar(context,
+                                  'Success', 'Reaction Removed Successfully');
+                            }).onError(
+                              (error, stackTrace) {
+                                CommonSnackbar.showNagativeSnackbar(
+                                    context,
+                                    'Fail',
+                                    'Reaction Removed Failed ${error.toString()}');
+                              },
+                            );
+                          },
+                          icon: Image.asset(
+                            'assets/ic_heart.png',
+                            height: 18,
+                            width: 18,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            )
         ],
       ),
     );
@@ -243,9 +352,9 @@ class MessageWidget extends StatelessWidget {
                         },
                       ),
                     ),
-                    tileColor: Colors.red,
-                    focusColor: Colors.red,
-                    selectedColor: Colors.red,
+                    // tileColor: Colors.red,
+                    // focusColor: Colors.red,
+                    // selectedColor: Colors.red,
                   ),
                 ),
           // TextButton.icon(
@@ -275,6 +384,80 @@ class MessageWidget extends StatelessWidget {
     return Text(
       'Still not supported',
       style: _themeData.textTheme.bodyText2!.copyWith(),
+    );
+  }
+
+  void _reactionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (innercontext) {
+        return AlertDialog(
+          title: const Text('Reaction'),
+          content: Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey.shade300,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    message.react().addReaction('like').then((value) {
+                      CommonSnackbar.showPositiveSnackbar(context, 'Success',
+                          'Reaction Added Successfully - like');
+                    }).onError(
+                      (error, stackTrace) {
+                        CommonSnackbar.showNagativeSnackbar(context, 'Fail',
+                            'Reaction Added Failed ${error.toString()} - like');
+                      },
+                    );
+                  },
+                  icon: Image.asset(
+                    'assets/ic_liked.png',
+                    height: 18,
+                    width: 18,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey.shade300,
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    message.react().addReaction('love').then((value) {
+                      CommonSnackbar.showPositiveSnackbar(context, 'Success',
+                          'Reaction Added Successfully - love');
+                    }).onError(
+                      (error, stackTrace) {
+                        CommonSnackbar.showNagativeSnackbar(context, 'Fail',
+                            'Reaction Added Failed ${error.toString()} - love');
+                      },
+                    );
+                  },
+                  icon: Image.asset(
+                    'assets/ic_heart.png',
+                    height: 18,
+                    width: 18,
+                  ),
+                ),
+              )
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

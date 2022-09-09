@@ -23,7 +23,8 @@ class _ChatScreenState extends State<ChatScreen> {
         .getMessages(widget.channelId)
         .stackFromEnd(true)
         .getLiveCollection(pageSize: 20)
-      ..onError((error, stacktrac) {
+      ..onError((error, stacktrace) {
+        print(stacktrace.toString());
         showDialog(
             context: context,
             barrierDismissible: false,
@@ -44,9 +45,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
     messageLiveCollection.asStream().listen((event) {
       print(event.map((e) => "${e.channelSegment}, ").toList());
-      setState(() {
-        if (mounted) amityMessages = event;
-      });
+      if (mounted) {
+        setState(() {
+          amityMessages = event;
+        });
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -69,6 +72,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -86,11 +90,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   final message = amityMessages[index];
                   return Container(
                     // height: 120,
-                    margin: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    // margin: const EdgeInsets.all(12),
+                    // decoration: BoxDecoration(
+                    //   color: Colors.grey.shade200,
+                    //   borderRadius: BorderRadius.circular(12),
+                    // ),
                     child: MessageWidget(message: message),
                   );
                 },
