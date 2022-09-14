@@ -25,6 +25,7 @@ import 'package:flutter_social_sample_app/presentation/screen/my_following_list/
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/post_detail/post_detail_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/reaction_list_message/reaction_list_message_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
@@ -211,6 +212,12 @@ class AppRouter {
             path: AppRoute.commentReactionRoute,
             builder: (context, state) => ReactionListCommentScreen(
                 commentId: state.params['commentId']!),
+          ),
+          GoRoute(
+            name: AppRoute.messageReaction,
+            path: AppRoute.messageReactionRoute,
+            builder: (context, state) => ReactionListMessageScreen(
+                messageId: state.params['messageId']!),
           ),
           GoRoute(
             name: AppRoute.postDetail,
