@@ -83,6 +83,9 @@ class AppRoute {
   static const commentReaction = 'commentReaction';
   static const commentReactionRoute = 'commentReaction/:commentId';
 
+  static const messageReaction = 'messageReaction';
+  static const messageReactionRoute = 'messageReaction/:messageId';
+
   //Token exchange Routes
   static const tokenExchange = 'tokenExchange';
   static const tokenExchangeRoute = 'tokenExchange';
