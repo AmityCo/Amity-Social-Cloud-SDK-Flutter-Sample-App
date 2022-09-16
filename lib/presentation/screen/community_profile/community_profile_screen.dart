@@ -5,6 +5,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_banned_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +25,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
   Future<AmityCommunity>? _future;
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
 
     _future = AmitySocialClient.newCommunityRepository()
         .getCommunity(widget.communityId);
@@ -33,7 +34,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final memberScreen = CommunityMembercreen(
+    final memberScreen = CommunityMemberScreen(
+      communityId: widget.communityId,
+      showAppBar: false,
+    );
+    final memberBannedScreen = CommunityMemberBannedScreen(
       communityId: widget.communityId,
       showAppBar: false,
     );
@@ -124,7 +129,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         ),
                         SliverToBoxAdapter(
                           child: DefaultTabController(
-                            length: 2,
+                            length: 3,
                             child: TabBar(
                               controller: _tabController,
                               tabs: const [
@@ -133,6 +138,9 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                                 ),
                                 Tab(
                                   text: 'Members',
+                                ),
+                                Tab(
+                                  text: 'Banned Members',
                                 )
                               ],
                             ),
@@ -147,6 +155,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         CommunityFeedScreen(
                             communityId: widget.communityId, showAppBar: false),
                         memberScreen,
+                        memberBannedScreen,
                       ],
                     ),
                   );
