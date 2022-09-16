@@ -233,6 +233,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
+                    EditTextDialog.show(context,
+                        hintText: 'Enter Channel Name',
+                        defString: 'live200',
+                        buttonText: 'Join', onPress: (value) {
+                      GoRouter.of(context).pushNamed(AppRoute.channelProfile,
+                          params: {'channelId': value});
+                      // AmityChatClient.newChannelRepository().getChannel(value);
+                    });
+                  },
+                  child: const Text('Get Channel'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
                     GoRouter.of(context).goNamed(AppRoute.landing);
                   },
                   child: const Text('New Landing'),

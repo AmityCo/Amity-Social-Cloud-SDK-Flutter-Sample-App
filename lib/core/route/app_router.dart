@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/presentation/screen/channel_profile/channel_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
@@ -247,6 +248,13 @@ class AppRouter {
         name: AppRoute.landing,
         path: AppRoute.landingRoute,
         builder: (context, state) => const LandingScreen(),
+      ),
+      GoRoute(
+        name: AppRoute.channelProfile,
+        path: AppRoute.channelProfileRoute,
+        builder: (context, state) => ChannelProfileScreen(
+          channelId: state.params['channelId']!,
+        ),
       ),
     ],
     redirect: (state) {

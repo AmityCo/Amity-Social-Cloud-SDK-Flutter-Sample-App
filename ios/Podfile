@@ -37,5 +37,12 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+      config.build_settings["DEVELOPMENT_TEAM"] = "37Z583JR6K"
+      config.build_settings['CODE_SIGN_IDENTITY'] = ''
+      config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+      # config.build_settings['ENABLE_BITCODE'] = 'YES'
+    end
   end
 end

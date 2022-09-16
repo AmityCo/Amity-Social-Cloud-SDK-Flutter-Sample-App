@@ -98,4 +98,7 @@ class AppRoute {
 
   static const chat = 'chat';
   static const chatRoute = 'chatRoute/:channelId';
+
+  static const channelProfile = 'channelProfile';
+  static const channelProfileRoute = '/channelProfile/:channelId';
 }
