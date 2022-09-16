@@ -5,18 +5,19 @@ import 'package:flutter_social_sample_app/core/widget/community_member_widget.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
-class CommunityMemberScreen extends StatefulWidget {
-  CommunityMemberScreen(
+class CommunityMemberBannedScreen extends StatefulWidget {
+  CommunityMemberBannedScreen(
       {Key? key, required this.communityId, this.showAppBar = true})
       : super(key: key);
   final String communityId;
   final bool showAppBar;
   late _CommunityMemberScreenState screenState;
   @override
-  State<CommunityMemberScreen> createState() => _CommunityMemberScreenState();
+  State<CommunityMemberBannedScreen> createState() =>
+      _CommunityMemberScreenState();
 }
 
-class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
+class _CommunityMemberScreenState extends State<CommunityMemberBannedScreen> {
   late PagingController<AmityCommunityMember> _controller;
   final amityCommunityMembers = <AmityCommunityMember>[];
 
@@ -28,7 +29,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
       pageFuture: (token) => AmitySocialClient.newCommunityRepository()
           .membership(widget.communityId)
           .getMembers()
-          .filter(AmityCommunityMembershipFilter.MEMBER)
+          .filter(AmityCommunityMembershipFilter.BANNED)
           .sortBy(AmityMembershipSortOption.LAST_CREATED)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,

@@ -119,8 +119,8 @@ class AppRouter {
           GoRoute(
             name: AppRoute.communityMember,
             path: AppRoute.communityMemmberRoute,
-            builder: (context, state) =>
-                CommunityMembercreen(communityId: state.params['communityId']!),
+            builder: (context, state) => CommunityMemberScreen(
+                communityId: state.params['communityId']!),
           ),
           GoRoute(
             name: AppRoute.userFeed,

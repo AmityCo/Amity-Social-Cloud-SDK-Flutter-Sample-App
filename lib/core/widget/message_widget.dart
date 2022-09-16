@@ -437,6 +437,7 @@ class MessageWidget extends StatelessWidget {
   }
 
   void _reactionDialog(BuildContext context, AmityMessage message) {
+    final myReaction = message.myReactions ?? [];
     showDialog(
       context: context,
       builder: (innercontext) {
@@ -453,16 +454,21 @@ class MessageWidget extends StatelessWidget {
                   ),
                   child: IconButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      message.react().addReaction('like').then((value) {
-                        CommonSnackbar.showPositiveSnackbar(context, 'Success',
-                            'Reaction Added Successfully - like');
-                      }).onError(
-                        (error, stackTrace) {
-                          CommonSnackbar.showNagativeSnackbar(context, 'Fail',
-                              'Reaction Added Failed ${error.toString()} - like');
-                        },
-                      );
+                      if (myReaction.contains('like')) {
+                        CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                            'You already have like reaction on this message');
+                      } else {
+                        Navigator.of(context).pop();
+                        message.react().addReaction('like').then((value) {
+                          CommonSnackbar.showPositiveSnackbar(context,
+                              'Success', 'Reaction Added Successfully - like');
+                        }).onError(
+                          (error, stackTrace) {
+                            CommonSnackbar.showNagativeSnackbar(context, 'Fail',
+                                'Reaction Added Failed ${error.toString()} - like');
+                          },
+                        );
+                      }
                     },
                     icon: Image.asset(
                       'assets/ic_liked.png',
@@ -479,16 +485,21 @@ class MessageWidget extends StatelessWidget {
                   ),
                   child: IconButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
-                      message.react().addReaction('love').then((value) {
-                        CommonSnackbar.showPositiveSnackbar(context, 'Success',
-                            'Reaction Added Successfully - love');
-                      }).onError(
-                        (error, stackTrace) {
-                          CommonSnackbar.showNagativeSnackbar(context, 'Fail',
-                              'Reaction Added Failed ${error.toString()} - love');
-                        },
-                      );
+                      if (myReaction.contains('love')) {
+                        CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                            'You already have love reaction on this message');
+                      } else {
+                        Navigator.of(context).pop();
+                        message.react().addReaction('love').then((value) {
+                          CommonSnackbar.showPositiveSnackbar(context,
+                              'Success', 'Reaction Added Successfully - love');
+                        }).onError(
+                          (error, stackTrace) {
+                            CommonSnackbar.showNagativeSnackbar(context, 'Fail',
+                                'Reaction Added Failed ${error.toString()} - love');
+                          },
+                        );
+                      }
                     },
                     icon: Image.asset(
                       'assets/ic_heart.png',
