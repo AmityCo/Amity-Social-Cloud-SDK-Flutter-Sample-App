@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _userIdTextController.text = 'victimAndroid';
     _displayNameTextController.text = 'Victim Android';
     _apiKeyTextController.text =
-        'b3bee858328ef4344a308e4a5a091688d05fdee2be353a2b';
+        'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
     _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
 
     //SG Server
