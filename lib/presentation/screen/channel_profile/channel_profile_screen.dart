@@ -2,7 +2,6 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
-import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 
 class ChannelProfileScreen extends StatefulWidget {
   const ChannelProfileScreen({Key? key, required this.channelId})
@@ -313,63 +312,48 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
           //   },
           // ),
           const SizedBox(height: 18),
-          Center(
-            child: SizedBox(
-              width: 260,
-              child: ElevatedButton(
-                onPressed: () {
-                  // if (!(amityChannel.isJoined ?? true)) {
-                  //   AmitySocialClient.newChannelRepository()
-                  //       .joinChannel(amityChannel.channelId!)
-                  //       .then((value) {})
-                  //       .onError((error, stackTrace) {
-                  //     ErrorDialog.show(context,
-                  //         title: 'Error', message: error.toString());
-                  //   });
-                  // } else {
-                  //   AmitySocialClient.newChannelRepository()
-                  //       .leaveChannel(amityChannel.channelId!)
-                  //       .then((value) {})
-                  //       .onError((error, stackTrace) {
-                  //     ErrorDialog.show(context,
-                  //         title: 'Error', message: error.toString());
-                  //   });
-                  // }
-                },
-                child: const Text('Join'),
-              ),
-            ),
-          ),
-          // if (amityChannel
-          //         .hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
-          //     amityChannel.isPostReviewEnabled!)
-          //   Center(
-          //     child: SizedBox(
-          //       width: 260,
-          //       child: ElevatedButton(
-          //         onPressed: () {
-          //           GoRouter.of(context).pushNamed(
-          //               AppRoute.communityInReviewPost,
-          //               params: {'channelId': amityChannel.channelId!});
-          //         },
-          //         child: const Text('Review Post'),
-          //       ),
-          //     ),
-          //   )
-          // else
-          //   Center(
-          //     child: SizedBox(
-          //       width: 260,
-          //       child: ElevatedButton(
-          //         onPressed: () {
-          //           GoRouter.of(context).pushNamed(
-          //               AppRoute.communityPendingPost,
-          //               params: {'channelId': amityChannel.channelId!});
-          //         },
-          //         child: const Text('Pending Post'),
-          //       ),
-          //     ),
-          //   )
+          FutureBuilder<AmityChannelMember>(
+              future: AmityChatClient.newChannelRepository()
+                  .membership(amityChannel.channelId!)
+                  .getMyMembership(),
+              builder: (context, snapshot) {
+                final amityChannelMember = snapshot.data;
+                if (snapshot.hasData) {
+                  return Center(
+                    child: SizedBox(
+                      width: 260,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (amityChannelMember!.membership ==
+                              AmityMembershipType.NONE) {
+                            AmityChatClient.newChannelRepository()
+                                .joinChannel(amityChannel.channelId!)
+                                .then((value) {})
+                                .onError((error, stackTrace) {
+                              ErrorDialog.show(context,
+                                  title: 'Error', message: error.toString());
+                            });
+                          } else {
+                            AmityChatClient.newChannelRepository()
+                                .leaveChannel(amityChannel.channelId!)
+                                .then((value) {})
+                                .onError((error, stackTrace) {
+                              ErrorDialog.show(context,
+                                  title: 'Error', message: error.toString());
+                            });
+                          }
+                        },
+                        child: Text(amityChannelMember!.membership ==
+                                AmityMembershipType.NONE
+                            ? 'Join'
+                            : 'Leave'),
+                      ),
+                    ),
+                  );
+                }
+
+                return Container();
+              }),
         ],
       ),
     );
