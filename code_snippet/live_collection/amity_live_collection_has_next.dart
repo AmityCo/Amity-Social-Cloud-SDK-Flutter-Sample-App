@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityLiveCollectionHasNext {
