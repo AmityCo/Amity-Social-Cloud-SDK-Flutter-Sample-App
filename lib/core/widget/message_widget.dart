@@ -27,6 +27,11 @@ class MessageWidget extends StatelessWidget {
 
     // if (value.messageId == '631882bd09045c4fc8281a57') print(value.toString());
 
+    if (value.reactions!.reactions != null &&
+        value.reactions!.reactions!.isNotEmpty) {
+      value.reactions!.reactions!.removeWhere((key, value) => value == 0);
+    }
+
     AmityMessageData? data = value.data;
     if (data != null) {
       if (data is MessageTextData) text = data.text!;
@@ -133,7 +138,7 @@ class MessageWidget extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomRight,
                 child: Container(
-                  // color: Colors.red,
+                  color: Colors.red,
                   child: InkWell(
                     onLongPress: () {
                       GoRouter.of(context).pushNamed(AppRoute.messageReaction,
