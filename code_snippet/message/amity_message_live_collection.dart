@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/widgets.dart';
 
@@ -18,14 +16,14 @@ class AmityMessageLiveCollection {
     //initialize message live collection
     messageLiveCollection = AmityChatClient.newMessageRepository()
         .getMessages(channelId)
-        //stack from end = true - means the first message will be last created message 
+        //stack from end = true - means the first message will be last created message
         //compatible with UI that needs the latest message on the bottom of the UI
         //vice versa with stack from end = false - the first message will be first created message
         .stackFromEnd(true)
         .getLiveCollection(pageSize: 20);
 
     //listen to data changes from live collection
-    messageLiveCollection.asStream().listen((event) {
+    messageLiveCollection.getStreamController().stream.listen((event) {
       // update latest results here
       // setState(() {
       amityMessages = event;

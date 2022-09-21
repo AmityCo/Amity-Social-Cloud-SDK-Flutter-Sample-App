@@ -19,13 +19,13 @@ class AmityLiveCollectionHasNext {
         .stackFromEnd(true)
         .getLiveCollection(pageSize: 20);
 
-    messageLiveCollection.asStream().listen((event) {
+    messageLiveCollection.getStreamController().stream.listen((event) {
       // update latest results here
       // setState(() {
       //   amityMessages = event;
       // });
     });
-     
+
     //load first page when initiating widget
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       messageLiveCollection.loadNext();

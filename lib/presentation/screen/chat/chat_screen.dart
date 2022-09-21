@@ -43,14 +43,23 @@ class _ChatScreenState extends State<ChatScreen> {
             });
       });
 
-    messageLiveCollection.asStream().listen((event) {
-      print(event.map((e) => "${e.channelSegment}, ").toList());
+    messageLiveCollection.getStreamController().stream.listen((event) {
+      //   print(event.map((e) => "${e.channelSegment}, ").toList());
       if (mounted) {
         setState(() {
           amityMessages = event;
         });
       }
     });
+
+    // messageLiveCollection.asStream().onListen((event) {
+    //   print(event.map((e) => "${e.channelSegment}, ").toList());
+    //   if (mounted) {
+    //     setState(() {
+    //       amityMessages = event;
+    //     });
+    //   }
+    // });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       messageLiveCollection.loadNext();
