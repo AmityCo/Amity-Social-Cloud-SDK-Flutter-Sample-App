@@ -19,7 +19,7 @@ class AmityLiveCollectionHasNext {
         .stackFromEnd(true)
         .getLiveCollection(pageSize: 20);
 
-    messageLiveCollection.asStream().stream.listen((event) {
+    messageLiveCollection.getStreamController().stream.listen((event) {
       // update latest results here
       // setState(() {
       //   amityMessages = event;

@@ -23,7 +23,7 @@ class AmityMessageLiveCollection {
         .getLiveCollection(pageSize: 20);
 
     //listen to data changes from live collection
-    messageLiveCollection.asStream().stream.listen((event) {
+    messageLiveCollection.getStreamController().stream.listen((event) {
       // update latest results here
       // setState(() {
       amityMessages = event;

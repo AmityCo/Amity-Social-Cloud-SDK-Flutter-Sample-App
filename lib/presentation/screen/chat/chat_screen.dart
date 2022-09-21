@@ -43,7 +43,7 @@ class _ChatScreenState extends State<ChatScreen> {
             });
       });
 
-    messageLiveCollection.asStream().stream.listen((event) {
+    messageLiveCollection.getStreamController().stream.listen((event) {
       //   print(event.map((e) => "${e.channelSegment}, ").toList());
       if (mounted) {
         setState(() {
