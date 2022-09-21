@@ -235,7 +235,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   onPressed: () {
                     EditTextDialog.show(context,
                         hintText: 'Enter Channel Name',
-                        defString: 'live200',
+                        // defString: 'live200',
                         buttonText: 'Join', onPress: (value) {
                       GoRouter.of(context).pushNamed(AppRoute.channelProfile,
                           params: {'channelId': value});
