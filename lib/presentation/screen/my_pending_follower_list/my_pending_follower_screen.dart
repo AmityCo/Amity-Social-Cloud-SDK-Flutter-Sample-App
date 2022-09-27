@@ -127,7 +127,7 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
     final _themeData = Theme.of(context);
     return StreamBuilder<AmityFollowRelationship>(
       initialData: amityFollowRelationship,
-      stream: amityFollowRelationship.listen,
+      stream: amityFollowRelationship.listen.stream,
       builder: (context, snapshot) {
         final data = snapshot.data!;
 

@@ -15,7 +15,7 @@ class CommunityMemberInfoRowWidget extends StatelessWidget {
     final _themeData = Theme.of(context);
     // final isBanned = communityMember.
     return StreamBuilder<AmityCommunityMember>(
-      stream: communityMember.listen,
+      stream: communityMember.listen.stream,
       initialData: communityMember,
       builder: (context, snapshot) {
         if (snapshot.hasData) {

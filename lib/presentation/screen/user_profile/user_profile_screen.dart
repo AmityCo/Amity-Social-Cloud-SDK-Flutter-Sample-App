@@ -258,7 +258,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                         return StreamBuilder<
                                                 AmityUserFollowInfo>(
                                             initialData: snapshot.data,
-                                            stream: snapshot.data!.listen,
+                                            stream:
+                                                snapshot.data!.listen.stream,
                                             builder: (context, snapshot) {
                                               return Column(
                                                 children: [

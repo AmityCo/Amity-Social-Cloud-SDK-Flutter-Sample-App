@@ -10,6 +10,7 @@ class AmityPostListen {
   void listenPost(String postId) {
     AmitySocialClient.newPostRepository()
         .getPostStream(postId)
+        .stream
         .listen((AmityPost post) {
       //handle results
     }).onError((error, stackTrace) {

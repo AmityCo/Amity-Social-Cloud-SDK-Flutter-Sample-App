@@ -15,10 +15,10 @@ class AmityCommentView {
     }
   }
 
- //example of using AmityComment with StreamBuilder
+  //example of using AmityComment with StreamBuilder
   void observeComment(AmityComment comment) {
     StreamBuilder<AmityComment>(
-        stream: comment.listen,
+        stream: comment.listen.stream,
         builder: (context, snapshot) {
           // update widget
           // eg. widget.text = comment.data.text

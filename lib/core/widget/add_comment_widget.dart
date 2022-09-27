@@ -1,6 +1,5 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 
 class AddCommentWidget extends StatelessWidget {
   AddCommentWidget(this._amityUser, this._addCommentCallback, {Key? key})

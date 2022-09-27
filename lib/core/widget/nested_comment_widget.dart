@@ -65,7 +65,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
         (index) {
           final amityComment = nestedCommentList[index];
           return StreamBuilder<AmityComment>(
-            stream: amityComment.listen,
+            stream: amityComment.listen.stream,
             initialData: amityComment,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
