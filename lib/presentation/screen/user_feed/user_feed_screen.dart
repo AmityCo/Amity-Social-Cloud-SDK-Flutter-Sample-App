@@ -1,10 +1,8 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
-import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class UserFeedScreen extends StatefulWidget {
   const UserFeedScreen({Key? key, required this.userId, this.showAppBar = true})

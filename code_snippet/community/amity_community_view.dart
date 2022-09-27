@@ -22,7 +22,7 @@ class AmityCommunityView {
   //example of using AmityCommunity with StreamBuilder
   void observeCommunity(AmityCommunity community) {
     StreamBuilder<AmityCommunity>(
-        stream: community.listen,
+        stream: community.listen.stream,
         builder: (context, snapshot) {
           // update widget
           // eg. widget.text = community.displayName

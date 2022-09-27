@@ -1,8 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter_social_sample_app/core/widget/community_widget.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 
 class CommunityTrendingListScreen extends StatefulWidget {
   const CommunityTrendingListScreen({Key? key}) : super(key: key);
