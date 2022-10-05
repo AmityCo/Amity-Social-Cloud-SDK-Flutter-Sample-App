@@ -101,4 +101,7 @@ class AppRoute {
 
   static const channelProfile = 'channelProfile';
   static const channelProfileRoute = '/channelProfile/:channelId';
+
+  static const channelList = 'channelList';
+  static const channelListRoute = '/channelList';
 }

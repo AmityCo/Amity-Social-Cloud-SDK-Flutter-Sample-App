@@ -247,6 +247,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
+                    GoRouter.of(context).pushNamed(AppRoute.channelList);
+                  },
+                  child: const Text('Channel List'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
                     GoRouter.of(context).goNamed(AppRoute.landing);
                   },
                   child: const Text('New Landing'),
