@@ -1,7 +1,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class ChannelProfileScreen extends StatefulWidget {
   const ChannelProfileScreen({Key? key, required this.channelId})
@@ -35,6 +37,14 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
       appBar: AppBar(
         title: const Text('Channel Profile'),
         actions: [
+          IconButton(
+              onPressed: () {
+                GoRouter.of(context).pushNamed(AppRoute.chat,
+                    params: {'channelId': widget.channelId});
+              },
+              icon: const Icon(
+                Icons.mark_unread_chat_alt_outlined,
+              )),
           PopupMenuButton(
             itemBuilder: (context) {
               return const [
@@ -292,6 +302,11 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
           Text(
             amityChannel.displayName ?? '',
             style: _themeData.textTheme.headline6,
+          ),
+          const SizedBox(height: 6),
+          SelectableText(
+            amityChannel.channelId ?? '',
+            style: _themeData.textTheme.subtitle1,
           ),
           // const SizedBox(height: 8),
           // Text(
