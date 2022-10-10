@@ -125,6 +125,10 @@ class MessageWidget extends StatelessWidget {
                           ),
                         ],
                       ),
+                      Text(
+                        'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
+                        style: _themeData.textTheme.caption!.copyWith(),
+                      ),
                     ],
                   ),
                 ),

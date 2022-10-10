@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
 
     //SG Server
-    //1
+    // 1
     // _userIdTextController.text = 'johnwick2';
     // _displayNameTextController.text = 'John Wick';
     // _apiKeyTextController.text =

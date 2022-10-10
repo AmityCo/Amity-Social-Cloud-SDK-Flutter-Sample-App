@@ -103,7 +103,7 @@ class _TokenExchangeScreenState extends State<TokenExchangeScreen> {
     return await AmityUserTokenManager(
             apiKey: "b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25",
             endpoint: AmityRegionalHttpEndpoint.SG)
-        .createAuthToken(_userId,
+        .createUserToken(_userId,
             displayname: _displayname, secureToken: _secureToken);
   }
 }

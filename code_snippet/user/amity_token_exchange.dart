@@ -13,7 +13,7 @@ class AmityTokenExchange {
     AmityUserTokenManager(
             apiKey: "your api key", endpoint: AmityRegionalHttpEndpoint.SG)
         //displayname and secureToken are optional
-        .createAuthToken(_userId,
+        .createUserToken(_userId,
             displayname: _displayname, secureToken: _secureToken)
         .then((AmityUserToken token) {
             log("accessToken = ${token.accessToken}");
