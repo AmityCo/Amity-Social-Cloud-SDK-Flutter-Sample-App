@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/presentation/screen/channel_member/channel_member_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class ChannelProfileScreen extends StatefulWidget {
@@ -128,13 +129,13 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                         ),
                         SliverToBoxAdapter(
                           child: DefaultTabController(
-                            length: 2,
+                            length: 1,
                             child: TabBar(
                               controller: _tabController,
                               tabs: const [
-                                Tab(
-                                  text: 'Feed',
-                                ),
+                                // Tab(
+                                //   text: 'Feed',
+                                // ),
                                 Tab(
                                   text: 'Members',
                                 )
@@ -148,6 +149,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                       controller: _tabController,
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
+                        // Container(),
+                        ChannelMemberScreen(
+                          channelId: widget.channelId,
+                          showAppBar: false,
+                        )
                         // ChannelFeedScreen(
                         //     channelId: widget.channelId, showAppBar: false),
                         // memberScreen,
