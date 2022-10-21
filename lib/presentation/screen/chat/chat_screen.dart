@@ -52,15 +52,6 @@ class _ChatScreenState extends State<ChatScreen> {
       }
     });
 
-    // messageLiveCollection.asStream().onListen((event) {
-    //   print(event.map((e) => "${e.channelSegment}, ").toList());
-    //   if (mounted) {
-    //     setState(() {
-    //       amityMessages = event;
-    //     });
-    //   }
-    // });
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       messageLiveCollection.loadNext();
     });
