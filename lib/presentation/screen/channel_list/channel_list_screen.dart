@@ -96,12 +96,13 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
       });
 
     channelLiveCollection.getStreamController().stream.listen((event) {
-      //   print(event.map((e) => "${e.channelSegment}, ").toList());
-      if (mounted) {
-        setState(() {
-          amityChannels = event;
-        });
-      }
+      print('>>>>>> ${event.length}');
+      // print(event.map((e) => "${e.channelSegment}, ").toList());
+      // if (mounted) {
+      setState(() {
+        amityChannels = event;
+      });
+      // }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -314,6 +315,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                     child: ListView.builder(
                       controller: scrollcontroller,
                       itemCount: amityChannels.length,
+                      shrinkWrap: true,
                       itemBuilder: (context, index) {
                         final amityChannel = amityChannels[index];
                         return Container(
