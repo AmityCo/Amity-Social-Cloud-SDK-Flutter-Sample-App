@@ -169,66 +169,19 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (_tabController.index == 0) {
-            showDialog(
-              context: context,
-              builder: (_) => AlertDialog(
-                title: const Text('Please Select Post Type'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      width: 200,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          //show create post for community
-                          // GoRouter.of(context).goNamed(
-                          //     AppRoute.createChannelPostPost,
-                          //     params: {'channelId': widget.channelId});
-                        },
-                        child: const Text('Post'),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Navigator.of(context).pop();
-                          //show create post for community
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //   builder: (context) {
-                          //     return CreatePollPostScreen(
-                          //         channelId: widget.channelId);
-                          //   },
-                          // ));
-                        },
-                        child: const Text('Poll Post'),
-                      ),
-                    ),
-                  ],
-                ),
-                actions: [
-                  ElevatedButton(onPressed: () {}, child: const Text('Cancel'))
-                ],
-              ),
-            );
-          } else {
-            //show add member action
-            EditTextDialog.show(context,
-                title: 'Add Member',
-                hintText: 'Enter Comma seperated user Ids', onPress: (value) {
-              // AmitySocialClient.newChannelRepository()
-              //     .membership(widget.channelId)
-              //     .addMembers(value.split(','))
-              //     .then((value) {
-              //   memberScreen.screenState.addMembers(value);
-              // }).onError((error, stackTrace) {
-              //   ErrorDialog.show(context,
-              //       title: 'Error', message: error.toString());
-              // });
+          //show add member action
+          EditTextDialog.show(context,
+              title: 'Add Channel Member',
+              hintText: 'Enter Comma seperated user Ids', onPress: (value) {
+            AmityChatClient.newChannelRepository()
+                .addMembers(_amityChannel.channelId!, value.split(','))
+                .then((value) {
+              // memberScreen.screenState.addMembers(value);
+            }).onError((error, stackTrace) {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString());
             });
-          }
+          });
         },
         child: const Icon(Icons.add),
       ),
@@ -243,6 +196,7 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -314,24 +268,34 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
             amityChannel.channelId ?? '',
             style: _themeData.textTheme.subtitle1,
           ),
-          // const SizedBox(height: 8),
-          // Text(
-          //   amityChannel.description ?? '',
-          //   style: _themeData.textTheme.caption,
-          // ),
-          // const SizedBox(height: 18),
-          // FutureBuilder<List<String>>(
-          //   future: amityChannel.getCurentUserRoles(),
-          //   builder: (context, snapshot) {
-          //     if (snapshot.hasData) {
-          //       return Text('Rolse - ${snapshot.data!.join(',')}');
-          //     }
-          //     if (snapshot.hasError) {
-          //       // print(snapshot.error.toString());
-          //     }
-          //     return Container();
-          //   },
-          // ),
+          const SizedBox(height: 8),
+          const Text('Current User Roles & Permission'),
+          const SizedBox(height: 8),
+          FutureBuilder<List<String>>(
+            future: amityChannel.getCurentUserRoles(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('Roles - ${snapshot.data!.join(',')}');
+              }
+              if (snapshot.hasError) {
+                // print(snapshot.error.toString());
+              }
+              return Container();
+            },
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder<List<String>>(
+            future: amityChannel.getCurentUserPermission(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text('Permission - ${snapshot.data!.join(',')}');
+              }
+              if (snapshot.hasError) {
+                // print(snapshot.error.toString());
+              }
+              return Container();
+            },
+          ),
           const SizedBox(height: 18),
           FutureBuilder<AmityChannelMember>(
               future: AmityChatClient.newChannelRepository()
