@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/channel_member_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
 class ChannelMemberScreen extends StatefulWidget {
-  ChannelMemberScreen(
+  const ChannelMemberScreen(
       {Key? key, required this.channelId, this.showAppBar = true})
       : super(key: key);
   final String channelId;
   final bool showAppBar;
-  late _ChannelMemberScreenState screenState;
   @override
   State<ChannelMemberScreen> createState() => _ChannelMemberScreenState();
 }
@@ -98,84 +98,84 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                         return ChannelMemberWidget(
                           amityChannelMember: amityChannelMember,
                           onMemberCallback: () {},
-                          options: const [
-                            // PopupMenuButton(
-                            //   itemBuilder: (context) {
-                            //     final isMemberBanned =
-                            //         amityChannelMember.isBanned ?? false;
-                            //     final canBanMember =
-                            //         AmityCoreClient.hasPermission(
-                            //                 AmityPermission.BAN_COMMUNITY_USER)
-                            //             .atChannel(
-                            //                 amityChannelMember.channelId!)
-                            //             .check();
-                            //     final canRemoveMember = AmityCoreClient
-                            //             .hasPermission(AmityPermission
-                            //                 .REMOVE_COMMUNITY_USER)
-                            //         .atChannel(amityChannelMember.channelId!)
-                            //         .check();
-                            //     final canAddRole =
-                            //         AmityCoreClient.hasPermission(
-                            //                 AmityPermission.CREATE_ROLE)
-                            //             .atChannel(
-                            //                 amityChannelMember.channelId!)
-                            //             .check();
-                            //     final canRemoveRole =
-                            //         AmityCoreClient.hasPermission(
-                            //                 AmityPermission.DELETE_ROLE)
-                            //             .atChannel(
-                            //                 amityChannelMember.channelId!)
-                            //             .check();
-                            //     return [
-                            //       PopupMenuItem(
-                            //         child: const Text("Remove"),
-                            //         value: 1,
-                            //         enabled: canRemoveMember,
-                            //       ),
-                            //       PopupMenuItem(
-                            //         child: const Text("Ban"),
-                            //         value: 2,
-                            //         enabled: canBanMember && !isMemberBanned,
-                            //       ),
-                            //       PopupMenuItem(
-                            //         child: const Text("Unban"),
-                            //         value: 3,
-                            //         enabled: canBanMember && isMemberBanned,
-                            //       ),
-                            //       PopupMenuItem(
-                            //         child: const Text("Add role"),
-                            //         value: 4,
-                            //         enabled: canAddRole && !isMemberBanned,
-                            //       ),
-                            //       PopupMenuItem(
-                            //         child: const Text("Remove role"),
-                            //         value: 5,
-                            //         enabled: canRemoveRole && !isMemberBanned,
-                            //       )
-                            //     ];
-                            //   },
-                            // child: const Icon(
-                            //   Icons.more_vert,
-                            //   size: 18,
-                            //   ),
-                            //   onSelected: (index) {
-                            //     if (index == 1) {
-                            //       _removeMember(context, amityChannelMember);
-                            //     }
-                            //     if (index == 2) {
-                            //       _banMember(context, amityChannelMember);
-                            //     }
-                            //     if (index == 3) {
-                            //       _unbanMember(context, amityChannelMember);
-                            //     }
-                            //     if (index == 4) {
-                            //       _addRole(context, amityChannelMember);
-                            //     }
-                            //     if (index == 5) {
-                            //       _removeRole(context, amityChannelMember);
-                            //     }
-                            //   },
-                            // )
+                          options: [
+                            PopupMenuButton(
+                              itemBuilder: (context) {
+                                final isMemberBanned =
+                                    amityChannelMember.isBanned ?? false;
+                                final canBanMember =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission.BAN_COMMUNITY_USER)
+                                        .atChannel(
+                                            amityChannelMember.channelId!)
+                                        .check();
+                                final canRemoveMember = AmityCoreClient
+                                        .hasPermission(AmityPermission
+                                            .REMOVE_COMMUNITY_USER)
+                                    .atChannel(amityChannelMember.channelId!)
+                                    .check();
+                                final canAddRole =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission.CREATE_ROLE)
+                                        .atChannel(
+                                            amityChannelMember.channelId!)
+                                        .check();
+                                final canRemoveRole =
+                                    AmityCoreClient.hasPermission(
+                                            AmityPermission.DELETE_ROLE)
+                                        .atChannel(
+                                            amityChannelMember.channelId!)
+                                        .check();
+                                return [
+                                  PopupMenuItem(
+                                    child: const Text("Remove"),
+                                    value: 1,
+                                    enabled: canRemoveMember,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Ban"),
+                                    value: 2,
+                                    enabled: canBanMember && !isMemberBanned,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Unban"),
+                                    value: 3,
+                                    enabled: canBanMember && isMemberBanned,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Add role"),
+                                    value: 4,
+                                    enabled: canAddRole && !isMemberBanned,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Remove role"),
+                                    value: 5,
+                                    enabled: canRemoveRole && !isMemberBanned,
+                                  )
+                                ];
+                              },
+                              child: const Icon(
+                                Icons.more_vert,
+                                size: 18,
+                              ),
+                              onSelected: (index) {
+                                if (index == 1) {
+                                  // _removeMember(context, amityChannelMember);
+                                }
+                                if (index == 2) {
+                                  // _banMember(context, amityChannelMember);
+                                }
+                                if (index == 3) {
+                                  // _unbanMember(context, amityChannelMember);
+                                }
+                                if (index == 4) {
+                                  _addRole(context, amityChannelMember);
+                                }
+                                if (index == 5) {
+                                  _removeRole(context, amityChannelMember);
+                                }
+                              },
+                            )
                           ],
                         );
                       },
@@ -239,43 +239,43 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
   //           });
   // }
 
-  // void _addRole(BuildContext context, AmityChannelMember member) {
-  //   AmitySocialClient.newChannelRepository()
-  //       .moderation(member.channelId!)
-  //       .addRole('channel-moderator', [member.userId!])
-  //       .onError((error, stackTrace) => {
-  //             ErrorDialog.show(context,
-  //                 title: 'Error', message: error.toString())
-  //           })
-  //       .then((value) => {
-  //             AmitySocialClient.newChannelRepository()
-  //                 .moderation(member.channelId!)
-  //                 .addRole('channel-moderator', [member.userId!]).then(
-  //                     (value) => {
-  //                           PositiveDialog.show(context,
-  //                               title: 'Complete',
-  //                               message: 'Role added successfully')
-  //                         })
-  //           });
-  // }
+  void _addRole(BuildContext context, AmityChannelMember member) {
+    AmityChatClient.newChannelRepository()
+        .moderation(member.channelId!)
+        .addRole('channel-moderator', [member.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              AmityChatClient.newChannelRepository()
+                  .moderation(member.channelId!)
+                  .addRole('channel-moderator', [member.userId!]).then(
+                      (value) => {
+                            PositiveDialog.show(context,
+                                title: 'Complete',
+                                message: 'Role added successfully')
+                          })
+            });
+  }
 
-  // void _removeRole(BuildContext context, AmityChannelMember member) {
-  //   AmitySocialClient.newChannelRepository()
-  //       .moderation(member.channelId!)
-  //       .removeRole('channel-moderator', [member.userId!])
-  //       .onError((error, stackTrace) => {
-  //             ErrorDialog.show(context,
-  //                 title: 'Error', message: error.toString())
-  //           })
-  //       .then((value) => {
-  //             AmitySocialClient.newChannelRepository()
-  //                 .moderation(member.channelId!)
-  //                 .removeRole('channel-moderator', [member.userId!]).then(
-  //                     (value) => {
-  //                           PositiveDialog.show(context,
-  //                               title: 'Complete',
-  //                               message: 'Role removed successfully')
-  //                         })
-  //           });
-  // }
+  void _removeRole(BuildContext context, AmityChannelMember member) {
+    AmityChatClient.newChannelRepository()
+        .moderation(member.channelId!)
+        .removeRole('channel-moderator', [member.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              AmityChatClient.newChannelRepository()
+                  .moderation(member.channelId!)
+                  .removeRole('channel-moderator', [member.userId!]).then(
+                      (value) => {
+                            PositiveDialog.show(context,
+                                title: 'Complete',
+                                message: 'Role removed successfully')
+                          })
+            });
+  }
 }

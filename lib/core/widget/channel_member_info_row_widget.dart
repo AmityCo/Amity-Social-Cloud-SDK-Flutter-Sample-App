@@ -21,6 +21,8 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
         if (snapshot.hasData) {
           final value = snapshot.data!;
           final rolesText = (value.roles ?? ['']).toString();
+          final permissionText =
+              (value.permissions?.permissions ?? ['']).toString();
           return Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -44,30 +46,37 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
                 const SizedBox(width: 18),
-                InkWell(
-                  onTap: () {
-                    GoRouter.of(context).goNamed(AppRoute.profile,
-                        params: {'userId': value.userId ?? ''});
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        value.user?.displayName ?? 'unknown',
-                        style: _themeData.textTheme.subtitle1,
-                        textAlign: TextAlign.start,
-                      ),
-                      Text(
-                        'roles - $rolesText',
-                        style: _themeData.textTheme.caption,
-                        textAlign: TextAlign.start,
-                      ),
-                      Text(
-                        'isBanned - ${value.isBanned ?? false}',
-                        style: _themeData.textTheme.caption,
-                        textAlign: TextAlign.start,
-                      ),
-                    ],
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      GoRouter.of(context).goNamed(AppRoute.profile,
+                          params: {'userId': value.userId ?? ''});
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          value.user?.displayName ?? 'unknown',
+                          style: _themeData.textTheme.subtitle1,
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          'roles - $rolesText',
+                          style: _themeData.textTheme.caption,
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          'permissions - $permissionText',
+                          style: _themeData.textTheme.caption,
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          'isBanned - ${value.isBanned ?? false}',
+                          style: _themeData.textTheme.caption,
+                          textAlign: TextAlign.start,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const Spacer(),
