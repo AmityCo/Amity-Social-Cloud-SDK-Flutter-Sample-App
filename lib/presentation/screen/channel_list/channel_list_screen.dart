@@ -28,6 +28,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
   List<AmityChannelType> _type = [];
   AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
   List<String>? _tags;
+  List<String>? _excludingTags;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
           .filter(_filter)
           .types(_type)
           .includingTags(_tags ?? [])
+          .excludingTags(_excludingTags ?? [])
           .includeDeleted(false)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
@@ -252,9 +254,32 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                           hintText: 'type tags here', onPress: (value) {
                         if (value.isNotEmpty) {
                           _tags = value.trim().split(',');
-                          _controller.reset();
-                          _controller.fetchNextPage();
                         }
+                        if (value.isEmpty) {
+                          _tags = [];
+                        }
+                        _controller.reset();
+                        _controller.fetchNextPage();
+                      });
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: InkWell(
+                    child: const Icon(Icons.tag, size: 18),
+                    onTap: () {
+                      EditTextDialog.show(context,
+                          title: 'Enter excluding tags, separate by comma',
+                          hintText: 'type tags here', onPress: (value) {
+                        if (value.isNotEmpty) {
+                          _excludingTags = value.trim().split(',');
+                        }
+                        if (value.isEmpty) {
+                          _excludingTags = [];
+                        }
+                        _controller.reset();
+                        _controller.fetchNextPage();
                       });
                     },
                   ),
