@@ -11,7 +11,9 @@ class EditTextDialog extends StatelessWidget {
       this.hintText,
       this.onChange,
       this.onPress})
-      : super(key: key);
+      : super(key: key) {
+    _textEditController.text = defString;
+  }
 
   static Future show(BuildContext context,
       {String? title,
@@ -23,7 +25,7 @@ class EditTextDialog extends StatelessWidget {
     return showDialog(
         context: context,
         builder: (context) {
-          String? text;
+          String? text = defString;
           return AlertDialog(
             title: Text(title ?? 'Edit Text'),
             content: EditTextDialog(
@@ -58,8 +60,6 @@ class EditTextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _textEditController.text = defString;
-
     return TextField(
       controller: _textEditController,
       onChanged: onChange,
