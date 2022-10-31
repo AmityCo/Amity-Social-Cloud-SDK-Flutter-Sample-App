@@ -44,7 +44,7 @@ class EditTextDialog extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  onPress?.call(text!);
+                  onPress?.call(text ?? '');
                 },
                 child: Text(buttonText ?? 'Update'),
                 style: ElevatedButton.styleFrom(primary: Colors.red),
