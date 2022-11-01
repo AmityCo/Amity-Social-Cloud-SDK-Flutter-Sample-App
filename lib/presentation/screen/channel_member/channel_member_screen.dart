@@ -2,6 +2,8 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/channel_member_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
@@ -151,6 +153,10 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                     child: const Text("Remove role"),
                                     value: 5,
                                     enabled: canRemoveRole && !isMemberBanned,
+                                  ),
+                                  const PopupMenuItem(
+                                    child: Text("Check Permission"),
+                                    value: 6,
                                   )
                                 ];
                               },
@@ -173,6 +179,40 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                 }
                                 if (index == 5) {
                                   _removeRole(context, amityChannelMember);
+                                }
+                                if (index == 6) {
+                                  EditTextDialog.show(context,
+                                      title: 'Enter valid permission string',
+                                      defString: 'ADD_CHANNEL_USER',
+                                      hintText: 'permisson', onPress: (value) {
+                                    try {
+                                      AmityPermission permission =
+                                          AmityPermissionExtension.enumOf(
+                                              value);
+                                      final havePermission = AmityCoreClient
+                                              .hasPermission(permission)
+                                          .atChannel(
+                                              amityChannelMember.channelId!,
+                                              userId: amityChannelMember.userId)
+                                          .check();
+                                      if (havePermission) {
+                                        CommonSnackbar.showPositiveSnackbar(
+                                            context,
+                                            'Permission',
+                                            'User have this permission');
+                                      } else {
+                                        CommonSnackbar.showNagativeSnackbar(
+                                            context,
+                                            'Permission',
+                                            'User dont have this permission');
+                                      }
+                                    } catch (error) {
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context,
+                                          'Error Permission',
+                                          'Error in performing permission check ${error.toString()}');
+                                    }
+                                  });
                                 }
                               },
                             )
