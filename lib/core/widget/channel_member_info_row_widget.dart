@@ -75,6 +75,11 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                           style: _themeData.textTheme.caption,
                           textAlign: TextAlign.start,
                         ),
+                        Text(
+                          'isMuted - ${value.isMuted ?? false}',
+                          style: _themeData.textTheme.caption,
+                          textAlign: TextAlign.start,
+                        ),
                       ],
                     ),
                   ),

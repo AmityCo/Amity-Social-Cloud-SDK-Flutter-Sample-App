@@ -66,7 +66,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                   child: Text("Check my permission"),
                   value: 4,
                   enabled: true,
-                )
+                ),
+                PopupMenuItem(
+                  child: Text("Mute"),
+                  value: 5,
+                ),
               ];
             },
             child: const Icon(
@@ -105,6 +109,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                     //         'The permission "$value" is valid = $hasPermission');
                   }
                 });
+              }
+              if (index == 5) {
+                ///Mute Channel
+                AmityChatClient.newChannelRepository()
+                    .muteChannel(widget.channelId);
               }
             },
           ),
@@ -283,6 +292,8 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
               return Container();
             },
           ),
+          const SizedBox(height: 8),
+          Text('isMute - ${amityChannel.isMuted ?? false}'),
           const SizedBox(height: 8),
           FutureBuilder<List<String>>(
             future: amityChannel.getCurentUserPermission(),
