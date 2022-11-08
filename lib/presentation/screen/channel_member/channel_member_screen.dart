@@ -105,12 +105,11 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                               itemBuilder: (context) {
                                 final isMemberBanned =
                                     amityChannelMember.isBanned ?? false;
-                                final canBanMember =
-                                    AmityCoreClient.hasPermission(
-                                            AmityPermission.BAN_COMMUNITY_USER)
-                                        .atChannel(
-                                            amityChannelMember.channelId!)
-                                        .check();
+                                final canBanMember = AmityCoreClient
+                                        .hasPermission(AmityPermission
+                                            .BAN_USER_FROM_CHANNEL)
+                                    .atChannel(amityChannelMember.channelId!)
+                                    .check();
                                 final canRemoveMember = AmityCoreClient
                                         .hasPermission(AmityPermission
                                             .REMOVE_COMMUNITY_USER)
@@ -128,6 +127,11 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                         .atChannel(
                                             amityChannelMember.channelId!)
                                         .check();
+                                final canMuteRole = AmityCoreClient
+                                        .hasPermission(AmityPermission
+                                            .MUTE_USER_INSIDE_CHANNEL)
+                                    .atChannel(amityChannelMember.channelId!)
+                                    .check();
                                 return [
                                   PopupMenuItem(
                                     child: const Text("Remove"),
@@ -157,6 +161,11 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                   const PopupMenuItem(
                                     child: Text("Check Permission"),
                                     value: 6,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Mute"),
+                                    value: 7,
+                                    enabled: canMuteRole,
                                   )
                                 ];
                               },
@@ -214,6 +223,10 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                     }
                                   });
                                 }
+
+                                if (index == 7) {
+                                  _muteMember(context, amityChannelMember);
+                                }
                               },
                             )
                           ],
@@ -236,6 +249,18 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
         ],
       ),
     );
+  }
+
+  void _muteMember(BuildContext context, AmityChannelMember member) {
+    AmityChatClient.newChannelRepository()
+        .moderation(member.channelId!)
+        .muteMembers([member.userId!])
+        .then((value) => PositiveDialog.show(context,
+            title: 'Complete', message: 'Mute member successfully'))
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            });
   }
 
   // void _removeMember(BuildContext context, AmityChannelMember member) {
@@ -287,16 +312,18 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())
             })
-        .then((value) => {
-              AmityChatClient.newChannelRepository()
-                  .moderation(member.channelId!)
-                  .addRole('channel-moderator', [member.userId!]).then(
-                      (value) => {
-                            PositiveDialog.show(context,
-                                title: 'Complete',
-                                message: 'Role added successfully')
-                          })
-            });
+        .then((value) {
+          PositiveDialog.show(context,
+              title: 'Complete', message: 'Role added successfully');
+          // AmityChatClient.newChannelRepository()
+          //     .moderation(member.channelId!)
+          //     .addRole('channel-moderator', [member.userId!]).then(
+          //         (value) => {
+          //               PositiveDialog.show(context,
+          //                   title: 'Complete',
+          //                   message: 'Role added successfully')
+          //             })
+        });
   }
 
   void _removeRole(BuildContext context, AmityChannelMember member) {
@@ -307,15 +334,15 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())
             })
-        .then((value) => {
-              AmityChatClient.newChannelRepository()
-                  .moderation(member.channelId!)
-                  .removeRole('channel-moderator', [member.userId!]).then(
-                      (value) => {
-                            PositiveDialog.show(context,
-                                title: 'Complete',
-                                message: 'Role removed successfully')
-                          })
-            });
+        .then((value) {
+          PositiveDialog.show(context,
+              title: 'Complete', message: 'Role removed successfully');
+          // AmityChatClient.newChannelRepository()
+          //     .moderation(member.channelId!)
+          //     .removeRole('channel-moderator', [member.userId!]).then(
+          //         (value) => {
+
+          //             })
+        });
   }
 }
