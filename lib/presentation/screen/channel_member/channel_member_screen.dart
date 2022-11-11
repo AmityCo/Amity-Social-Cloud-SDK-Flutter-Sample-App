@@ -105,6 +105,8 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                               itemBuilder: (context) {
                                 final isMemberBanned =
                                     amityChannelMember.isBanned ?? false;
+                                final isMemberMute =
+                                    amityChannelMember.isMuted ?? false;
 
                                 final canRemoveMember =
                                     AmityCoreClient.hasPermission(
@@ -172,6 +174,11 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                     child: const Text("Mute"),
                                     value: 7,
                                     enabled: canMuteRole,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("Unmute"),
+                                    value: 8,
+                                    enabled: canMuteRole,
                                   )
                                 ];
                               },
@@ -233,6 +240,9 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                 if (index == 7) {
                                   _muteMember(context, amityChannelMember);
                                 }
+                                if (index == 8) {
+                                  _unMuteMember(context, amityChannelMember);
+                                }
                               },
                             )
                           ],
@@ -263,6 +273,18 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
         .muteMembers([member.userId!])
         .then((value) => PositiveDialog.show(context,
             title: 'Complete', message: 'Mute member successfully'))
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            });
+  }
+
+  void _unMuteMember(BuildContext context, AmityChannelMember member) {
+    AmityChatClient.newChannelRepository()
+        .moderation(member.channelId!)
+        .muteMembers([member.userId!], millis: 0)
+        .then((value) => PositiveDialog.show(context,
+            title: 'Complete', message: 'Un-Mute member successfully'))
         .onError((error, stackTrace) => {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())
