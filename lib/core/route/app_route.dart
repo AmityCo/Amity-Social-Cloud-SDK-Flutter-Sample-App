@@ -104,4 +104,10 @@ class AppRoute {
 
   static const channelList = 'channelList';
   static const channelListRoute = '/channelList';
+
+  static const createChannel = 'createChannel';
+  static const createChannelRoute = '/createChannel';
+
+  static const updateChannel = 'updateChannel';
+  static const updateChannelRoute = '/updateChannel';
 }
