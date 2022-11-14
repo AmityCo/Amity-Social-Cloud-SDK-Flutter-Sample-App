@@ -225,10 +225,12 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())
             })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Member banned successfully')
-            });
+        .then((value) {
+          _controller.reset();
+          _controller.fetchNextPage();
+          PositiveDialog.show(context,
+              title: 'Complete', message: 'Member banned successfully');
+        });
   }
 
   void _unbanMember(BuildContext context, AmityCommunityMember value) {

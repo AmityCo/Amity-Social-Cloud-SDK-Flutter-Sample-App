@@ -7,17 +7,18 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
-class ChannelMemberScreen extends StatefulWidget {
-  const ChannelMemberScreen(
+class ChannelMemberBannedScreen extends StatefulWidget {
+  const ChannelMemberBannedScreen(
       {Key? key, required this.channelId, this.showAppBar = true})
       : super(key: key);
   final String channelId;
   final bool showAppBar;
   @override
-  State<ChannelMemberScreen> createState() => _ChannelMemberScreenState();
+  State<ChannelMemberBannedScreen> createState() =>
+      _ChannelMemberBannedScreenState();
 }
 
-class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
+class _ChannelMemberBannedScreenState extends State<ChannelMemberBannedScreen> {
   late PagingController<AmityChannelMember> _controller;
   final amityChannelMembers = <AmityChannelMember>[];
 
@@ -29,6 +30,7 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
       pageFuture: (token) => AmityChatClient.newChannelRepository()
           .membership(widget.channelId)
           .getMembers()
+          .filter(AmityChannelMembershipFilter.BANNED)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -105,8 +107,6 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                               itemBuilder: (context) {
                                 final isMemberBanned =
                                     amityChannelMember.isBanned ?? false;
-                                final isMemberMute =
-                                    amityChannelMember.isMuted ?? false;
 
                                 final canRemoveMember =
                                     AmityCoreClient.hasPermission(
@@ -174,11 +174,6 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                     child: const Text("Mute"),
                                     value: 7,
                                     enabled: canMuteRole,
-                                  ),
-                                  PopupMenuItem(
-                                    child: const Text("Unmute"),
-                                    value: 8,
-                                    enabled: canMuteRole,
                                   )
                                 ];
                               },
@@ -240,9 +235,6 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                 if (index == 7) {
                                   _muteMember(context, amityChannelMember);
                                 }
-                                if (index == 8) {
-                                  _unMuteMember(context, amityChannelMember);
-                                }
                               },
                             )
                           ],
@@ -273,18 +265,6 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
         .muteMembers([member.userId!])
         .then((value) => PositiveDialog.show(context,
             title: 'Complete', message: 'Mute member successfully'))
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            });
-  }
-
-  void _unMuteMember(BuildContext context, AmityChannelMember member) {
-    AmityChatClient.newChannelRepository()
-        .moderation(member.channelId!)
-        .muteMembers([member.userId!], millis: 0)
-        .then((value) => PositiveDialog.show(context,
-            title: 'Complete', message: 'Un-Mute member successfully'))
         .onError((error, stackTrace) => {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString())

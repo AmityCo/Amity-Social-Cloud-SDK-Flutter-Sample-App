@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/presentation/screen/channel_member/channel_member_banned_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_member/channel_member_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -142,11 +143,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                             child: TabBar(
                               controller: _tabController,
                               tabs: const [
-                                // Tab(
-                                //   text: 'Feed',
-                                // ),
                                 Tab(
                                   text: 'Members',
+                                ),
+                                Tab(
+                                  text: 'Banned Members',
                                 )
                               ],
                             ),
@@ -162,7 +163,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                         ChannelMemberScreen(
                           channelId: widget.channelId,
                           showAppBar: false,
-                        )
+                        ),
+                        ChannelMemberBannedScreen(
+                          channelId: widget.channelId,
+                          showAppBar: false,
+                        ),
                         // ChannelFeedScreen(
                         //     channelId: widget.channelId, showAppBar: false),
                         // memberScreen,
