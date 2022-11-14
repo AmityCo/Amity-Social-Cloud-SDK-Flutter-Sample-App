@@ -1,10 +1,12 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/channel_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class ChannelListScreen extends StatefulWidget {
   const ChannelListScreen({Key? key}) : super(key: key);
@@ -328,7 +330,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // GoRouter.of(context).goNamed(AppRoute.createChannel);
+          GoRouter.of(context).pushNamed(AppRoute.createChannel);
         },
         child: const Icon(Icons.add),
       ),
