@@ -5,29 +5,26 @@ import 'dart:io';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:uuid/uuid.dart';
 
-class ChannelCreateScreen extends StatefulWidget {
-  const ChannelCreateScreen({
+class ChannelUpdateScreen extends StatefulWidget {
+  const ChannelUpdateScreen({
     Key? key,
-    this.userIds = const [],
+    required this.channelId,
   }) : super(key: key);
-  final List<String>? userIds;
+  final String channelId;
   @override
-  State<ChannelCreateScreen> createState() => _ChannelCreateScreenState();
+  State<ChannelUpdateScreen> createState() => _ChannelUpdateScreenState();
 }
 
-class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
+class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
   final _formState = GlobalKey<FormState>();
-
+  String? avatarUrl;
   final _channelIdEditController = TextEditingController();
   final _nameEditController = TextEditingController();
-  final _userIdsEditController = TextEditingController();
   final _metadataEditController = TextEditingController();
   final _tagsEditController = TextEditingController();
 
@@ -36,9 +33,22 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
 
   @override
   void initState() {
-    if (widget.userIds != null) {
-      _userIdsEditController.text = widget.userIds!.join(',');
-    }
+    AmityChatClient.newChannelRepository()
+        .getChannel(widget.channelId)
+        .then((value) {
+      setState(() {
+        _channelType = value.amityChannelType;
+        avatarUrl = value.avatar?.fileUrl;
+        _channelIdEditController.text = value.channelId!;
+        _nameEditController.text = value.displayName ?? '';
+
+        _metadataEditController.text =
+            value.metadata != null ? jsonEncode(value.metadata) : '';
+        _tagsEditController.text = (value.tags?.tags ?? []).join(',');
+      });
+    }).onError((error, stackTrace) {
+      ErrorDialog.show(context, title: 'Error', message: error.toString());
+    });
     super.initState();
   }
 
@@ -46,7 +56,7 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Channel'),
+        title: const Text('Update Channel'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -83,42 +93,51 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                           ),
                           fit: BoxFit.cover,
                         )
-                      : InkWell(
-                          onTap: () async {
-                            final ImagePicker _picker = ImagePicker();
-                            // Pick an image
-                            final image = await _picker.pickImage(
-                                source: ImageSource.gallery);
-
-                            setState(() {
-                              _avatar = image;
-                            });
-                          },
-                          child: Stack(
-                            children: [
-                              Image.asset('assets/user_placeholder.png'),
-                              Align(
-                                alignment: Alignment.bottomCenter,
-                                child: Container(
-                                  height: 32,
-                                  width: 120,
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(.5),
+                      : avatarUrl != null
+                          ? Image.network(
+                              avatarUrl!,
+                              fit: BoxFit.fill,
+                            )
+                          : InkWell(
+                              onTap: () async {},
+                              child: Stack(
+                                children: [
+                                  Image.asset('assets/user_placeholder.png'),
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      height: 32,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(.5),
+                                      ),
+                                      child: const Icon(
+                                        Icons.edit,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
-                                  child: const Icon(
-                                    Icons.edit,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
+                ElevatedButton(
+                    onPressed: () async {
+                      final ImagePicker _picker = ImagePicker();
+                      // Pick an image
+                      final image =
+                          await _picker.pickImage(source: ImageSource.gallery);
+
+                      setState(() {
+                        _avatar = image;
+                      });
+                    },
+                    child: const Text('Edit Avatar')),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _channelIdEditController,
+                  enabled: false,
                   decoration: const InputDecoration(
                       hintText: 'Enter Channel ID (optional)'),
                 ),
@@ -141,19 +160,6 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 100,
-                  child: TextFormField(
-                    controller: _userIdsEditController,
-                    expands: true,
-                    maxLines: null,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter Comma seperated user Ids',
-                      isDense: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
                 TextFormField(
                   controller: _metadataEditController,
                   decoration:
@@ -164,16 +170,8 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                   onPressed: _channelType == null
                       ? null
                       : () {
-                          if (_channelType == AmityChannelType.CONVERSATION &&
-                              _userIdsEditController.text.trim().isEmpty) {
-                            CommonSnackbar.showNagativeSnackbar(
-                                context,
-                                'Error',
-                                'Please enter userId for conversation channel');
-                            return;
-                          }
                           ProgressDialog.show(context,
-                                  asyncFunction: _createChannel)
+                                  asyncFunction: _updateChannel)
                               .then((value) {
                             GoRouter.of(context).pop();
                           }).onError((error, stackTrace) {
@@ -191,7 +189,7 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
     );
   }
 
-  Future _createChannel() async {
+  Future _updateChannel() async {
     AmityImage? _communityAvatar;
     if (_avatar != null) {
       AmityUploadResult<AmityImage> amityUploadResult =
@@ -205,7 +203,7 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
       }
     }
 
-    String channeld = _channelIdEditController.text.trim();
+    // String channeld = _channelIdEditController.text.trim();
     String name = _nameEditController.text.trim();
 
     final _metadataString = _metadataEditController.text.trim();
@@ -216,70 +214,10 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
       print('metadata decode failed');
     }
 
-    List<String> userIds = [];
-    if (_userIdsEditController.text.isNotEmpty) {
-      userIds = _userIdsEditController.text
-          .trim()
-          .split(',')
-          .map((e) => e.trim())
-          .toList();
-    }
+    final builder =
+        AmityChatClient.newChannelRepository().updateChannel(widget.channelId);
 
-    ChannelCreatorBuilder? builder;
-    switch (_channelType) {
-      case AmityChannelType.CONVERSATION:
-        if (userIds.isEmpty) {
-          CommonSnackbar.showNagativeSnackbar(
-              context, 'Error', 'Please enter userId for conversation channel');
-          return;
-        }
-
-        builder = AmityChatClient.newChannelRepository()
-            .createChannel()
-            .conversationType()
-            .withUserIds(userIds);
-
-        if (channeld.isEmpty) channeld = const Uuid().v4();
-        builder.channelId(channeld);
-
-        break;
-      case AmityChannelType.COMMUNITY:
-        if (channeld.isNotEmpty) {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .communityType()
-              .withChannelId(channeld);
-        } else {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .communityType()
-              .withDisplayName(name);
-
-          if (channeld.isEmpty) channeld = const Uuid().v4();
-          builder.channelId(channeld);
-        }
-        break;
-      case AmityChannelType.LIVE:
-        if (channeld.isNotEmpty) {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .liveType()
-              .withChannelId(channeld);
-        } else {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .liveType()
-              .withDisplayName(name);
-          if (channeld.isEmpty) channeld = const Uuid().v4();
-          builder.channelId(channeld);
-        }
-
-        break;
-      default:
-    }
-
-    builder!.userIds(userIds);
-    builder.displayName(name);
+    if (name.isNotEmpty) builder.displayName(name);
 
     if (_communityAvatar != null) builder.avatar(_communityAvatar);
 

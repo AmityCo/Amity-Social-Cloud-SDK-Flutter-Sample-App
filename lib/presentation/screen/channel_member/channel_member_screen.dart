@@ -179,6 +179,11 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                     child: const Text("Unmute"),
                                     value: 8,
                                     enabled: canMuteRole,
+                                  ),
+                                  PopupMenuItem(
+                                    child: const Text("permanent Mute"),
+                                    value: 9,
+                                    enabled: canMuteRole,
                                   )
                                 ];
                               },
@@ -243,6 +248,10 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                                 if (index == 8) {
                                   _unMuteMember(context, amityChannelMember);
                                 }
+                                if (index == 9) {
+                                  _permanentMuteMember(
+                                      context, amityChannelMember);
+                                }
                               },
                             )
                           ],
@@ -271,6 +280,18 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
     AmityChatClient.newChannelRepository()
         .moderation(member.channelId!)
         .muteMembers([member.userId!])
+        .then((value) => PositiveDialog.show(context,
+            title: 'Complete', message: 'Mute member successfully'))
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            });
+  }
+
+  void _permanentMuteMember(BuildContext context, AmityChannelMember member) {
+    AmityChatClient.newChannelRepository()
+        .moderation(member.channelId!)
+        .muteMembers([member.userId!], millis: -1)
         .then((value) => PositiveDialog.show(context,
             title: 'Complete', message: 'Mute member successfully'))
         .onError((error, stackTrace) => {
