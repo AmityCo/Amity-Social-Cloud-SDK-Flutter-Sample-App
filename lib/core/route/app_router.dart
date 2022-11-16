@@ -3,6 +3,7 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_create/channel_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_list/channel_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_profile/channel_profile_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/channel_update/channel_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
@@ -267,6 +268,12 @@ class AppRouter {
         name: AppRoute.createChannel,
         path: AppRoute.createChannelRoute,
         builder: (context, state) => const ChannelCreateScreen(),
+      ),
+      GoRoute(
+        name: AppRoute.updateChannel,
+        path: AppRoute.updateChannelRoute,
+        builder: (context, state) =>
+            ChannelUpdateScreen(channelId: state.queryParams['channelId']!),
       ),
     ],
     redirect: (state) {

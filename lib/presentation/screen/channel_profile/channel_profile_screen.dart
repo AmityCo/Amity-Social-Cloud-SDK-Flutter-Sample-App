@@ -81,8 +81,8 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
             onSelected: (index) {
               if (index == 1) {
                 //Open Edit Channel
-                // GoRouter.of(context).goNamed(AppRoute.updateChannel,
-                //     params: {'channelId': widget.channelId});
+                GoRouter.of(context).pushNamed(AppRoute.updateChannel,
+                    queryParams: {'channelId': widget.channelId});
               }
               if (index == 2) {
                 //Delete Channel
