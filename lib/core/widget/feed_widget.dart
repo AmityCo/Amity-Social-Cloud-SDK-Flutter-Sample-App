@@ -389,9 +389,13 @@ class FeedReactionActionWidget extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () {
                 if (_isFlagedByMe) {
-                  amityPost.react().removeReaction('like');
+                  amityPost.react().removeReaction('like').then((value) {
+                    print(value.myReactions);
+                  });
                 } else {
-                  amityPost.react().addReaction('like');
+                  amityPost.react().addReaction('like').then((value) {
+                    print(value.myReactions);
+                  });
                 }
               },
               onLongPress: () {
