@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 
@@ -22,6 +23,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   bool loading = false;
   AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
   List<AmityDataType> _dataType = [];
+  List<String> _tags = [];
   @override
   void initState() {
     _controller = PagingController(
@@ -30,8 +32,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           .targetCommunity(widget.communityId)
           .feedType(AmityFeedType.PUBLISHED)
           .includeDeleted(false)
-          // .sortBy(_sortOption)
           .types(_dataType)
+          .tags(_tags)
           .sortBy(_sortOption)
           .onlyParent(true)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
@@ -170,6 +172,26 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
                       _controller.reset();
                       _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: InkWell(
+                    child: const Icon(Icons.tag, size: 18),
+                    onTap: () {
+                      EditTextDialog.show(context,
+                          title: 'Enter tags, separate by comma',
+                          hintText: 'type tags here', onPress: (value) {
+                        if (value.isNotEmpty) {
+                          _tags = value.trim().split(',');
+                        }
+                        if (value.isEmpty) {
+                          _tags = [];
+                        }
+                        _controller.reset();
+                        _controller.fetchNextPage();
+                      });
                     },
                   ),
                 ),

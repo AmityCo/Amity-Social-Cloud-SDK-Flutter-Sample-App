@@ -20,6 +20,7 @@ class FeedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
+
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen.stream,
       initialData: amityPost,
