@@ -18,11 +18,14 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
   final scrollcontroller = ScrollController();
   bool loading = false;
 
+  List<AmityDataType> _dataType = [];
+
   @override
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newFeedRepository()
           .getGlobalFeed()
+          .types(_dataType)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -70,6 +73,67 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
       appBar: AppBar(title: const Text('Global Feed')),
       body: Column(
         children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      CheckedPopupMenuItem(
+                        child: Text(AmityDataType.IMAGE.name),
+                        value: 2,
+                        checked: _dataType.contains(AmityDataType.IMAGE),
+                      ),
+                      CheckedPopupMenuItem(
+                        child: Text(AmityDataType.VIDEO.name),
+                        value: 3,
+                        checked: _dataType.contains(AmityDataType.VIDEO),
+                      ),
+                      CheckedPopupMenuItem(
+                        child: Text(AmityDataType.FILE.name),
+                        value: 4,
+                        checked: _dataType.contains(AmityDataType.FILE),
+                      )
+                    ];
+                  },
+                  child: const Icon(
+                    Icons.filter_alt_rounded,
+                    size: 18,
+                  ),
+                  onSelected: (index) {
+                    if (index == 1) {
+                      _dataType.clear();
+                    }
+                    if (index == 2) {
+                      if (_dataType.contains(AmityDataType.IMAGE)) {
+                        _dataType.remove(AmityDataType.IMAGE);
+                      } else {
+                        _dataType.add(AmityDataType.IMAGE);
+                      }
+                    }
+                    if (index == 3) {
+                      if (_dataType.contains(AmityDataType.VIDEO)) {
+                        _dataType.remove(AmityDataType.VIDEO);
+                      } else {
+                        _dataType.add(AmityDataType.VIDEO);
+                      }
+                    }
+                    if (index == 4) {
+                      if (_dataType.contains(AmityDataType.FILE)) {
+                        _dataType.remove(AmityDataType.FILE);
+                      } else {
+                        _dataType.add(AmityDataType.FILE);
+                      }
+                    }
+
+                    _controller.reset();
+                    _controller.fetchNextPage();
+                  },
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
