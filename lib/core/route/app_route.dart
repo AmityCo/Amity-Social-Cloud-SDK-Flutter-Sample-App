@@ -110,4 +110,7 @@ class AppRoute {
 
   static const updateChannel = 'updateChannel';
   static const updateChannelRoute = '/updateChannel';
+
+  static const updateMessage = 'updateMessage';
+  static const updateMessageRoute = '/updateMessage';
 }

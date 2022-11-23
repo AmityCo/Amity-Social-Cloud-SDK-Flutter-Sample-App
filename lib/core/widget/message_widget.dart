@@ -78,6 +78,7 @@ class MessageWidget extends StatelessWidget {
             // color: Colors.red,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
                   width: 36,
@@ -129,8 +130,48 @@ class MessageWidget extends StatelessWidget {
                         'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
                         style: _themeData.textTheme.caption!.copyWith(),
                       ),
+                      Text(
+                        'Tags - ${value.amityTags?.tags?.join(',') ?? ' Null'}',
+                        style: _themeData.textTheme.caption!.copyWith(),
+                      ),
+                      Text(
+                        'Metadata - ${value.metadata?.toString() ?? ' Null'}',
+                        style: _themeData.textTheme.caption!.copyWith(),
+                      ),
                     ],
                   ),
+                ),
+                PopupMenuButton(
+                  child: const Icon(Icons.arrow_drop_down_circle_outlined),
+                  itemBuilder: (context) {
+                    return [
+                      const PopupMenuItem(
+                        child: Text('Edit Message'),
+                        value: 1,
+                      ),
+                      const PopupMenuItem(
+                        child: Text('Delete Message'),
+                        value: 2,
+                      )
+                    ];
+                  },
+                  onSelected: (value) {
+                    switch (value) {
+                      case 1:
+                        if (message.data is MessageTextData) {
+                          /// Update Message
+                          GoRouter.of(context).pushNamed(AppRoute.updateMessage,
+                              queryParams: {'messageId': message.messageId!});
+                        }
+
+                        break;
+                      case 2:
+
+                        /// Delete Message
+                        break;
+                      default:
+                    }
+                  },
                 ),
               ],
             ),
