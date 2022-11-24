@@ -122,7 +122,7 @@ class _MyAppState extends State<MyApp> {
                       .listen((event) {
                     log(event.toString());
                   }).onError((error, stackTrace) {
-                    log('>>>>>' + error.message.toString());
+                    log('>>>>>' + error.messageId.toString());
                   });
                 }).onError<AmityException>((error, stackTrace) {
                   log(error.message.toString());

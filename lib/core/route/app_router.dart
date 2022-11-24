@@ -24,6 +24,7 @@ import 'package:flutter_social_sample_app/presentation/screen/following_list/fol
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/login/login_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/message_update/message_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/my_follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_following_list/my_following_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
@@ -274,6 +275,12 @@ class AppRouter {
         path: AppRoute.updateChannelRoute,
         builder: (context, state) =>
             ChannelUpdateScreen(channelId: state.queryParams['channelId']!),
+      ),
+      GoRoute(
+        name: AppRoute.updateMessage,
+        path: AppRoute.updateMessageRoute,
+        builder: (context, state) =>
+            MessageUpdateScreen(messageId: state.queryParams['messageId']!),
       ),
     ],
     redirect: (state) {
