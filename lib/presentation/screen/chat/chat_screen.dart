@@ -1,9 +1,11 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/add_message_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/message_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.channelId}) : super(key: key);
@@ -13,46 +15,79 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  late MessageLiveCollection messageLiveCollection;
+  late PagingController<AmityMessage> _controller;
   List<AmityMessage> amityMessages = [];
   final scrollcontroller = ScrollController();
 
+  AmityMessageDataType? _type;
+  AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
+  List<String>? _tags;
+  List<String>? _excludingTags;
+
   @override
   void initState() {
-    messageLiveCollection = AmityChatClient.newMessageRepository()
-        .getMessages(widget.channelId)
-        .stackFromEnd(true)
-        .getLiveCollection(pageSize: 20)
-      ..onError((error, stacktrace) {
-        print(stacktrace.toString());
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                content: Text('${error.toString()}'),
-                title: Text('Error'),
-                actions: [
-                  ElevatedButton(
-                      onPressed: () {
-                        GoRouter.of(context).pop();
-                      },
-                      child: Text('Back'))
-                ],
-              );
+    // final builder =
+    //     AmityChatClient.newMessageRepository().getMessages(widget.channelId);
+    // // .type(_type)
+    // _controller = builder.stackFromEnd(true).getLiveCollection(pageSize: 20)
+    //   ..onError((error, stacktrace) {
+    //     print(stacktrace.toString());
+    //     showDialog(
+    //         context: context,
+    //         barrierDismissible: false,
+    //         builder: (context) {
+    //           return AlertDialog(
+    //             content: Text('${error.toString()}'),
+    //             title: Text('Error'),
+    //             actions: [
+    //               ElevatedButton(
+    //                   onPressed: () {
+    //                     GoRouter.of(context).pop();
+    //                   },
+    //                   child: Text('Back'))
+    //             ],
+    //           );
+    //         });
+    //   });
+
+    // _controller.getStreamController().stream.listen((event) {
+    //   //   print(event.map((e) => "${e.channelSegment}, ").toList());
+    //   if (mounted) {
+    //     setState(() {
+    //       amityMessages = event;
+    //     });
+    //   }
+    // });
+
+    _controller = PagingController(
+      pageFuture: (token) => AmityChatClient.newMessageRepository()
+          .getMessages(widget.channelId)
+          .stackFromEnd(false)
+          .type(_type)
+          .includingTags(_tags ?? [])
+          .excludingTags(_excludingTags ?? [])
+          .includeDeleted(false)
+          .getPagingData(token: token, limit: GlobalConstant.pageSize),
+      pageSize: GlobalConstant.pageSize,
+    )..addListener(
+        () {
+          if (_controller.error == null) {
+            setState(() {
+              amityMessages.clear();
+              amityMessages.addAll(_controller.loadedItems);
             });
-      });
+          } else {
+            //Error on pagination controller
+            setState(() {});
+            print(_controller.error.toString());
+            print(_controller.stacktrace.toString());
+            ErrorDialog.show(context,
+                title: 'Error', message: _controller.error.toString());
+          }
+        },
+      );
 
-    messageLiveCollection.getStreamController().stream.listen((event) {
-      //   print(event.map((e) => "${e.channelSegment}, ").toList());
-      if (mounted) {
-        setState(() {
-          amityMessages = event;
-        });
-      }
-    });
-
-    // messageLiveCollection.asStream().onListen((event) {
+    // _controller.asStream().onListen((event) {
     //   print(event.map((e) => "${e.channelSegment}, ").toList());
     //   if (mounted) {
     //     setState(() {
@@ -62,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
     // });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      messageLiveCollection.loadNext();
+      _controller.fetchNextPage();
     });
 
     scrollcontroller.addListener(pagination);
@@ -73,8 +108,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void pagination() {
     if ((scrollcontroller.position.pixels >=
             (scrollcontroller.position.maxScrollExtent - 100)) &&
-        messageLiveCollection.hasNextPage()) {
-      messageLiveCollection.loadNext();
+        _controller.hasMoreItems) {
+      _controller.fetchNextPage();
     }
   }
 
@@ -85,7 +120,202 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            if (messageLiveCollection.isFetching)
+            Container(
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: PopupMenuButton<int>(
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.TEXT.value),
+                            value: 0,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.IMAGE.value),
+                            value: 1,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.FILE.value),
+                            value: 2,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.AUDIO.value),
+                            value: 3,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.CUSTOM.value),
+                            value: 4,
+                          ),
+                          const PopupMenuItem(
+                            child: Text('All'),
+                            value: 5,
+                          )
+                        ];
+                      },
+                      child: const Icon(
+                        Icons.filter_alt_rounded,
+                        size: 18,
+                      ),
+                      onSelected: (index) {
+                        if (index != 5) {
+                          _type = AmityMessageDataType.values[index];
+                        } else {
+                          _type = null;
+                        }
+
+                        _controller.reset();
+                        _controller.fetchNextPage();
+                      },
+                    ),
+                  ),
+                  // Container(
+                  //   padding: const EdgeInsets.all(8),
+                  //   child: PopupMenuButton(
+                  //     itemBuilder: (context) {
+                  //       return [
+                  //         CheckedPopupMenuItem(
+                  //           child: const Text('ALL'),
+                  //           value: 0,
+                  //           checked: _type.isEmpty,
+                  //         ),
+                  //         CheckedPopupMenuItem(
+                  //           child: Text(AmityChannelType.COMMUNITY.value),
+                  //           value: 1,
+                  //           checked: _type.contains(AmityChannelType.COMMUNITY),
+                  //         ),
+                  //         CheckedPopupMenuItem(
+                  //           child: Text(AmityChannelType.LIVE.value),
+                  //           value: 2,
+                  //           checked: _type.contains(AmityChannelType.LIVE),
+                  //         ),
+                  //         CheckedPopupMenuItem(
+                  //           child: Text(AmityChannelType.BROADCAST.value),
+                  //           value: 3,
+                  //           checked: _type.contains(AmityChannelType.BROADCAST),
+                  //         ),
+                  //         CheckedPopupMenuItem(
+                  //           child: Text(AmityChannelType.CONVERSATION.value),
+                  //           value: 4,
+                  //           checked:
+                  //               _type.contains(AmityChannelType.CONVERSATION),
+                  //         )
+                  //       ];
+                  //     },
+                  //     child: const Icon(
+                  //       Icons.file_present_rounded,
+                  //       size: 18,
+                  //     ),
+                  //     onSelected: (index) {
+                  //       if (index == 0) {
+                  //         _type.clear();
+                  //       }
+
+                  //       if (index == 1) {
+                  //         if (_type.contains(AmityChannelType.COMMUNITY)) {
+                  //           _type.remove(AmityChannelType.COMMUNITY);
+                  //         } else {
+                  //           _type.add(AmityChannelType.COMMUNITY);
+                  //         }
+                  //       }
+                  //       if (index == 2) {
+                  //         if (_type.contains(AmityChannelType.LIVE)) {
+                  //           _type.remove(AmityChannelType.LIVE);
+                  //         } else {
+                  //           _type.add(AmityChannelType.LIVE);
+                  //         }
+                  //       }
+                  //       if (index == 3) {
+                  //         if (_type.contains(AmityChannelType.BROADCAST)) {
+                  //           _type.remove(AmityChannelType.BROADCAST);
+                  //         } else {
+                  //           _type.add(AmityChannelType.BROADCAST);
+                  //         }
+                  //       }
+                  //       if (index == 4) {
+                  //         if (_type.contains(AmityChannelType.CONVERSATION)) {
+                  //           _type.remove(AmityChannelType.CONVERSATION);
+                  //         } else {
+                  //           _type.add(AmityChannelType.CONVERSATION);
+                  //         }
+                  //       }
+
+                  //       _controller.reset();
+                  //       _controller.loadNext();
+                  //     },
+                  //   ),
+                  // ),
+                  // Container(
+                  //   padding: const EdgeInsets.all(8),
+                  //   child: PopupMenuButton(
+                  //     itemBuilder: (context) {
+                  //       return [
+                  //         PopupMenuItem(
+                  //           child:
+                  //               Text(AmityChannelSortOption.LAST_ACTIVITY.name),
+                  //           value: 1,
+                  //         ),
+                  //       ];
+                  //     },
+                  //     child: const Icon(
+                  //       Icons.sort_rounded,
+                  //       size: 18,
+                  //     ),
+                  //     onSelected: (index) {
+                  //       if (index == 1) {
+                  //         _sort = AmityChannelSortOption.LAST_ACTIVITY;
+                  //       }
+
+                  //       _controller.reset();
+                  //       _controller.loadNext();
+                  //     },
+                  //   ),
+                  // ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      child: const Icon(Icons.tag, size: 18),
+                      onTap: () {
+                        EditTextDialog.show(context,
+                            title: 'Enter tags, separate by comma',
+                            hintText: 'type tags here', onPress: (value) {
+                          if (value.isNotEmpty) {
+                            _tags = value.trim().split(',');
+                          }
+                          if (value.isEmpty) {
+                            _tags = [];
+                          }
+                          _controller.reset();
+                          _controller.fetchNextPage();
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      child: const Icon(Icons.tag, size: 18),
+                      onTap: () {
+                        EditTextDialog.show(context,
+                            title: 'Enter excluding tags, separate by comma',
+                            hintText: 'type tags here', onPress: (value) {
+                          if (value.isNotEmpty) {
+                            _excludingTags = value.trim().split(',');
+                          }
+                          if (value.isEmpty) {
+                            _excludingTags = [];
+                          }
+                          _controller.reset();
+                          _controller.fetchNextPage();
+                        });
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
+            if (_controller.isFetching)
               Container(
                 alignment: Alignment.center,
                 child: const CircularProgressIndicator(),
