@@ -166,6 +166,13 @@ class MessageWidget extends StatelessWidget {
 
                         break;
                       case 2:
+                        message.delete().then((value) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Deleted');
+                        }).onError((error, stackTrace) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Delete Error - ${error}');
+                        });
 
                         /// Delete Message
                         break;
