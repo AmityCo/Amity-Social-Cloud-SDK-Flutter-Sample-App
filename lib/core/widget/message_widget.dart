@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_downloader/image_downloader.dart';
 
@@ -60,6 +63,23 @@ class MessageWidget extends StatelessWidget {
     }
 
     return InkWell(
+      onTap: () {
+        final Completer completer = Completer();
+        ProgressDialog.showCompleter(context, completer);
+
+        AmityChatClient.newMessageRepository()
+            .getMessage(message.messageId!)
+            .then((value) {
+          completer.complete();
+          PositiveDialog.show(context,
+              title: 'Message View',
+              message: value.toString().replaceAll(',', ', \n\n'));
+        }).onError((error, stackTrace) {
+          completer.completeError(error!);
+          CommonSnackbar.showNagativeSnackbar(
+              context, 'Error', error.toString());
+        });
+      },
       onLongPress: () {
         _reactionDialog(context, message);
       },
