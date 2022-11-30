@@ -2,8 +2,8 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/add_message_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/message_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key, required this.channelId}) : super(key: key);
@@ -17,31 +17,25 @@ class _ChatScreenState extends State<ChatScreen> {
   List<AmityMessage> amityMessages = [];
   final scrollcontroller = ScrollController();
 
+  AmityMessageDataType? _type;
+  AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
+  List<String>? _tags;
+  List<String>? _excludingTags;
+  bool parentsOnly = false;
+
   @override
   void initState() {
-    messageLiveCollection = AmityChatClient.newMessageRepository()
-        .getMessages(widget.channelId)
-        .stackFromEnd(true)
-        .getLiveCollection(pageSize: 20)
-      ..onError((error, stacktrace) {
-        print(stacktrace.toString());
-        showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                content: Text('${error.toString()}'),
-                title: Text('Error'),
-                actions: [
-                  ElevatedButton(
-                      onPressed: () {
-                        GoRouter.of(context).pop();
-                      },
-                      child: Text('Back'))
-                ],
-              );
-            });
-      });
+    messageLiveCollection = MessageLiveCollection(
+      request: () => AmityChatClient.newMessageRepository()
+          .getMessages(widget.channelId)
+          .stackFromEnd(true)
+          .type(_type)
+          .includingTags(_tags ?? [])
+          .excludingTags(_excludingTags ?? [])
+          .includeDeleted(false)
+          .filterByParent(parentsOnly)
+          .build(),
+    );
 
     messageLiveCollection.getStreamController().stream.listen((event) {
       //   print(event.map((e) => "${e.channelSegment}, ").toList());
@@ -51,15 +45,6 @@ class _ChatScreenState extends State<ChatScreen> {
         });
       }
     });
-
-    // messageLiveCollection.asStream().onListen((event) {
-    //   print(event.map((e) => "${e.channelSegment}, ").toList());
-    //   if (mounted) {
-    //     setState(() {
-    //       amityMessages = event;
-    //     });
-    //   }
-    // });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       messageLiveCollection.loadNext();
@@ -85,29 +70,145 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: PopupMenuButton<int>(
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.TEXT.value),
+                            value: 0,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.IMAGE.value),
+                            value: 1,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.FILE.value),
+                            value: 2,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.AUDIO.value),
+                            value: 3,
+                          ),
+                          PopupMenuItem(
+                            child: Text(AmityMessageDataType.CUSTOM.value),
+                            value: 4,
+                          ),
+                          const PopupMenuItem(
+                            child: Text('All'),
+                            value: 5,
+                          )
+                        ];
+                      },
+                      child: const Icon(
+                        Icons.filter_alt_rounded,
+                        size: 18,
+                      ),
+                      onSelected: (index) {
+                        if (index != 5) {
+                          _type = AmityMessageDataType.values[index];
+                        } else {
+                          _type = null;
+                        }
+
+                        messageLiveCollection.reset();
+                        messageLiveCollection.loadNext();
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      child: const Icon(Icons.tag, size: 18),
+                      onTap: () {
+                        EditTextDialog.show(context,
+                            title: 'Enter tags, separate by comma',
+                            defString: (_tags ?? []).join(','),
+                            hintText: 'type tags here', onPress: (value) {
+                          if (value.isNotEmpty) {
+                            _tags = value.trim().split(',');
+                          }
+                          if (value.isEmpty) {
+                            _tags = [];
+                          }
+                          messageLiveCollection.reset();
+                          messageLiveCollection.loadNext();
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      child: const Icon(Icons.tag, size: 18),
+                      onTap: () {
+                        EditTextDialog.show(context,
+                            title: 'Enter excluding tags, separate by comma',
+                            defString: (_excludingTags ?? []).join(','),
+                            hintText: 'type tags here', onPress: (value) {
+                          if (value.isNotEmpty) {
+                            _excludingTags = value.trim().split(',');
+                          }
+                          if (value.isEmpty) {
+                            _excludingTags = [];
+                          }
+                          messageLiveCollection.reset();
+                          messageLiveCollection.loadNext();
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: parentsOnly,
+                          onChanged: (value) {
+                            setState(() {
+                              parentsOnly = value ?? false;
+                            });
+                            messageLiveCollection.reset();
+                            messageLiveCollection.loadNext();
+                          },
+                        ),
+                        const Text('Parent only')
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
             if (messageLiveCollection.isFetching)
               Container(
                 alignment: Alignment.center,
                 child: const CircularProgressIndicator(),
               ),
             Expanded(
-              child: ListView.builder(
-                controller: scrollcontroller,
-                itemCount: amityMessages.length,
-                reverse: true,
-                itemBuilder: (context, index) {
-                  final message = amityMessages[index];
-                  return Container(
-                    // height: 120,
-                    // margin: const EdgeInsets.all(12),
-                    // decoration: BoxDecoration(
-                    //   color: Colors.grey.shade200,
-                    //   borderRadius: BorderRadius.circular(12),
-                    // ),
-                    child: MessageWidget(message: message),
-                  );
-                },
-              ),
+              child: amityMessages.isEmpty
+                  ? const Center(
+                      child: Text('No Message'),
+                    )
+                  : ListView.builder(
+                      controller: scrollcontroller,
+                      itemCount: amityMessages.length,
+                      reverse: true,
+                      itemBuilder: (context, index) {
+                        final message = amityMessages[index];
+                        return Container(
+                          // height: 120,
+                          // margin: const EdgeInsets.all(12),
+                          // decoration: BoxDecoration(
+                          //   color: Colors.grey.shade200,
+                          //   borderRadius: BorderRadius.circular(12),
+                          // ),
+                          child: MessageWidget(message: message),
+                        );
+                      },
+                    ),
             ),
             Container(
               margin: const EdgeInsets.all(12),
@@ -145,6 +246,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   await AmityChatClient.newMessageRepository()
                       .createMessage(widget.channelId)
                       .text(value.message!)
+                      .parentId('482e8ae1-e9f8-44d1-988f-55fc681d86af')
                       .send()
                       .then((value) {
                     scrollcontroller.jumpTo(0);

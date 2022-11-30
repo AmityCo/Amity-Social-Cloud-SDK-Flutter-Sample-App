@@ -126,18 +126,28 @@ class MessageWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Text(
-                        'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
-                        style: _themeData.textTheme.caption!.copyWith(),
-                      ),
-                      Text(
-                        'Tags - ${value.amityTags?.tags?.join(',') ?? ' Null'}',
-                        style: _themeData.textTheme.caption!.copyWith(),
-                      ),
-                      Text(
-                        'Metadata - ${value.metadata?.toString() ?? ' Null'}',
-                        style: _themeData.textTheme.caption!.copyWith(),
-                      ),
+                      if (value.myReactions != null &&
+                          value.myReactions!.isNotEmpty)
+                        Text(
+                          'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
+                          style: _themeData.textTheme.caption!.copyWith(),
+                        ),
+                      if (value.amityTags != null &&
+                          value.amityTags!.tags!.isNotEmpty)
+                        Text(
+                          'Tags - ${value.amityTags?.tags?.join(',') ?? ' Null'}',
+                          style: _themeData.textTheme.caption!.copyWith(),
+                        ),
+                      if (value.metadata != null)
+                        Text(
+                          'Metadata - ${value.metadata?.toString() ?? ' Null'}',
+                          style: _themeData.textTheme.caption!.copyWith(),
+                        ),
+                      if (value.parentId != null)
+                        Text(
+                          'PreantID - ${value.parentId?.toString() ?? ' Null'}',
+                          style: _themeData.textTheme.caption!.copyWith(),
+                        ),
                     ],
                   ),
                 ),
@@ -163,7 +173,6 @@ class MessageWidget extends StatelessWidget {
                           GoRouter.of(context).pushNamed(AppRoute.updateMessage,
                               queryParams: {'messageId': message.messageId!});
                         }
-
                         break;
                       case 2:
                         message.delete().then((value) {

@@ -13,7 +13,8 @@ environment:
 dependencies:
   amity_sdk:
     path: ../Amity-Social-Cloud-SDK-Flutter-Internal
-    # path: ../amity_social_cloud_sdk_flutter
+  # amity_sdk: ^0.12.0
+  # path: ../amity_social_cloud_sdk_flutter
   cached_network_image: ^3.2.0
   chewie: ^1.3.1
 
