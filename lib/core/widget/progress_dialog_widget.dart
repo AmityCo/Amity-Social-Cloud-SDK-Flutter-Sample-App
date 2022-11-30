@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class ProgressDialog extends StatelessWidget {
@@ -38,6 +40,38 @@ class ProgressDialog extends StatelessWidget {
     return data;
   }
 
+  static Future<T> showCompleter<T>(BuildContext context, Completer completer,
+      {String message = ''}) async {
+    //Show loading overlay
+    final overlayState = Navigator.of(context).overlay!;
+
+    final overlayEntryLoader = OverlayEntry(
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(color: Colors.black38.withOpacity(.5)),
+          alignment: Alignment.center,
+          child: ProgressDialog(
+            message: message,
+          ),
+        );
+      },
+    );
+
+    overlayState.insert(overlayEntryLoader);
+
+    T data;
+
+    try {
+      data = await completer.future;
+    } on Exception catch (_) {
+      overlayEntryLoader.remove();
+      rethrow;
+    }
+
+    overlayEntryLoader.remove();
+    return data;
+  }
+
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
@@ -53,15 +87,16 @@ class ProgressDialog extends StatelessWidget {
           const SizedBox(
             child: CircularProgressIndicator(),
           ),
-          const SizedBox(width: 15.0),
-          Expanded(
-            child: Text(
-              message,
-              textAlign: TextAlign.justify,
-              style:
-                  _themeData.textTheme.subtitle1!.copyWith(color: Colors.black),
+          if (message.isNotEmpty) const SizedBox(width: 15.0),
+          if (message.isNotEmpty)
+            Expanded(
+              child: Text(
+                message,
+                textAlign: TextAlign.justify,
+                style: _themeData.textTheme.subtitle1!
+                    .copyWith(color: Colors.black),
+              ),
             ),
-          ),
         ],
       ),
     );
