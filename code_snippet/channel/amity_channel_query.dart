@@ -7,7 +7,7 @@ class AmityChannelQuery {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter query channels example
     */
-  final _amityCommunities = <AmityChannel>[];
+  final _amitychannel = <AmityChannel>[];
   late PagingController<AmityChannel> _channelController;
 
   // Available Channel Type options
@@ -29,8 +29,8 @@ class AmityChannelQuery {
           if (_channelController.error == null) {
             //handle results, we suggest to clear the previous items
             //and add with the latest _controller.loadedItems
-            _amityCommunities.clear();
-            _amityCommunities.addAll(_channelController.loadedItems);
+            _amitychannel.clear();
+            _amitychannel.addAll(_channelController.loadedItems);
             //update widgets
           } else {
             //error on pagination controller
@@ -51,8 +51,8 @@ class AmityChannelQuery {
           if (_channelController.error == null) {
             //handle results, we suggest to clear the previous items
             //and add with the latest _controller.loadedItems
-            _amityCommunities.clear();
-            _amityCommunities.addAll(_channelController.loadedItems);
+            _amitychannel.clear();
+            _amitychannel.addAll(_channelController.loadedItems);
             //update widgets
           } else {
             //error on pagination controller
@@ -73,8 +73,8 @@ class AmityChannelQuery {
           if (_channelController.error == null) {
             //handle results, we suggest to clear the previous items
             //and add with the latest _controller.loadedItems
-            _amityCommunities.clear();
-            _amityCommunities.addAll(_channelController.loadedItems);
+            _amitychannel.clear();
+            _amitychannel.addAll(_channelController.loadedItems);
             //update widgets
           } else {
             //error on pagination controller
@@ -95,8 +95,8 @@ class AmityChannelQuery {
           if (_channelController.error == null) {
             //handle results, we suggest to clear the previous items
             //and add with the latest _controller.loadedItems
-            _amityCommunities.clear();
-            _amityCommunities.addAll(_channelController.loadedItems);
+            _amitychannel.clear();
+            _amitychannel.addAll(_channelController.loadedItems);
             //update widgets
           } else {
             //error on pagination controller
@@ -121,8 +121,8 @@ class AmityChannelQuery {
           if (_channelController.error == null) {
             //handle results, we suggest to clear the previous items
             //and add with the latest _controller.loadedItems
-            _amityCommunities.clear();
-            _amityCommunities.addAll(_channelController.loadedItems);
+            _amitychannel.clear();
+            _amitychannel.addAll(_channelController.loadedItems);
             //update widgets
           } else {
             //error on pagination controller
