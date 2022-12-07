@@ -1,18 +1,22 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/widgets.dart';
 
-class AmityMessageView {
+class AmityMessageViewById {
   /* begin_sample_code
     gist_id: 4027a2a8b70a49e3903abe76a9983d44
-    filename: AmityMessageView.dart
+    filename: AmityMessageViewById.dart
     asc_page: https://docs.amity.co/social/flutter
-    description: Flutter view message example
+    description: Flutter view message by id example
     */
   void getMessage(String messageId) {
     AmityChatClient.newMessageRepository()
         .getMessage(messageId)
         .then((value) => {
               //handle result
+
+              // if(value is AmityMessageDataType.TEXT){
+
+              // }
             })
         .onError((error, stackTrace) => {
               //handle error
