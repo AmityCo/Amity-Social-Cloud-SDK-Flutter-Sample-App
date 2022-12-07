@@ -13,11 +13,13 @@ class AmityCommunityFeedQuery {
   void initPagingController(String communityId) {
     //inititate the PagingController
     _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newFeedRepository()
-          .getCommunityFeed(communityId)
+      pageFuture: (token) => AmitySocialClient.newPostRepository()
+          .getPosts()
+          .targetCommunity(communityId)
           //feedType could be AmityFeedType.PUBLISHED, AmityFeedType.REVIEWING, AmityFeedType.DECLINED
           .feedType(AmityFeedType.PUBLISHED)
-          .getPagingData(token: token, limit: 20),
+          //Optional
+          .tags(['tag1', 'tag2']).getPagingData(token: token, limit: 20),
       pageSize: 20,
     )..addListener(
         () {
