@@ -225,6 +225,42 @@ class MessageWidget extends StatelessWidget {
                     ],
                   ),
                 ),
+                InkWell(
+                  onTap: () {
+                    if (message.isFlaggedByMe) {
+                      message.unflag().then((value) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Unflagged');
+                      }).onError((error, stackTrace) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Unflag Error - ${error}');
+                      });
+                    } else {
+                      message.flag().then((value) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Flagged');
+                      }).onError((error, stackTrace) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Flag Error - ${error}');
+                      });
+                    }
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1)),
+                    child: Row(
+                      children: [
+                        Icon(value.isFlaggedByMe
+                            ? Icons.flag_rounded
+                            : Icons.flag_outlined),
+                        if ((value.flagCount ?? 0) > 0)
+                          Text('${value.flagCount}')
+                      ],
+                    ),
+                  ),
+                ),
                 PopupMenuButton(
                   child: const Icon(Icons.arrow_drop_down_circle_outlined),
                   itemBuilder: (context) {
@@ -240,6 +276,10 @@ class MessageWidget extends StatelessWidget {
                       const PopupMenuItem(
                         value: 2,
                         child: Text('Delete Message'),
+                      ),
+                      const PopupMenuItem(
+                        value: 3,
+                        child: Text('Flag Message'),
                       )
                     ];
                   },
@@ -265,6 +305,25 @@ class MessageWidget extends StatelessWidget {
                         });
 
                         /// Delete Message
+                        break;
+                      case 3:
+                        if (message.isFlaggedByMe) {
+                          message.unflag().then((value) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Unflagged');
+                          }).onError((error, stackTrace) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Unflag Error - ${error}');
+                          });
+                        } else {
+                          message.flag().then((value) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Flagged');
+                          }).onError((error, stackTrace) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Flag Error - ${error}');
+                          });
+                        }
                         break;
                       default:
                     }
