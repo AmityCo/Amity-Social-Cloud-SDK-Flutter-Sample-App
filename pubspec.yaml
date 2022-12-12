@@ -22,14 +22,13 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   file_picker: ^5.0.1
-  firebase_core: ^2.3.0
-  firebase_messaging: ^14.1.3
+  firebase_core: ^2.4.0
+  firebase_messaging: ^14.1.4
   flutter:
     sdk: flutter
   gallery_saver: ^2.3.2
   get: ^4.6.3
-  get_it: ^7.2.0
-  go_router: ^5.2.2
+  go_router: ^5.2.4
   image_downloader: ^0.31.0
   image_picker: ^0.8.4+10
   intl: ^0.17.0

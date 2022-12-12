@@ -179,49 +179,13 @@ class MessageWidget extends StatelessWidget {
                           'Child Count - ${value.childrenNumber?.toString() ?? ' Null'}',
                           style: themeData.textTheme.caption!.copyWith(),
                         ),
-                      // if (message.parentId != null)
-                      //   FutureBuilder<AmityMessage>(
-                      //       future: AmityChatClient.newMessageRepository()
-                      //           .getMessage(message.parentId!),
-                      //       builder: (context, snapshot) {
-                      //         if (snapshot.hasData) {
-                      //           final value = snapshot.data;
-                      //           return Container(
-                      //             decoration: BoxDecoration(
-                      //               color: Colors.grey.shade300,
-                      //               borderRadius: const BorderRadius.all(
-                      //                   Radius.circular(12)),
-                      //             ),
-                      //             child: Column(
-                      //               crossAxisAlignment:
-                      //                   CrossAxisAlignment.start,
-                      //               children: [
-                      //                 Row(
-                      //                   children: [
-                      //                     const Text('Reply to '),
-                      //                     Text('@${value!.user!.userId}'),
-                      //                     // const Spacer(),
-                      //                     // IconButton(
-                      //                     //   onPressed: () {
-                      //                     //     // setState(() {
-                      //                     //     //   value = null;
-                      //                     //     // });
-                      //                     //   },
-                      //                     //   icon: const Icon(
-                      //                     //     Icons.clear_rounded,
-                      //                     //   ),
-                      //                     // )
-                      //                   ],
-                      //                 ),
-                      //                 AmityMessageContentWidget(
-                      //                   amityMessage: value,
-                      //                 )
-                      //               ],
-                      //             ),
-                      //           );
-                      //         }
-                      //         return Container();
-                      //       }),
+
+                      if (value.user!.flagCount != null &&
+                          value.user!.flagCount! > 0)
+                        Text(
+                          'User Flag Count - ${value.user?.flagCount?.toString() ?? ' Null'}',
+                          style: themeData.textTheme.caption!.copyWith(),
+                        ),
                     ],
                   ),
                 ),
@@ -277,10 +241,19 @@ class MessageWidget extends StatelessWidget {
                         value: 2,
                         child: Text('Delete Message'),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 3,
-                        child: Text('Flag Message'),
-                      )
+                        child: Text(
+                            '${message.isFlaggedByMe ? 'Unflag' : 'flag'} Message'),
+                      ),
+                      const PopupMenuItem(
+                        value: 4,
+                        child: Text('Flag User'),
+                      ),
+                      const PopupMenuItem(
+                        value: 5,
+                        child: Text('UnFlag User'),
+                      ),
                     ];
                   },
                   onSelected: (value) {
@@ -324,6 +297,34 @@ class MessageWidget extends StatelessWidget {
                                 context, 'Message', 'Flag Error - ${error}');
                           });
                         }
+                        break;
+                      case 4:
+                        UserRepository()
+                            .report(message.userId!)
+                            .flag()
+                            .then((value) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Flagged User');
+                        }).onError((error, stackTrace) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'flagged Error - ${error}');
+                        });
+
+                        /// Delete Message
+                        break;
+                      case 5:
+                        UserRepository()
+                            .report(message.userId!)
+                            .unflag()
+                            .then((value) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Unflagged User');
+                        }).onError((error, stackTrace) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Unflagged Error - ${error}');
+                        });
+
+                        /// Delete Message
                         break;
                       default:
                     }

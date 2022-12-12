@@ -91,6 +91,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.grey.withOpacity(.3)),
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
                             child: _avatar != null
                                 ? Image.file(
                                     File(
@@ -110,7 +111,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                           )
                                         : Image.asset(
                                             'assets/user_placeholder.png'),
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -398,6 +398,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     ),
                     const SizedBox(height: 8),
                     Text('Description - ${amityUser.description}'),
+                    const SizedBox(height: 8),
+                    Text('Flag Count - ${amityUser.flagCount ?? 0}'),
                     const SizedBox(height: 8),
                     Text('Created Date - ${amityUser.createdAt}'),
                     const SizedBox(height: 8),

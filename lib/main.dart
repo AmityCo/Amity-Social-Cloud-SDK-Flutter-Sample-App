@@ -62,10 +62,6 @@ class _MyAppState extends State<MyApp> {
     final _themeData = Theme.of(context);
     return MaterialApp.router(
       routerConfig: AppRouter.router,
-      // routeInformationParser: AppRouter.router.routeInformationParser,
-      // routerDelegate: AppRouter.router.routerDelegate,
-      // routeInformationProvider: AppRouter.router.routeInformationProvider,
-
       theme: ThemeData(
         primarySwatch: Colors.blue,
         inputDecorationTheme: const InputDecorationTheme(
