@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_router.dart';
 import 'package:flutter_social_sample_app/core/service_locator/service_locator.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 void main() async {
@@ -61,9 +60,8 @@ class _MyAppState extends State<MyApp> {
     userId = 'victimAndroid';
     userDisplayName = 'victimAndroid';
     final _themeData = Theme.of(context);
-    return GetMaterialApp.router(
-      routeInformationParser: AppRouter.router.routeInformationParser,
-      routerDelegate: AppRouter.router.routerDelegate,
+    return MaterialApp.router(
+      routerConfig: AppRouter.router,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         inputDecorationTheme: const InputDecorationTheme(

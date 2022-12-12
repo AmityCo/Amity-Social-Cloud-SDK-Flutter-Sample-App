@@ -37,13 +37,13 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withOpacity(.3)),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: value.user?.avatarUrl != null
                       ? Image.network(
                           value.user!.avatarUrl!,
                           fit: BoxFit.fill,
                         )
                       : Image.asset('assets/user_placeholder.png'),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
                 const SizedBox(width: 18),
                 Expanded(
@@ -77,6 +77,11 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                         ),
                         Text(
                           'isMuted - ${value.isMuted ?? false}',
+                          style: _themeData.textTheme.caption,
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
+                          'Flag Count - ${value.user?.flagCount ?? 0}',
                           style: _themeData.textTheme.caption,
                           textAlign: TextAlign.start,
                         ),

@@ -283,7 +283,7 @@ class AppRouter {
             MessageUpdateScreen(messageId: state.queryParams['messageId']!),
       ),
     ],
-    redirect: (state) {
+    redirect: (context, state) {
       if (state.location != AppRoute.loginRoute) {
         return AmityCoreClient.isUserLoggedIn() ? null : AppRoute.loginRoute;
       }

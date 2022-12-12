@@ -106,13 +106,13 @@ class MessageWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withOpacity(.3)),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: _user.avatarUrl != null
                       ? Image.network(
                           _user.avatarUrl!,
                           fit: BoxFit.fill,
                         )
                       : Image.asset('assets/user_placeholder.png'),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -178,10 +178,46 @@ class MessageWidget extends StatelessWidget {
                       if (value.user!.flagCount != null &&
                           value.user!.flagCount! > 0)
                         Text(
-                          'User Flag Count - ${value.childrenNumber?.toString() ?? ' Null'}',
+                          'User Flag Count - ${value.user?.flagCount?.toString() ?? ' Null'}',
                           style: _themeData.textTheme.caption!.copyWith(),
                         ),
                     ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    if (message.isFlaggedByMe) {
+                      message.unflag().then((value) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Unflagged');
+                      }).onError((error, stackTrace) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Unflag Error - ${error}');
+                      });
+                    } else {
+                      message.flag().then((value) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Flagged');
+                      }).onError((error, stackTrace) {
+                        CommonSnackbar.showPositiveSnackbar(
+                            context, 'Message', 'Flag Error - ${error}');
+                      });
+                    }
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 1)),
+                    child: Row(
+                      children: [
+                        Icon(value.isFlaggedByMe
+                            ? Icons.flag_rounded
+                            : Icons.flag_outlined),
+                        if ((value.flagCount ?? 0) > 0)
+                          Text('${value.flagCount}')
+                      ],
+                    ),
                   ),
                 ),
                 PopupMenuButton(
@@ -189,16 +225,17 @@ class MessageWidget extends StatelessWidget {
                   itemBuilder: (context) {
                     return [
                       const PopupMenuItem(
-                        child: Text('Edit Message'),
                         value: 1,
+                        child: Text('Edit Message'),
                       ),
                       const PopupMenuItem(
-                        child: Text('Delete Message'),
                         value: 2,
+                        child: Text('Delete Message'),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 3,
-                        child: Text('Flag Message'),
+                        child: Text(
+                            '${message.isFlaggedByMe ? 'Unflag' : 'flag'} Message'),
                       ),
                       const PopupMenuItem(
                         value: 4,
