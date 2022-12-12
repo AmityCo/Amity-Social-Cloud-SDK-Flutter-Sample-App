@@ -245,24 +245,24 @@ class _ChatScreenState extends State<ChatScreen> {
                 AmityCoreClient.getCurrentUser(),
                 (value) async {
                   late var messageBuilder;
+
+                  if (value.message != null) {
+                    messageBuilder = AmityChatClient.newMessageRepository()
+                        .createMessage(widget.channelId)
+                        .text(value.message!);
+                  }
+
                   if (value.image != null) {
                     messageBuilder = AmityChatClient.newMessageRepository()
                         .createMessage(widget.channelId)
                         .image(Uri(path: value.image!.path))
                         .caption(value.message!);
-                    return;
                   }
                   if (value.file != null) {
                     messageBuilder = AmityChatClient.newMessageRepository()
                         .createMessage(widget.channelId)
                         .file(Uri(path: value.file!.path))
                         .caption(value.message!);
-                  }
-
-                  if (value.message != null) {
-                    messageBuilder = AmityChatClient.newMessageRepository()
-                        .createMessage(widget.channelId)
-                        .text(value.message!);
                   }
 
                   if (replyToMessage != null) {
