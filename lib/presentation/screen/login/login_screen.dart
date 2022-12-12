@@ -19,19 +19,19 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     //STAGING Server
-    // _userIdTextController.text = 'victimAndroid';
-    // _displayNameTextController.text = 'Victim Android';
-    // _apiKeyTextController.text =
-    //     'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
+    _userIdTextController.text = 'victimAndroid';
+    _displayNameTextController.text = 'Victim Android';
+    _apiKeyTextController.text =
+        'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
 
     //SG Server
     // 1
-    _userIdTextController.text = 'johnwick2';
-    _displayNameTextController.text = 'John Wick';
-    _apiKeyTextController.text =
-        'b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
+    // _userIdTextController.text = 'johnwick2';
+    // _displayNameTextController.text = 'John Wick';
+    // _apiKeyTextController.text =
+    //     'b3babb0b3a89f4341d31dc1a01091edcd70f8de7b23d697f';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.value;
 
     //2
     // _userIdTextController.text = 'bb01';

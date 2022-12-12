@@ -53,7 +53,7 @@ class AppRouter {
                 UserProfileScreen(userId: state.params['userId']!),
             routes: [
               GoRoute(
-                name: AppRoute.createPost + '_from_profile',
+                name: '${AppRoute.createPost}_from_profile',
                 path: AppRoute.createPostRoute,
                 builder: (context, state) =>
                     CreatePostScreen(userId: state.params['userId']!),
@@ -283,7 +283,7 @@ class AppRouter {
             MessageUpdateScreen(messageId: state.queryParams['messageId']!),
       ),
     ],
-    redirect: (state) {
+    redirect: (context, state) {
       if (state.location != AppRoute.loginRoute) {
         return AmityCoreClient.isUserLoggedIn() ? null : AppRoute.loginRoute;
       }

@@ -179,9 +179,7 @@ class _CommunityCategoryListScreenState
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          GoRouter.of(context)
-              .navigator!
-              .pop(selectedCategory.map((e) => e).join(','));
+          GoRouter.of(context).pop(selectedCategory.map((e) => e).join(','));
         },
         child: const Icon(Icons.check_sharp),
       ),
