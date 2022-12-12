@@ -168,6 +168,19 @@ class MessageWidget extends StatelessWidget {
                           'PreantID - ${value.parentId?.toString() ?? ' Null'}',
                           style: _themeData.textTheme.caption!.copyWith(),
                         ),
+                      if (value.childrenNumber != null &&
+                          value.childrenNumber! > 0)
+                        Text(
+                          'Child Count - ${value.childrenNumber?.toString() ?? ' Null'}',
+                          style: _themeData.textTheme.caption!.copyWith(),
+                        ),
+
+                      if (value.user!.flagCount != null &&
+                          value.user!.flagCount! > 0)
+                        Text(
+                          'User Flag Count - ${value.childrenNumber?.toString() ?? ' Null'}',
+                          style: _themeData.textTheme.caption!.copyWith(),
+                        ),
                     ],
                   ),
                 ),
@@ -182,6 +195,18 @@ class MessageWidget extends StatelessWidget {
                       const PopupMenuItem(
                         child: Text('Delete Message'),
                         value: 2,
+                      ),
+                      const PopupMenuItem(
+                        value: 3,
+                        child: Text('Flag Message'),
+                      ),
+                      const PopupMenuItem(
+                        value: 4,
+                        child: Text('Flag User'),
+                      ),
+                      const PopupMenuItem(
+                        value: 5,
+                        child: Text('UnFlag User'),
                       )
                     ];
                   },
@@ -201,6 +226,53 @@ class MessageWidget extends StatelessWidget {
                         }).onError((error, stackTrace) {
                           CommonSnackbar.showPositiveSnackbar(
                               context, 'Message', 'Delete Error - ${error}');
+                        });
+
+                        /// Delete Message
+                        break;
+                      case 3:
+                        if (message.isFlaggedByMe) {
+                          message.unflag().then((value) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Unflagged');
+                          }).onError((error, stackTrace) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Unflag Error - ${error}');
+                          });
+                        } else {
+                          message.flag().then((value) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Flagged');
+                          }).onError((error, stackTrace) {
+                            CommonSnackbar.showPositiveSnackbar(
+                                context, 'Message', 'Flag Error - ${error}');
+                          });
+                        }
+                        break;
+                      case 4:
+                        UserRepository()
+                            .report(message.userId!)
+                            .flag()
+                            .then((value) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Flagged User');
+                        }).onError((error, stackTrace) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'flagged Error - ${error}');
+                        });
+
+                        /// Delete Message
+                        break;
+                      case 5:
+                        UserRepository()
+                            .report(message.userId!)
+                            .unflag()
+                            .then((value) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Unflagged User');
+                        }).onError((error, stackTrace) {
+                          CommonSnackbar.showPositiveSnackbar(
+                              context, 'Message', 'Unflagged Error - ${error}');
                         });
 
                         /// Delete Message
