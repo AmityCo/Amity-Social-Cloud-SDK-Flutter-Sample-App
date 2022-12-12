@@ -23,6 +23,8 @@ class _ChatScreenState extends State<ChatScreen> {
   List<String>? _excludingTags;
   bool parentsOnly = false;
 
+  AmityMessage? replyToMessage;
+
   @override
   void initState() {
     messageLiveCollection = MessageLiveCollection(
@@ -70,115 +72,117 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: PopupMenuButton<int>(
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          value: 0,
-                          child: Text(AmityMessageDataType.TEXT.value),
-                        ),
-                        PopupMenuItem(
-                          value: 1,
-                          child: Text(AmityMessageDataType.IMAGE.value),
-                        ),
-                        PopupMenuItem(
-                          value: 2,
-                          child: Text(AmityMessageDataType.FILE.value),
-                        ),
-                        PopupMenuItem(
-                          value: 3,
-                          child: Text(AmityMessageDataType.AUDIO.value),
-                        ),
-                        PopupMenuItem(
-                          value: 4,
-                          child: Text(AmityMessageDataType.CUSTOM.value),
-                        ),
-                        const PopupMenuItem(
-                          value: 5,
-                          child: Text('All'),
-                        )
-                      ];
-                    },
-                    child: const Icon(
-                      Icons.filter_alt_rounded,
-                      size: 18,
-                    ),
-                    onSelected: (index) {
-                      if (index != 5) {
-                        _type = AmityMessageDataType.values[index];
-                      } else {
-                        _type = null;
-                      }
+            Container(
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: PopupMenuButton<int>(
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            value: 0,
+                            child: Text(AmityMessageDataType.TEXT.value),
+                          ),
+                          PopupMenuItem(
+                            value: 1,
+                            child: Text(AmityMessageDataType.IMAGE.value),
+                          ),
+                          PopupMenuItem(
+                            value: 2,
+                            child: Text(AmityMessageDataType.FILE.value),
+                          ),
+                          PopupMenuItem(
+                            value: 3,
+                            child: Text(AmityMessageDataType.AUDIO.value),
+                          ),
+                          PopupMenuItem(
+                            value: 4,
+                            child: Text(AmityMessageDataType.CUSTOM.value),
+                          ),
+                          const PopupMenuItem(
+                            value: 5,
+                            child: Text('All'),
+                          )
+                        ];
+                      },
+                      child: const Icon(
+                        Icons.filter_alt_rounded,
+                        size: 18,
+                      ),
+                      onSelected: (index) {
+                        if (index != 5) {
+                          _type = AmityMessageDataType.values[index];
+                        } else {
+                          _type = null;
+                        }
 
-                      messageLiveCollection.reset();
-                      messageLiveCollection.loadNext();
-                    },
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: InkWell(
-                    child: const Icon(Icons.tag, size: 18),
-                    onTap: () {
-                      EditTextDialog.show(context,
-                          title: 'Enter tags, separate by comma',
-                          defString: (_tags ?? []).join(','),
-                          hintText: 'type tags here', onPress: (value) {
-                        if (value.isNotEmpty) {
-                          _tags = value.trim().split(',');
-                        }
-                        if (value.isEmpty) {
-                          _tags = [];
-                        }
                         messageLiveCollection.reset();
                         messageLiveCollection.loadNext();
-                      });
-                    },
+                      },
+                    ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: InkWell(
-                    child: const Icon(Icons.tag, size: 18),
-                    onTap: () {
-                      EditTextDialog.show(context,
-                          title: 'Enter excluding tags, separate by comma',
-                          defString: (_excludingTags ?? []).join(','),
-                          hintText: 'type tags here', onPress: (value) {
-                        if (value.isNotEmpty) {
-                          _excludingTags = value.trim().split(',');
-                        }
-                        if (value.isEmpty) {
-                          _excludingTags = [];
-                        }
-                        messageLiveCollection.reset();
-                        messageLiveCollection.loadNext();
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  child: Row(
-                    children: [
-                      Checkbox(
-                        value: parentsOnly,
-                        onChanged: (value) {
-                          setState(() {
-                            parentsOnly = value ?? false;
-                          });
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      child: const Icon(Icons.tag, size: 18),
+                      onTap: () {
+                        EditTextDialog.show(context,
+                            title: 'Enter tags, separate by comma',
+                            defString: (_tags ?? []).join(','),
+                            hintText: 'type tags here', onPress: (value) {
+                          if (value.isNotEmpty) {
+                            _tags = value.trim().split(',');
+                          }
+                          if (value.isEmpty) {
+                            _tags = [];
+                          }
                           messageLiveCollection.reset();
                           messageLiveCollection.loadNext();
-                        },
-                      ),
-                      const Text('Parent only')
-                    ],
+                        });
+                      },
+                    ),
                   ),
-                )
-              ],
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    child: InkWell(
+                      child: const Icon(Icons.tag, size: 18),
+                      onTap: () {
+                        EditTextDialog.show(context,
+                            title: 'Enter excluding tags, separate by comma',
+                            defString: (_excludingTags ?? []).join(','),
+                            hintText: 'type tags here', onPress: (value) {
+                          if (value.isNotEmpty) {
+                            _excludingTags = value.trim().split(',');
+                          }
+                          if (value.isEmpty) {
+                            _excludingTags = [];
+                          }
+                          messageLiveCollection.reset();
+                          messageLiveCollection.loadNext();
+                        });
+                      },
+                    ),
+                  ),
+                  Container(
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: parentsOnly,
+                          onChanged: (value) {
+                            setState(() {
+                              parentsOnly = value ?? false;
+                            });
+                            messageLiveCollection.reset();
+                            messageLiveCollection.loadNext();
+                          },
+                        ),
+                        const Text('Parent only')
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
             if (messageLiveCollection.isFetching)
               Container(
@@ -196,58 +200,80 @@ class _ChatScreenState extends State<ChatScreen> {
                       reverse: true,
                       itemBuilder: (context, index) {
                         final message = amityMessages[index];
-                        return Container(
-                          // height: 120,
-                          // margin: const EdgeInsets.all(12),
-                          // decoration: BoxDecoration(
-                          //   color: Colors.grey.shade200,
-                          //   borderRadius: BorderRadius.circular(12),
-                          // ),
-                          child: MessageWidget(message: message),
+                        return MessageWidget(
+                          message: message,
+                          onReplyTap: (value) => setState(() {
+                            replyToMessage = value;
+                          }),
                         );
                       },
                     ),
             ),
+            if (replyToMessage != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(color: Colors.grey.shade200),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text('Reply to '),
+                        Text('@${replyToMessage!.user!.userId}'),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              replyToMessage = null;
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.clear_rounded,
+                          ),
+                        )
+                      ],
+                    ),
+                    AmityMessageContentWidget(
+                      amityMessage: replyToMessage!,
+                    )
+                  ],
+                ),
+              ),
             Container(
               margin: const EdgeInsets.all(12),
               child: AddMessageWidget(
                 AmityCoreClient.getCurrentUser(),
                 (value) async {
+                  late var messageBuilder;
                   if (value.image != null) {
-                    await AmityChatClient.newMessageRepository()
+                    messageBuilder = AmityChatClient.newMessageRepository()
                         .createMessage(widget.channelId)
                         .image(Uri(path: value.image!.path))
-                        .caption(value.message!)
-                        .send()
-                        .then((value) {
-                      scrollcontroller.jumpTo(0);
-                    }).onError((error, stackTrace) {
-                      CommonSnackbar.showNagativeSnackbar(
-                          context, 'Error', error.toString());
-                    });
+                        .caption(value.message!);
                     return;
                   }
                   if (value.file != null) {
-                    await AmityChatClient.newMessageRepository()
+                    messageBuilder = AmityChatClient.newMessageRepository()
                         .createMessage(widget.channelId)
                         .file(Uri(path: value.file!.path))
-                        .caption(value.message!)
-                        .send()
-                        .then((value) {
-                      scrollcontroller.jumpTo(0);
-                    }).onError((error, stackTrace) {
-                      CommonSnackbar.showNagativeSnackbar(
-                          context, 'Error', error.toString());
-                    });
-                    return;
+                        .caption(value.message!);
                   }
-                  await AmityChatClient.newMessageRepository()
-                      .createMessage(widget.channelId)
-                      .text(value.message!)
-                      .parentId('482e8ae1-e9f8-44d1-988f-55fc681d86af')
-                      .send()
-                      .then((value) {
+
+                  if (value.message != null) {
+                    messageBuilder = AmityChatClient.newMessageRepository()
+                        .createMessage(widget.channelId)
+                        .text(value.message!);
+                  }
+
+                  if (replyToMessage != null) {
+                    messageBuilder.parentId(replyToMessage!.messageId);
+                  }
+
+                  messageBuilder.send().then((value) {
                     scrollcontroller.jumpTo(0);
+                    setState(() {
+                      replyToMessage = null;
+                    });
                   }).onError((error, stackTrace) {
                     print(stackTrace.toString());
                     CommonSnackbar.showNagativeSnackbar(

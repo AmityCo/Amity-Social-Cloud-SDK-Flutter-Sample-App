@@ -11,8 +11,11 @@ import 'package:go_router/go_router.dart';
 import 'package:image_downloader/image_downloader.dart';
 
 class MessageWidget extends StatelessWidget {
-  MessageWidget({Key? key, required this.message}) : super(key: key);
+  const MessageWidget(
+      {Key? key, required this.message, required this.onReplyTap})
+      : super(key: key);
   final AmityMessage message;
+  final ValueChanged<AmityMessage> onReplyTap;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,12 +24,12 @@ class MessageWidget extends StatelessWidget {
   }
 
   Widget _getBody(BuildContext context, AmityMessage value) {
-    final _themeData = Theme.of(context);
-    AmityUser _user = value.user!;
-    String text = '';
-    bool _notSupportedDataType = false;
+    final themeData = Theme.of(context);
+    AmityUser user = value.user!;
+    // String text = '';
+    // bool notSupportedDataType = false;
 
-    bool _isLikedByMe = value.myReactions?.isNotEmpty ?? false;
+    // bool isLikedByMe = value.myReactions?.isNotEmpty ?? false;
 
     // if (value.messageId == '631882bd09045c4fc8281a57') print(value.toString());
 
@@ -35,12 +38,12 @@ class MessageWidget extends StatelessWidget {
       value.reactions!.reactions!.removeWhere((key, value) => value == 0);
     }
 
-    AmityMessageData? data = value.data;
-    if (data != null) {
-      if (data is MessageTextData) text = data.text!;
-    } else {
-      _notSupportedDataType = true;
-    }
+    // AmityMessageData? data = value.data;
+    // if (data != null) {
+    //   if (data is MessageTextData) text = data.text!;
+    // } else {
+    //   notSupportedDataType = true;
+    // }
 
     if (value.isDeleted ?? false) {
       return Container(
@@ -55,7 +58,7 @@ class MessageWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               'Message has been deleted',
-              style: _themeData.textTheme.caption,
+              style: themeData.textTheme.caption,
             )
           ],
         ),
@@ -107,9 +110,9 @@ class MessageWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       color: Colors.grey.withOpacity(.3)),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: _user.avatarUrl != null
+                  child: user.avatarUrl != null
                       ? Image.network(
-                          _user.avatarUrl!,
+                          user.avatarUrl!,
                           fit: BoxFit.fill,
                         )
                       : Image.asset('assets/user_placeholder.png'),
@@ -120,66 +123,68 @@ class MessageWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _user.displayName!,
-                        style: _themeData.textTheme.bodyText1!.copyWith(
+                        user.displayName!,
+                        style: themeData.textTheme.bodyText1!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      _notSupportedDataType
-                          ? Text(
-                              'DataType Not Supported : ${message.type?.value}',
-                              style: _themeData.textTheme.bodyText2!.copyWith(),
-                            )
-                          : _getContentWidget(context, data!),
+                      AmityMessageContentWidget(
+                        amityMessage: message,
+                      ),
                       // const SizedBox(height: 6),
                       Row(
                         children: [
                           Text(
                             value.createdAt?.toLocal().toIso8601String() ??
                                 DateTime.now().toLocal().toIso8601String(),
-                            style: _themeData.textTheme.caption!.copyWith(),
+                            style: themeData.textTheme.caption!.copyWith(),
                           ),
                           const SizedBox(width: 12),
                           Text(
                             value.syncState!.value.toUpperCase(),
-                            style: _themeData.textTheme.caption!.copyWith(),
+                            style: themeData.textTheme.caption!.copyWith(),
                           ),
                         ],
+                      ),
+                      Text(
+                        'Message Id - ${value.messageId}',
+                        style: themeData.textTheme.caption!.copyWith(),
                       ),
                       if (value.myReactions != null &&
                           value.myReactions!.isNotEmpty)
                         Text(
                           'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
-                          style: _themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.caption!.copyWith(),
                         ),
                       if (value.amityTags != null &&
                           value.amityTags!.tags!.isNotEmpty)
                         Text(
                           'Tags - ${value.amityTags?.tags?.join(',') ?? ' Null'}',
-                          style: _themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.caption!.copyWith(),
                         ),
                       if (value.metadata != null)
                         Text(
                           'Metadata - ${value.metadata?.toString() ?? ' Null'}',
-                          style: _themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.caption!.copyWith(),
                         ),
+
                       if (value.parentId != null)
                         Text(
                           'PreantID - ${value.parentId?.toString() ?? ' Null'}',
-                          style: _themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.caption!.copyWith(),
                         ),
                       if (value.childrenNumber != null &&
                           value.childrenNumber! > 0)
                         Text(
                           'Child Count - ${value.childrenNumber?.toString() ?? ' Null'}',
-                          style: _themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.caption!.copyWith(),
                         ),
 
                       if (value.user!.flagCount != null &&
                           value.user!.flagCount! > 0)
                         Text(
                           'User Flag Count - ${value.user?.flagCount?.toString() ?? ' Null'}',
-                          style: _themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.caption!.copyWith(),
                         ),
                     ],
                   ),
@@ -225,6 +230,10 @@ class MessageWidget extends StatelessWidget {
                   itemBuilder: (context) {
                     return [
                       const PopupMenuItem(
+                        value: 0,
+                        child: Text('Reply'),
+                      ),
+                      const PopupMenuItem(
                         value: 1,
                         child: Text('Edit Message'),
                       ),
@@ -244,11 +253,14 @@ class MessageWidget extends StatelessWidget {
                       const PopupMenuItem(
                         value: 5,
                         child: Text('UnFlag User'),
-                      )
+                      ),
                     ];
                   },
                   onSelected: (value) {
                     switch (value) {
+                      case 0:
+                        onReplyTap(message);
+                        break;
                       case 1:
                         if (message.data is MessageTextData) {
                           /// Update Message
@@ -321,7 +333,6 @@ class MessageWidget extends StatelessWidget {
               ],
             ),
           ),
-          // if (_isLikedByMe)
           if (value.reactions!.reactions != null &&
               value.reactions!.reactions!.isNotEmpty)
             Positioned.fill(
@@ -379,7 +390,7 @@ class MessageWidget extends StatelessWidget {
                                       value.reactions!
                                           .getCount('like')
                                           .toString(),
-                                      style: _themeData.textTheme.caption!
+                                      style: themeData.textTheme.caption!
                                           .copyWith(fontSize: 14),
                                     ),
                                   ),
@@ -435,7 +446,7 @@ class MessageWidget extends StatelessWidget {
                                       value.reactions!
                                           .getCount('like')
                                           .toString(),
-                                      style: _themeData.textTheme.caption!
+                                      style: themeData.textTheme.caption!
                                           .copyWith(fontSize: 14),
                                     ),
                                   ),
@@ -490,7 +501,7 @@ class MessageWidget extends StatelessWidget {
                                     value.reactions!
                                         .getCount('love')
                                         .toString(),
-                                    style: _themeData.textTheme.caption!
+                                    style: themeData.textTheme.caption!
                                         .copyWith(fontSize: 14),
                                   ),
                                   const SizedBox(width: 2),
@@ -544,7 +555,7 @@ class MessageWidget extends StatelessWidget {
                                     value.reactions!
                                         .getCount('love')
                                         .toString(),
-                                    style: _themeData.textTheme.caption!
+                                    style: themeData.textTheme.caption!
                                         .copyWith(fontSize: 14),
                                   ),
                                   const SizedBox(width: 2),
@@ -565,179 +576,6 @@ class MessageWidget extends StatelessWidget {
             )
         ],
       ),
-    );
-  }
-
-  Widget _getContentWidget(BuildContext context, AmityMessageData data) {
-    final _themeData = Theme.of(context);
-
-    if (data is MessageTextData) {
-      return Text(
-        data.text!,
-        style: _themeData.textTheme.bodyText2!.copyWith(),
-      );
-    }
-
-    if (data is MessageImageData) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            // color: Colors.red,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: data.image.hasLocalPreview
-                  ? Image.file(
-                      File(data.image.getFilePath!),
-                      fit: BoxFit.cover,
-                    )
-                  : Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Image.network(
-                            data.image.getUrl(AmityImageSize.MEDIUM),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black.withOpacity(.3)),
-                            child: InkWell(
-                              child: const Icon(
-                                Icons.download,
-                                color: Colors.white,
-                              ),
-                              onTap: () async {
-                                var imageId =
-                                    await ImageDownloader.downloadImage(data
-                                        .image
-                                        .getUrl(AmityImageSize.MEDIUM));
-                                if (imageId == null) {
-                                  return;
-                                }
-
-                                // Below is a method of obtaining saved image information.
-                                var fileName =
-                                    await ImageDownloader.findName(imageId);
-                                var path =
-                                    await ImageDownloader.findPath(imageId);
-
-                                print(fileName);
-                                print(path);
-
-                                CommonSnackbar.showPositiveSnackbar(
-                                    context, 'Success', 'Image Save $fileName');
-
-                                // await GallerySaver.saveImage(path!).then(
-                                //   (value) {
-                                //     CommonSnackbar.showPositiveSnackbar(context,
-                                //         'Success', 'Image Saved in Gallary');
-                                //   },
-                                // ).onError((error, stackTrace) {
-                                //   CommonSnackbar.showNagativeSnackbar(
-                                //       context, 'Error', error.toString());
-                                // });
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-            ),
-          ),
-          if (data.caption != null && data.caption!.isNotEmpty)
-            Text(
-              '${data.caption}',
-              style: _themeData.textTheme.bodyText2,
-            ),
-        ],
-      );
-    }
-
-    if (data is MessageFileData) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          data.file.hasLocalPreview
-              ? TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.attach_file_rounded),
-                  label: Text(
-                    data.file.getFilePath!.split('/').last,
-                  ),
-                )
-              : Container(
-                  color: Colors.grey.shade300,
-                  child: ListTile(
-                    leading: const Icon(Icons.attach_file_rounded),
-                    title: Text(
-                      data.file.fileName,
-                    ),
-                    trailing: Container(
-                      padding: const EdgeInsets.all(4),
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(.3)),
-                      child: InkWell(
-                        child: const Icon(
-                          Icons.download,
-                          color: Colors.white,
-                        ),
-                        onTap: () async {
-                          var fileId = await ImageDownloader.downloadImage(
-                              data.file.getUrl);
-                          if (fileId == null) {
-                            return;
-                          }
-
-                          // Below is a method of obtaining saved image information.
-                          var fileName = await ImageDownloader.findName(fileId);
-                          var path = await ImageDownloader.findPath(fileId);
-
-                          print(fileName);
-                          print(path);
-                        },
-                      ),
-                    ),
-                    // tileColor: Colors.red,
-                    // focusColor: Colors.red,
-                    // selectedColor: Colors.red,
-                  ),
-                ),
-          // TextButton.icon(
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.attach_file_rounded),
-          //     label: Text(
-          //       data.file.getUrl.split('/').last,
-          //     ),
-          //     style: TextButton.styleFrom(
-          //       padding: const EdgeInsets.all(12),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(12),
-          //       ),
-          //       primary: Colors.black,
-          //       backgroundColor: Colors.grey.shade300,
-          //     ),
-          //   ),
-          if (data.caption != null && data.caption!.isNotEmpty)
-            Text(
-              '${data.caption}',
-              style: _themeData.textTheme.bodyText2,
-            ),
-        ],
-      );
-    }
-
-    return Text(
-      'Still not supported',
-      style: _themeData.textTheme.bodyText2!.copyWith(),
     );
   }
 
@@ -826,6 +664,185 @@ class MessageWidget extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class AmityMessageContentWidget extends StatelessWidget {
+  const AmityMessageContentWidget({Key? key, required this.amityMessage})
+      : super(key: key);
+  final AmityMessage amityMessage;
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
+    final data = amityMessage.data;
+    if (data is MessageTextData) {
+      return Text(
+        data.text!,
+        style: themeData.textTheme.bodyText2!.copyWith(),
+      );
+    }
+
+    if (data is MessageImageData) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            // color: Colors.red,
+            child: SizedBox(
+              width: 100,
+              height: 100,
+              child: data.image.hasLocalPreview
+                  ? Image.file(
+                      File(data.image.getFilePath!),
+                      fit: BoxFit.cover,
+                    )
+                  : Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.network(
+                            data.image.getUrl(AmityImageSize.MEDIUM),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            margin: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withOpacity(.3)),
+                            child: InkWell(
+                              child: const Icon(
+                                Icons.download,
+                                color: Colors.white,
+                              ),
+                              onTap: () async {
+                                var imageId =
+                                    await ImageDownloader.downloadImage(data
+                                        .image
+                                        .getUrl(AmityImageSize.MEDIUM));
+                                if (imageId == null) {
+                                  return;
+                                }
+
+                                // Below is a method of obtaining saved image information.
+                                var fileName =
+                                    await ImageDownloader.findName(imageId);
+                                var path =
+                                    await ImageDownloader.findPath(imageId);
+
+                                print(fileName);
+                                print(path);
+
+                                CommonSnackbar.showPositiveSnackbar(
+                                    context, 'Success', 'Image Save $fileName');
+
+                                // await GallerySaver.saveImage(path!).then(
+                                //   (value) {
+                                //     CommonSnackbar.showPositiveSnackbar(context,
+                                //         'Success', 'Image Saved in Gallary');
+                                //   },
+                                // ).onError((error, stackTrace) {
+                                //   CommonSnackbar.showNagativeSnackbar(
+                                //       context, 'Error', error.toString());
+                                // });
+                              },
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+            ),
+          ),
+          if (data.caption != null && data.caption!.isNotEmpty)
+            Text(
+              '${data.caption}',
+              style: themeData.textTheme.bodyText2,
+            ),
+        ],
+      );
+    }
+
+    if (data is MessageFileData) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          data.file.hasLocalPreview
+              ? TextButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.attach_file_rounded),
+                  label: Text(
+                    data.file.getFilePath!.split('/').last,
+                  ),
+                )
+              : Container(
+                  color: Colors.grey.shade300,
+                  child: ListTile(
+                    leading: const Icon(Icons.attach_file_rounded),
+                    title: Text(
+                      data.file.fileName,
+                    ),
+                    trailing: Container(
+                      padding: const EdgeInsets.all(4),
+                      margin: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withOpacity(.3)),
+                      child: InkWell(
+                        child: const Icon(
+                          Icons.download,
+                          color: Colors.white,
+                        ),
+                        onTap: () async {
+                          var fileId = await ImageDownloader.downloadImage(
+                              data.file.getUrl);
+                          if (fileId == null) {
+                            return;
+                          }
+
+                          // Below is a method of obtaining saved image information.
+                          var fileName = await ImageDownloader.findName(fileId);
+                          var path = await ImageDownloader.findPath(fileId);
+
+                          print(fileName);
+                          print(path);
+                        },
+                      ),
+                    ),
+                    // tileColor: Colors.red,
+                    // focusColor: Colors.red,
+                    // selectedColor: Colors.red,
+                  ),
+                ),
+          // TextButton.icon(
+          //     onPressed: () {},
+          //     icon: const Icon(Icons.attach_file_rounded),
+          //     label: Text(
+          //       data.file.getUrl.split('/').last,
+          //     ),
+          //     style: TextButton.styleFrom(
+          //       padding: const EdgeInsets.all(12),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(12),
+          //       ),
+          //       primary: Colors.black,
+          //       backgroundColor: Colors.grey.shade300,
+          //     ),
+          //   ),
+          if (data.caption != null && data.caption!.isNotEmpty)
+            Text(
+              '${data.caption}',
+              style: themeData.textTheme.bodyText2,
+            ),
+        ],
+      );
+    }
+
+    return Text(
+      'Still not supported',
+      style: themeData.textTheme.bodyText2!.copyWith(),
     );
   }
 }

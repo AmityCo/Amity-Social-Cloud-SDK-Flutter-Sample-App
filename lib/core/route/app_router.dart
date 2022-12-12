@@ -53,7 +53,7 @@ class AppRouter {
                 UserProfileScreen(userId: state.params['userId']!),
             routes: [
               GoRoute(
-                name: AppRoute.createPost + '_from_profile',
+                name: '${AppRoute.createPost}_from_profile',
                 path: AppRoute.createPostRoute,
                 builder: (context, state) =>
                     CreatePostScreen(userId: state.params['userId']!),
