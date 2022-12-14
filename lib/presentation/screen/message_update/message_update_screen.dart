@@ -40,8 +40,7 @@ class MessageUpdateScreen extends StatelessWidget {
             }
 
             if (value.amityTags != null) {
-              _tagsEditController.text =
-                  value.amityTags?.tags?.toString() ?? '';
+              _tagsEditController.text = value.amityTags?.tags?.join(',') ?? '';
             }
 
             return SingleChildScrollView(
