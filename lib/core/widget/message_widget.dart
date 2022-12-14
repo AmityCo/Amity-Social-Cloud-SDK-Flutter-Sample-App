@@ -5,6 +5,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -254,6 +255,10 @@ class MessageWidget extends StatelessWidget {
                         value: 5,
                         child: Text('UnFlag User'),
                       ),
+                      const PopupMenuItem(
+                        value: 6,
+                        child: Text('Tags'),
+                      ),
                     ];
                   },
                   onSelected: (value) {
@@ -325,6 +330,34 @@ class MessageWidget extends StatelessWidget {
                         });
 
                         /// Delete Message
+                        break;
+                      case 6:
+                        EditTextDialog.show(
+                          context,
+                          title: 'Tags',
+                          hintText: 'Enter Tags',
+                          defString: message.amityTags?.tags?.join(','),
+                          onPress: (value) {
+                            if (value.isNotEmpty) {
+                              message
+                                  .upate()
+                                  .tags(value.split(','))
+                                  .update()
+                                  .then((value) {
+                                CommonSnackbar.showPositiveSnackbar(
+                                    context, 'Message', 'Tag Updated');
+                              }).onError((error, stackTrace) {
+                                CommonSnackbar.showPositiveSnackbar(context,
+                                    'Message', 'Tag message Error - $error');
+                              });
+                            } else {
+                              CommonSnackbar.showNagativeSnackbar(
+                                  context, 'Tags', 'Please enter tags');
+                            }
+                          },
+                        );
+
+                        /// Tag Message
                         break;
                       default:
                     }
@@ -738,16 +771,6 @@ class AmityMessageContentWidget extends StatelessWidget {
 
                                 CommonSnackbar.showPositiveSnackbar(
                                     context, 'Success', 'Image Save $fileName');
-
-                                // await GallerySaver.saveImage(path!).then(
-                                //   (value) {
-                                //     CommonSnackbar.showPositiveSnackbar(context,
-                                //         'Success', 'Image Saved in Gallary');
-                                //   },
-                                // ).onError((error, stackTrace) {
-                                //   CommonSnackbar.showNagativeSnackbar(
-                                //       context, 'Error', error.toString());
-                                // });
                               },
                             ),
                           ),
