@@ -2,7 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityMessageReply {
   /* begin_sample_code
-    gist_id: 252bf750d3803761412412d7e10f3bda
+    gist_id: 15d2f575d9e3a9badf6a2c63bec0c901
     filename: AmityMessageReply.dart
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter message reply example

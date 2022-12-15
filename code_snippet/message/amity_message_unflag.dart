@@ -2,7 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityMessageUnflag {
   /* begin_sample_code
-    gist_id: a64f66b4df447fd87c4cbff25fea843e
+    gist_id: 74827599992fd693530f96cf68d7e7cc
     filename: AmityMessageUnflag.dart
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter unflag message example

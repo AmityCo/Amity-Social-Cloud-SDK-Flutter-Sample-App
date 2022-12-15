@@ -2,7 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityUserFlag {
   /* begin_sample_code
-    gist_id: a64f66b4df447fd87c4cbff25fea843e
+    gist_id: 89269b8e6bf4f447744c777f8c8a5336
     filename: AmityUserFlag.dart
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter flag user example
