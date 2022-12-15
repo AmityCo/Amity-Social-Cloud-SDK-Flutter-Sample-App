@@ -31,95 +31,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    // final memberScreen = ChannelMembercreen(
-    //   channelId: widget.channelId,
-    //   showAppBar: false,
-    // );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Channel Profile'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                GoRouter.of(context).pushNamed(AppRoute.chat,
-                    params: {'channelId': widget.channelId});
-              },
-              icon: const Icon(
-                Icons.mark_unread_chat_alt_outlined,
-              )),
-          PopupMenuButton(
-            itemBuilder: (context) {
-              return const [
-                PopupMenuItem(
-                  child: Text("Edit"),
-                  value: 1,
-                ),
-                PopupMenuItem(
-                  child: Text("Delete (Soft)"),
-                  value: 2,
-                ),
-                PopupMenuItem(
-                  child: Text("Delete (Hard)"),
-                  value: 3,
-                  enabled: false,
-                ),
-                PopupMenuItem(
-                  child: Text("Check my permission"),
-                  value: 4,
-                  enabled: true,
-                ),
-                PopupMenuItem(
-                  child: Text("Mute"),
-                  value: 5,
-                ),
-              ];
-            },
-            child: const Icon(
-              Icons.more_vert,
-              size: 18,
-            ),
-            onSelected: (index) {
-              if (index == 1) {
-                //Open Edit Channel
-                GoRouter.of(context).pushNamed(AppRoute.updateChannel,
-                    queryParams: {'channelId': widget.channelId});
-              }
-              if (index == 2) {
-                //Delete Channel
-                // AmitySocialClient.newChannelRepository()
-                //     .deleteChannel(widget.channelId);
-              }
-              if (index == 4) {
-                EditTextDialog.show(context,
-                    title: 'Check my permission in this community',
-                    hintText: 'Enter permission name', onPress: (value) {
-                  final permissions =
-                      AmityPermission.values.where((v) => v.value == value);
-
-                  if (permissions.isEmpty) {
-                    ErrorDialog.show(context,
-                        title: 'Error', message: 'permission does not exist');
-                  } else {
-                    // final hasPermission =
-                    //     AmityCoreClient.hasPermission(permissions.first)
-                    //         .atChannel(widget.channelId)
-                    //         .check();
-                    // PositiveDialog.show(context,
-                    //     title: 'Permission',
-                    //     message:
-                    //         'The permission "$value" is valid = $hasPermission');
-                  }
-                });
-              }
-              if (index == 5) {
-                ///Mute Channel
-                AmityChatClient.newChannelRepository()
-                    .muteChannel(widget.channelId);
-              }
-            },
-          ),
-        ],
-      ),
       body: FutureBuilder<AmityChannel>(
         future: _future,
         builder: (context, futureSnapshot) {
@@ -130,48 +42,163 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                 initialData: _amityChannel,
                 builder: (context, snapshot) {
                   _amityChannel = snapshot.data!;
-                  return NestedScrollView(
-                    headerSliverBuilder: (context, innerBoxIsScrolled) {
-                      return [
-                        SliverToBoxAdapter(
-                          child: _ChannelProfileHeaderWidget(
-                              amityChannel: _amityChannel),
-                        ),
-                        SliverToBoxAdapter(
-                          child: DefaultTabController(
-                            length: 1,
-                            child: TabBar(
-                              controller: _tabController,
-                              tabs: const [
-                                Tab(
-                                  text: 'Members',
-                                ),
-                                Tab(
-                                  text: 'Banned Members',
-                                )
-                              ],
-                            ),
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Channel Profile'),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            ///Mute/Unmute Channel
+                            if (_amityChannel.isMuted ?? false) {
+                              AmityChatClient.newChannelRepository()
+                                  .unMuteChannel(widget.channelId);
+                            } else {
+                              AmityChatClient.newChannelRepository()
+                                  .muteChannel(widget.channelId);
+                            }
+                          },
+                          icon: Icon(
+                            ((_amityChannel.isMuted ?? false)
+                                ? Icons.volume_off_rounded
+                                : Icons.volume_up_rounded),
                           ),
                         ),
-                      ];
-                    },
-                    body: TabBarView(
-                      controller: _tabController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        // Container(),
-                        ChannelMemberScreen(
-                          channelId: widget.channelId,
-                          showAppBar: false,
+                        IconButton(
+                          onPressed: () {
+                            GoRouter.of(context).pushNamed(AppRoute.chat,
+                                params: {'channelId': widget.channelId});
+                          },
+                          icon: const Icon(
+                            Icons.mark_unread_chat_alt_outlined,
+                          ),
                         ),
-                        ChannelMemberBannedScreen(
-                          channelId: widget.channelId,
-                          showAppBar: false,
+                        PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 1,
+                                child: Text("Edit"),
+                              ),
+                              const PopupMenuItem(
+                                value: 2,
+                                child: Text("Delete (Soft)"),
+                              ),
+                              const PopupMenuItem(
+                                value: 3,
+                                enabled: false,
+                                child: Text("Delete (Hard)"),
+                              ),
+                              const PopupMenuItem(
+                                value: 4,
+                                enabled: true,
+                                child: Text("Check my permission"),
+                              ),
+                              PopupMenuItem(
+                                value: 5,
+                                child: Text((_amityChannel.isMuted ?? false)
+                                    ? 'Unmute'
+                                    : 'Mute'),
+                              ),
+                            ];
+                          },
+                          child: const Icon(
+                            Icons.more_vert,
+                            size: 18,
+                          ),
+                          onSelected: (index) {
+                            if (index == 1) {
+                              //Open Edit Channel
+                              GoRouter.of(context).pushNamed(
+                                  AppRoute.updateChannel,
+                                  queryParams: {'channelId': widget.channelId});
+                            }
+                            if (index == 2) {
+                              //Delete Channel
+                              // AmitySocialClient.newChannelRepository()
+                              //     .deleteChannel(widget.channelId);
+                            }
+                            if (index == 4) {
+                              EditTextDialog.show(context,
+                                  title:
+                                      'Check my permission in this community',
+                                  hintText: 'Enter permission name',
+                                  onPress: (value) {
+                                final permissions = AmityPermission.values
+                                    .where((v) => v.value == value);
+
+                                if (permissions.isEmpty) {
+                                  ErrorDialog.show(context,
+                                      title: 'Error',
+                                      message: 'permission does not exist');
+                                } else {
+                                  // final hasPermission =
+                                  //     AmityCoreClient.hasPermission(permissions.first)
+                                  //         .atChannel(widget.channelId)
+                                  //         .check();
+                                  // PositiveDialog.show(context,
+                                  //     title: 'Permission',
+                                  //     message:
+                                  //         'The permission "$value" is valid = $hasPermission');
+                                }
+                              });
+                            }
+                            if (index == 5) {
+                              ///Mute/Unmute Channel
+                              if (_amityChannel.isMuted ?? false) {
+                                AmityChatClient.newChannelRepository()
+                                    .unMuteChannel(widget.channelId);
+                              } else {
+                                AmityChatClient.newChannelRepository()
+                                    .muteChannel(widget.channelId);
+                              }
+                            }
+                          },
                         ),
-                        // ChannelFeedScreen(
-                        //     channelId: widget.channelId, showAppBar: false),
-                        // memberScreen,
                       ],
+                    ),
+                    body: NestedScrollView(
+                      headerSliverBuilder: (context, innerBoxIsScrolled) {
+                        return [
+                          SliverToBoxAdapter(
+                            child: _ChannelProfileHeaderWidget(
+                                amityChannel: _amityChannel),
+                          ),
+                          SliverToBoxAdapter(
+                            child: DefaultTabController(
+                              length: 1,
+                              child: TabBar(
+                                controller: _tabController,
+                                tabs: const [
+                                  Tab(
+                                    text: 'Members',
+                                  ),
+                                  Tab(
+                                    text: 'Banned Members',
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      body: TabBarView(
+                        controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          // Container(),
+                          ChannelMemberScreen(
+                            channelId: widget.channelId,
+                            showAppBar: false,
+                          ),
+                          ChannelMemberBannedScreen(
+                            channelId: widget.channelId,
+                            showAppBar: false,
+                          ),
+                          // ChannelFeedScreen(
+                          //     channelId: widget.channelId, showAppBar: false),
+                          // memberScreen,
+                        ],
+                      ),
                     ),
                   );
                 });
@@ -223,6 +250,7 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                 height: 64,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
                 child:
                     amityChannel.avatar?.getUrl(AmityImageSize.MEDIUM) != null
                         ? Image.network(
@@ -230,7 +258,6 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                             fit: BoxFit.fill,
                           )
                         : Image.asset('assets/user_placeholder.png'),
-                clipBehavior: Clip.antiAliasWithSaveLayer,
               ),
               const SizedBox(width: 18),
               Expanded(
