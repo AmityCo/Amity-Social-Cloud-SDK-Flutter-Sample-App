@@ -104,19 +104,25 @@ class MessageWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.withOpacity(.3)),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: user.avatarUrl != null
-                      ? Image.network(
-                          user.avatarUrl!,
-                          fit: BoxFit.fill,
-                        )
-                      : Image.asset('assets/user_placeholder.png'),
+                InkWell(
+                  onTap: () {
+                    GoRouter.of(context).pushNamed(AppRoute.profile,
+                        params: {'userId': user.userId ?? ''});
+                  },
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.withOpacity(.3)),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    child: user.avatarUrl != null
+                        ? Image.network(
+                            user.avatarUrl!,
+                            fit: BoxFit.fill,
+                          )
+                        : Image.asset('assets/user_placeholder.png'),
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
