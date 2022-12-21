@@ -39,9 +39,15 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                       color: Colors.grey.withOpacity(.3)),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: value.user?.avatarUrl != null
-                      ? Image.network(
-                          value.user!.avatarUrl!,
-                          fit: BoxFit.fill,
+                      ? InkWell(
+                          onTap: () {
+                            GoRouter.of(context).pushNamed(AppRoute.profile,
+                                params: {'userId': value.userId ?? ''});
+                          },
+                          child: Image.network(
+                            value.user!.avatarUrl!,
+                            fit: BoxFit.fill,
+                          ),
                         )
                       : Image.asset('assets/user_placeholder.png'),
                 ),
@@ -49,7 +55,7 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      GoRouter.of(context).goNamed(AppRoute.profile,
+                      GoRouter.of(context).pushNamed(AppRoute.profile,
                           params: {'userId': value.userId ?? ''});
                     },
                     child: Column(
