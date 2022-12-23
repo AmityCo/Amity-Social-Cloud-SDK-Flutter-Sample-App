@@ -7,8 +7,10 @@ import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddMessageWidget extends StatefulWidget {
-  AddMessageWidget(this._amityUser, this._addCommentCallback, {Key? key})
+  AddMessageWidget(this._channelId, this._amityUser, this._addCommentCallback,
+      {Key? key})
       : super(key: key);
+  final String _channelId;
   final AmityUser _amityUser;
   final ValueChanged<MessageData> _addCommentCallback;
 
@@ -22,6 +24,8 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
   // final ValueChanged<File> _addImageCallback;
   File? _selectedImage;
   File? _selectedFile;
+
+  FocusNode _focusNode = FocusNode();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -73,7 +77,8 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
                   ),
                   tileColor: Colors.grey.shade300,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 )
               : Container(),
           Column(
@@ -141,19 +146,21 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(.3)),
+                      shape: BoxShape.circle,
+                      color: Colors.grey.withOpacity(.3),
+                    ),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: widget._amityUser.avatarUrl != null
                         ? Image.network(
                             widget._amityUser.avatarUrl!,
                             fit: BoxFit.fill,
                           )
                         : Image.asset('assets/user_placeholder.png'),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(
+                      constraints: BoxConstraints(maxHeight: 100),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(
@@ -163,13 +170,30 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: TextFormField(
                         controller: _commentTextEditController,
+                        focusNode: _focusNode,
                         // maxLength: 20000,
+                        maxLines: 10,
+                        minLines: 1,
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.zero,
                           isDense: true,
                           hintText: 'Write your message here',
                         ),
+                        onChanged: (value) {
+                          final regex = RegExp(r"\@\w*$");
+
+                          if (regex.hasMatch(value)) {
+                            final match = regex.stringMatch(value);
+                            showOverlaidTag(
+                                context, value, match!.replaceAll('@', ''));
+                          } else {
+                            if (suggestionTagoverlayEntry != null) {
+                              suggestionTagoverlayEntry!.remove();
+                              suggestionTagoverlayEntry = null;
+                            }
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -207,6 +231,49 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
         ],
       ),
     );
+  }
+
+  OverlayEntry? suggestionTagoverlayEntry;
+  showOverlaidTag(BuildContext context, String newText, String keyword) async {
+    TextPainter painter = TextPainter(
+      textDirection: TextDirection.ltr,
+      text: TextSpan(
+        text: newText,
+      ),
+    );
+    painter.layout();
+
+    final overlayState = Overlay.of(context);
+    suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
+      return Positioned(
+        // Decides where to place the tag on the screen.
+        top: _focusNode.offset.dy - 24,
+        left: _focusNode.offset.dx,
+
+        // Tag code.
+        child: const Material(
+            elevation: 4.0,
+            color: Colors.lightBlueAccent,
+            child: Text(
+              'Show tag here',
+              style: TextStyle(
+                fontSize: 20.0,
+              ),
+            )),
+      );
+    });
+    overlayState!.insert(suggestionTagoverlayEntry!);
+
+    AmityChannelRepository()
+        .membership(widget._channelId)
+        .searchMembers(keyword)
+        .getPagingData()
+        .then((value) {})
+        .onError((error, stackTrace) {});
+
+    // Removes the over lay entry from the Overly after 500 milliseconds
+    // await Future.delayed(const Duration(milliseconds: 2000));
+    // suggestionTagoverlayEntry.remove();
   }
 }
 

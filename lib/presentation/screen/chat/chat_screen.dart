@@ -242,6 +242,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Container(
               margin: const EdgeInsets.all(12),
               child: AddMessageWidget(
+                widget.channelId,
                 AmityCoreClient.getCurrentUser(),
                 (value) async {
                   late var messageBuilder;
