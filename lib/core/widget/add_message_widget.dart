@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -18,17 +19,64 @@ class AddMessageWidget extends StatefulWidget {
   State<AddMessageWidget> createState() => _AddMessageWidgetState();
 }
 
-class _AddMessageWidgetState extends State<AddMessageWidget> {
+class _AddMessageWidgetState extends State<AddMessageWidget>
+    with WidgetsBindingObserver {
   final _commentTextEditController = TextEditingController();
 
   // final ValueChanged<File> _addImageCallback;
   File? _selectedImage;
   File? _selectedFile;
 
-  FocusNode _focusNode = FocusNode();
+  final _focusNode = FocusNode();
+
+  final _debouncer = Debouncer(milliseconds: 200);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        hideOverLay();
+      } else {
+        // Future.delayed(const Duration(seconds: 2), updateOverLay);
+      }
+    });
+    // Used to obtain the change of the window size to determine whether the keyboard is hidden.
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    // stop Observing the window size changes.
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    _debouncer.run(() {
+      if (WidgetsBinding.instance.window.viewInsets.bottom != 0.0) {
+        // Keyboard is visible.
+        updateOverLay();
+      } else {
+        // Keyboard is not visible.
+        FocusManager.instance.primaryFocus?.unfocus();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return WillPopScope(
+      onWillPop: () async {
+        if (suggestionTagoverlayEntry != null) {
+          suggestionTagoverlayEntry!.remove();
+          suggestionTagoverlayEntry = null;
+          return false;
+        }
+        return true;
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -181,18 +229,9 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
                           hintText: 'Write your message here',
                         ),
                         onChanged: (value) {
-                          final regex = RegExp(r"\@\w*$");
+                          hideOverLay();
 
-                          if (regex.hasMatch(value)) {
-                            final match = regex.stringMatch(value);
-                            showOverlaidTag(
-                                context, value, match!.replaceAll('@', ''));
-                          } else {
-                            if (suggestionTagoverlayEntry != null) {
-                              suggestionTagoverlayEntry!.remove();
-                              suggestionTagoverlayEntry = null;
-                            }
-                          }
+                          updateOverLay();
                         },
                       ),
                     ),
@@ -233,6 +272,22 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
     );
   }
 
+  void updateOverLay() {
+    final value = _commentTextEditController.text.trim();
+    final regex = RegExp(r"\@\w*$");
+    if (regex.hasMatch(value)) {
+      final match = regex.stringMatch(value);
+      showOverlaidTag(context, value, match!.replaceAll('@', ''));
+    }
+  }
+
+  void hideOverLay() {
+    if (suggestionTagoverlayEntry != null) {
+      suggestionTagoverlayEntry!.remove();
+      suggestionTagoverlayEntry = null;
+    }
+  }
+
   OverlayEntry? suggestionTagoverlayEntry;
   showOverlaidTag(BuildContext context, String newText, String keyword) async {
     TextPainter painter = TextPainter(
@@ -242,38 +297,35 @@ class _AddMessageWidgetState extends State<AddMessageWidget> {
       ),
     );
     painter.layout();
-
     final overlayState = Overlay.of(context);
-    suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
-      return Positioned(
-        // Decides where to place the tag on the screen.
-        top: _focusNode.offset.dy - 24,
-        left: _focusNode.offset.dx,
 
-        // Tag code.
-        child: const Material(
-            elevation: 4.0,
-            color: Colors.lightBlueAccent,
-            child: Text(
-              'Show tag here',
-              style: TextStyle(
-                fontSize: 20.0,
+    if (suggestionTagoverlayEntry == null) {
+      suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
+        return Positioned(
+          left: _focusNode.offset.dx + painter.width,
+          top: _focusNode.offset.dy - 200,
+          child: Material(
+            elevation: 0,
+            color: Colors.transparent,
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 200, maxHeight: 200),
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ChannelMemberSuggestionWidget(
+                      channelId: widget._channelId,
+                      keyword: keyword,
+                    ),
+                  ),
+                ],
               ),
-            )),
-      );
-    });
-    overlayState!.insert(suggestionTagoverlayEntry!);
-
-    AmityChannelRepository()
-        .membership(widget._channelId)
-        .searchMembers(keyword)
-        .getPagingData()
-        .then((value) {})
-        .onError((error, stackTrace) {});
-
-    // Removes the over lay entry from the Overly after 500 milliseconds
-    // await Future.delayed(const Duration(milliseconds: 2000));
-    // suggestionTagoverlayEntry.remove();
+            ),
+          ),
+        );
+      });
+      overlayState!.insert(suggestionTagoverlayEntry!);
+    }
   }
 }
 
@@ -282,4 +334,63 @@ class MessageData {
   File? image;
   File? file;
   MessageData({this.message, this.image, this.file});
+}
+
+class ChannelMemberSuggestionWidget extends StatelessWidget {
+  const ChannelMemberSuggestionWidget(
+      {Key? key, required this.channelId, required this.keyword})
+      : super(key: key);
+  final String channelId;
+  final String keyword;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.black26,
+          width: 1,
+        ),
+      ),
+      child: FutureBuilder<List<AmityChannelMember>>(
+        future: AmityChannelRepository()
+            .membership(channelId)
+            .searchMembers(keyword)
+            .query(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data != null) {
+            return ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              children: [
+                const ListTile(
+                  leading: CircleAvatar(
+                    foregroundImage: NetworkImage(''),
+                  ),
+                  title: Text('All'),
+                  dense: true,
+                ),
+                ...List.generate(
+                  snapshot.data!.length,
+                  (index) {
+                    final amityMember = snapshot.data![index];
+                    return ListTile(
+                      leading: CircleAvatar(
+                        foregroundImage:
+                            NetworkImage(amityMember.user!.avatarUrl ?? ''),
+                      ),
+                      title: Text(amityMember.user!.userId!),
+                      dense: true,
+                    );
+                  },
+                )
+              ],
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
+  }
 }
