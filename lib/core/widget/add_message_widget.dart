@@ -8,7 +8,8 @@ import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddMessageWidget extends StatefulWidget {
-  AddMessageWidget(this._channelId, this._amityUser, this._addCommentCallback,
+  const AddMessageWidget(
+      this._channelId, this._amityUser, this._addCommentCallback,
       {Key? key})
       : super(key: key);
   final String _channelId;
@@ -26,6 +27,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
   // final ValueChanged<File> _addImageCallback;
   File? _selectedImage;
   File? _selectedFile;
+  List<AmityMentionMetadata>? _amityMentionMetadata;
 
   final _focusNode = FocusNode();
 
@@ -252,13 +254,18 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                         );
                         return;
                       }
-                      widget._addCommentCallback.call(MessageData(
+                      widget._addCommentCallback.call(
+                        MessageData(
                           message: text,
                           image: _selectedImage,
-                          file: _selectedFile));
+                          file: _selectedFile,
+                          amityMentionMetadata: _amityMentionMetadata,
+                        ),
+                      );
                       _commentTextEditController.text = '';
                       _selectedImage = null;
                       _selectedFile = null;
+                      _amityMentionMetadata = null;
                     },
                     icon: const Icon(Icons.send_rounded),
                     iconSize: 28,
@@ -274,10 +281,11 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
 
   void updateOverLay() {
     final value = _commentTextEditController.text.trim();
-    final regex = RegExp(r"\@\w*$");
+    final regex = RegExp(r"\@[\w\-\_\.]*$");
     if (regex.hasMatch(value)) {
-      final match = regex.stringMatch(value);
-      showOverlaidTag(context, value, match!.replaceAll('@', ''));
+      final match = regex.allMatches(value).last;
+      showOverlaidTag(
+          context, value, match.group(0)!.replaceAll('@', ''), match.start);
     }
   }
 
@@ -289,7 +297,8 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
   }
 
   OverlayEntry? suggestionTagoverlayEntry;
-  showOverlaidTag(BuildContext context, String newText, String keyword) async {
+  showOverlaidTag(BuildContext context, String newText, String keyword,
+      int startIndex) async {
     TextPainter painter = TextPainter(
       textDirection: TextDirection.ltr,
       text: TextSpan(
@@ -316,6 +325,43 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                     child: ChannelMemberSuggestionWidget(
                       channelId: widget._channelId,
                       keyword: keyword,
+                      onUserSelect: (value) {
+                        hideOverLay();
+
+                        _commentTextEditController.text =
+                            _commentTextEditController.text
+                                .trim()
+                                .replaceAll(keyword, '');
+
+                        _amityMentionMetadata ??= [];
+                        if (value.amityMentionType ==
+                            AmityMentionType.CHANNEL) {
+                          _amityMentionMetadata!.add(
+                            AmityChannelMentionMetadata(
+                              index: startIndex,
+                              length: 'All'.length,
+                            ),
+                          );
+                          _commentTextEditController.text =
+                              '${_commentTextEditController.text.trim()}all';
+                        } else {
+                          _amityMentionMetadata!.add(
+                            AmityUserMentionMetadata(
+                              userId: value.amityChannelMember!.userId!,
+                              index: startIndex,
+                              length: value.amityChannelMember!.user!
+                                  .displayName!.length,
+                            ),
+                          );
+                          _commentTextEditController.text =
+                              '${_commentTextEditController.text.trim()}${value.amityChannelMember!.user!.displayName}';
+                        }
+
+                        _commentTextEditController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset:
+                                    _commentTextEditController.text.length));
+                      },
                     ),
                   ),
                 ],
@@ -333,15 +379,20 @@ class MessageData {
   String? message;
   File? image;
   File? file;
-  MessageData({this.message, this.image, this.file});
+  List<AmityMentionMetadata>? amityMentionMetadata;
+  MessageData({this.message, this.image, this.file, this.amityMentionMetadata});
 }
 
 class ChannelMemberSuggestionWidget extends StatelessWidget {
   const ChannelMemberSuggestionWidget(
-      {Key? key, required this.channelId, required this.keyword})
+      {Key? key,
+      required this.channelId,
+      required this.keyword,
+      required this.onUserSelect})
       : super(key: key);
   final String channelId;
   final String keyword;
+  final ValueChanged<ChannelMemberTagData> onUserSelect;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -364,12 +415,16 @@ class ChannelMemberSuggestionWidget extends StatelessWidget {
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               children: [
-                const ListTile(
-                  leading: CircleAvatar(
+                ListTile(
+                  leading: const CircleAvatar(
                     foregroundImage: NetworkImage(''),
                   ),
-                  title: Text('All'),
+                  title: const Text('All'),
                   dense: true,
+                  onTap: () {
+                    onUserSelect(
+                        ChannelMemberTagData(AmityMentionType.CHANNEL));
+                  },
                 ),
                 ...List.generate(
                   snapshot.data!.length,
@@ -382,6 +437,10 @@ class ChannelMemberSuggestionWidget extends StatelessWidget {
                       ),
                       title: Text(amityMember.user!.userId!),
                       dense: true,
+                      onTap: () {
+                        onUserSelect(ChannelMemberTagData(AmityMentionType.USER,
+                            amityChannelMember: amityMember));
+                      },
                     );
                   },
                 )
@@ -393,4 +452,11 @@ class ChannelMemberSuggestionWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+class ChannelMemberTagData {
+  final AmityMentionType amityMentionType;
+  final AmityChannelMember? amityChannelMember;
+
+  ChannelMemberTagData(this.amityMentionType, {this.amityChannelMember});
 }

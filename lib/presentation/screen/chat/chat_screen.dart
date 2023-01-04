@@ -245,7 +245,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 widget.channelId,
                 AmityCoreClient.getCurrentUser(),
                 (value) async {
-                  late var messageBuilder;
+                  late AmityMessageCreator messageBuilder;
 
                   if (value.message != null) {
                     messageBuilder = AmityChatClient.newMessageRepository()
@@ -259,11 +259,36 @@ class _ChatScreenState extends State<ChatScreen> {
                         .image(Uri(path: value.image!.path))
                         .caption(value.message!);
                   }
+
                   if (value.file != null) {
                     messageBuilder = AmityChatClient.newMessageRepository()
                         .createMessage(widget.channelId)
                         .file(Uri(path: value.file!.path))
                         .caption(value.message!);
+                  }
+
+                  if (value.amityMentionMetadata != null) {
+                    messageBuilder.metadata(
+                        AmityMentionMetadataCreator(value.amityMentionMetadata!)
+                            .create());
+
+                    /// Calculate the mention data
+                    final userIds = <String>[];
+                    for (AmityMentionMetadata amityMention
+                        in value.amityMentionMetadata!) {
+                      ///Check if we have channel mention and add mention channel
+                      if (amityMention is AmityChannelMentionMetadata) {
+                        messageBuilder.mentionChannel();
+                      }
+                      if (amityMention is AmityUserMentionMetadata) {
+                        userIds.add(amityMention.userId);
+                      }
+                    }
+
+                    ///If mention userIds is not empaty, add them to mention userIds
+                    if (userIds.isNotEmpty) {
+                      messageBuilder.mentionUsers(userIds);
+                    }
                   }
 
                   if (replyToMessage != null) {
@@ -276,6 +301,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       replyToMessage = null;
                     });
                   }).onError((error, stackTrace) {
+                    print(error.toString());
                     print(stackTrace.toString());
                     CommonSnackbar.showNagativeSnackbar(
                         context, 'Error', error.toString());

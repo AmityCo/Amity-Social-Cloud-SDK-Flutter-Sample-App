@@ -716,7 +716,7 @@ class AmityMessageContentWidget extends StatelessWidget {
     final themeData = Theme.of(context);
     final data = amityMessage.data;
     if (data is MessageTextData) {
-      return Text(
+      return SelectableText(
         data.text!,
         style: themeData.textTheme.bodyText2!.copyWith(),
       );
