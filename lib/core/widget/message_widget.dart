@@ -7,6 +7,7 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_downloader/image_downloader.dart';
@@ -716,9 +717,21 @@ class AmityMessageContentWidget extends StatelessWidget {
     final themeData = Theme.of(context);
     final data = amityMessage.data;
     if (data is MessageTextData) {
-      return SelectableText(
-        data.text!,
+      return DynamicTextHighlighting(
+        text: data.text!,
+        highlights: RegExp(r"\@[\w\-\_\.]*")
+            .allMatches(data.text!)
+            .map((e) => e.group(0)!)
+            .toList(),
         style: themeData.textTheme.bodyText2!.copyWith(),
+        onHighlightClick: (value) {
+          GoRouter.of(context).pushNamed(
+            AppRoute.profile,
+            params: {
+              'userId': value.replaceAll('@', ''),
+            },
+          );
+        },
       );
     }
 
