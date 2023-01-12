@@ -47,7 +47,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     final _themeData = Theme.of(context);
 
     return SafeArea(
-      child: Container(
+      child: Material(
         child: FutureBuilder<AmityUser>(
           future: _future,
           builder: (context, snapshot) {

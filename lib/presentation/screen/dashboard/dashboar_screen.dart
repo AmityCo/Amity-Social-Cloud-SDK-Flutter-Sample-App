@@ -24,6 +24,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
     return SafeArea(
+      key: const Key('dashboard_screen_key'),
       child: Scaffold(
         body: Center(
           child: SingleChildScrollView(

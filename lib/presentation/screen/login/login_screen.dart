@@ -57,6 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text('ASC Flutter SDK', style: _themeData.textTheme.headline6),
               const SizedBox(height: 24),
               TextFormField(
+                key: const Key('user_id_txtip'),
                 controller: _userIdTextController,
                 decoration: const InputDecoration(
                   label: Text('User Id'),
@@ -64,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
               TextFormField(
+                key: const Key('display_name_txtip'),
                 controller: _displayNameTextController,
                 decoration: const InputDecoration(
                   label: Text('Display name'),
@@ -71,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 48),
               TextFormField(
+                key: const Key('api_key_txtip'),
                 controller: _apiKeyTextController,
                 decoration: const InputDecoration(
                   label: Text('Api Key'),
@@ -78,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
               TextFormField(
+                key: const Key('server_url_txtip'),
                 controller: _serverUrlTextController,
                 decoration: const InputDecoration(
                   label: Text('Server url'),
@@ -85,13 +89,14 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 48),
               TextButton(
+                key: const Key('Login_btn_id'),
                 onPressed: () async {
                   try {
                     FocusManager.instance.primaryFocus!.unfocus();
                     // Setup the Amity Option First
                     String apikey = _apiKeyTextController.text.trim();
                     String serverUrl = _serverUrlTextController.text.trim();
-                    final data = await AmityCoreClient.setup(
+                    await AmityCoreClient.setup(
                       option: AmityCoreClientOption(
                           apiKey: apikey,
                           httpEndpoint: AmityRegionalHttpEndpoint.values
@@ -107,24 +112,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     String userId = _userIdTextController.text.trim();
                     String userDisplayName =
                         _displayNameTextController.text.trim();
-                    final user = await AmityCoreClient.login(userId)
+                    await AmityCoreClient.login(userId)
                         .displayName(userDisplayName)
                         .submit();
+
                     GoRouter.of(context).go(AppRoute.homeRoute);
                   } catch (error) {
                     CommonSnackbar.showNagativeSnackbar(
                         context, 'Error', error.toString());
                   }
                 },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  padding: const EdgeInsets.all(12),
+                ),
                 child: Container(
                   width: 200,
                   alignment: Alignment.center,
                   child: const Text('Login'),
-                ),
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  primary: Colors.white,
-                  padding: const EdgeInsets.all(12),
                 ),
               )
             ],
