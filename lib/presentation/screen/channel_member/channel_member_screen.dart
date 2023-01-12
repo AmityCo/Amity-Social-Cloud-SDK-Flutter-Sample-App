@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/channel_member_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
@@ -23,12 +24,17 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+
+  String _keyboard = '';
+
+  final _debouncer = Debouncer(milliseconds: 500);
+
   @override
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmityChatClient.newChannelRepository()
           .membership(widget.channelId)
-          .getMembers()
+          .searchMembers(_keyboard)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -84,6 +90,20 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
           : null,
       body: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.grey.shade100),
+            child: TextFormField(
+              onChanged: (value) {
+                _debouncer.run(() {
+                  _keyboard = value;
+                  _controller.reset();
+                  _controller.fetchNextPage();
+                });
+              },
+              decoration: const InputDecoration(hintText: 'Enter Keybaord'),
+            ),
+          ),
           Expanded(
             child: amityChannelMembers.isNotEmpty
                 ? RefreshIndicator(
