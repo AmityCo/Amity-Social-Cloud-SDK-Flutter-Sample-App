@@ -105,6 +105,10 @@ class FeedWidget extends StatelessWidget {
                             'Updated At - ' + value.updatedAt!.format(),
                             style: _themeData.textTheme.caption,
                           ),
+                          SelectableText(
+                            'Post ID - ' + value.postId!,
+                            style: _themeData.textTheme.caption,
+                          ),
                           if (value.target is UserTarget)
                             Text(
                               'Posted On : ' +

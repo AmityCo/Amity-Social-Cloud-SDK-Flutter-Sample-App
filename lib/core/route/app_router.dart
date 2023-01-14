@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_create/channel_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_list/channel_list_screen.dart';
@@ -288,12 +291,12 @@ class AppRouter {
           ),
         ],
         redirect: (context, state) {
-          // if (state.location != AppRoute.loginRoute) {
-          //   if (!AmityCoreClient.isUserLoggedIn()) {
-          //     log('redirecting to /login');
-          //     return AppRoute.loginRoute;
-          //   }
-          // }
+          if (state.location != AppRoute.loginRoute) {
+            if (!AmityCoreClient.isUserLoggedIn()) {
+              log('redirecting to /login');
+              return AppRoute.loginRoute;
+            }
+          }
           return null;
         },
         debugLogDiagnostics: true,
