@@ -27,7 +27,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
   // final ValueChanged<File> _addImageCallback;
   File? _selectedImage;
   File? _selectedFile;
-  List<AmityMentionMetadata>? _amityMentionMetadata;
+  List<MentionData>? _amityMentionMetadata;
 
   final _focusNode = FocusNode();
 
@@ -337,20 +337,22 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                         if (value.amityMentionType ==
                             AmityMentionType.CHANNEL) {
                           _amityMentionMetadata!.add(
-                            AmityChannelMentionMetadata(
-                              index: startIndex,
-                              length: 'All'.length,
-                            ),
+                            MentionData(AmityMentionType.CHANNEL.value,
+                                startIndex, 'all'.length,
+                                displayName: 'all'),
                           );
                           _commentTextEditController.text =
                               '${_commentTextEditController.text.trim()}all';
                         } else {
                           _amityMentionMetadata!.add(
-                            AmityUserMentionMetadata(
+                            MentionData(
+                              AmityMentionType.USER.value,
+                              startIndex,
+                              value.amityChannelMember!.user!.displayName!
+                                  .length,
                               userId: value.amityChannelMember!.userId!,
-                              index: startIndex,
-                              length: value.amityChannelMember!.user!
-                                  .displayName!.length,
+                              displayName:
+                                  value.amityChannelMember!.user!.displayName!,
                             ),
                           );
                           _commentTextEditController.text =
@@ -379,8 +381,29 @@ class MessageData {
   String? message;
   File? image;
   File? file;
-  List<AmityMentionMetadata>? amityMentionMetadata;
+  List<MentionData>? amityMentionMetadata;
   MessageData({this.message, this.image, this.file, this.amityMentionMetadata});
+}
+
+class MentionData {
+  final String mentionType;
+  final String? userId;
+  final String? displayName;
+  final int index;
+  final int length;
+
+  MentionData(
+    this.mentionType,
+    this.index,
+    this.length, {
+    this.userId,
+    this.displayName,
+  });
+
+  AmityMentionMetadata amityMentionMetaData(int index) => mentionType ==
+          AmityMentionType.USER.value
+      ? AmityUserMentionMetadata(userId: userId!, index: index, length: length)
+      : AmityChannelMentionMetadata(index: index, length: length);
 }
 
 class ChannelMemberSuggestionWidget extends StatelessWidget {
