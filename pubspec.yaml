@@ -12,7 +12,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   amity_sdk:
-    path: ../Amity-Social-Cloud-SDK-Flutter-Internal
+    path: ../../Amity-Social-Cloud-SDK-Flutter-Internal
   # amity_sdk: ^0.14.0
   # path: ../amity_social_cloud_sdk_flutter
   cached_network_image: ^3.2.0
