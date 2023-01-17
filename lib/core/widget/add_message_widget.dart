@@ -22,6 +22,7 @@ class AddMessageWidget extends StatefulWidget {
 
 class _AddMessageWidgetState extends State<AddMessageWidget>
     with WidgetsBindingObserver {
+  final _commentTextFieldKey = GlobalKey();
   final _commentTextEditController = TextEditingController();
 
   // final ValueChanged<File> _addImageCallback;
@@ -219,6 +220,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                       ),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: TextFormField(
+                        key: _commentTextFieldKey,
                         controller: _commentTextEditController,
                         focusNode: _focusNode,
                         // maxLength: 20000,
@@ -306,13 +308,29 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
       ),
     );
     painter.layout();
+    final width = MediaQuery.of(context).size.width;
     final overlayState = Overlay.of(context);
+
+    TextPosition cursorTextPosition = _commentTextEditController.selection.base;
+    Rect caretPrototype = const Rect.fromLTWH(0.0, 0.0, 0.0, 0.0);
+    Offset caretOffset =
+        painter.getOffsetForCaret(cursorTextPosition, caretPrototype);
+
+    // final left = caretOffset.dx % 100;
+    // final top = caretOffset.dy - 200;
+
+    final renderBox =
+        _commentTextFieldKey.currentContext!.findRenderObject() as RenderBox;
+    Offset position = renderBox.localToGlobal(Offset.zero);
+
+    final left = position.dx;
+    final top = position.dy - 200;
 
     if (suggestionTagoverlayEntry == null) {
       suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
         return Positioned(
-          left: _focusNode.offset.dx + painter.width,
-          top: _focusNode.offset.dy - 200,
+          left: left,
+          top: top,
           child: Material(
             elevation: 0,
             color: Colors.transparent,
