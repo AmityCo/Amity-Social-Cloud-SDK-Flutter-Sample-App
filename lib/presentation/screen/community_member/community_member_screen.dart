@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/community_member_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
@@ -22,14 +23,22 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+  String _keyboard = '';
+
+  final _debouncer = Debouncer(milliseconds: 500);
+
+  AmityCommunityMembershipFilter _filter =
+      AmityCommunityMembershipFilter.MEMBER;
+  AmityCommunityMembershipSortOption _sort =
+      AmityCommunityMembershipSortOption.LAST_CREATED;
   @override
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newCommunityRepository()
           .membership(widget.communityId)
           .getMembers()
-          .filter(AmityCommunityMembershipFilter.MEMBER)
-          .sortBy(AmityMembershipSortOption.LAST_CREATED)
+          .filter(_filter)
+          .sortBy(_sort)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -85,6 +94,102 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
           : null,
       body: Column(
         children: [
+          // Container(
+          //   padding: const EdgeInsets.all(12),
+          //   decoration: BoxDecoration(color: Colors.grey.shade100),
+          //   child: TextFormField(
+          //     onChanged: (value) {
+          //       _debouncer.run(() {
+          //         _keyboard = value;
+          //         _controller.reset();
+          //         _controller.fetchNextPage();
+          //       });
+          //     },
+          //     decoration: const InputDecoration(hintText: 'Enter Keybaord'),
+          //   ),
+          // ),
+          Container(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: 1,
+                          child: Text(AmityCommunityMembershipFilter.ALL.name),
+                        ),
+                        PopupMenuItem(
+                          value: 2,
+                          child:
+                              Text(AmityCommunityMembershipFilter.MEMBER.name),
+                        ),
+                        PopupMenuItem(
+                          value: 3,
+                          child:
+                              Text(AmityCommunityMembershipFilter.BANNED.name),
+                        )
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.filter_alt_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 1) {
+                        _filter = AmityCommunityMembershipFilter.ALL;
+                      }
+                      if (index == 2) {
+                        _filter = AmityCommunityMembershipFilter.MEMBER;
+                      }
+                      if (index == 3) {
+                        _filter = AmityCommunityMembershipFilter.BANNED;
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                          value: 1,
+                          child: Text(AmityCommunityMembershipSortOption
+                              .FIRST_CREATED.name),
+                        ),
+                        PopupMenuItem(
+                          value: 2,
+                          child: Text(AmityCommunityMembershipSortOption
+                              .LAST_CREATED.name),
+                        ),
+                      ];
+                    },
+                    child: const Icon(
+                      Icons.sort_rounded,
+                      size: 18,
+                    ),
+                    onSelected: (index) {
+                      if (index == 1) {
+                        _sort =
+                            AmityCommunityMembershipSortOption.FIRST_CREATED;
+                      }
+                      if (index == 2) {
+                        _sort = AmityCommunityMembershipSortOption.LAST_CREATED;
+                      }
+
+                      _controller.reset();
+                      _controller.fetchNextPage();
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: amityCommunityMembers.isNotEmpty
                 ? RefreshIndicator(
@@ -134,29 +239,29 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                                         .check();
                                 return [
                                   PopupMenuItem(
-                                    child: const Text("Remove"),
                                     value: 1,
                                     enabled: canRemoveMember,
+                                    child: const Text("Remove"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Ban"),
                                     value: 2,
                                     enabled: canBanMember && !isMemberBanned,
+                                    child: const Text("Ban"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Unban"),
                                     value: 3,
                                     enabled: canBanMember && isMemberBanned,
+                                    child: const Text("Unban"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Add role"),
                                     value: 4,
                                     enabled: canAddRole && !isMemberBanned,
+                                    child: const Text("Add role"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Remove role"),
                                     value: 5,
                                     enabled: canRemoveRole && !isMemberBanned,
+                                    child: const Text("Remove role"),
                                   )
                                 ];
                               },
