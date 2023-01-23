@@ -11,8 +11,8 @@ class AmityCommunityMemberQuery {
   late PagingController<AmityCommunityMember> _communityMembersController;
 
   //Available sort options
-  // AmityMembershipSortOption.LAST_CREATED;
-  // AmityMembershipSortOption.FIRST_CREATED;
+  // AmityCommunityMembershipSortOption.LAST_CREATED;
+  // AmityCommunityMembershipSortOption.FIRST_CREATED;
 
   // Available filter options
   // AmityCommunityMembershipFilter.ALL;
@@ -21,7 +21,7 @@ class AmityCommunityMemberQuery {
 
   void queryCommunityMembers(
       String communityId,
-      AmityMembershipSortOption sortOption,
+      AmityCommunityMembershipSortOption sortOption,
       AmityCommunityMembershipFilter filter) {
     _communityMembersController = PagingController(
       pageFuture: (token) => AmitySocialClient.newCommunityRepository()
@@ -40,7 +40,8 @@ class AmityCommunityMemberQuery {
             //handle results, we suggest to clear the previous items
             //and add with the latest _controller.loadedItems
             _amityCommunityMembers.clear();
-            _amityCommunityMembers.addAll(_communityMembersController.loadedItems);
+            _amityCommunityMembers
+                .addAll(_communityMembersController.loadedItems);
             //update widgets
           } else {
             //error on pagination controller

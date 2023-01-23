@@ -30,7 +30,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberBannedScreen> {
           .membership(widget.communityId)
           .getMembers()
           .filter(AmityCommunityMembershipFilter.BANNED)
-          .sortBy(AmityMembershipSortOption.LAST_CREATED)
+          .sortBy(AmityCommunityMembershipSortOption.LAST_CREATED)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
