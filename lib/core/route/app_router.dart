@@ -24,6 +24,7 @@ import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/global_user_search/global_user_search.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/login/login_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/message_update/message_update_screen.dart';
@@ -288,6 +289,11 @@ class AppRouter {
             path: AppRoute.updateMessageRoute,
             builder: (context, state) =>
                 MessageUpdateScreen(messageId: state.queryParams['messageId']!),
+          ),
+          GoRoute(
+            name: AppRoute.globalUserSearch,
+            path: AppRoute.globalUserSearchRoute,
+            builder: (context, state) => const GlobalUserSearch(),
           ),
         ],
         redirect: (context, state) {

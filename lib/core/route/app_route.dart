@@ -113,4 +113,7 @@ class AppRoute {
 
   static const updateMessage = 'updateMessage';
   static const updateMessageRoute = '/updateMessage';
+
+  static const globalUserSearch = 'globalUserSearch';
+  static const globalUserSearchRoute = '/globalUserSearchRoute';
 }

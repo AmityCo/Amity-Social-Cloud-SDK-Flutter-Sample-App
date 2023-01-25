@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_downloader/image_downloader.dart';
@@ -716,9 +719,61 @@ class AmityMessageContentWidget extends StatelessWidget {
     final themeData = Theme.of(context);
     final data = amityMessage.data;
     if (data is MessageTextData) {
-      return SelectableText(
-        data.text!,
+      return DynamicTextHighlighting(
+        text: data.text!,
+        highlights: amityMessage.metadata == null
+            ? []
+            : [
+                ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
+                    .getMentionedUsers()
+                    .map<String>((e) =>
+                        data.text!.substring(e.index, e.index + e.length + 1))
+                    .toList(),
+                ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
+                    .getMentionedChannels()
+                    .map<String>((e) =>
+                        data.text!.substring(e.index, e.index + e.length + 1))
+                    .toList()
+              ],
         style: themeData.textTheme.bodyText2!.copyWith(),
+        onHighlightClick: (value) {
+          if (value.toLowerCase().contains('all')) {
+            final temp =
+                AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
+                    .getMentionedUsers();
+            log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
+                .getMentionedUsers()
+                .map<String>((e) =>
+                    data.text!.substring(e.index, e.index + e.length + 1))
+                .toList()
+                .toString());
+            log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
+                .getMentionedChannels()
+                .map<String>((e) =>
+                    data.text!.substring(e.index, e.index + e.length + 1))
+                .toList()
+                .toString());
+            CommonSnackbar.showPositiveSnackbar(
+                context, 'Click', 'Click on @all show channel profile');
+          } else {
+            print(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
+                .getMentionedUsers()
+                .map<String>((e) =>
+                    data.text!.substring(e.index, e.index + e.length + 1))
+                .toList());
+            final amityUser = amityMessage.mentionees!.firstWhereOrNull(
+                (element) =>
+                    element.user!.displayName == value.replaceAll('@', ''));
+            if (amityUser != null) {
+              GoRouter.of(context).pushNamed(
+                AppRoute.profile,
+                params: {
+                  'userId': amityUser.userId,
+                },
+              );
+            }
+          }
+        },
       );
     }
 

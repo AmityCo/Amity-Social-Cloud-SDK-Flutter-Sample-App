@@ -25,7 +25,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               Text('Post Id - ${widget.postId}'),
               FutureBuilder<AmityPost>(
                 future: AmitySocialClient.newPostRepository()
-                    .getPost('62cbe2e938443200da3e7f73'),
+                    .getPost(widget.postId),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return FeedWidget(amityPost: snapshot.data!);

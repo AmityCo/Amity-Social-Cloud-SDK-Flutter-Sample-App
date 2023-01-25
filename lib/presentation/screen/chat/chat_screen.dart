@@ -269,20 +269,33 @@ class _ChatScreenState extends State<ChatScreen> {
                   }
 
                   if (value.amityMentionMetadata != null) {
+                    /// Clean up mention data, since user could have deleted some mention
+                    value.amityMentionMetadata!.removeWhere((element) =>
+                        !value.message!.contains(element.displayName ?? ''));
+
+                    /// Rearrange the indexing
+                    final amityMentioneesMetadata = value.amityMentionMetadata!
+                        .map<AmityMentionMetadata>((e) {
+                      return e.amityMentionMetaData(
+                          value.message!.indexOf('@${e.displayName!}'));
+                    }).toList();
+
                     messageBuilder.metadata(
-                        AmityMentionMetadataCreator(value.amityMentionMetadata!)
+                        AmityMentionMetadataCreator(amityMentioneesMetadata)
                             .create());
 
                     /// Calculate the mention data
                     final userIds = <String>[];
-                    for (AmityMentionMetadata amityMention
+                    for (MentionData amityMention
                         in value.amityMentionMetadata!) {
                       ///Check if we have channel mention and add mention channel
-                      if (amityMention is AmityChannelMentionMetadata) {
+                      if (amityMention.mentionType ==
+                          AmityMentionType.CHANNEL.value) {
                         messageBuilder.mentionChannel();
                       }
-                      if (amityMention is AmityUserMentionMetadata) {
-                        userIds.add(amityMention.userId);
+                      if (amityMention.mentionType ==
+                          AmityMentionType.USER.value) {
+                        userIds.add(amityMention.userId!);
                       }
                     }
 
