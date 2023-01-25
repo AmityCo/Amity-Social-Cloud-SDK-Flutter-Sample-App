@@ -29,7 +29,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
           .membership(widget.communityId)
           .getMembers()
           .filter(AmityCommunityMembershipFilter.MEMBER)
-          .sortBy(AmityMembershipSortOption.LAST_CREATED)
+          .sortBy(AmityCommunityMembershipSortOption.LAST_CREATED)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
