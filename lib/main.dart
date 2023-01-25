@@ -2,9 +2,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/route/app_router.dart';
+import 'package:flutter_social_sample_app/core/route/app_router_service.dart';
 import 'package:flutter_social_sample_app/core/service_locator/service_locator.dart';
-import 'package:go_router/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,20 +32,18 @@ void main() async {
   //       showLogs: true),
   // );
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  late GoRouter router;
-  MyApp({Key? key, String? initialLocation}) : super(key: key) {
-    router = AppRouter.router(initialLocation: initialLocation);
-  }
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  final AppRouterService routerService = AppRouterService.instance;
   @override
   void initState() {
     super.initState();
@@ -60,7 +57,7 @@ class _MyAppState extends State<MyApp> {
     userDisplayName = 'victimAndroid';
     final _themeData = Theme.of(context);
     return MaterialApp.router(
-      routerConfig: widget.router,
+      routerConfig: routerService.router,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         inputDecorationTheme: const InputDecorationTheme(

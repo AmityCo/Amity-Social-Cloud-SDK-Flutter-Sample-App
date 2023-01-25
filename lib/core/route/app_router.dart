@@ -37,8 +37,8 @@ import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
-  static GoRouter router({String? initialLocation}) => GoRouter(
-        initialLocation: initialLocation ?? AppRoute.homeRoute,
+  static GoRouter router() => GoRouter(
+        initialLocation: AppRoute.homeRoute,
         routes: [
           GoRoute(
             name: AppRoute.home,

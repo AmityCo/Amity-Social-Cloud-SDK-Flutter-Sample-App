@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_router_service.dart';
 import 'package:flutter_social_sample_app/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,8 +17,14 @@ extension WidgetTesterExtension on WidgetTester {
     );
   }
 
-  Future<void> pumpRouterApp(String route) async {
-    return pumpWidget(MyApp(initialLocation: route));
+  Future<void> pumpRouterApp() async {
+    return pumpWidget(const MyApp());
+  }
+
+  Future<void> pumpNewRoute(String route,
+      {Map<String, String>? params, Map<String, String>? queryParams}) async {
+    return AppRouterService.instance
+        .pumpNewRoute(route, params: params, queryParams: queryParams);
   }
 
   Future delay(int ms) async {

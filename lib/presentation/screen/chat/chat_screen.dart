@@ -68,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: const Key('chat_screen_key'),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
