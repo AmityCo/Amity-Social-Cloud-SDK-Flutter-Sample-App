@@ -1,5 +1,4 @@
 import 'package:amity_sdk/amity_sdk.dart';
-import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helper/widget_tester_extension.dart';
@@ -9,24 +8,22 @@ import '../robot/global_feed_robot.dart';
 void main() {
   group('Post Test', () {
     // C228850
-    testWidgets('Make sure can comment on post successfully',
+    testWidgets('C228850 - Make sure can comment on post successfully',
         (widgetTester) async {
       final loginRobot = LoginRobot(widgetTester);
       final globalfeedRoBot = GlobalFeedRobot(widgetTester);
       final globalFeedMenu = find.text("Global Feed");
       const comment = "Make sure can comment on post successfully";
 
-      await widgetTester.pumpRouterApp(AppRoute.loginRoute);
-      await widgetTester.pumpAndSettle();
       await loginRobot.fillLoginForm(
           'victimAndroid',
           'Victim Android',
-          'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c',
+          'b0efe90c69ddf2604a63d81853081688840088b6e967397e',
           AmityRegionalHttpEndpoint.STAGING.value);
 
-      await widgetTester.pumpAndSettle(const Duration(seconds: 2));
+      await widgetTester.pumpAndSettle();
       await loginRobot.loginTap();
-      await widgetTester.pumpForSeconds(10);
+      await widgetTester.pumpForSeconds(3);
       await AmitySocialClient.newPostRepository()
           .createPost()
           .targetUser('victimAndroid')
