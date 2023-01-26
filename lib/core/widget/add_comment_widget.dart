@@ -35,7 +35,7 @@ class AddCommentWidget extends StatelessWidget {
               ),
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: TextFormField(
-                key: Key('text_form_field'),
+                key: const Key('comment_input'),
                 controller: _commentTextEditController,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
