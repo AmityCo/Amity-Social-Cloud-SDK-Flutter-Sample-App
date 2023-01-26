@@ -9,7 +9,7 @@ class GlobalFeedRobot {
   final globalFeedMenu = find.text("Global Feed");
   final commentInput = find.byKey(const Key("comment_input")).first;
   final sendIcon = find.byIcon(Icons.send_rounded).first;
-  final commentButton = find.text("Comment").first;
+  final commentButton = find.byKey(const Key("feed_action_comment")).first;
 
   Future enterComment(comment) async {
     await widgetTester.enterText(commentInput, comment);

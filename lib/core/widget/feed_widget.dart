@@ -430,6 +430,7 @@ class FeedReactionActionWidget extends StatelessWidget {
             ),
           ),
           TextButton.icon(
+            key: const Key("feed_action_comment"),
             onPressed: onCommentCallback,
             icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
             label: Text(
