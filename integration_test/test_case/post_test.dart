@@ -1,11 +1,15 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:faker/faker.dart';
 
-import '../helper/widget_tester_extension.dart';
+import '../helper/api/post.dart';
 import '../robot/login_robot.dart';
 import '../robot/global_feed_robot.dart';
 
 void main() {
+  final faker = Faker();
+  final userOne = faker.randomGenerator.numberOfLength(10);
+  final postAPI = PostAPI();
   group('Post Test', () {
     // C228850
     testWidgets('C228850 - Make sure can comment on post successfully',
@@ -13,23 +17,16 @@ void main() {
       final loginRobot = LoginRobot(widgetTester);
       final globalfeedRoBot = GlobalFeedRobot(widgetTester);
       final globalFeedMenu = find.text("Global Feed");
+      const post = "C228850 - Make sure can comment on post successfully";
       const comment = "Make sure can comment on post successfully";
 
-      await loginRobot.fillLoginForm(
-          'victimAndroid',
-          'Victim Android',
-          'b0efe90c69ddf2604a63d81853081688840088b6e967397e',
+      loginRobot.login(
+          userOne,
+          userOne,
+          "b0efe90c69ddf2604a63d81853081688840088b6e967397e",
           AmityRegionalHttpEndpoint.STAGING.value);
 
-      await widgetTester.pumpAndSettle();
-      await loginRobot.loginTap();
-      await widgetTester.pumpForSeconds(3);
-      await AmitySocialClient.newPostRepository()
-          .createPost()
-          .targetUser('victimAndroid')
-          .text("C228850 - Make sure can comment on post successfully")
-          .post();
-
+      await postAPI.createPost(userOne, post);
       await widgetTester.tap(globalFeedMenu);
       await widgetTester.pumpAndSettle();
       await globalfeedRoBot.enterComment(comment);
