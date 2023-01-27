@@ -2,10 +2,10 @@ import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityUserGetUsers {
   /* begin_sample_code
-    gist_id: 6a732f6953a3cc445c2510b798fd3692
-    filename: AmityUserGet.dart
+    gist_id: ee07f318a29fc7db6f103487f5f32b78
+    filename: AmityUserGetUsers.dart
     asc_page: https://docs.amity.co/social/flutter
-    description: Flutter get user example
+    description: Flutter get users example
     */
   final _amityUsers = <AmityUser>[];
   late PagingController<AmityUser> _amityUsersController;

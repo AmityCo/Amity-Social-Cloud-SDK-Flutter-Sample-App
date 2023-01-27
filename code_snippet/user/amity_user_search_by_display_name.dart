@@ -2,10 +2,10 @@ import 'package:amity_sdk/amity_sdk.dart';
 
 class AmityUserSearchByDisplayName {
   /* begin_sample_code
-    gist_id: 6a732f6953a3cc445c2510b798fd3692
-    filename: AmityUserGet.dart
+    gist_id: 3ee3dab5280389461b9417ce8a7734d6
+    filename: AmityUserSearchByDisplayName.dart
     asc_page: https://docs.amity.co/social/flutter
-    description: Flutter get user example
+    description: Flutter search user by display name example
     */
   final _amityUsers = <AmityUser>[];
   late PagingController<AmityUser> _amityUsersController;
