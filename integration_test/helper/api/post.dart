@@ -5,7 +5,7 @@ class PostAPI {
     await AmitySocialClient.newPostRepository()
         .createPost()
         .targetUser(targetId)
-        .text("C228850 - Make sure can comment on post successfully")
+        .text(post)
         .post();
   }
 }

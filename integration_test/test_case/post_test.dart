@@ -8,8 +8,8 @@ import '../robot/global_feed_robot.dart';
 
 void main() {
   final faker = Faker();
-  final userOne = faker.randomGenerator.numberOfLength(10);
   final postAPI = PostAPI();
+  final userOne = faker.randomGenerator.numberOfLength(5);
   group('Post Test', () {
     // C228850
     testWidgets('C228850 - Make sure can comment on post successfully',
@@ -20,7 +20,7 @@ void main() {
       const post = "C228850 - Make sure can comment on post successfully";
       const comment = "Make sure can comment on post successfully";
 
-      loginRobot.login(
+      await loginRobot.login(
           userOne,
           userOne,
           "b0efe90c69ddf2604a63d81853081688840088b6e967397e",

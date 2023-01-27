@@ -31,7 +31,8 @@ class LoginRobot {
     await widgetTester.pumpAndSettle();
   }
 
-  Future login(userId, displayName, apiKey, endpoint) async {
+  Future login(
+      String userId, String displayName, String apiKey, String endpoint) async {
     await fillLoginForm(userId, displayName, apiKey, endpoint);
     await widgetTester.pumpAndSettle();
     await loginTap();
