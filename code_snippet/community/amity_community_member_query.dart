@@ -10,7 +10,7 @@ class AmityCommunityMemberQuery {
   final _amityCommunityMembers = <AmityCommunityMember>[];
   late PagingController<AmityCommunityMember> _communityMembersController;
 
-  //Available sort options
+  // Available sort options
   // AmityCommunityMembershipSortOption.LAST_CREATED;
   // AmityCommunityMembershipSortOption.FIRST_CREATED;
 
