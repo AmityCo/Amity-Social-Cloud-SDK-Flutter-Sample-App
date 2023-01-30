@@ -19,8 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     //STAGING Server
-    _userIdTextController.text = 'victimAndroid';
-    _displayNameTextController.text = 'Victim Android';
+    //_userIdTextController.text = 'victimAndroid';
+    //_displayNameTextController.text = 'Victim Android';
     _apiKeyTextController.text =
         'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
     _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;

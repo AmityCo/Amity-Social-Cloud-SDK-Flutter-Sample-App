@@ -41,12 +41,12 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
     }
     super.initState();
   }
-
+  DateTime timeBackPress = DateTime.now();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Channel'),
+        title: const Text('Create New Channel'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -118,12 +118,15 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
+                  key: Key("channel_id"),
                   controller: _channelIdEditController,
                   decoration: const InputDecoration(
                       hintText: 'Enter Channel ID (optional)'),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
+                  key: Key("channel_name_txt"),
+                  //key: const Key('channel_name_txt'),
                   controller: _nameEditController,
                   decoration:
                       const InputDecoration(hintText: 'Enter Channel Name'),
@@ -131,6 +134,8 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                 SizedBox(
                   height: 80,
                   child: TextFormField(
+                    key: Key("comma_tag_txt"),
+                    //key: const Key('comma_tag_txt'),
                     controller: _tagsEditController,
                     expands: true,
                     maxLines: null,
@@ -144,6 +149,8 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                 SizedBox(
                   height: 100,
                   child: TextFormField(
+                    key: Key("comma_user_ids_txt"),
+                    //key: const Key('comma_user_ids_txt'),
                     controller: _userIdsEditController,
                     expands: true,
                     maxLines: null,
@@ -155,12 +162,16 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
+                  key: Key("comma_user_ids_txt"),
+                  //key: const Key('channel_metadata_txt'),
+                  autofocus: true,
                   controller: _metadataEditController,
                   decoration:
                       const InputDecoration(hintText: 'Enter Channel metadata'),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
+                  key: const Key('create_new_channel'),
                   onPressed: _channelType == null
                       ? null
                       : () {
