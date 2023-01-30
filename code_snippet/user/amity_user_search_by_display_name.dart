@@ -10,7 +10,7 @@ class AmityUserSearchByDisplayName {
   final _amityUsers = <AmityUser>[];
   late PagingController<AmityUser> _amityUsersController;
 
-  void serarchUserByDisplayName(String keyword) {
+  void searchUserByDisplayName(String keyword) {
     _amityUsersController = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
           .searchUserByDisplayName(keyword)
