@@ -211,6 +211,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(
+                      key: const Key('message_text_field'),
                       constraints: BoxConstraints(maxHeight: 100),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
@@ -241,6 +242,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                     ),
                   ),
                   IconButton(
+                    key: const Key('send_btn'),
                     onPressed: () {
                       FocusManager.instance.primaryFocus!.unfocus();
                       final text = _commentTextEditController.text.trim();
