@@ -390,7 +390,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
           ),
         );
       });
-      overlayState!.insert(suggestionTagoverlayEntry!);
+      overlayState.insert(suggestionTagoverlayEntry!);
     }
   }
 }

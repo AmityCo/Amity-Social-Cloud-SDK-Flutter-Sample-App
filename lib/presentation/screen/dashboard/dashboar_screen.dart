@@ -41,14 +41,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.createPost,
-                        params: {'userId': 'victimIOS'});
-                  },
-                  child: const Text('Create Post'),
-                ),
-                const SizedBox(height: 20),
-                TextButton(
-                  onPressed: () {
                     GoRouter.of(context).goNamed(AppRoute.globalFeed);
                   },
                   child: const Text('Global Feed'),

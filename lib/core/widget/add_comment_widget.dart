@@ -1,12 +1,15 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 
 class AddCommentWidget extends StatelessWidget {
-  AddCommentWidget(this._amityUser, this._addCommentCallback, {Key? key})
+  AddCommentWidget(this._amityUser, this.addCommentCallback, {Key? key})
       : super(key: key);
   final AmityUser _amityUser;
   final _commentTextEditController = TextEditingController();
-  final ValueChanged<String> _addCommentCallback;
+  final _commentTextTextFieldKey = GlobalKey();
+  final mentionUsers = <AmityUser>[];
+  Function(String comment, List<AmityUser> mentionUsers) addCommentCallback;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,6 +38,7 @@ class AddCommentWidget extends StatelessWidget {
               ),
               clipBehavior: Clip.antiAliasWithSaveLayer,
               child: TextFormField(
+                key: _commentTextTextFieldKey,
                 controller: _commentTextEditController,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
@@ -42,6 +46,28 @@ class AddCommentWidget extends StatelessWidget {
                   isDense: true,
                   hintText: 'Write your comment here',
                 ),
+                onChanged: (value) {
+                  if (value.length > 3) {
+                    UserSuggesionOverlay.instance.hideOverLay();
+
+                    UserSuggesionOverlay.instance.updateOverLay(
+                      context,
+                      _commentTextTextFieldKey,
+                      value,
+                      (keyword, user) {
+                        mentionUsers.add(user);
+                        _commentTextEditController.text =
+                            _commentTextEditController.text
+                                .replaceAll(keyword, user.displayName ?? '');
+
+                        _commentTextEditController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset:
+                                    _commentTextEditController.text.length));
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ),
@@ -49,7 +75,7 @@ class AddCommentWidget extends StatelessWidget {
             onPressed: () {
               FocusManager.instance.primaryFocus!.unfocus();
               final text = _commentTextEditController.text.trim();
-              _addCommentCallback.call(text);
+              this.addCommentCallback(text, mentionUsers);
               _commentTextEditController.text = '';
               // _amityPost
               //     .comment()
