@@ -36,22 +36,14 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  late GoRouter router;
-  MyApp({Key? key, String? initialLocation}) : super(key: key) {
-    router = AppRouter.router(initialLocation: initialLocation);
-  }
+// class MyApp extends StatefulWidget {
+//   MyApp({Key? key}) : super(key: key);
 
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
+//   @override
+//   State<MyApp> createState() => _MyAppState();
+// }
 
-class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class MyApp extends StatelessWidget {
   late String userId;
   late String userDisplayName;
   @override
@@ -60,7 +52,7 @@ class _MyAppState extends State<MyApp> {
     userDisplayName = 'victimAndroid';
     final _themeData = Theme.of(context);
     return MaterialApp.router(
-      routerConfig: widget.router,
+      routerConfig: AppRouter.router,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         inputDecorationTheme: const InputDecorationTheme(

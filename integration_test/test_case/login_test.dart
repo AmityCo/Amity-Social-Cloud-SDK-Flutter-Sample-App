@@ -9,21 +9,17 @@ import '../robot/login_robot.dart';
 void main() {
   group('Login Test', () {
     testWidgets('Verify Login', (widgetTester) async {
-      await widgetTester.pumpRouterApp(AppRoute.loginRoute);
+      await widgetTester.pumpMyApp();
 
       await widgetTester.pumpAndSettle();
 
       final loginRobot = LoginRobot(widgetTester);
 
-      await loginRobot.fillLoginForm(
+      await loginRobot.login(
           'victimAndroid',
           'Victim Android',
           'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c',
           AmityRegionalHttpEndpoint.STAGING.value);
-
-      await widgetTester.pumpAndSettle(const Duration(seconds: 2));
-
-      await loginRobot.loginTap();
 
       await widgetTester.pumpForSeconds(10);
 
