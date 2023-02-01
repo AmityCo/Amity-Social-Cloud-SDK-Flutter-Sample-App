@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_router.dart';
 import 'package:flutter_social_sample_app/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,8 +17,18 @@ extension WidgetTesterExtension on WidgetTester {
     );
   }
 
-  Future<void> pumpRouterApp(String route) async {
-    return pumpWidget(MyApp(initialLocation: route));
+  // Always Required, and by defualt this will login screen
+  Future<void> pumpMyApp() async {
+    return pumpWidget(MyApp());
+  }
+
+  Future<void> pushNewRoute(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
+  }) async {
+    return AppRouter.router
+        .pushNamed(name, params: params, queryParams: params);
   }
 
   Future delay(int ms) async {
