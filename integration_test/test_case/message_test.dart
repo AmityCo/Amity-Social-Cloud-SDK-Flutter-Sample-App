@@ -2,9 +2,11 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
+
 import '../helper/amity_sdk_helper.dart';
 import '../helper/api/channel.dart';
 import '../helper/widget_tester_extension.dart';
+import '../robot/login_robot.dart';
 import '../robot/message_robot.dart';
 
 void main() {
@@ -31,10 +33,10 @@ void main() {
           await widgetTester.pumpMyApp();
           final messageRobot = ChatMessageRobot(widgetTester);
           const message = "C264306 SMS text";
-
           await channelAPI.createCommunityChannel(channelId, displayName);
           await messageRobot.openChatScreen(channelId);
           await messageRobot.sendMessage(channelId,message);
+
           expect(find.textContaining(message, findRichText: true), findsOneWidget);
         });
   });
