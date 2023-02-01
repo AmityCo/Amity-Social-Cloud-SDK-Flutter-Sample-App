@@ -92,6 +92,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             child: TextFormField(
+              key: const Key('channel_id'),
               onChanged: (value) {
                 _debouncer.run(() {
                   _keyboard = value;

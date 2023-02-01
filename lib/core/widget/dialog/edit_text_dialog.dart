@@ -61,6 +61,7 @@ class EditTextDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      key: const Key('channel_name'),
       controller: _textEditController,
       onChanged: onChange,
       decoration: InputDecoration(
