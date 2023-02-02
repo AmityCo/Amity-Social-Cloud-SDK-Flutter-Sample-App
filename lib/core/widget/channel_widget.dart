@@ -57,6 +57,7 @@ class _ChannelInfoWidget extends StatelessWidget {
     final _themeData = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
+      key:const Key('channel_search_result_id'),
       child: Row(
         children: [
           Container(

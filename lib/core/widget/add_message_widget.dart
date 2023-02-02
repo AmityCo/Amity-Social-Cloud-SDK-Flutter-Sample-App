@@ -219,6 +219,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                         color: Colors.grey.shade300,
                       ),
                       clipBehavior: Clip.antiAliasWithSaveLayer,
+                      key: const Key('message_text_field'),
                       child: TextFormField(
                         key: _commentTextFieldKey,
                         controller: _commentTextEditController,
@@ -241,6 +242,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                     ),
                   ),
                   IconButton(
+                    key: const Key('send_btn'),
                     onPressed: () {
                       FocusManager.instance.primaryFocus!.unfocus();
                       final text = _commentTextEditController.text.trim();
