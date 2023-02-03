@@ -50,7 +50,8 @@ jobs:
         # if: ${{ github.event_name == 'pull_request' }}
         id: pull_body_message
         run: |
-          echo "MESSAGE=${{ format('🥇 PR - #{0} {1} \n👉 Link - {2}\n🥇 Branch - into {3} from {4}\n', 
+          echo "MESSAGE=${{ format('Repo - {0}🥇PR - #{1} {2} \n👉 Link - {3}\n🥇 Branch - into {4} from {5}\n', 
+              "Flutter Sample App",
               github.event.pull_request.number,
               github.event.pull_request.title,
               github.event.pull_request._links.html.href,
