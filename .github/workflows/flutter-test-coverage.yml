@@ -17,7 +17,8 @@ permissions:
   pull-requests: write # <== Add this to allow action to modify your PR
 
 jobs:
-  test:
+  flutter_test_report:
+    name: Flutter Test and Report
     runs-on: ubuntu-latest
 
     steps:
