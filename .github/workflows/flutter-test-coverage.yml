@@ -1,0 +1,74 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Flutter Test Coverage
+
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+
+permissions:
+  contents: read # Required when overriding permissions
+  pull-requests: write # <== Add this to allow action to modify your PR
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Note: This workflow uses the latest stable version of the Dart SDK.
+      # You can specify other versions if desired, see documentation here:
+      # https://github.com/dart-lang/setup-dart/blob/main/README.md
+      # - uses: dart-lang/setup-dart@v1
+      - name: dart/Flutter Setup
+        uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+
+      - uses: britannio/action-install-flutter@v1.1
+        with:
+          channel: "stable"
+
+      - name: Dart/Flutter version
+        run: |
+          dart --version
+          flutter --version
+
+      - name: Flutter Clean
+        run: |
+          flutter clean
+          flutter pub get
+
+      - name: Compose Message Body for Pull Request Event
+        # if: ${{ github.event_name == 'pull_request' }}
+        id: pull_body_message
+        run: |
+          echo "MESSAGE=${{ format('🥇 PR - #{0} {1} \n👉 Link - {2}\n🥇 Branch - into {3} from {4}\n', 
+              github.event.pull_request.number,
+              github.event.pull_request.title,
+              github.event.pull_request._links.html.href,
+              github.base_ref,
+              github.head_ref
+            ) }}" >> $GITHUB_OUTPUT
+
+      - name: Compose Full Report Message to Send
+        id: compose_full_report
+        run: |
+          echo "MESSAGE=${{ format('{0}', 
+              steps.pull_body_message.outputs.MESSAGE,
+            ) }}" >> $GITHUB_OUTPUT
+
+      - name: Send Message to Eko Chat
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: ${{ secrets.BOT_EKO_CHAT_MESSAGING_URL }}
+          method: "POST"
+          bearerToken: ${{ secrets.BOT_AUTH_TOKEN }}
+          customHeaders: '{"Content-Type": "application/json"}'
+          data: '{"gid": "${{ secrets.BOT_GROUP_ID }}", "tid": "${{ secrets.BOT_CHAT_ID }}","message": {"data": "${{ steps.compose_full_report.outputs.MESSAGE }}", "type": "text"}}'
