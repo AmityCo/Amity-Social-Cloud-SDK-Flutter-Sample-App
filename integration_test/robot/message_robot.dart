@@ -35,6 +35,7 @@ class ChatMessageRobot {
   }
   Future sendMessage(channelName,message)async{
     await widgetTester.enterText(messageInput, message);
+    await widgetTester.pumpForSeconds(3);
     await widgetTester.tap(send);
     await widgetTester.pumpAndSettle();
     await widgetTester.pumpForSeconds(5);

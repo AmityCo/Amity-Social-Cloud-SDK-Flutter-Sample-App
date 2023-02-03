@@ -40,4 +40,17 @@ void main() {
           expect(find.textContaining(message, findRichText: true), findsOneWidget);
         });
   });
+
+  testWidgets('C264307 - User able to create text messages in Live Channel',
+          (widgetTester) async {
+        await widgetTester.pumpMyApp();
+        final messageRobot = ChatMessageRobot(widgetTester);
+        const message = "C264307 SMS text";
+        await channelAPI.createLiveChannel(channelId, displayName);
+        await messageRobot.openChatScreen(channelId);
+        await messageRobot.sendMessage(channelId,message);
+
+        expect(find.textContaining(message, findRichText: true), findsOneWidget);
+      });
+
 }
