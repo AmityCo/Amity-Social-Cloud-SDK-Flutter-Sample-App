@@ -61,7 +61,7 @@ jobs:
         id: compose_full_report
         run: |
           echo "MESSAGE=${{ format('{0}', 
-              steps.pull_body_message.outputs.MESSAGE,
+              steps.pull_body_message.outputs.MESSAGE
             ) }}" >> $GITHUB_OUTPUT
 
       - name: Send Message to Eko Chat
