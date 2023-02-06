@@ -2,11 +2,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:faker/faker.dart';
-
 import '../helper/amity_sdk_helper.dart';
 import '../helper/api/channel.dart';
 import '../helper/widget_tester_extension.dart';
-import '../robot/login_robot.dart';
 import '../robot/message_robot.dart';
 
 void main() {
@@ -64,4 +62,5 @@ void main() {
 
         expect(find.textContaining(message, findRichText: true), findsOneWidget);
       });
+
 }

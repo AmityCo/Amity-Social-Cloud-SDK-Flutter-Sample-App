@@ -48,9 +48,9 @@ class ChatMessageRobot {
     await widgetTester.pushNewRoute(AppRoute.chat,params: {'channelId':channelId});
     await widgetTester.pumpForSeconds(5);
   }
+
   Future sendMessage(channelName,message)async{
     await widgetTester.enterText(messageInput, message);
-    await widgetTester.pumpForSeconds(3);
     await widgetTester.tap(send);
     await widgetTester.pumpAndSettle();
     await widgetTester.pumpForSeconds(5);

@@ -9,6 +9,7 @@ class ChannelAPI {
         .displayName(displayName) //Optional
         .create();
   }
+
   Future createLiveChannel(channelId, displayName) async {
     AmityChatClient.newChannelRepository()
         .createChannel()
