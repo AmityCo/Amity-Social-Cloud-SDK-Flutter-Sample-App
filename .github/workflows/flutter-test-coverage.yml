@@ -52,7 +52,7 @@ jobs:
         id: pull_body_message
         run: |
           echo "MESSAGE=${{ format('Repo - {0}🥇PR - #{1} {2} \n👉 Link - {3}\n🥇 Branch - into {4} from {5}\n', 
-              'Flutter Sample App',
+              github.repository,
               github.event.pull_request.number,
               github.event.pull_request.title,
               github.event.pull_request._links.html.href,
