@@ -64,6 +64,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                           ),
                         ),
                         IconButton(
+                          key: const Key('send_message_btn'),
                           onPressed: () {
                             GoRouter.of(context).pushNamed(AppRoute.chat,
                                 params: {'channelId': widget.channelId});

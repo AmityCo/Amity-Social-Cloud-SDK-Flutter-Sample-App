@@ -17,5 +17,13 @@ class ChannelAPI {
         .displayName(displayName)
         .create();
   }
+  Future createConversationChannel(userId, displayName) async {
+    AmityChatClient.newChannelRepository()
+        .createChannel()
+        .conversationType()
+        .withUserId(userId)
+        .displayName(displayName)
+        .create();
+  }
 
 }
