@@ -24,6 +24,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
 
+  final mentionUsers = <AmityUser>[];
+
   @override
   void initState() {
     _controller = PagingController(
@@ -172,13 +174,35 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
             margin: const EdgeInsets.all(12),
             child: AddCommentWidget(
               AmityCoreClient.getCurrentUser(),
-              (text) async {
+              (text, user) async {
+                mentionUsers.clear();
+                mentionUsers.addAll(user);
+
+                //Clean up mention user list, as user might have removed some tagged user
+                mentionUsers.removeWhere(
+                    (element) => !text.contains(element.displayName!));
+
+                final amityMentioneesMetadata = mentionUsers
+                    .map<AmityUserMentionMetadata>((e) =>
+                        AmityUserMentionMetadata(
+                            userId: e.userId!,
+                            index: text.indexOf('@${e.displayName!}'),
+                            length: e.displayName!.length))
+                    .toList();
+
+                Map<String, dynamic> metadata =
+                    AmityMentionMetadataCreator(amityMentioneesMetadata)
+                        .create();
+
                 if (_replyToComment != null) {
                   ///Add comment to [_replyToComment] comment
                   final _comment = await _replyToComment!
                       .comment()
                       .create()
                       .text(text)
+                      .mentionUsers(
+                          mentionUsers.map<String>((e) => e.userId!).toList())
+                      .metadata(metadata)
                       .send();
 
                   setState(() {
@@ -193,6 +217,9 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                     .post(widget._postId)
                     .create()
                     .text(text)
+                    .mentionUsers(
+                        mentionUsers.map<String>((e) => e.userId!).toList())
+                    .metadata(metadata)
                     .send();
                 _controller.addAtIndex(0, _comment);
                 return;

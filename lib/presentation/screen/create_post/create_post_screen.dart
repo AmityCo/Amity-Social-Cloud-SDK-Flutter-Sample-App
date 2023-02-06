@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
@@ -7,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -34,6 +34,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool isImagePost = false;
   bool isFilePost = false;
   bool isVideoPost = false;
+
+  final _postTextTextFieldKey = GlobalKey();
+
+  final mentionUsers = <AmityUser>[];
 
   @override
   void initState() {
@@ -74,10 +78,32 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
               const SizedBox(height: 20),
               TextFormField(
+                key: _postTextTextFieldKey,
                 controller: _postTextEditController,
                 decoration: const InputDecoration(
                   label: Text('Text*'),
                 ),
+                onChanged: (value) {
+                  if (value.length > 3) {
+                    UserSuggesionOverlay.instance.hideOverLay();
+
+                    UserSuggesionOverlay.instance.updateOverLay(
+                      context,
+                      _postTextTextFieldKey,
+                      value,
+                      (keyword, user) {
+                        mentionUsers.add(user);
+                        _postTextEditController.text = _postTextEditController
+                            .text
+                            .replaceAll(keyword, user.displayName ?? '');
+
+                        _postTextEditController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: _postTextEditController.text.length));
+                      },
+                    );
+                  }
+                },
               ),
               TextFormField(
                 controller: _metadataEditController,
@@ -182,6 +208,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           title: 'Error', message: error.toString());
                     });
                   },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    primary: Colors.white,
+                    padding: const EdgeInsets.all(12),
+                  ),
                   child: Container(
                     width: 200,
                     alignment: Alignment.center,
@@ -194,11 +225,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       if (isVideoPost) const TextSpan(text: ' Video'),
                       const TextSpan(text: ' Post'),
                     ])),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    primary: Colors.white,
-                    padding: const EdgeInsets.all(12),
                   ),
                 ),
               )
@@ -214,13 +240,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final _target = _targetuserTextEditController.text.trim();
     final _text = _postTextEditController.text.trim();
     final _isCommunityPost = widget.communityId != null;
-    final _metadataString = _metadataEditController.text.trim();
-    Map<String, dynamic> _metadata = {};
-    try {
-      _metadata = jsonDecode(_metadataString);
-    } catch (e) {
-      print('metadata decode failed');
-    }
+    // final _metadataString = _metadataEditController.text.trim();
+
+    ///Mention user logic
+    //Clean up mention user list, as user might have removed some tagged user
+    mentionUsers
+        .removeWhere((element) => !_text.contains(element.displayName!));
+
+    final mentionedUserIds = mentionUsers.map((e) => e.userId!).toList();
+
+    final amityMentioneesMetadata = mentionUsers
+        .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+            userId: e.userId!,
+            index: _text.indexOf('@${e.displayName!}'),
+            length: e.displayName!.length))
+        .toList();
+
+    Map<String, dynamic> _metadata =
+        AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+    // try {
+    //   _metadata = jsonDecode(_metadataString);
+    // } catch (e) {
+    //   print('metadata decode failed');
+    // }
 
     if (isTextPost) {
       if (_isCommunityPost) {
@@ -228,6 +270,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .createPost()
             .targetCommunity(_target)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       } else {
@@ -235,6 +278,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .createPost()
             .targetUser(_target)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       }
@@ -257,6 +301,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .targetCommunity(_target)
             .image(_images)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       } else {
@@ -265,6 +310,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .targetUser(_target)
             .image(_images)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       }
@@ -287,6 +333,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .targetCommunity(_target)
             .video(_video)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       } else {
@@ -295,6 +342,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .targetUser(_target)
             .video(_video)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       }
@@ -310,12 +358,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           _files.add(amityUploadComplete.getFile as AmityFile);
         }
       }
+
       if (_isCommunityPost) {
         await AmitySocialClient.newPostRepository()
             .createPost()
             .targetCommunity(_target)
             .file(_files)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       } else {
@@ -324,6 +374,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .targetUser(_target)
             .file(_files)
             .text(_text)
+            .mentionUsers(mentionedUserIds)
             .metadata(_metadata)
             .post();
       }

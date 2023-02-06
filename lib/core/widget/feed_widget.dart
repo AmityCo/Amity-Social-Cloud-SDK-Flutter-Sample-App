@@ -1,9 +1,11 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:flutter_social_sample_app/core/widget/poll_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
@@ -137,7 +139,8 @@ class FeedWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (value.data != null)
-                            FeedContentWidget(amityPostData: value.data!),
+                            FeedContentWidget(
+                                amityPost: value, amityPostData: value.data!),
                           const SizedBox(height: 8),
                           if (value.children != null)
                             Wrap(
@@ -162,6 +165,7 @@ class FeedWidget extends StatelessWidget {
                                     );
                                   }
                                   return FeedContentWidget(
+                                      amityPost: value,
                                       amityPostData: amityChildPost.data!);
                                 })
                               ],
@@ -184,7 +188,8 @@ class FeedWidget extends StatelessWidget {
                               queryParams: {'postId': amityPost.postId!});
                         }),
                     const SizedBox(height: 12),
-                    AddCommentWidget(AmityCoreClient.getCurrentUser(), (text) {
+                    AddCommentWidget(AmityCoreClient.getCurrentUser(),
+                        (text, user) {
                       value.comment().create().text(text).send();
                     }),
                   ],
@@ -223,8 +228,10 @@ class FeedWidget extends StatelessWidget {
 }
 
 class FeedContentWidget extends StatelessWidget {
+  final AmityPost amityPost;
   final AmityPostData amityPostData;
-  const FeedContentWidget({Key? key, required this.amityPostData})
+  const FeedContentWidget(
+      {Key? key, required this.amityPost, required this.amityPostData})
       : super(key: key);
 
   @override
@@ -234,9 +241,26 @@ class FeedContentWidget extends StatelessWidget {
     if (amityPostData is TextData) {
       final data = amityPostData as TextData;
       if (data.text != null && data.text!.isNotEmpty) {
-        return Text(
-          data.text ?? '',
-          style: _themeData.textTheme.subtitle1,
+        return DynamicTextHighlighting(
+          text: data.text ?? '',
+          highlights: amityPost.mentionees
+                  ?.map<String>((e) => '@${e.user?.displayName ?? ''}')
+                  .toList() ??
+              [],
+          onHighlightClick: (String value) {
+            final amityUser = amityPost.mentionees!.firstWhereOrNull(
+                (element) =>
+                    element.user!.displayName == value.replaceAll('@', ''));
+            if (amityUser != null) {
+              GoRouter.of(context).pushNamed(
+                AppRoute.profile,
+                params: {
+                  'userId': amityUser.userId,
+                },
+              );
+            }
+          },
+          style: _themeData.textTheme.subtitle1!,
         );
       }
       return Container();
