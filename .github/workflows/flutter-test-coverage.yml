@@ -39,11 +39,6 @@ jobs:
           dart --version
           flutter --version
 
-      - name: Flutter Clean
-        run: |
-          flutter clean
-          flutter pub get
-
       - name: Compose Message Body for Pull Request Event
         # if: ${{ github.event_name == 'pull_request' }}
         id: pull_body_message
