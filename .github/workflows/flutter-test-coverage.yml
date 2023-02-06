@@ -7,9 +7,6 @@ name: Flutter Test Coverage
 
 on:
   pull_request:
-    types:
-      - opened
-      - edited
     branches:
       - develop
 
