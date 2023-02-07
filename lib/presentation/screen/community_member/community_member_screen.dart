@@ -36,7 +36,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newCommunityRepository()
           .membership(widget.communityId)
-          .getMembers()
+          .searchMembers(_keyboard)
           .filter(_filter)
           .sortBy(_sort)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
@@ -94,20 +94,20 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
           : null,
       body: Column(
         children: [
-          // Container(
-          //   padding: const EdgeInsets.all(12),
-          //   decoration: BoxDecoration(color: Colors.grey.shade100),
-          //   child: TextFormField(
-          //     onChanged: (value) {
-          //       _debouncer.run(() {
-          //         _keyboard = value;
-          //         _controller.reset();
-          //         _controller.fetchNextPage();
-          //       });
-          //     },
-          //     decoration: const InputDecoration(hintText: 'Enter Keybaord'),
-          //   ),
-          // ),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.grey.shade100),
+            child: TextFormField(
+              onChanged: (value) {
+                _debouncer.run(() {
+                  _keyboard = value;
+                  _controller.reset();
+                  _controller.fetchNextPage();
+                });
+              },
+              decoration: const InputDecoration(hintText: 'Enter Keybaord'),
+            ),
+          ),
           Container(
             child: Row(
               children: [
