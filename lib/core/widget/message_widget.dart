@@ -201,19 +201,25 @@ class MessageWidget extends StatelessWidget {
                 ),
                 InkWell(
                   onTap: () {
+                    final completer = Completer();
+                    ProgressDialog.showCompleter(context, completer);
                     if (message.isFlaggedByMe) {
                       message.unflag().then((value) {
+                        completer.complete();
                         CommonSnackbar.showPositiveSnackbar(
                             context, 'Message', 'Unflagged');
                       }).onError((error, stackTrace) {
+                        completer.completeError(error!, stackTrace);
                         CommonSnackbar.showPositiveSnackbar(
                             context, 'Message', 'Unflag Error - ${error}');
                       });
                     } else {
                       message.flag().then((value) {
+                        completer.complete();
                         CommonSnackbar.showPositiveSnackbar(
                             context, 'Message', 'Flagged');
                       }).onError((error, stackTrace) {
+                        completer.completeError(error!, stackTrace);
                         CommonSnackbar.showPositiveSnackbar(
                             context, 'Message', 'Flag Error - ${error}');
                       });
