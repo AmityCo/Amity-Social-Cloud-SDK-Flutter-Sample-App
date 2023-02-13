@@ -15,9 +15,11 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeedWidget extends StatelessWidget {
+  final String? communityId;
   final AmityPost amityPost;
   // final VoidCallback onCommentCallback;
-  const FeedWidget({Key? key, required this.amityPost}) : super(key: key);
+  const FeedWidget({Key? key, required this.amityPost, this.communityId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -184,14 +186,22 @@ class FeedWidget extends StatelessWidget {
                         key: UniqueKey(),
                         amityPost: value,
                         onCommentCallback: () {
-                          GoRouter.of(context).pushNamed(AppRoute.commentList,
-                              queryParams: {'postId': amityPost.postId!});
+                          GoRouter.of(context).pushNamed(
+                            AppRoute.commentList,
+                            queryParams: {
+                              'postId': amityPost.postId!,
+                              'communityId': communityId ?? ''
+                            },
+                          );
                         }),
                     const SizedBox(height: 12),
-                    AddCommentWidget(AmityCoreClient.getCurrentUser(),
-                        (text, user) {
-                      value.comment().create().text(text).send();
-                    }),
+                    AddCommentWidget(
+                      AmityCoreClient.getCurrentUser(),
+                      (text, user) {
+                        value.comment().create().text(text).send();
+                      },
+                      communityId: communityId,
+                    ),
                   ],
                 ),
               ),

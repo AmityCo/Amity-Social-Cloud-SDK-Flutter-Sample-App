@@ -84,23 +84,56 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   label: Text('Text*'),
                 ),
                 onChanged: (value) {
-                  if (value.length > 3) {
-                    UserSuggesionOverlay.instance.hideOverLay();
+                  UserSuggesionOverlay.instance.hideOverLay();
 
+                  if (widget.communityId == null ||
+                      widget.communityId!.isEmpty) {
                     UserSuggesionOverlay.instance.updateOverLay(
                       context,
+                      UserSuggestionType.global,
                       _postTextTextFieldKey,
                       value,
                       (keyword, user) {
                         mentionUsers.add(user);
-                        _postTextEditController.text = _postTextEditController
-                            .text
-                            .replaceAll(keyword, user.displayName ?? '');
+                        if (keyword.isNotEmpty) {
+                          _postTextEditController.text = _postTextEditController
+                              .text
+                              .replaceAll(keyword, user.displayName ?? '');
+                        } else {
+                          _postTextEditController.text =
+                              (_postTextEditController.text +
+                                  user.displayName!);
+                        }
 
                         _postTextEditController.selection =
                             TextSelection.fromPosition(TextPosition(
                                 offset: _postTextEditController.text.length));
                       },
+                    );
+                  } else {
+                    UserSuggesionOverlay.instance.updateOverLay(
+                      context,
+                      UserSuggestionType.community,
+                      _postTextTextFieldKey,
+                      value,
+                      (keyword, user) {
+                        mentionUsers.add(user);
+
+                        if (keyword.isNotEmpty) {
+                          _postTextEditController.text = _postTextEditController
+                              .text
+                              .replaceAll(keyword, user.displayName ?? '');
+                        } else {
+                          _postTextEditController.text =
+                              (_postTextEditController.text +
+                                  user.displayName!);
+                        }
+
+                        _postTextEditController.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: _postTextEditController.text.length));
+                      },
+                      communityId: widget.communityId,
                     );
                   }
                 },

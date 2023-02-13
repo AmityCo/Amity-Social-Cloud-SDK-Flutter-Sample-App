@@ -7,7 +7,9 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class CommentQueryScreen extends StatefulWidget {
-  const CommentQueryScreen(this._postId, {Key? key}) : super(key: key);
+  const CommentQueryScreen(this._postId, {Key? key, this.communityId})
+      : super(key: key);
+  final String? communityId;
   final String _postId;
   @override
   State<CommentQueryScreen> createState() => _CommentQueryScreenState();
@@ -132,6 +134,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                               _replyToComment = value;
                             });
                           },
+                          key: UniqueKey(),
                         );
                       },
                     ),
@@ -224,6 +227,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                 _controller.addAtIndex(0, _comment);
                 return;
               },
+              communityId: widget.communityId,
             ),
           ),
         ],

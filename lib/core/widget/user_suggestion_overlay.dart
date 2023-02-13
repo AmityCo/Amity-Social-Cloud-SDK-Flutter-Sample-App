@@ -1,23 +1,30 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 
 class UserSuggesionOverlay {
   static final UserSuggesionOverlay _instance =
       UserSuggesionOverlay._internal();
 
   static UserSuggesionOverlay get instance => _instance;
-  // factory Singleton() {
-  //   return _singleton;
-  // }
 
   UserSuggesionOverlay._internal();
-  void updateOverLay(BuildContext context, GlobalKey anchore, String value,
-      Function(String keyword, AmityUser user) onUserSelect) {
+  void updateOverLay(
+      BuildContext context,
+      UserSuggestionType type,
+      GlobalKey anchore,
+      String value,
+      Function(String keyword, AmityUser user) onUserSelect,
+      {String? communityId}) {
     final regex = RegExp(r"\@[\w\-\_\.]*$");
     if (regex.hasMatch(value)) {
       final match = regex.allMatches(value).last;
-      _showOverlaidTag(context, anchore, value,
-          match.group(0)!.replaceAll('@', ''), match.start, onUserSelect);
+      // if (match.group(0)!.replaceAll('@', '').length > 2) {
+      _showOverlaidTag(context, type, anchore, value,
+          match.group(0)!.replaceAll('@', ''), match.start, onUserSelect,
+          communityId: communityId);
+      // }
     }
   }
 
@@ -31,11 +38,13 @@ class UserSuggesionOverlay {
   OverlayEntry? suggestionTagoverlayEntry;
   _showOverlaidTag(
       BuildContext context,
+      UserSuggestionType type,
       GlobalKey anchore,
       String newText,
       String keyword,
       int startIndex,
-      Function(String keyword, AmityUser user) onUserSelect) async {
+      Function(String keyword, AmityUser user) onUserSelect,
+      {String? communityId}) async {
     TextPainter painter = TextPainter(
       textDirection: TextDirection.ltr,
       text: TextSpan(
@@ -66,49 +75,22 @@ class UserSuggesionOverlay {
                 children: [
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: _GlobalUserSuggestionWidget(
-                      keyword: keyword,
-                      onUserSelect: (value) {
-                        hideOverLay();
-                        onUserSelect(keyword, value);
-
-                        // _commentTextEditController.text =
-                        //     _commentTextEditController.text
-                        //         .trim()
-                        //         .replaceAll(keyword, '');
-
-                        // _amityMentionMetadata ??= [];
-                        // if (value.amityMentionType ==
-                        //     AmityMentionType.CHANNEL) {
-                        //   _amityMentionMetadata!.add(
-                        //     MentionData(AmityMentionType.CHANNEL.value,
-                        //         startIndex, 'all'.length,
-                        //         displayName: 'all'),
-                        //   );
-                        //   _commentTextEditController.text =
-                        //       '${_commentTextEditController.text.trim()}all';
-                        // } else {
-                        //   _amityMentionMetadata!.add(
-                        //     MentionData(
-                        //       AmityMentionType.USER.value,
-                        //       startIndex,
-                        //       value.amityChannelMember!.user!.displayName!
-                        //           .length,
-                        //       userId: value.amityChannelMember!.userId!,
-                        //       displayName:
-                        //           value.amityChannelMember!.user!.displayName!,
-                        //     ),
-                        //   );
-                        //   _commentTextEditController.text =
-                        //       '${_commentTextEditController.text.trim()}${value.amityChannelMember!.user!.displayName}';
-                        // }
-
-                        // _commentTextEditController.selection =
-                        //     TextSelection.fromPosition(TextPosition(
-                        //         offset:
-                        //             _commentTextEditController.text.length));
-                      },
-                    ),
+                    child: type == UserSuggestionType.global
+                        ? _GlobalUserSuggestionWidget(
+                            keyword: keyword,
+                            onUserSelect: (value) {
+                              hideOverLay();
+                              onUserSelect(keyword, value);
+                            },
+                          )
+                        : _CommunityUserSuggestionWidget(
+                            communityId: communityId!,
+                            keyword: keyword,
+                            onUserSelect: (value) {
+                              hideOverLay();
+                              onUserSelect(keyword, value);
+                            },
+                          ),
                   ),
                 ],
               ),
@@ -121,12 +103,69 @@ class UserSuggesionOverlay {
   }
 }
 
-class _GlobalUserSuggestionWidget extends StatelessWidget {
+class _GlobalUserSuggestionWidget extends StatefulWidget {
   const _GlobalUserSuggestionWidget(
       {Key? key, required this.keyword, required this.onUserSelect})
       : super(key: key);
   final String keyword;
   final ValueChanged<AmityUser> onUserSelect;
+
+  @override
+  State<_GlobalUserSuggestionWidget> createState() =>
+      _GlobalUserSuggestionWidgetState();
+}
+
+class _GlobalUserSuggestionWidgetState
+    extends State<_GlobalUserSuggestionWidget> {
+  late PagingController<AmityUser> _controller;
+  final amityUsers = <AmityUser>[];
+
+  final scrollcontroller = ScrollController();
+
+  @override
+  void initState() {
+    _controller = PagingController(
+      pageFuture: (token) => AmityCoreClient.newUserRepository()
+          .searchUserByDisplayName(widget.keyword)
+          .getPagingData(token: token, limit: GlobalConstant.pageSize),
+      pageSize: GlobalConstant.pageSize,
+    )..addListener(
+        () {
+          if (_controller.error == null) {
+            setState(() {
+              amityUsers.clear();
+              amityUsers.addAll(_controller.loadedItems);
+            });
+          } else {
+            //Error on pagination controller
+            setState(() {});
+            print(_controller.error.toString());
+            print(_controller.stacktrace.toString());
+            ErrorDialog.show(context,
+                title: 'Error', message: _controller.error.toString());
+          }
+        },
+      );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _controller.fetchNextPage();
+    });
+
+    scrollcontroller.addListener(pagination);
+
+    super.initState();
+  }
+
+  void pagination() {
+    if ((scrollcontroller.position.pixels ==
+            scrollcontroller.position.maxScrollExtent) &&
+        _controller.hasMoreItems) {
+      setState(() {
+        _controller.fetchNextPage();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -138,50 +177,163 @@ class _GlobalUserSuggestionWidget extends StatelessWidget {
           width: 1,
         ),
       ),
-      child: FutureBuilder<List<AmityUser>>(
-        future: AmityCoreClient.newUserRepository()
-            .searchUserByDisplayName(keyword)
-            .query(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data != null) {
-            return ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              children: [
-                // ListTile(
-                //   leading: const CircleAvatar(
-                //     foregroundImage: NetworkImage(''),
-                //   ),
-                //   title: const Text('All'),
-                //   dense: true,
-                //   onTap: () {
-                //     // onUserSelect(
-                //     //     ChannelMemberTagData(AmityMentionType.CHANNEL));
-                //   },
-                // ),
-                ...List.generate(
-                  snapshot.data!.length,
-                  (index) {
-                    final amityUser = snapshot.data![index];
-                    return ListTile(
-                      leading: CircleAvatar(
-                        foregroundImage:
-                            NetworkImage(amityUser.avatarUrl ?? ''),
-                      ),
-                      title: Text(amityUser.userId!),
-                      dense: true,
-                      onTap: () {
-                        onUserSelect(amityUser);
-                      },
-                    );
-                  },
-                )
-              ],
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+      child: Column(
+        children: [
+          Expanded(
+            child: amityUsers.isNotEmpty
+                ? ListView.builder(
+                    controller: scrollcontroller,
+                    itemCount: amityUsers.length,
+                    itemBuilder: (context, index) {
+                      final amityUser = amityUsers[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          foregroundImage:
+                              NetworkImage(amityUser.avatarUrl ?? ''),
+                        ),
+                        title: Text(amityUser.userId!),
+                        dense: true,
+                        onTap: () {
+                          widget.onUserSelect(amityUser);
+                        },
+                      );
+                    },
+                  )
+                : Container(
+                    alignment: Alignment.center,
+                    child: _controller.isFetching
+                        ? const CircularProgressIndicator()
+                        : const Text('No User'),
+                  ),
+          ),
+          if (_controller.isFetching && amityUsers.isNotEmpty)
+            Container(
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            )
+        ],
       ),
     );
   }
 }
+
+class _CommunityUserSuggestionWidget extends StatefulWidget {
+  const _CommunityUserSuggestionWidget(
+      {Key? key,
+      required this.communityId,
+      required this.keyword,
+      required this.onUserSelect})
+      : super(key: key);
+  final String communityId;
+  final String keyword;
+  final ValueChanged<AmityUser> onUserSelect;
+
+  @override
+  State<_CommunityUserSuggestionWidget> createState() =>
+      _CommunityUserSuggestionWidgetState();
+}
+
+class _CommunityUserSuggestionWidgetState
+    extends State<_CommunityUserSuggestionWidget> {
+  late PagingController<AmityCommunityMember> _controller;
+  final amityCommunityMember = <AmityCommunityMember>[];
+
+  final scrollcontroller = ScrollController();
+
+  @override
+  void initState() {
+    _controller = PagingController(
+      pageFuture: (token) => AmitySocialClient.newCommunityRepository()
+          .membership(widget.communityId)
+          .searchMembers(widget.keyword)
+          .getPagingData(token: token, limit: GlobalConstant.pageSize),
+      pageSize: GlobalConstant.pageSize,
+    )..addListener(
+        () {
+          if (_controller.error == null) {
+            setState(() {
+              amityCommunityMember.clear();
+              amityCommunityMember.addAll(_controller.loadedItems);
+            });
+          } else {
+            //Error on pagination controller
+            setState(() {});
+            print(_controller.error.toString());
+            print(_controller.stacktrace.toString());
+            ErrorDialog.show(context,
+                title: 'Error', message: _controller.error.toString());
+          }
+        },
+      );
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _controller.fetchNextPage();
+    });
+
+    scrollcontroller.addListener(pagination);
+
+    super.initState();
+  }
+
+  void pagination() {
+    if ((scrollcontroller.position.pixels ==
+            scrollcontroller.position.maxScrollExtent) &&
+        _controller.hasMoreItems) {
+      setState(() {
+        _controller.fetchNextPage();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.black26,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: amityCommunityMember.isNotEmpty
+                ? ListView.builder(
+                    controller: scrollcontroller,
+                    itemCount: amityCommunityMember.length,
+                    itemBuilder: (context, index) {
+                      final amityCommunityUser = amityCommunityMember[index];
+                      return ListTile(
+                        leading: CircleAvatar(
+                          foregroundImage: NetworkImage(
+                              amityCommunityUser.user?.avatarUrl ?? ''),
+                        ),
+                        title: Text(amityCommunityUser.user!.userId!),
+                        dense: true,
+                        onTap: () {
+                          widget.onUserSelect(amityCommunityUser.user!);
+                        },
+                      );
+                    },
+                  )
+                : Container(
+                    alignment: Alignment.center,
+                    child: _controller.isFetching
+                        ? const CircularProgressIndicator()
+                        : const Text('No User'),
+                  ),
+          ),
+          if (_controller.isFetching && amityCommunityMember.isNotEmpty)
+            Container(
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(),
+            )
+        ],
+      ),
+    );
+  }
+}
+
+enum UserSuggestionType { global, community, channel }

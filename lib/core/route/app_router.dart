@@ -103,8 +103,10 @@ class AppRouter {
                 name: AppRoute.commentList,
                 path: AppRoute.commentListRoute,
                 builder: (context, state) {
-                  print('From location - ' + state.location);
-                  return CommentQueryScreen(state.queryParams['postId']!);
+                  return CommentQueryScreen(
+                    state.queryParams['postId']!,
+                    communityId: state.queryParams['communityId']!,
+                  );
                 },
               ),
               GoRoute(

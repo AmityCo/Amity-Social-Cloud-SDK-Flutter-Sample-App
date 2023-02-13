@@ -91,6 +91,7 @@ class _CommunityInReviewPostListScreenState
                         return Column(
                           children: [
                             FeedWidget(
+                              communityId: widget.communityId,
                               amityPost: amityPost,
                             ),
                             Container(

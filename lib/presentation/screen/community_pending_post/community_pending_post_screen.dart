@@ -92,6 +92,7 @@ class _CommunityPendingPostListScreenState
                         return Column(
                           children: [
                             FeedWidget(
+                              communityId: widget.communityId,
                               amityPost: amityPost,
                             ),
                             Container(
