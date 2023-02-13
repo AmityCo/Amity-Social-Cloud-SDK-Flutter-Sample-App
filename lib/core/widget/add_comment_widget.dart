@@ -59,9 +59,12 @@ class AddCommentWidget extends StatelessWidget {
                       (keyword, user) {
                         mentionUsers.add(user);
                         if (keyword.isNotEmpty) {
+                          final length = _commentTextEditController.text.length;
                           _commentTextEditController.text =
-                              _commentTextEditController.text
-                                  .replaceAll(keyword, user.displayName ?? '');
+                              _commentTextEditController.text.replaceRange(
+                                  length - keyword.length,
+                                  length,
+                                  user.displayName ?? '');
                         } else {
                           _commentTextEditController.text =
                               (_commentTextEditController.text +
@@ -82,9 +85,12 @@ class AddCommentWidget extends StatelessWidget {
                         value, (keyword, user) {
                       mentionUsers.add(user);
                       if (keyword.isNotEmpty) {
+                        final length = _commentTextEditController.text.length;
                         _commentTextEditController.text =
-                            _commentTextEditController.text
-                                .replaceAll(keyword, user.displayName ?? '');
+                            _commentTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
                       } else {
                         _commentTextEditController.text =
                             (_commentTextEditController.text +

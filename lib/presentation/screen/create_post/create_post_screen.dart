@@ -96,9 +96,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       (keyword, user) {
                         mentionUsers.add(user);
                         if (keyword.isNotEmpty) {
-                          _postTextEditController.text = _postTextEditController
-                              .text
-                              .replaceAll(keyword, user.displayName ?? '');
+                          final length = _postTextEditController.text.length;
+                          _postTextEditController.text =
+                              _postTextEditController.text.replaceRange(
+                                  length - keyword.length,
+                                  length,
+                                  user.displayName ?? '');
                         } else {
                           _postTextEditController.text =
                               (_postTextEditController.text +
@@ -120,9 +123,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         mentionUsers.add(user);
 
                         if (keyword.isNotEmpty) {
-                          _postTextEditController.text = _postTextEditController
-                              .text
-                              .replaceAll(keyword, user.displayName ?? '');
+                          final length = _postTextEditController.text.length;
+                          _postTextEditController.text =
+                              _postTextEditController.text.replaceRange(
+                                  length - keyword.length,
+                                  length,
+                                  user.displayName ?? '');
                         } else {
                           _postTextEditController.text =
                               (_postTextEditController.text +
