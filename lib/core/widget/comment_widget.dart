@@ -29,7 +29,6 @@ class _CommentWidgetState extends State<CommentWidget> {
   @override
   void initState() {
     super.initState();
-
     periodicTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {

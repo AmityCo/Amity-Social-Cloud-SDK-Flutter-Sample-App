@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 
 class AddCommentWidget extends StatelessWidget {
-  AddCommentWidget(this._amityUser, this.addCommentCallback, {Key? key})
+  AddCommentWidget(this._amityUser, this.addCommentCallback,
+      {Key? key, this.communityId})
       : super(key: key);
   final AmityUser _amityUser;
+  final String? communityId;
   final _commentTextEditController = TextEditingController();
   final _commentTextTextFieldKey = GlobalKey();
   final mentionUsers = <AmityUser>[];
@@ -47,18 +49,24 @@ class AddCommentWidget extends StatelessWidget {
                   hintText: 'Write your comment here',
                 ),
                 onChanged: (value) {
-                  if (value.length > 3) {
-                    UserSuggesionOverlay.instance.hideOverLay();
-
+                  UserSuggesionOverlay.instance.hideOverLay();
+                  if (communityId == null || communityId!.isEmpty) {
                     UserSuggesionOverlay.instance.updateOverLay(
                       context,
+                      UserSuggestionType.global,
                       _commentTextTextFieldKey,
                       value,
                       (keyword, user) {
                         mentionUsers.add(user);
-                        _commentTextEditController.text =
-                            _commentTextEditController.text
-                                .replaceAll(keyword, user.displayName ?? '');
+                        if (keyword.isNotEmpty) {
+                          _commentTextEditController.text =
+                              _commentTextEditController.text
+                                  .replaceAll(keyword, user.displayName ?? '');
+                        } else {
+                          _commentTextEditController.text =
+                              (_commentTextEditController.text +
+                                  user.displayName!);
+                        }
 
                         _commentTextEditController.selection =
                             TextSelection.fromPosition(TextPosition(
@@ -66,6 +74,27 @@ class AddCommentWidget extends StatelessWidget {
                                     _commentTextEditController.text.length));
                       },
                     );
+                  } else {
+                    UserSuggesionOverlay.instance.updateOverLay(
+                        context,
+                        UserSuggestionType.community,
+                        _commentTextTextFieldKey,
+                        value, (keyword, user) {
+                      mentionUsers.add(user);
+                      if (keyword.isNotEmpty) {
+                        _commentTextEditController.text =
+                            _commentTextEditController.text
+                                .replaceAll(keyword, user.displayName ?? '');
+                      } else {
+                        _commentTextEditController.text =
+                            (_commentTextEditController.text +
+                                user.displayName!);
+                      }
+
+                      _commentTextEditController.selection =
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _commentTextEditController.text.length));
+                    }, communityId: communityId);
                   }
                 },
               ),

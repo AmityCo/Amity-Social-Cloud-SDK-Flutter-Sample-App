@@ -211,6 +211,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
+                          communityId: widget.communityId,
                           amityPost: amityPost,
                         );
                       },
