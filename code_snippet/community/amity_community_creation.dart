@@ -56,7 +56,7 @@ class AmityCommunityCreation {
       //check if the upload result is complete
       else if (amityUploadResult is AmityUploadError) {
         final amityUploadError = amityUploadResult as AmityUploadError;
-        final AmityException amityException = amityUploadError.getErrror;
+        final AmityException amityException = amityUploadError.getError;
         //handle error
       }
     });
