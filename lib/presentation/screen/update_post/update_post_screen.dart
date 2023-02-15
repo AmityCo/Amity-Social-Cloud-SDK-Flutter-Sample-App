@@ -8,8 +8,13 @@ import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.da
 
 class UpdatePostScreen extends StatefulWidget {
   final String? communityId;
+  final bool isPublic;
   final AmityPost amityPost;
-  const UpdatePostScreen({Key? key, required this.amityPost, this.communityId})
+  const UpdatePostScreen(
+      {Key? key,
+      required this.amityPost,
+      this.communityId,
+      required this.isPublic})
       : super(key: key);
 
   @override
@@ -63,7 +68,9 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
               onChanged: (value) {
                 UserSuggesionOverlay.instance.hideOverLay();
 
-                if (widget.communityId == null || widget.communityId!.isEmpty) {
+                if (widget.communityId == null ||
+                    widget.communityId!.isEmpty ||
+                    widget.isPublic) {
                   UserSuggesionOverlay.instance.updateOverLay(
                     context,
                     UserSuggestionType.global,

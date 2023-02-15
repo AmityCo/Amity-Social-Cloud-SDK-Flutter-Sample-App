@@ -58,12 +58,6 @@ class AppRouter {
                     UserProfileScreen(userId: state.params['userId']!),
                 routes: [
                   GoRoute(
-                    name: '${AppRoute.createPost}_from_profile',
-                    path: AppRoute.createPostRoute,
-                    builder: (context, state) =>
-                        CreatePostScreen(userId: state.params['userId']!),
-                  ),
-                  GoRoute(
                     name: AppRoute.followersUser,
                     path: AppRoute.followersUserRoute,
                     builder: (context, state) =>
@@ -94,22 +88,6 @@ class AppRouter {
                 ],
               ),
               GoRoute(
-                name: AppRoute.createPost,
-                path: AppRoute.createPostRoute,
-                builder: (context, state) =>
-                    CreatePostScreen(userId: state.params['userId']!),
-              ),
-              GoRoute(
-                name: AppRoute.commentList,
-                path: AppRoute.commentListRoute,
-                builder: (context, state) {
-                  return CommentQueryScreen(
-                    state.queryParams['postId']!,
-                    communityId: state.queryParams['communityId']!,
-                  );
-                },
-              ),
-              GoRoute(
                 name: AppRoute.globalFeed,
                 path: AppRoute.globalFeedRoute,
                 builder: (context, state) => const GlobalFeedScreen(),
@@ -119,15 +97,9 @@ class AppRouter {
                 name: AppRoute.communityFeed,
                 path: AppRoute.communityFeedRoute,
                 builder: (context, state) => CommunityFeedScreen(
-                    communityId: state.params['communityId']!),
-                // routes: [
-                //   GoRoute(
-                //     name: 'commentCommunityFeed',
-                //     path: 'comment/:postId',
-                //     builder: (context, state) =>
-                //         CommentQueryScreen(state.params['postId']!),
-                //   ),
-                // ],
+                  communityId: state.queryParams['communityId']!,
+                  isPublic: state.queryParams['isPublic'] == 'true',
+                ),
               ),
               GoRoute(
                 name: AppRoute.communityMember,
@@ -140,14 +112,6 @@ class AppRouter {
                 path: AppRoute.userFeedRoute,
                 builder: (context, state) =>
                     UserFeedScreen(userId: state.params['userId']!),
-                // routes: [
-                //   GoRoute(
-                //     name: 'commentUserFeed',
-                //     path: 'comment/:postId',
-                //     builder: (context, state) =>
-                //         CommentQueryScreen(state.params['postId']!),
-                //   ),
-                // ],
               ),
               GoRoute(
                 name: AppRoute.communityList,
@@ -158,20 +122,14 @@ class AppRouter {
                       name: AppRoute.communityProfile,
                       path: AppRoute.communityProfileRoute,
                       builder: (context, state) => CommunityProfileScreen(
-                            communityId: state.params['communityId']!,
+                            communityId: state.queryParams['communityId']!,
                           ),
                       routes: [
-                        GoRoute(
-                          name: AppRoute.createCommunityPostPost,
-                          path: AppRoute.createCommunityPostPostRoute,
-                          builder: (context, state) => CreatePostScreen(
-                              communityId: state.params['communityId']!),
-                        ),
                         GoRoute(
                           name: AppRoute.updateCommunity,
                           path: AppRoute.updateCommunityRoute,
                           builder: (context, state) => CommunityUpdateScreen(
-                            communityId: state.params['communityId']!,
+                            communityId: state.queryParams['communityId']!,
                           ),
                         ),
                         GoRoute(
@@ -179,14 +137,20 @@ class AppRouter {
                           path: AppRoute.communityInReviewPostRoute,
                           builder: (context, state) =>
                               CommunityInReviewPostListScreen(
-                                  communityId: state.params['communityId']!),
+                                  communityId:
+                                      state.queryParams['communityId']!,
+                                  isPublic:
+                                      state.queryParams['isPublic'] == 'true'),
                         ),
                         GoRoute(
                           name: AppRoute.communityPendingPost,
                           path: AppRoute.communityPendingPostRoute,
                           builder: (context, state) =>
                               CommunityPendingPostListScreen(
-                                  communityId: state.params['communityId']!),
+                                  communityId:
+                                      state.queryParams['communityId']!,
+                                  isPublic:
+                                      state.queryParams['isPublic'] == 'true'),
                         ),
                       ]),
                   GoRoute(
@@ -296,6 +260,26 @@ class AppRouter {
             name: AppRoute.globalUserSearch,
             path: AppRoute.globalUserSearchRoute,
             builder: (context, state) => const GlobalUserSearch(),
+          ),
+          GoRoute(
+            name: AppRoute.createPost,
+            path: AppRoute.createPostRoute,
+            builder: (context, state) => CreatePostScreen(
+              userId: state.queryParams['userId'],
+              communityId: state.queryParams['communityId'],
+              isPublic: state.queryParams['isPublic'] == 'true',
+            ),
+          ),
+          GoRoute(
+            name: AppRoute.commentList,
+            path: AppRoute.commentListRoute,
+            builder: (context, state) {
+              return CommentQueryScreen(
+                state.queryParams['postId']!,
+                communityId: state.queryParams['communityId'],
+                isPublic: state.queryParams['isPublic'] == 'true',
+              );
+            },
           ),
         ],
         redirect: (context, state) {

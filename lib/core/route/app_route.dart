@@ -12,17 +12,14 @@ class AppRoute {
   static const userFeedRoute = 'userFeed/:userId';
 
   static const commentList = 'commentList';
-  static const commentListRoute = 'commentList';
+  static const commentListRoute = '/commentList';
 
   static const landing = 'landing';
   static const landingRoute = '/landing';
 
   //Create Post Routes
   static const createPost = 'createPost';
-  static const createPostRoute = 'createPost';
-
-  static const createCommunityPostPost = 'createCommunityPost';
-  static const createCommunityPostPostRoute = 'createCommunityPost';
+  static const createPostRoute = '/createPost';
 
   //community flow routes
   static const communityList = 'communityList';
@@ -35,7 +32,7 @@ class AppRoute {
   static const communityRecommendedListRoute = 'communityRecommendedList';
 
   static const communityProfile = 'communityProfile';
-  static const communityProfileRoute = 'communityProfile/:communityId';
+  static const communityProfileRoute = 'communityProfile';
 
   static const communityInReviewPost = 'communityInReviewPost';
   static const communityInReviewPostRoute = 'communityInReviewPost';

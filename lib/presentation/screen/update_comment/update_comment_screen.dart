@@ -4,12 +4,18 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 
 class UpdateCommentScreen extends StatefulWidget {
   final AmityComment amityComment;
-  const UpdateCommentScreen({Key? key, required this.amityComment})
+  const UpdateCommentScreen(
+      {Key? key,
+      required this.amityComment,
+      required this.communityId,
+      required this.isPublic})
       : super(key: key);
-
+  final String? communityId;
+  final bool isPublic;
   @override
   State<UpdateCommentScreen> createState() => _UpdateCommentScreenState();
 }
@@ -17,6 +23,9 @@ class UpdateCommentScreen extends StatefulWidget {
 class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
   final _commentTextEditController = TextEditingController();
   final _commentMetadataEditController = TextEditingController();
+
+  final _commentTextTextFieldKey = GlobalKey();
+  final mentionUsers = <AmityUser>[];
 
   @override
   void initState() {
@@ -29,7 +38,13 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
       _commentMetadataEditController.text = metadataString;
     }
 
-    super.initState();
+    if (widget.amityComment.mentionees != null) {
+      mentionUsers.addAll(widget.amityComment.mentionees!.map((e) {
+        return e.user!;
+      }));
+
+      super.initState();
+    }
   }
 
   @override
@@ -44,10 +59,72 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
           children: [
             const SizedBox(height: 20),
             TextFormField(
+              key: _commentTextTextFieldKey,
               controller: _commentTextEditController,
               decoration: const InputDecoration(
                 label: Text('Text*'),
               ),
+              onChanged: (value) {
+                UserSuggesionOverlay.instance.hideOverLay();
+
+                if (widget.communityId == null ||
+                    widget.communityId!.isEmpty ||
+                    widget.isPublic) {
+                  UserSuggesionOverlay.instance.updateOverLay(
+                    context,
+                    UserSuggestionType.global,
+                    _commentTextTextFieldKey,
+                    value,
+                    (keyword, user) {
+                      mentionUsers.add(user);
+                      if (keyword.isNotEmpty) {
+                        final length = _commentTextEditController.text.length;
+                        _commentTextEditController.text =
+                            _commentTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
+                      } else {
+                        _commentTextEditController.text =
+                            (_commentTextEditController.text +
+                                user.displayName!);
+                      }
+
+                      _commentTextEditController.selection =
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _commentTextEditController.text.length));
+                    },
+                  );
+                } else {
+                  UserSuggesionOverlay.instance.updateOverLay(
+                    context,
+                    UserSuggestionType.community,
+                    _commentTextTextFieldKey,
+                    value,
+                    (keyword, user) {
+                      mentionUsers.add(user);
+
+                      if (keyword.isNotEmpty) {
+                        final length = _commentTextEditController.text.length;
+                        _commentTextEditController.text =
+                            _commentTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
+                      } else {
+                        _commentTextEditController.text =
+                            (_commentTextEditController.text +
+                                user.displayName!);
+                      }
+
+                      _commentTextEditController.selection =
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _commentTextEditController.text.length));
+                    },
+                    communityId: widget.communityId,
+                  );
+                }
+              },
             ),
             const SizedBox(height: 20),
             TextFormField(
@@ -69,6 +146,11 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                         context, 'Error', error.toString());
                   });
                 },
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  primary: Colors.white,
+                  padding: const EdgeInsets.all(12),
+                ),
                 child: Container(
                   width: 200,
                   alignment: Alignment.center,
@@ -77,11 +159,6 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                     TextSpan(text: 'Update'),
                     TextSpan(text: ' Comment'),
                   ])),
-                ),
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  primary: Colors.white,
-                  padding: const EdgeInsets.all(12),
                 ),
               ),
             )
@@ -93,18 +170,39 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
 
   Future updateComment() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final _text = _commentTextEditController.text.trim();
-    final _metadataString = _commentMetadataEditController.text.trim();
-    Map<String, dynamic> _metadata = {};
-    try {
-      _metadata = jsonDecode(_metadataString);
-    } catch (e) {
-      print('metadata decode failed');
+    final text = _commentTextEditController.text.trim();
+    final metadataString = _commentMetadataEditController.text.trim();
+    Map<String, dynamic> metadata = {};
+
+    if (mentionUsers.isNotEmpty) {
+      ///Mention user logic
+      //Clean up mention user list, as user might have removed some tagged user
+      mentionUsers
+          .removeWhere((element) => !text.contains(element.displayName!));
+
+      // final mentionedUserIds = mentionUsers.map((e) => e.userId!).toList();
+
+      final amityMentioneesMetadata = mentionUsers
+          .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+              userId: e.userId!,
+              index: text.indexOf('@${e.displayName!}'),
+              length: e.displayName!.length))
+          .toList();
+
+      metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+    } else {
+      try {
+        metadata = jsonDecode(metadataString);
+      } catch (e) {
+        print('metadata decode failed');
+      }
     }
+
     await widget.amityComment
         .edit()
-        .text(_text)
-        .metadata(_metadata)
+        .text(text)
+        .metadata(metadata)
+        .mentionUsers(mentionUsers.map((e) => e.userId!).toList())
         .build()
         .update();
   }
