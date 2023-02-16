@@ -50,22 +50,22 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
             itemBuilder: (context) {
               return const [
                 PopupMenuItem(
-                  child: Text("Edit"),
                   value: 1,
+                  child: Text("Edit"),
                 ),
                 PopupMenuItem(
-                  child: Text("Delete (Soft)"),
                   value: 2,
+                  child: Text("Delete (Soft)"),
                 ),
                 PopupMenuItem(
-                  child: Text("Delete (Hard)"),
                   value: 3,
                   enabled: false,
+                  child: Text("Delete (Hard)"),
                 ),
                 PopupMenuItem(
-                  child: Text("Check my permission"),
                   value: 4,
                   enabled: true,
+                  child: Text("Check my permission"),
                 )
               ];
             },
@@ -153,7 +153,10 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
                         CommunityFeedScreen(
-                            communityId: widget.communityId, showAppBar: false),
+                          communityId: widget.communityId,
+                          showAppBar: false,
+                          isPublic: _amityCommunity.isPublic ?? true,
+                        ),
                         memberScreen,
                         memberBannedScreen,
                       ],
@@ -182,9 +185,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         onPressed: () {
                           Navigator.of(context).pop();
                           //show create post for community
-                          GoRouter.of(context).goNamed(
-                              AppRoute.createCommunityPostPost,
-                              params: {'communityId': widget.communityId});
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.createPost, queryParams: {
+                            'communityId': _amityCommunity.communityId,
+                            'isPublic': _amityCommunity.isPublic.toString(),
+                          });
                         },
                         child: const Text('Post'),
                       ),
@@ -254,6 +259,7 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 height: 64,
                 decoration: BoxDecoration(
                     shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
                 child:
                     amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) !=
                             null
@@ -263,7 +269,6 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                             fit: BoxFit.fill,
                           )
                         : Image.asset('assets/user_placeholder.png'),
-                clipBehavior: Clip.antiAliasWithSaveLayer,
               ),
               const SizedBox(width: 18),
               Expanded(
@@ -367,7 +372,10 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                   onPressed: () {
                     GoRouter.of(context).pushNamed(
                         AppRoute.communityInReviewPost,
-                        params: {'communityId': amityCommunity.communityId!});
+                        queryParams: {
+                          'communityId': amityCommunity.communityId,
+                          'isPublic': amityCommunity.isPublic!.toString()
+                        });
                   },
                   child: const Text('Review Post'),
                 ),
@@ -379,9 +387,11 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 width: 260,
                 child: ElevatedButton(
                   onPressed: () {
-                    GoRouter.of(context).pushNamed(
-                        AppRoute.communityPendingPost,
-                        params: {'communityId': amityCommunity.communityId!});
+                    GoRouter.of(context)
+                        .pushNamed(AppRoute.communityPendingPost, queryParams: {
+                      'communityId': amityCommunity.communityId,
+                      'isPublic': amityCommunity.isPublic!.toString()
+                    });
                   },
                   child: const Text('Pending Post'),
                 ),

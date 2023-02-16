@@ -12,10 +12,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key, this.userId, this.communityId})
+  const CreatePostScreen(
+      {Key? key, this.userId, this.communityId, this.isPublic = false})
       : super(key: key);
   final String? userId;
   final String? communityId;
+  final bool isPublic;
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -87,7 +89,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   UserSuggesionOverlay.instance.hideOverLay();
 
                   if (widget.communityId == null ||
-                      widget.communityId!.isEmpty) {
+                      widget.communityId!.isEmpty ||
+                      widget.isPublic) {
                     UserSuggesionOverlay.instance.updateOverLay(
                       context,
                       UserSuggestionType.global,

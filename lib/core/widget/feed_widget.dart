@@ -16,10 +16,15 @@ import 'package:url_launcher/url_launcher.dart';
 
 class FeedWidget extends StatelessWidget {
   final String? communityId;
+  final bool isPublic;
   final AmityPost amityPost;
   // final VoidCallback onCommentCallback;
-  const FeedWidget({Key? key, required this.amityPost, this.communityId})
-      : super(key: key);
+  const FeedWidget({
+    Key? key,
+    required this.amityPost,
+    this.communityId,
+    this.isPublic = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +90,8 @@ class FeedWidget extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) => UpdatePostScreen(
                                       amityPost: value,
+                                      communityId: communityId,
+                                      isPublic: isPublic,
                                     ),
                                   ),
                                 );
@@ -190,7 +197,8 @@ class FeedWidget extends StatelessWidget {
                             AppRoute.commentList,
                             queryParams: {
                               'postId': amityPost.postId!,
-                              'communityId': communityId ?? ''
+                              'communityId': communityId,
+                              'isPublic': isPublic.toString()
                             },
                           );
                         }),
@@ -201,6 +209,7 @@ class FeedWidget extends StatelessWidget {
                         value.comment().create().text(text).send();
                       },
                       communityId: communityId,
+                      isPublic: isPublic,
                     ),
                   ],
                 ),

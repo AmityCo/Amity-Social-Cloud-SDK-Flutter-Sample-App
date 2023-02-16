@@ -12,9 +12,17 @@ import 'package:flutter_social_sample_app/presentation/screen/update_comment/upd
 import 'package:go_router/go_router.dart';
 
 class CommentWidget extends StatefulWidget {
-  const CommentWidget(this.postId, this.amityComment, this.onReply, {Key? key})
-      : super(key: key);
+  const CommentWidget(
+    this.postId,
+    this.amityComment,
+    this.onReply, {
+    Key? key,
+    required this.communityId,
+    required this.isPublic,
+  }) : super(key: key);
   final String postId;
+  final String? communityId;
+  final bool? isPublic;
   final AmityComment amityComment;
   final ValueChanged<AmityComment> onReply;
   @override
@@ -87,13 +95,13 @@ class _CommentWidgetState extends State<CommentWidget> {
             height: 36,
             decoration: BoxDecoration(
                 shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: _user.avatarUrl != null
                 ? Image.network(
                     _user.avatarUrl!,
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -105,7 +113,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     children: [
                       TextSpan(
                         text: _user.displayName!,
-                        style: _themeData.textTheme.bodyText1!.copyWith(
+                        style: _themeData.textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -134,10 +142,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                           },
                         ),
                       ),
-                      // TextSpan(
-                      //   text: text,
-                      //   style: _themeData.textTheme.bodyText2!.copyWith(),
-                      // )
                     ],
                   ),
                 ),
@@ -146,7 +150,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   children: [
                     Text(
                       value.createdAt!.beforeTime(),
-                      style: _themeData.textTheme.caption!.copyWith(),
+                      style: _themeData.textTheme.bodySmall!.copyWith(),
                     ),
                     const SizedBox(width: 12),
                     InkWell(
@@ -264,23 +268,23 @@ class _CommentWidgetState extends State<CommentWidget> {
               return [
                 if (_user.userId == AmityCoreClient.getUserId())
                   const PopupMenuItem(
-                    child: Text("Edit"),
                     value: 1,
+                    child: Text("Edit"),
                   ),
                 if (_user.userId == AmityCoreClient.getUserId())
                   const PopupMenuItem(
-                    child: Text("Delete (Soft)"),
                     value: 2,
+                    child: Text("Delete (Soft)"),
                   ),
                 if (_user.userId == AmityCoreClient.getUserId())
                   const PopupMenuItem(
-                    child: Text("Delete (Hard)"),
                     value: 3,
                     enabled: false,
+                    child: Text("Delete (Hard)"),
                   ),
                 PopupMenuItem(
-                  child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                   value: 4,
+                  child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                 ),
               ];
             },
@@ -294,6 +298,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                   MaterialPageRoute(
                     builder: (context) => UpdateCommentScreen(
                       amityComment: value,
+                      communityId: widget.communityId,
+                      isPublic: widget.isPublic ?? false,
                     ),
                   ),
                 );

@@ -28,7 +28,7 @@ class CommunityWidget extends StatelessWidget {
             child: InkWell(
               onTap: () {
                 GoRouter.of(context).goNamed(AppRoute.communityProfile,
-                    params: {'communityId': value.communityId!});
+                    queryParams: {'communityId': value.communityId!});
                 // params: {'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'});
               },
               child: Column(
@@ -79,6 +79,7 @@ class _CommunityInfoWidget extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
                 shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) !=
                     null
                 ? Image.network(
@@ -86,7 +87,6 @@ class _CommunityInfoWidget extends StatelessWidget {
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 18),
           Expanded(
@@ -105,6 +105,10 @@ class _CommunityInfoWidget extends StatelessWidget {
                   'tags: ${amityCommunity.tags.toString()}',
                   style: _themeData.textTheme.caption,
                 ),
+                Text(
+                  'Public: ${amityCommunity.isPublic}',
+                  style: _themeData.textTheme.caption,
+                ),
               ],
             ),
           ),
@@ -113,17 +117,17 @@ class _CommunityInfoWidget extends StatelessWidget {
               itemBuilder: (context) {
                 return const [
                   PopupMenuItem(
-                    child: Text("Edit"),
                     value: 1,
+                    child: Text("Edit"),
                   ),
                   PopupMenuItem(
-                    child: Text("Delete (Soft)"),
                     value: 2,
+                    child: Text("Delete (Soft)"),
                   ),
                   PopupMenuItem(
-                    child: Text("Delete (Hard)"),
                     value: 3,
                     enabled: false,
+                    child: Text("Delete (Hard)"),
                   )
                 ];
               },
@@ -133,8 +137,10 @@ class _CommunityInfoWidget extends StatelessWidget {
               ),
               onSelected: (index) {
                 if (index == 1) {
-                  GoRouter.of(context).goNamed(AppRoute.updateCommunity,
-                      params: {'communityId': amityCommunity.communityId!});
+                  GoRouter.of(context).pushNamed(AppRoute.updateCommunity,
+                      queryParams: {
+                        'communityId': amityCommunity.communityId!
+                      });
                 }
                 if (index == 2) {
                   amityCommunity.delete();
@@ -197,31 +203,25 @@ class _CommunityOwnerWidget extends StatelessWidget {
             height: 24,
             decoration: BoxDecoration(
                 shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: amityUser.avatarUrl != null
                 ? Image.network(
                     amityUser.avatarUrl!,
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 18),
-          InkWell(
-            onTap: () {
-              GoRouter.of(context).goNamed(AppRoute.home,
-                  params: {'userId': amityUser.userId!});
-            },
-            child: Column(
-              children: [
-                Text(
-                  amityUser.displayName!,
-                  style: _themeData.textTheme.bodyText1,
-                ),
-                // Text(
-                //   subTitle ?? '',
-                //   style: _themeData.textTheme.caption,
-                // ),
-              ],
+          Expanded(
+            child: InkWell(
+              onTap: () {
+                GoRouter.of(context).pushNamed(AppRoute.profile,
+                    params: {'userId': amityUser.userId!});
+              },
+              child: Text(
+                amityUser.displayName!,
+                style: _themeData.textTheme.bodyText1,
+              ),
             ),
           ),
         ],

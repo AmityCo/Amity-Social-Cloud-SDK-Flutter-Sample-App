@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
-import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_post/user_post_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -487,13 +486,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 ),
                 floatingActionButton: FloatingActionButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CreatePostScreen(
-                          userId: widget.userId,
-                        ),
-                      ),
-                    );
+                    GoRouter.of(context).pushNamed(AppRoute.createPost,
+                        queryParams: {'userId': widget.userId});
                   },
                   child: const Icon(Icons.add, size: 24),
                 ),

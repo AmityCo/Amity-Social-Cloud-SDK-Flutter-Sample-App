@@ -1,9 +1,13 @@
 // import 'package:amity_sdk/flutter_application_1.dart';
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_social_sample_app/core/route/app_router.dart';
 import 'package:flutter_social_sample_app/core/service_locator/service_locator.dart';
+import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 import 'package:go_router/go_router.dart';
 
 void main() async {
@@ -47,9 +51,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  late StreamSubscription<bool> keyboardSubscription;
+
   @override
   void initState() {
     super.initState();
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+    // Query
+    print(
+        'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
+
+    // Subscribe
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      if (!visible) {
+        UserSuggesionOverlay.instance.hideOverLay();
+      }
+    });
   }
 
   late String userId;
@@ -88,5 +107,11 @@ class _MyAppState extends State<MyApp> {
       ),
       themeMode: ThemeMode.light,
     );
+  }
+
+  @override
+  void dispose() {
+    keyboardSubscription.cancel();
+    super.dispose();
   }
 }
