@@ -2,7 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 
 class TokenExchangeScreen extends StatefulWidget {
   const TokenExchangeScreen({Key? key}) : super(key: key);

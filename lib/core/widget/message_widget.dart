@@ -10,7 +10,7 @@ import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
-import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_downloader/image_downloader.dart';
 

@@ -13,21 +13,23 @@ class AmityUserAvatar {
     AmityCoreClient.newFileRepository()
         .image(imageFile)
         .upload()
-        .then((AmityUploadResult<AmityImage> amityResult) {
-      //handle result
-      if (amityResult is AmityUploadComplete) {
-        final amityUploadComplete = amityResult as AmityUploadComplete;
-        //cast amityUploadResult to AmityImage
-        final uploadedImage = amityUploadComplete.getFile as AmityImage;
-        //proceed result with uploadedImage
-        updateUserAvatar(uploadedImage.fileId);
-      }
+        .stream
+        .listen((AmityUploadResult<AmityImage> amityResult) {
+      amityResult.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) {
+          //handle result
 
-      if (amityResult is AmityUploadError) {
-        //handle error
-      }
-    }).onError<AmityException>((error, stackTrace) {
-      //handle error
+          //proceed result with uploadedImage
+          updateUserAvatar(file.fileId);
+        },
+        error: (error) {
+          // handle error
+        },
+        cancel: () {
+          // handle cancel request
+        },
+      );
     });
   }
 

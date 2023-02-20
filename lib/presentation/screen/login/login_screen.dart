@@ -116,35 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         .displayName(userDisplayName)
                         .submit();
 
-                    //File Picker
-                    // List<File> files = <File>[];
-                    // FilePickerResult? result = await FilePicker.platform
-                    //     .pickFiles(allowMultiple: true);
-
-                    // if (result != null) {
-                    //   files.addAll(
-                    //       result.paths.map((path) => File(path!)).toList());
-                    // }
-
-                    // AmityCoreClient.newFileRepository()
-                    //     .file(files.first)
-                    //     .uploadStream()
-                    //     .stream
-                    //     .listen((event) async {
-                    //   event.when(
-                    //     progress: (uploadInfo, cancelToken) {},
-                    //     complete: (file) {},
-                    //     error: (error) {
-                    //       print('Error - ${error.toString()}');
-                    //     },
-                    //     cancel: () {
-                    //       print('User Cancel the request');
-                    //     },
-                    //   );
-                    // });
-
-                    // Future.delayed(Duration(seconds: 1),() => ,)
-
                     GoRouter.of(context).go(AppRoute.homeRoute);
                   } catch (error) {
                     CommonSnackbar.showNagativeSnackbar(

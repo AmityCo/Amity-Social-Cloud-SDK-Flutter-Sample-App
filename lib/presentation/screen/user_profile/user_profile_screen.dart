@@ -4,7 +4,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
-import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_post/user_post_screen.dart';
@@ -514,7 +514,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       AmityUploadResult<AmityImage> amityUploadResult =
           await AmityCoreClient.newFileRepository()
               .image(File(_avatar!.path))
-              .upload();
+              .upload()
+              .stream
+              .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
         _userAvatar = amityUploadComplete.getFile as AmityImage;

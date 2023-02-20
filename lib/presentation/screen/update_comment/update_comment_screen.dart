@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
-import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 
 class UpdateCommentScreen extends StatefulWidget {
   final AmityComment amityComment;

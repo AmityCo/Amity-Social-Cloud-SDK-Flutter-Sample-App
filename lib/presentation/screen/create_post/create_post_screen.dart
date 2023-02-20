@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/upload_dialog_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -234,8 +237,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               Center(
                 child: TextButton(
                   onPressed: () async {
-                    ProgressDialog.show(context, asyncFunction: createPost)
-                        .then((value) {
+                    ProgressDialog.show(
+                      context,
+                      asyncFunction: () => _createPost(context),
+                    ).then((value) {
                       PositiveDialog.show(context,
                           title: 'Post Created',
                           message: 'Post Created Successfully',
@@ -274,7 +279,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Future createPost() async {
+  Future _createPost(BuildContext context) async {
+    final uploadInfoStream = StreamController<UploadInfo>.broadcast();
+    UploadProgressDialog.show(context, uploadInfoStream);
+
     FocusManager.instance.primaryFocus?.unfocus();
     final _target = _targetuserTextEditController.text.trim();
     final _text = _postTextEditController.text.trim();
@@ -325,13 +333,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     if (isImagePost) {
       List<AmityImage> _images = [];
-      for (final _file in files) {
-        AmityUploadResult<AmityImage> amityUploadResult =
-            await AmityCoreClient.newFileRepository().image(_file).upload();
-        if (amityUploadResult is AmityUploadComplete) {
-          final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-          _images.add(amityUploadComplete.getFile as AmityImage);
+
+      if (files.isNotEmpty) {
+        final uploadCompleter = Completer();
+
+        for (final _file in files) {
+          AmityCoreClient.newFileRepository()
+              .image(_file)
+              .upload()
+              .stream
+              .listen((event) {
+            uploadInfoStream.add(UploadInfo(_file.path, event));
+            event.when(
+              progress: (uploadInfo, cancelToken) {},
+              complete: (file) {
+                _images.add(file as AmityImage);
+
+                ///check if all file is uploaded
+                if (_images.length == files.length) {
+                  uploadCompleter.complete();
+                }
+              },
+              error: (error) {
+                uploadCompleter.completeError(error);
+              },
+              cancel: () {},
+            );
+          });
         }
+
+        await uploadCompleter.future;
       }
 
       if (_isCommunityPost) {
@@ -389,13 +420,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     if (isFilePost) {
       List<AmityFile> _files = [];
-      for (final _file in files) {
-        AmityUploadResult<AmityFile> amityUploadResult =
-            await AmityCoreClient.newFileRepository().file(_file).upload();
-        if (amityUploadResult is AmityUploadComplete) {
-          final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-          _files.add(amityUploadComplete.getFile as AmityFile);
+      if (files.isNotEmpty) {
+        final uploadCompleter = Completer();
+        for (final _file in files) {
+          AmityCoreClient.newFileRepository()
+              .file(_file)
+              .upload()
+              .stream
+              .listen((event) {
+            uploadInfoStream.add(UploadInfo(_file.path, event));
+            event.when(
+              progress: (uploadInfo, cancelToken) {},
+              complete: (file) {
+                _files.add(file as AmityFile);
+
+                ///check if all file is uploaded
+                if (_files.length == files.length) {
+                  uploadCompleter.complete();
+                }
+              },
+              error: (error) {
+                CommonSnackbar.showNagativeSnackbar(
+                    context, 'Error', error.message);
+                uploadCompleter.completeError(error);
+              },
+              cancel: () {},
+            );
+          });
         }
+        await uploadCompleter.future;
       }
 
       if (_isCommunityPost) {

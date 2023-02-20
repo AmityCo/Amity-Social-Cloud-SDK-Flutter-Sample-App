@@ -14,21 +14,24 @@ class AmityPostFileCreation {
     AmityCoreClient.newFileRepository()
         .file(uploadinFile)
         .upload()
-        .then((AmityUploadResult<AmityFile> amityUploadResult) {
-      //check if the upload result is complete
-      if (amityUploadResult is AmityUploadComplete) {
-        final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        //cast amityUploadResult to AmityFile
-        AmityFile uploadedFile = amityUploadComplete.getFile as AmityFile;
-        //then create a file post
-        createFilePost(uploadedFile);
-      }
-      //check if the upload result is complete
-      else if (amityUploadResult is AmityUploadError) {
-        final amityUploadError = amityUploadResult as AmityUploadError;
-        final AmityException amityException = amityUploadError.getError;
-        //handle error
-      }
+        .stream
+        .listen((AmityUploadResult<AmityFile> amityResult) {
+      amityResult.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) {
+          //handle result
+
+          //then create a file post
+          createFilePost(file);
+        },
+        error: (error) {
+          final AmityException amityException = error;
+          // handle error
+        },
+        cancel: () {
+          // handle cancel request
+        },
+      );
     });
   }
 

@@ -10,21 +10,26 @@ class AmityFileUpload {
     description: Flutter get user example
     */
   void uploadFile(File uploadingFile) async {
-    AmityUploadResult<AmityFile> amityUploadResult =
-        await AmityCoreClient.newFileRepository().file(uploadingFile).upload();
-    //check if the upload result is complete
-    if (amityUploadResult is AmityUploadComplete) {
-      final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-      //cast amityUploadResult to AmityFile
-      final AmityFile uploadedFile = amityUploadComplete.getFile as AmityFile;
-      //proceed result with uploadedFile
-    }
-    //check if the upload result is complete
-    else if (amityUploadResult is AmityUploadError) {
-      final amityUploadError = amityUploadResult as AmityUploadError;
-      final AmityException amityException = amityUploadError.getError;
-      //handle error
-    }
+    AmityCoreClient.newFileRepository()
+        .file(uploadingFile)
+        .upload()
+        .stream
+        .listen((amityUploadResult) {
+      amityUploadResult.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) {
+          //check if the upload result is complete
+
+          final AmityFile uploadedFile = file;
+          //proceed result with uploadedFile
+        },
+        error: (error) {
+          final AmityException amityException = error;
+          //handle error
+        },
+        cancel: () {},
+      );
+    });
   }
   /* end_sample_code */
 }
