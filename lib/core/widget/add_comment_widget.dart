@@ -3,11 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
 
 class AddCommentWidget extends StatelessWidget {
-  AddCommentWidget(this._amityUser, this.addCommentCallback,
-      {Key? key, this.communityId})
-      : super(key: key);
+  AddCommentWidget(
+    this._amityUser,
+    this.addCommentCallback, {
+    Key? key,
+    this.communityId,
+    this.isPublic = false,
+  }) : super(key: key);
   final AmityUser _amityUser;
   final String? communityId;
+  final bool isPublic;
   final _commentTextEditController = TextEditingController();
   final _commentTextTextFieldKey = GlobalKey();
   final mentionUsers = <AmityUser>[];
@@ -22,13 +27,13 @@ class AddCommentWidget extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
                 shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: _amityUser.avatarUrl != null
                 ? Image.network(
                     _amityUser.avatarUrl!,
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -50,7 +55,7 @@ class AddCommentWidget extends StatelessWidget {
                 ),
                 onChanged: (value) {
                   UserSuggesionOverlay.instance.hideOverLay();
-                  if (communityId == null || communityId!.isEmpty) {
+                  if (communityId == null || communityId!.isEmpty || isPublic) {
                     UserSuggesionOverlay.instance.updateOverLay(
                       context,
                       UserSuggestionType.global,

@@ -7,9 +7,13 @@ import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 
 class CommunityPendingPostListScreen extends StatefulWidget {
   const CommunityPendingPostListScreen(
-      {Key? key, required this.communityId, this.showAppBar = true})
+      {Key? key,
+      required this.communityId,
+      this.showAppBar = true,
+      required this.isPublic})
       : super(key: key);
   final String communityId;
+  final bool isPublic;
   final bool showAppBar;
   @override
   State<CommunityPendingPostListScreen> createState() =>
@@ -94,6 +98,7 @@ class _CommunityPendingPostListScreenState
                             FeedWidget(
                               communityId: widget.communityId,
                               amityPost: amityPost,
+                              isPublic: widget.isPublic,
                             ),
                             Container(
                               decoration: BoxDecoration(
