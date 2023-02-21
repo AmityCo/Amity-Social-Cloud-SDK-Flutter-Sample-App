@@ -44,21 +44,20 @@ class AmityCommunityCreation {
     AmityCoreClient.newFileRepository()
         .image(uploadingImage)
         .upload()
-        .then((AmityUploadResult<AmityImage> amityUploadResult) {
-      //check if the upload result is complete
-      if (amityUploadResult is AmityUploadComplete) {
-        final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        //cast amityUploadResult to AmityImage
-        AmityImage uploadedImage = amityUploadComplete.getFile as AmityImage;
-        //then create an image post
-        createCommunity(uploadedImage);
-      }
-      //check if the upload result is complete
-      else if (amityUploadResult is AmityUploadError) {
-        final amityUploadError = amityUploadResult as AmityUploadError;
-        final AmityException amityException = amityUploadError.getErrror;
-        //handle error
-      }
+        .stream
+        .listen((amityUploadResult) {
+      amityUploadResult.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) {
+          //check if the upload result is complete
+          //then create an image post
+          createCommunity(file);
+        },
+        error: (error) {
+          final AmityException amityException = error;
+        },
+        cancel: () {},
+      );
     });
   }
   /* end_sample_code */
