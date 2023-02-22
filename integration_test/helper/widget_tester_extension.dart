@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_router.dart';
 import 'package:flutter_social_sample_app/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -16,8 +17,41 @@ extension WidgetTesterExtension on WidgetTester {
     );
   }
 
-  Future<void> pumpRouterApp(String route) async {
-    return pumpWidget(MyApp(initialLocation: route));
+  // Always Required, and by defualt this will login screen
+  Future<void> pumpMyApp() async {
+    return pumpWidget(MyApp());
+  }
+
+  Future<void> pumpMyAppAndSettle() async {
+    await pumpMyApp();
+    await pumpAndSettle();
+  }
+
+  Future<void> tapAndPumpSettle(Finder finder) async {
+    await tap(finder);
+    await pumpAndSettle();
+  }
+
+  Future<void> enterTextAndPumpSettle(Finder finder, text) async {
+    await enterText(finder, text);
+    await pumpAndSettle();
+  }
+
+  Future<void> pushNewRoute(
+    String name, {
+    Map<String, String> params = const <String, String>{},
+    Map<String, dynamic> queryParams = const <String, dynamic>{},
+  }) async {
+    AppRouter.router.pushNamed(name, params: params, queryParams: params);
+    await pumpAndSettle();
+  }
+
+  Future hideKeyboard() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  Future navigateBack() async {
+    find.byTooltip('Back');
   }
 
   Future delay(int ms) async {

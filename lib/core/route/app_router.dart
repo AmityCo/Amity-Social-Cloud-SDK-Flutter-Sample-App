@@ -41,256 +41,251 @@ import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
-  static GoRouter router({String? initialLocation}) => GoRouter(
-        initialLocation: initialLocation ?? AppRoute.homeRoute,
+  static GoRouter router = GoRouter(
+    initialLocation: AppRoute.homeRoute,
+    routes: [
+      GoRoute(
+        name: AppRoute.home,
+        path: AppRoute.homeRoute,
+        builder: (context, state) {
+          return const DashboardScreen();
+        },
         routes: [
           GoRoute(
-            name: AppRoute.home,
-            path: AppRoute.homeRoute,
-            builder: (context, state) {
-              return const DashboardScreen();
-            },
+            name: AppRoute.profile,
+            path: AppRoute.profileRoute,
+            builder: (context, state) =>
+                UserProfileScreen(userId: state.params['userId']!),
             routes: [
               GoRoute(
-                name: AppRoute.profile,
-                path: AppRoute.profileRoute,
+                name: AppRoute.followersUser,
+                path: AppRoute.followersUserRoute,
                 builder: (context, state) =>
-                    UserProfileScreen(userId: state.params['userId']!),
-                routes: [
-                  GoRoute(
-                    name: AppRoute.followersUser,
-                    path: AppRoute.followersUserRoute,
-                    builder: (context, state) =>
-                        FollowerListScreen(userId: state.params['userId']!),
-                  ),
-                  GoRoute(
-                    name: AppRoute.followingsUser,
-                    path: AppRoute.followingsUserRoute,
-                    builder: (context, state) =>
-                        FollowingListScreen(userId: state.params['userId']!),
-                  ),
-                  GoRoute(
-                    name: AppRoute.followersMy,
-                    path: AppRoute.followersMyRoute,
-                    builder: (context, state) => const MyFollowerListScreen(),
-                  ),
-                  GoRoute(
-                    name: AppRoute.followingsMy,
-                    path: AppRoute.followeringsMyRoute,
-                    builder: (context, state) => const MyFollowingListScreen(),
-                  ),
-                  GoRoute(
-                    name: AppRoute.followersPendingMy,
-                    path: AppRoute.followersPendingMyRoute,
-                    builder: (context, state) =>
-                        const MyPendingFollowerScreen(),
-                  )
-                ],
+                    FollowerListScreen(userId: state.params['userId']!),
               ),
               GoRoute(
-                name: AppRoute.globalFeed,
-                path: AppRoute.globalFeedRoute,
-                builder: (context, state) => const GlobalFeedScreen(),
-                routes: [],
-              ),
-              GoRoute(
-                name: AppRoute.communityFeed,
-                path: AppRoute.communityFeedRoute,
-                builder: (context, state) => CommunityFeedScreen(
-                  communityId: state.queryParams['communityId']!,
-                  isPublic: state.queryParams['isPublic'] == 'true',
-                ),
-              ),
-              GoRoute(
-                name: AppRoute.communityMember,
-                path: AppRoute.communityMemmberRoute,
-                builder: (context, state) => CommunityMemberScreen(
-                    communityId: state.params['communityId']!),
-              ),
-              GoRoute(
-                name: AppRoute.userFeed,
-                path: AppRoute.userFeedRoute,
+                name: AppRoute.followingsUser,
+                path: AppRoute.followingsUserRoute,
                 builder: (context, state) =>
-                    UserFeedScreen(userId: state.params['userId']!),
+                    FollowingListScreen(userId: state.params['userId']!),
               ),
               GoRoute(
-                name: AppRoute.communityList,
-                path: AppRoute.communityListRoute,
-                builder: (context, state) => CommunityListScreen(),
-                routes: [
-                  GoRoute(
-                      name: AppRoute.communityProfile,
-                      path: AppRoute.communityProfileRoute,
-                      builder: (context, state) => CommunityProfileScreen(
-                            communityId: state.queryParams['communityId']!,
-                          ),
-                      routes: [
-                        GoRoute(
-                          name: AppRoute.updateCommunity,
-                          path: AppRoute.updateCommunityRoute,
-                          builder: (context, state) => CommunityUpdateScreen(
-                            communityId: state.queryParams['communityId']!,
-                          ),
-                        ),
-                        GoRoute(
-                          name: AppRoute.communityInReviewPost,
-                          path: AppRoute.communityInReviewPostRoute,
-                          builder: (context, state) =>
-                              CommunityInReviewPostListScreen(
-                                  communityId:
-                                      state.queryParams['communityId']!,
-                                  isPublic:
-                                      state.queryParams['isPublic'] == 'true'),
-                        ),
-                        GoRoute(
-                          name: AppRoute.communityPendingPost,
-                          path: AppRoute.communityPendingPostRoute,
-                          builder: (context, state) =>
-                              CommunityPendingPostListScreen(
-                                  communityId:
-                                      state.queryParams['communityId']!,
-                                  isPublic:
-                                      state.queryParams['isPublic'] == 'true'),
-                        ),
-                      ]),
-                  GoRoute(
-                    name: AppRoute.createCommunity,
-                    path: AppRoute.createCommunityRoute,
-                    builder: (context, state) => CommunityCreateScreen(
-                      categoryIds: state.queryParams['categoryIds']?.split(','),
-                      userIds: state.queryParams['userIds']?.split(','),
-                    ),
-                  ),
-                ],
+                name: AppRoute.followersMy,
+                path: AppRoute.followersMyRoute,
+                builder: (context, state) => const MyFollowerListScreen(),
               ),
               GoRoute(
-                name: AppRoute.tokenExchange,
-                path: AppRoute.tokenExchangeRoute,
-                builder: (context, state) => const TokenExchangeScreen(),
+                name: AppRoute.followingsMy,
+                path: AppRoute.followeringsMyRoute,
+                builder: (context, state) => const MyFollowingListScreen(),
               ),
               GoRoute(
-                name: AppRoute.communityTrendingList,
-                path: AppRoute.communityTrendingListRoute,
-                builder: (context, state) =>
-                    const CommunityTrendingListScreen(),
-              ),
-              GoRoute(
-                name: AppRoute.communityRecommendedList,
-                path: AppRoute.communityRecommendedListRoute,
-                builder: (context, state) =>
-                    const CommunityRecommendListScreen(),
-              ),
-              GoRoute(
-                name: AppRoute.postReaction,
-                path: AppRoute.postReactionRoute,
-                builder: (context, state) =>
-                    ReactionListPostScreen(postId: state.params['postId']!),
-              ),
-              GoRoute(
-                name: AppRoute.commentReaction,
-                path: AppRoute.commentReactionRoute,
-                builder: (context, state) => ReactionListCommentScreen(
-                    commentId: state.params['commentId']!),
-              ),
-              GoRoute(
-                name: AppRoute.messageReaction,
-                path: AppRoute.messageReactionRoute,
-                builder: (context, state) => ReactionListMessageScreen(
-                    messageId: state.params['messageId']!),
-              ),
-              GoRoute(
-                name: AppRoute.postDetail,
-                path: AppRoute.postDetailRoute,
-                builder: (context, state) =>
-                    PostDetailScreen(postId: state.params['postId']!),
-              ),
-              GoRoute(
-                name: AppRoute.createPollPost,
-                path: AppRoute.createPollPostRoute,
-                builder: (context, state) => const CreatePollPostScreen(),
-              ),
-              GoRoute(
-                name: AppRoute.chat,
-                path: AppRoute.chatRoute,
-                builder: (context, state) =>
-                    ChatScreen(channelId: state.params['channelId']!),
-              ),
+                name: AppRoute.followersPendingMy,
+                path: AppRoute.followersPendingMyRoute,
+                builder: (context, state) => const MyPendingFollowerScreen(),
+              )
             ],
           ),
           GoRoute(
-            name: AppRoute.login,
-            path: AppRoute.loginRoute,
-            builder: (context, state) => const LoginScreen(),
+            name: AppRoute.globalFeed,
+            path: AppRoute.globalFeedRoute,
+            builder: (context, state) => const GlobalFeedScreen(),
+            routes: [],
           ),
           GoRoute(
-            name: AppRoute.landing,
-            path: AppRoute.landingRoute,
-            builder: (context, state) => const LandingScreen(),
-          ),
-          GoRoute(
-            name: AppRoute.channelProfile,
-            path: AppRoute.channelProfileRoute,
-            builder: (context, state) => ChannelProfileScreen(
-              channelId: state.params['channelId']!,
-            ),
-          ),
-          GoRoute(
-            name: AppRoute.channelList,
-            path: AppRoute.channelListRoute,
-            builder: (context, state) => const ChannelListScreen(),
-          ),
-          GoRoute(
-            name: AppRoute.createChannel,
-            path: AppRoute.createChannelRoute,
-            builder: (context, state) => const ChannelCreateScreen(),
-          ),
-          GoRoute(
-            name: AppRoute.updateChannel,
-            path: AppRoute.updateChannelRoute,
-            builder: (context, state) =>
-                ChannelUpdateScreen(channelId: state.queryParams['channelId']!),
-          ),
-          GoRoute(
-            name: AppRoute.updateMessage,
-            path: AppRoute.updateMessageRoute,
-            builder: (context, state) =>
-                MessageUpdateScreen(messageId: state.queryParams['messageId']!),
-          ),
-          GoRoute(
-            name: AppRoute.globalUserSearch,
-            path: AppRoute.globalUserSearchRoute,
-            builder: (context, state) => const GlobalUserSearch(),
-          ),
-          GoRoute(
-            name: AppRoute.createPost,
-            path: AppRoute.createPostRoute,
-            builder: (context, state) => CreatePostScreen(
-              userId: state.queryParams['userId'],
-              communityId: state.queryParams['communityId'],
+            name: AppRoute.communityFeed,
+            path: AppRoute.communityFeedRoute,
+            builder: (context, state) => CommunityFeedScreen(
+              communityId: state.queryParams['communityId']!,
               isPublic: state.queryParams['isPublic'] == 'true',
             ),
           ),
           GoRoute(
-            name: AppRoute.commentList,
-            path: AppRoute.commentListRoute,
-            builder: (context, state) {
-              return CommentQueryScreen(
-                state.queryParams['postId']!,
-                communityId: state.queryParams['communityId'],
-                isPublic: state.queryParams['isPublic'] == 'true',
-              );
-            },
+            name: AppRoute.communityMember,
+            path: AppRoute.communityMemmberRoute,
+            builder: (context, state) => CommunityMemberScreen(
+                communityId: state.params['communityId']!),
+          ),
+          GoRoute(
+            name: AppRoute.userFeed,
+            path: AppRoute.userFeedRoute,
+            builder: (context, state) =>
+                UserFeedScreen(userId: state.params['userId']!),
+          ),
+          GoRoute(
+            name: AppRoute.communityList,
+            path: AppRoute.communityListRoute,
+            builder: (context, state) => CommunityListScreen(),
+            routes: [
+              GoRoute(
+                  name: AppRoute.communityProfile,
+                  path: AppRoute.communityProfileRoute,
+                  builder: (context, state) => CommunityProfileScreen(
+                        communityId: state.queryParams['communityId']!,
+                      ),
+                  routes: [
+                    GoRoute(
+                      name: AppRoute.updateCommunity,
+                      path: AppRoute.updateCommunityRoute,
+                      builder: (context, state) => CommunityUpdateScreen(
+                        communityId: state.queryParams['communityId']!,
+                      ),
+                    ),
+                    GoRoute(
+                      name: AppRoute.communityInReviewPost,
+                      path: AppRoute.communityInReviewPostRoute,
+                      builder: (context, state) =>
+                          CommunityInReviewPostListScreen(
+                              communityId: state.queryParams['communityId']!,
+                              isPublic:
+                                  state.queryParams['isPublic'] == 'true'),
+                    ),
+                    GoRoute(
+                      name: AppRoute.communityPendingPost,
+                      path: AppRoute.communityPendingPostRoute,
+                      builder: (context, state) =>
+                          CommunityPendingPostListScreen(
+                              communityId: state.queryParams['communityId']!,
+                              isPublic:
+                                  state.queryParams['isPublic'] == 'true'),
+                    ),
+                  ]),
+              GoRoute(
+                name: AppRoute.createCommunity,
+                path: AppRoute.createCommunityRoute,
+                builder: (context, state) => CommunityCreateScreen(
+                  categoryIds: state.queryParams['categoryIds']?.split(','),
+                  userIds: state.queryParams['userIds']?.split(','),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            name: AppRoute.tokenExchange,
+            path: AppRoute.tokenExchangeRoute,
+            builder: (context, state) => const TokenExchangeScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.communityTrendingList,
+            path: AppRoute.communityTrendingListRoute,
+            builder: (context, state) => const CommunityTrendingListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.communityRecommendedList,
+            path: AppRoute.communityRecommendedListRoute,
+            builder: (context, state) => const CommunityRecommendListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.postReaction,
+            path: AppRoute.postReactionRoute,
+            builder: (context, state) =>
+                ReactionListPostScreen(postId: state.params['postId']!),
+          ),
+          GoRoute(
+            name: AppRoute.commentReaction,
+            path: AppRoute.commentReactionRoute,
+            builder: (context, state) => ReactionListCommentScreen(
+                commentId: state.params['commentId']!),
+          ),
+          GoRoute(
+            name: AppRoute.messageReaction,
+            path: AppRoute.messageReactionRoute,
+            builder: (context, state) => ReactionListMessageScreen(
+                messageId: state.params['messageId']!),
+          ),
+          GoRoute(
+            name: AppRoute.postDetail,
+            path: AppRoute.postDetailRoute,
+            builder: (context, state) =>
+                PostDetailScreen(postId: state.params['postId']!),
+          ),
+          GoRoute(
+            name: AppRoute.createPollPost,
+            path: AppRoute.createPollPostRoute,
+            builder: (context, state) => const CreatePollPostScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.chat,
+            path: AppRoute.chatRoute,
+            builder: (context, state) =>
+                ChatScreen(channelId: state.params['channelId']!),
           ),
         ],
-        redirect: (context, state) {
-          if (state.location != AppRoute.loginRoute) {
-            if (!AmityCoreClient.isUserLoggedIn()) {
-              log('redirecting to /login');
-              return AppRoute.loginRoute;
-            }
-          }
-          return null;
+      ),
+      GoRoute(
+        name: AppRoute.login,
+        path: AppRoute.loginRoute,
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        name: AppRoute.landing,
+        path: AppRoute.landingRoute,
+        builder: (context, state) => const LandingScreen(),
+      ),
+      GoRoute(
+        name: AppRoute.channelProfile,
+        path: AppRoute.channelProfileRoute,
+        builder: (context, state) => ChannelProfileScreen(
+          channelId: state.params['channelId']!,
+        ),
+      ),
+      GoRoute(
+        name: AppRoute.channelList,
+        path: AppRoute.channelListRoute,
+        builder: (context, state) => const ChannelListScreen(),
+      ),
+      GoRoute(
+        name: AppRoute.createChannel,
+        path: AppRoute.createChannelRoute,
+        builder: (context, state) => const ChannelCreateScreen(),
+      ),
+      GoRoute(
+        name: AppRoute.updateChannel,
+        path: AppRoute.updateChannelRoute,
+        builder: (context, state) =>
+            ChannelUpdateScreen(channelId: state.queryParams['channelId']!),
+      ),
+      GoRoute(
+        name: AppRoute.updateMessage,
+        path: AppRoute.updateMessageRoute,
+        builder: (context, state) =>
+            MessageUpdateScreen(messageId: state.queryParams['messageId']!),
+      ),
+      GoRoute(
+        name: AppRoute.globalUserSearch,
+        path: AppRoute.globalUserSearchRoute,
+        builder: (context, state) => const GlobalUserSearch(),
+      ),
+      GoRoute(
+        name: AppRoute.createPost,
+        path: AppRoute.createPostRoute,
+        builder: (context, state) => CreatePostScreen(
+          userId: state.queryParams['userId'],
+          communityId: state.queryParams['communityId'],
+          isPublic: state.queryParams['isPublic'] == 'true',
+        ),
+      ),
+      GoRoute(
+        name: AppRoute.commentList,
+        path: AppRoute.commentListRoute,
+        builder: (context, state) {
+          return CommentQueryScreen(
+            state.queryParams['postId']!,
+            communityId: state.queryParams['communityId'],
+            isPublic: state.queryParams['isPublic'] == 'true',
+          );
         },
-        debugLogDiagnostics: true,
-      );
+      ),
+    ],
+    redirect: (context, state) {
+      if (state.location != AppRoute.loginRoute) {
+        if (!AmityCoreClient.isUserLoggedIn()) {
+          log('redirecting to /login');
+          return AppRoute.loginRoute;
+        }
+      }
+      return null;
+    },
+    debugLogDiagnostics: true,
+  );
 }
