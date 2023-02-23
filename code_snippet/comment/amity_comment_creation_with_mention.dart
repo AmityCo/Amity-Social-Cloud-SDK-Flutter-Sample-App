@@ -1,9 +1,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 
-class AmityCommentCreation {
+class AmityCommentCreationWithMention {
   /* begin_sample_code
     gist_id: 34836861e7d5f5c42d396ecee361c19a
-    filename: AmityPostTextCreationWithMention.dart
+    filename: AmityCommentCreationWithMention.dart
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter create text comment with mention example 
     */

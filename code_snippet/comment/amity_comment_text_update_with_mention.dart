@@ -1,17 +1,14 @@
 import 'package:amity_sdk/amity_sdk.dart';
 
-class AmityPostTextCreationWithMention {
+class AmityCommentTextUpdateWithMention {
   /* begin_sample_code
-    gist_id: 859934e8745bc50d05e4946aa8b36064
-    filename: AmityPostTextCreationWithMention.dart
+    gist_id: 94844f30c4d620f7d432969e83aff13e
+    filename: AmityCommentTextUpdateWithMention.dart
     asc_page: https://docs.amity.co/social/flutter
-    description: Flutter create text post with mention example
+    description: Flutter update text comment with mention example
     */
 
-  //current post collection from feed repository
-  late PagingController<AmityPost> _controller;
-
-  void createTextPostWithMention() {
+  void updateTextComentWithMention(AmityComment comment) {
     const userId = 'userAId';
     const startMentionIndex = 0;
     const mentionLength = 6;
@@ -22,23 +19,18 @@ class AmityPostTextCreationWithMention {
     final mentionMetadataCreator =
         AmityMentionMetadataCreator([mentionMetadata]).create();
 
-    //create a text post with mention
-    AmitySocialClient.newPostRepository()
-        .createPost()
-        .targetUser(
-            'userId') // or targetMe(), targetCommunity(communityId: String)
-        .text('Hello from flutter!')
+    //update a text post with mention
+    comment
+        .edit()
+        .text('updated comment content')
         //mentionUsers to trigger push notifications
         .mentionUsers([userId])
         //metadata to render mention highlights
         .metadata(mentionMetadataCreator)
-        .post()
-        .then((AmityPost post) => {
-              //handle result
-              //optional: to present the created post in to the current post collection
-              //you will need manually put the newly created post in to the collection
-              //for example :
-              _controller.add(post)
+        .build()
+        .update()
+        .then((post) => {
+              //success
             })
         .onError((error, stackTrace) => {
               //handle error
