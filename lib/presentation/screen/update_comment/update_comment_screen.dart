@@ -94,35 +94,34 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                           TextSelection.fromPosition(TextPosition(
                               offset: _commentTextEditController.text.length));
                     },
+                    postion: UserSuggestionPostion.bottom,
                   );
                 } else {
                   UserSuggesionOverlay.instance.updateOverLay(
-                    context,
-                    UserSuggestionType.community,
-                    _commentTextTextFieldKey,
-                    value,
-                    (keyword, user) {
-                      mentionUsers.add(user);
+                      context,
+                      UserSuggestionType.community,
+                      _commentTextTextFieldKey,
+                      value, (keyword, user) {
+                    mentionUsers.add(user);
 
-                      if (keyword.isNotEmpty) {
-                        final length = _commentTextEditController.text.length;
-                        _commentTextEditController.text =
-                            _commentTextEditController.text.replaceRange(
-                                length - keyword.length,
-                                length,
-                                user.displayName ?? '');
-                      } else {
-                        _commentTextEditController.text =
-                            (_commentTextEditController.text +
-                                user.displayName!);
-                      }
+                    if (keyword.isNotEmpty) {
+                      final length = _commentTextEditController.text.length;
+                      _commentTextEditController.text =
+                          _commentTextEditController.text.replaceRange(
+                              length - keyword.length,
+                              length,
+                              user.displayName ?? '');
+                    } else {
+                      _commentTextEditController.text =
+                          (_commentTextEditController.text + user.displayName!);
+                    }
 
-                      _commentTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(
-                              offset: _commentTextEditController.text.length));
-                    },
-                    communityId: widget.communityId,
-                  );
+                    _commentTextEditController.selection =
+                        TextSelection.fromPosition(TextPosition(
+                            offset: _commentTextEditController.text.length));
+                  },
+                      communityId: widget.communityId,
+                      postion: UserSuggestionPostion.bottom);
                 }
               },
             ),
