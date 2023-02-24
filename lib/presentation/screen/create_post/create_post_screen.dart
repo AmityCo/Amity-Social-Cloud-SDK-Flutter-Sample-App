@@ -95,58 +95,53 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       widget.communityId!.isEmpty ||
                       widget.isPublic) {
                     UserSuggesionOverlay.instance.updateOverLay(
-                      context,
-                      UserSuggestionType.global,
-                      _postTextTextFieldKey,
-                      value,
-                      (keyword, user) {
-                        mentionUsers.add(user);
-                        if (keyword.isNotEmpty) {
-                          final length = _postTextEditController.text.length;
-                          _postTextEditController.text =
-                              _postTextEditController.text.replaceRange(
-                                  length - keyword.length,
-                                  length,
-                                  user.displayName ?? '');
-                        } else {
-                          _postTextEditController.text =
-                              (_postTextEditController.text +
-                                  user.displayName!);
-                        }
+                        context,
+                        UserSuggestionType.global,
+                        _postTextTextFieldKey,
+                        value, (keyword, user) {
+                      mentionUsers.add(user);
+                      if (keyword.isNotEmpty) {
+                        final length = _postTextEditController.text.length;
+                        _postTextEditController.text =
+                            _postTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
+                      } else {
+                        _postTextEditController.text =
+                            (_postTextEditController.text + user.displayName!);
+                      }
 
-                        _postTextEditController.selection =
-                            TextSelection.fromPosition(TextPosition(
-                                offset: _postTextEditController.text.length));
-                      },
-                    );
+                      _postTextEditController.selection =
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _postTextEditController.text.length));
+                    }, postion: UserSuggestionPostion.bottom);
                   } else {
                     UserSuggesionOverlay.instance.updateOverLay(
-                      context,
-                      UserSuggestionType.community,
-                      _postTextTextFieldKey,
-                      value,
-                      (keyword, user) {
-                        mentionUsers.add(user);
+                        context,
+                        UserSuggestionType.community,
+                        _postTextTextFieldKey,
+                        value, (keyword, user) {
+                      mentionUsers.add(user);
 
-                        if (keyword.isNotEmpty) {
-                          final length = _postTextEditController.text.length;
-                          _postTextEditController.text =
-                              _postTextEditController.text.replaceRange(
-                                  length - keyword.length,
-                                  length,
-                                  user.displayName ?? '');
-                        } else {
-                          _postTextEditController.text =
-                              (_postTextEditController.text +
-                                  user.displayName!);
-                        }
+                      if (keyword.isNotEmpty) {
+                        final length = _postTextEditController.text.length;
+                        _postTextEditController.text =
+                            _postTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
+                      } else {
+                        _postTextEditController.text =
+                            (_postTextEditController.text + user.displayName!);
+                      }
 
-                        _postTextEditController.selection =
-                            TextSelection.fromPosition(TextPosition(
-                                offset: _postTextEditController.text.length));
-                      },
-                      communityId: widget.communityId,
-                    );
+                      _postTextEditController.selection =
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _postTextEditController.text.length));
+                    },
+                        communityId: widget.communityId,
+                        postion: UserSuggestionPostion.bottom);
                   }
                 },
               ),
