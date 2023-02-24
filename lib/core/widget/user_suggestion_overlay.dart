@@ -10,20 +10,22 @@ class UserSuggesionOverlay {
   static UserSuggesionOverlay get instance => _instance;
 
   UserSuggesionOverlay._internal();
+
   void updateOverLay(
       BuildContext context,
       UserSuggestionType type,
       GlobalKey anchore,
       String value,
       Function(String keyword, AmityUser user) onUserSelect,
-      {String? communityId}) {
+      {String? communityId,
+      UserSuggestionPostion postion = UserSuggestionPostion.top}) {
     final regex = RegExp(r"\@[\w\-\_\.]*$");
     if (regex.hasMatch(value)) {
       final match = regex.allMatches(value).last;
       // if (match.group(0)!.replaceAll('@', '').length > 2) {
       _showOverlaidTag(context, type, anchore, value,
           match.group(0)!.replaceAll('@', ''), match.start, onUserSelect,
-          communityId: communityId);
+          communityId: communityId, postion: postion);
       // }
     }
   }
@@ -44,7 +46,8 @@ class UserSuggesionOverlay {
       String keyword,
       int startIndex,
       Function(String keyword, AmityUser user) onUserSelect,
-      {String? communityId}) async {
+      {String? communityId,
+      required UserSuggestionPostion postion}) async {
     TextPainter painter = TextPainter(
       textDirection: TextDirection.ltr,
       text: TextSpan(
@@ -58,9 +61,16 @@ class UserSuggesionOverlay {
     final renderBox = anchore.currentContext!.findRenderObject() as RenderBox;
     Offset position = renderBox.localToGlobal(Offset.zero);
 
-    final left = position.dx;
-    final top = position.dy - 200;
+    double left = position.dx;
+    double top = position.dy;
 
+    if (postion == UserSuggestionPostion.top) {
+      left = position.dx;
+      top = position.dy - 200;
+    } else {
+      left = position.dx;
+      top = position.dy + 60;
+    }
     if (suggestionTagoverlayEntry == null) {
       suggestionTagoverlayEntry = OverlayEntry(builder: (context) {
         return Positioned(
@@ -337,3 +347,5 @@ class _CommunityUserSuggestionWidgetState
 }
 
 enum UserSuggestionType { global, community, channel }
+
+enum UserSuggestionPostion { top, bottom }

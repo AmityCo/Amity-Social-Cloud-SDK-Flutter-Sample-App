@@ -109,34 +109,25 @@ class FeedWidget extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Created At - ' + value.createdAt!.format(),
+                            'Created At - ${value.createdAt!.format()}',
                             style: _themeData.textTheme.caption,
                           ),
                           Text(
-                            'Updated At - ' + value.updatedAt!.format(),
+                            'Updated At - ${value.updatedAt!.format()}',
                             style: _themeData.textTheme.caption,
                           ),
                           SelectableText(
-                            'Post ID - ' + value.postId!,
+                            'Post ID - ${value.postId!}',
                             style: _themeData.textTheme.caption,
                           ),
                           if (value.target is UserTarget)
                             Text(
-                              'Posted On : ' +
-                                  ((value.target as UserTarget)
-                                          .targetUser
-                                          ?.displayName ??
-                                      'No name'),
+                              'Posted On : ${(value.target as UserTarget).targetUser?.displayName ?? 'No name'}',
                               style: _themeData.textTheme.caption,
                             ),
                           if (value.target is CommunityTarget)
                             Text(
-                              'Posted On : ' +
-                                  ((value.target as CommunityTarget)
-                                          .targetCommunity
-                                          ?.displayName ??
-                                      'No name') +
-                                  ' Community',
+                              'Posted On : ${(value.target as CommunityTarget).targetCommunity?.displayName ?? 'No name'} Community',
                               style: _themeData.textTheme.caption,
                             ),
                         ],
@@ -206,7 +197,36 @@ class FeedWidget extends StatelessWidget {
                     AddCommentWidget(
                       AmityCoreClient.getCurrentUser(),
                       (text, user) {
-                        value.comment().create().text(text).send();
+                        final mentionUsers = <AmityUser>[];
+
+                        mentionUsers.clear();
+                        mentionUsers.addAll(user);
+
+                        //Clean up mention user list, as user might have removed some tagged user
+                        mentionUsers.removeWhere(
+                            (element) => !text.contains(element.displayName!));
+
+                        final amityMentioneesMetadata = mentionUsers
+                            .map<AmityUserMentionMetadata>((e) =>
+                                AmityUserMentionMetadata(
+                                    userId: e.userId!,
+                                    index: text.indexOf('@${e.displayName!}'),
+                                    length: e.displayName!.length))
+                            .toList();
+
+                        Map<String, dynamic> metadata =
+                            AmityMentionMetadataCreator(amityMentioneesMetadata)
+                                .create();
+
+                        value
+                            .comment()
+                            .create()
+                            .text(text)
+                            .mentionUsers(mentionUsers
+                                .map<String>((e) => e.userId!)
+                                .toList())
+                            .metadata(metadata)
+                            .send();
                       },
                       communityId: communityId,
                       isPublic: isPublic,
@@ -361,7 +381,7 @@ class FeedContentWidget extends StatelessWidget {
 
     return Container(
       color: Colors.red,
-      child: Text('>>>>> ' + amityPostData.toString() + ' <<<<<<'),
+      child: Text('>>>>> $amityPostData <<<<<<'),
     );
   }
 }
