@@ -333,9 +333,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       List<AmityImage> _images = [];
 
       if (files.isNotEmpty) {
-        final uploadCompleter = Completer();
-
         for (final _file in files) {
+          final uploadCompleter = Completer();
           AmityCoreClient.newFileRepository()
               .image(_file)
               .upload()
@@ -348,9 +347,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 _images.add(file as AmityImage);
 
                 ///check if all file is uploaded
-                if (_images.length == files.length) {
-                  uploadCompleter.complete();
-                }
+                // if (_images.length == files.length) {
+                uploadCompleter.complete();
+                // }
               },
               error: (error) {
                 uploadCompleter.completeError(error);
@@ -358,9 +357,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               cancel: () {},
             );
           });
+          await uploadCompleter.future;
         }
-
-        await uploadCompleter.future;
       }
 
       if (_isCommunityPost) {
@@ -419,8 +417,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (isFilePost) {
       List<AmityFile> _files = [];
       if (files.isNotEmpty) {
-        final uploadCompleter = Completer();
         for (final _file in files) {
+          final uploadCompleter = Completer();
           AmityCoreClient.newFileRepository()
               .file(_file)
               .upload()
@@ -433,9 +431,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 _files.add(file as AmityFile);
 
                 ///check if all file is uploaded
-                if (_files.length == files.length) {
-                  uploadCompleter.complete();
-                }
+                uploadCompleter.complete();
               },
               error: (error) {
                 CommonSnackbar.showNagativeSnackbar(
@@ -445,8 +441,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               cancel: () {},
             );
           });
+          await uploadCompleter.future;
         }
-        await uploadCompleter.future;
       }
 
       if (_isCommunityPost) {
