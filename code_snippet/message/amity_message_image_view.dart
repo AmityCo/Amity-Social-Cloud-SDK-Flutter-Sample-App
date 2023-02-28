@@ -10,17 +10,19 @@ class AmityMessageImageView {
   void viewImageMessage(AmityMessage message) {
     if (message.data is MessageImageData) {
       final imageUrl =
-          (message.data as MessageImageData).image.getUrl(AmityImageSize.FULL);
+          (message.data as MessageImageData).image!.getUrl(AmityImageSize.FULL);
 
-      final smallImageUrl =
-          (message.data as MessageImageData).image.getUrl(AmityImageSize.SMALL);
+      final smallImageUrl = (message.data as MessageImageData)
+          .image!
+          .getUrl(AmityImageSize.SMALL);
 
       final mediumImageUrl = (message.data as MessageImageData)
-          .image
+          .image!
           .getUrl(AmityImageSize.MEDIUM);
 
-      final largeImageUrl =
-          (message.data as MessageImageData).image.getUrl(AmityImageSize.LARGE);
+      final largeImageUrl = (message.data as MessageImageData)
+          .image!
+          .getUrl(AmityImageSize.LARGE);
     }
   }
   /* end_sample_code */

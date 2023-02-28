@@ -34,7 +34,7 @@ class _ChatScreenState extends State<ChatScreen> {
           .type(_type)
           .includingTags(_tags ?? [])
           .excludingTags(_excludingTags ?? [])
-          .includeDeleted(false)
+          .includeDeleted(true)
           .filterByParent(parentsOnly)
           .build(),
     );
