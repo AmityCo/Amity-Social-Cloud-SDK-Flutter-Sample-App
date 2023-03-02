@@ -30,6 +30,10 @@ class FeedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
 
+    amityPost.subscription(AmityPostEvents.POST).subscribeTopic().then((value) {
+      print('>>>>>>>>>');
+    });
+
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen.stream,
       initialData: amityPost,
