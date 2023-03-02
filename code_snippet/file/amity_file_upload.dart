@@ -16,7 +16,9 @@ class AmityFileUpload {
         .stream
         .listen((amityUploadResult) {
       amityUploadResult.when(
-        progress: (uploadInfo, cancelToken) {},
+        progress: (uploadInfo, cancelToken) {
+          int progress = uploadInfo.getProgressPercentage();
+        },
         complete: (file) {
           //check if the upload result is complete
 
@@ -27,7 +29,9 @@ class AmityFileUpload {
           final AmityException amityException = error;
           //handle error
         },
-        cancel: () {},
+        cancel: () {
+          //upload is cancelled
+        },
       );
     });
   }
