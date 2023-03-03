@@ -30,6 +30,8 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
   AmityCommunitySortOption _sort = AmityCommunitySortOption.LAST_CREATED;
   List<String>? _tags;
 
+  bool _includeDelete = true;
+
   @override
   void initState() {
     _controller = PagingController(
@@ -39,7 +41,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
           .sortBy(_sort)
           .filter(_filter)
           .tags(_tags ?? [])
-          .includeDeleted(false)
+          .includeDeleted(_includeDelete)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -197,6 +199,25 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                         }
                       });
                     },
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Checkbox(
+                        value: _includeDelete,
+                        onChanged: (value) {
+                          setState(() {
+                            _includeDelete = (value ?? false);
+                            _controller.reset();
+                            _controller.fetchNextPage();
+                          });
+                        },
+                      ),
+                      const Text('Include Delete')
+                    ],
                   ),
                 )
               ],
