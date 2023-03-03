@@ -9,8 +9,8 @@ class AmityMessageFileView {
     */
   void viewFileMessage(AmityMessage message) {
     if (message.data is MessageFileData) {
-      final fileName = (message.data as MessageFileData).file.fileName;
-      final fileUrl = (message.data as MessageFileData).file.getUrl;
+      final fileName = (message.data as MessageFileData).file!.fileName;
+      final fileUrl = (message.data as MessageFileData).file!.getUrl;
     }
   }
   /* end_sample_code */

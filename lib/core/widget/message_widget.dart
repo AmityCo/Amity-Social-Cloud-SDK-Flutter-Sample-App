@@ -9,8 +9,8 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_downloader/image_downloader.dart';
 
@@ -792,16 +792,16 @@ class AmityMessageContentWidget extends StatelessWidget {
             child: SizedBox(
               width: 100,
               height: 100,
-              child: data.image.hasLocalPreview
+              child: data.image!.hasLocalPreview
                   ? Image.file(
-                      File(data.image.getFilePath!),
+                      File(data.image!.getFilePath!),
                       fit: BoxFit.cover,
                     )
                   : Stack(
                       children: [
                         Positioned.fill(
                           child: Image.network(
-                            data.image.getUrl(AmityImageSize.MEDIUM),
+                            data.image!.getUrl(AmityImageSize.MEDIUM),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -821,7 +821,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                               onTap: () async {
                                 var imageId =
                                     await ImageDownloader.downloadImage(data
-                                        .image
+                                        .image!
                                         .getUrl(AmityImageSize.MEDIUM));
                                 if (imageId == null) {
                                   return;
@@ -859,12 +859,12 @@ class AmityMessageContentWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          data.file.hasLocalPreview
+          data.file!.hasLocalPreview
               ? TextButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.attach_file_rounded),
                   label: Text(
-                    data.file.getFilePath!.split('/').last,
+                    data.file!.getFilePath!.split('/').last,
                   ),
                 )
               : Container(
@@ -872,7 +872,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.attach_file_rounded),
                     title: Text(
-                      data.file.fileName,
+                      data.file!.fileName,
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.all(4),
@@ -887,7 +887,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                         ),
                         onTap: () async {
                           var fileId = await ImageDownloader.downloadImage(
-                              data.file.getUrl);
+                              data.file!.getUrl);
                           if (fileId == null) {
                             return;
                           }
