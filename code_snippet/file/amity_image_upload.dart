@@ -2,16 +2,17 @@ import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 
-class AmityFileUpload {
+class AmityImageUpload {
   /* begin_sample_code
-    gist_id: 961f689cc424da0e56bac0a33b93a66a
-    filename: AmityFileUpload.dart
+    gist_id: 67d7af32b29baec7988facddc18eec9a
+    filename: AmityImageUpload.dart
     asc_page: https://docs.amity.co/social/flutter
-    description: Flutter File upload with progress example
+    description: Flutter Image upload with progress example
     */
-  void uploadFile(File uploadingFile) async {
+  void uploadImage(File uploadingImage) async {
     AmityCoreClient.newFileRepository()
-        .file(uploadingFile)
+        .image(uploadingImage)
+        .isFullImage(false)
         .upload()
         .stream
         .listen((amityUploadResult) {
@@ -22,8 +23,8 @@ class AmityFileUpload {
         complete: (file) {
           //check if the upload result is complete
 
-          final AmityFile uploadedFile = file;
-          //proceed result with uploadedFile
+          final AmityImage uploadedImage = file;
+          //proceed result with uploadedImage
         },
         error: (error) {
           final AmityException amityException = error;
