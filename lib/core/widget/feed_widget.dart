@@ -8,6 +8,7 @@ import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:flutter_social_sample_app/core/widget/poll_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_post/update_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
@@ -18,28 +19,30 @@ class FeedWidget extends StatelessWidget {
   final String? communityId;
   final bool isPublic;
   final AmityPost amityPost;
+  final bool disableAction;
   // final VoidCallback onCommentCallback;
   const FeedWidget({
     Key? key,
     required this.amityPost,
     this.communityId,
     this.isPublic = false,
+    this.disableAction = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
 
-    amityPost.subscription(AmityPostEvents.POST).subscribeTopic().then((value) {
-      print('Post RTE subscription success');
-    });
+    // amityPost.subscription(AmityPostEvents.POST).subscribeTopic().then((value) {
+    //   print('Post RTE subscription success');
+    // });
 
-    amityPost
-        .subscription(AmityPostEvents.COMMENTS)
-        .subscribeTopic()
-        .then((value) {
-      print('Post Comment RTE subscription success');
-    });
+    // amityPost
+    //     .subscription(AmityPostEvents.COMMENTS)
+    //     .subscribeTopic()
+    //     .then((value) {
+    //   print('Post Comment RTE subscription success');
+    // });
 
     //
     return StreamBuilder<AmityPost>(
@@ -51,18 +54,7 @@ class FeedWidget extends StatelessWidget {
           return Stack(
             fit: StackFit.loose,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 10,
-                      ),
-                    ]),
-                margin: const EdgeInsets.all(12),
-                padding: const EdgeInsets.all(12),
+              ShadowContainerWidget(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -71,49 +63,66 @@ class FeedWidget extends StatelessWidget {
                       userAvatar: value.postedUser?.avatarUrl ??
                           value.postedUser!.avatarCustomUrl,
                       userName: value.postedUser!.displayName!,
-                      options: [
-                        if (amityPost.postedUserId ==
-                            AmityCoreClient.getUserId())
-                          PopupMenuButton(
-                            itemBuilder: (context) {
-                              return const [
-                                PopupMenuItem(
-                                  child: Text("Edit"),
-                                  value: 1,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Delete (Soft)"),
-                                  value: 2,
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Delete (Hard)"),
-                                  value: 3,
-                                  enabled: false,
-                                )
-                              ];
-                            },
-                            child: const Icon(
-                              Icons.more_vert,
-                              size: 18,
-                            ),
-                            onSelected: (index) {
-                              if (index == 1) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => UpdatePostScreen(
-                                      amityPost: value,
-                                      communityId: communityId,
-                                      isPublic: isPublic,
-                                    ),
+                      options: disableAction
+                          ? null
+                          : [
+                              if (amityPost.postedUserId ==
+                                  AmityCoreClient.getUserId())
+                                PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    return const [
+                                      PopupMenuItem(
+                                        value: 1,
+                                        child: Text("Edit"),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 2,
+                                        child: Text("Delete (Soft)"),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 3,
+                                        enabled: false,
+                                        child: Text("Delete (Hard)"),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 4,
+                                        child: Text("RTE"),
+                                      )
+                                    ];
+                                  },
+                                  child: const Icon(
+                                    Icons.more_vert,
+                                    size: 18,
                                   ),
-                                );
-                              }
-                              if (index == 2) {
-                                amityPost.delete();
-                              }
-                            },
-                          ),
-                      ],
+                                  onSelected: (index) {
+                                    if (index == 1) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UpdatePostScreen(
+                                            amityPost: value,
+                                            communityId: communityId,
+                                            isPublic: isPublic,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    if (index == 2) {
+                                      amityPost.delete();
+                                    }
+                                    if (index == 4) {
+                                      /// jumpe to Post RTE screen
+                                      GoRouter.of(context).pushNamed(
+                                          AppRoute.postRTE,
+                                          queryParams: {
+                                            'postId': value.postId!,
+                                            'communityId': communityId,
+                                            'isPublic': isPublic.toString()
+                                          });
+                                    }
+                                  },
+                                ),
+                            ],
                     ),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 2),

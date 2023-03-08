@@ -61,15 +61,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
     scrollcontroller.addListener(pagination);
 
-    /// Listen to comment create event in Amity Post
-    AmitySocialClient.newPostRepository().getPost(widget._postId).then((post) {
-      post.subscription(AmityPostEvents.COMMENTS).subscribeTopic();
-      post.listen.stream.listen((event) {
-        _controller.reset();
-        _controller.fetchNextPage();
-      });
-    });
-
     super.initState();
   }
 
