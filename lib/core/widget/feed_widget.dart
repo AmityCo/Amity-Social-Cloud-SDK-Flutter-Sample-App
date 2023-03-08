@@ -31,9 +31,17 @@ class FeedWidget extends StatelessWidget {
     final _themeData = Theme.of(context);
 
     amityPost.subscription(AmityPostEvents.POST).subscribeTopic().then((value) {
-      print('>>>>>>>>>');
+      print('Post RTE subscription success');
     });
 
+    amityPost
+        .subscription(AmityPostEvents.COMMENTS)
+        .subscribeTopic()
+        .then((value) {
+      print('Post Comment RTE subscription success');
+    });
+
+    //
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen.stream,
       initialData: amityPost,

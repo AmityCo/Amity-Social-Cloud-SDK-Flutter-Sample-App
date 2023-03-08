@@ -37,6 +37,14 @@ class _CommentWidgetState extends State<CommentWidget> {
   @override
   void initState() {
     super.initState();
+
+    // widget.amityComment
+    //     .subscription(AmityCommentEvents.COMMENT)
+    //     .subscribeTopic()
+    //     .then((value) {
+    //   print('Post RTE subscription success');
+    // });
+
     periodicTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -214,6 +222,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ),
                     )
                   ],
+                ),
+                const SizedBox(height: 6),
+                SelectableText(
+                  'Comment ID - ${value.commentId}',
+                  style: _themeData.textTheme.caption,
                 ),
                 const SizedBox(height: 6),
                 if (value.childrenNumber! > 0)

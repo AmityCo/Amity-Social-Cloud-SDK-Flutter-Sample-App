@@ -14,7 +14,7 @@ class AmityFileUpload {
         .file(uploadingFile)
         .upload()
         .stream
-        .listen((amityUploadResult) {
+        .listen((AmityUploadResult<AmityFile> amityUploadResult) {
       amityUploadResult.when(
         progress: (uploadInfo, cancelToken) {},
         complete: (file) {

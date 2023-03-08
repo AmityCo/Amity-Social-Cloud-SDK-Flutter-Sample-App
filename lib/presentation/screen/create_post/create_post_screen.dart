@@ -341,6 +341,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               .stream
               .listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
+
             event.when(
               progress: (uploadInfo, cancelToken) {},
               complete: (file) {
