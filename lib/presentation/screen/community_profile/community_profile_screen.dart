@@ -23,6 +23,8 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
   late TabController _tabController;
   late AmityCommunity _amityCommunity;
   Future<AmityCommunity>? _future;
+
+  final memberList = GlobalKey<CommunityMemberScreenState>();
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
@@ -35,6 +37,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
   @override
   Widget build(BuildContext context) {
     final memberScreen = CommunityMemberScreen(
+      key: memberList,
       communityId: widget.communityId,
       showAppBar: false,
     );
@@ -226,7 +229,10 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                   .membership(widget.communityId)
                   .addMembers(value.split(','))
                   .then((value) {
-                memberScreen.screenState.addMembers(value);
+                if (memberList.currentState != null) {
+                  memberList.currentState!.addMembers(value);
+                }
+                //
               }).onError((error, stackTrace) {
                 ErrorDialog.show(context,
                     title: 'Error', message: error.toString());

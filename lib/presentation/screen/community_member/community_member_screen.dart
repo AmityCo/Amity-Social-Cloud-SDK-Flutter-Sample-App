@@ -12,12 +12,12 @@ class CommunityMemberScreen extends StatefulWidget {
       : super(key: key);
   final String communityId;
   final bool showAppBar;
-  late _CommunityMemberScreenState screenState;
+  // late _CommunityMemberScreenState screenState;
   @override
-  State<CommunityMemberScreen> createState() => _CommunityMemberScreenState();
+  State<CommunityMemberScreen> createState() => CommunityMemberScreenState();
 }
 
-class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
+class CommunityMemberScreenState extends State<CommunityMemberScreen> {
   late PagingController<AmityCommunityMember> _controller;
   final amityCommunityMembers = <AmityCommunityMember>[];
 
@@ -73,7 +73,11 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
   }
 
   void removeMembers(List<String> userIds) {
-    _controller.removeWhere((member) => userIds.contains(member.userId));
+    _controller.removeWhere((member) {
+      print(
+          ' ${member.userId} does it contain ${userIds.contains(member.userId)}');
+      return userIds.contains(member.userId);
+    });
   }
 
   void pagination() {
@@ -205,6 +209,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                         final amityCommunityMember =
                             amityCommunityMembers[index];
                         return CommunityMemberWidget(
+                          key: UniqueKey(),
                           amityCommunityMember: amityCommunityMember,
                           onMemberCallback: () {},
                           options: [
