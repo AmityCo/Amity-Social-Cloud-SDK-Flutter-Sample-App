@@ -102,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           httpEndpoint: AmityRegionalHttpEndpoint.values
                               .where((element) => element.value == serverUrl)
                               .first,
+                          mqttEndpoint: AmityRegionalMqttEndpoint.STAGING,
                           showLogs: true),
                       sycInitialization: true,
                     );

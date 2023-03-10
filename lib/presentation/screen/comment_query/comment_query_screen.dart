@@ -85,12 +85,12 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
             itemBuilder: (context) {
               return [
                 PopupMenuItem(
-                  child: Text(AmityCommentSortOption.LAST_CREATED.apiKey),
                   value: 1,
+                  child: Text(AmityCommentSortOption.LAST_CREATED.apiKey),
                 ),
                 PopupMenuItem(
-                  child: Text(AmityCommentSortOption.FIRST_CREATED.apiKey),
                   value: 2,
+                  child: Text(AmityCommentSortOption.FIRST_CREATED.apiKey),
                 ),
               ];
             },
@@ -228,7 +228,9 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                         mentionUsers.map<String>((e) => e.userId!).toList())
                     .metadata(metadata)
                     .send();
-                _controller.addAtIndex(0, _comment);
+
+                /// Remove this line Post Comment Create RTE will refresh the list
+                // _controller.addAtIndex(0, _comment);
                 return;
               },
               communityId: widget.communityId,

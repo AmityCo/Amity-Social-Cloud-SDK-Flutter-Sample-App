@@ -35,6 +35,8 @@ import 'package:flutter_social_sample_app/presentation/screen/post_detail/post_d
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_message/reaction_list_message_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/rte_event/comment_rte_event_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
@@ -271,6 +273,29 @@ class AppRouter {
         builder: (context, state) {
           return CommentQueryScreen(
             state.queryParams['postId']!,
+            communityId: state.queryParams['communityId'],
+            isPublic: state.queryParams['isPublic'] == 'true',
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoute.postRTE,
+        path: AppRoute.postRTERoute,
+        builder: (context, state) {
+          return PostRteEventScreen(
+            postId: state.queryParams['postId']!,
+            communityId: state.queryParams['communityId'],
+            isPublic: state.queryParams['isPublic'] == 'true',
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoute.commentRTE,
+        path: AppRoute.commentRTERoute,
+        builder: (context, state) {
+          return CommentRteEventScreen(
+            commentId: state.queryParams['commentId']!,
+            postId: state.queryParams['postId']!,
             communityId: state.queryParams['communityId'],
             isPublic: state.queryParams['isPublic'] == 'true',
           );

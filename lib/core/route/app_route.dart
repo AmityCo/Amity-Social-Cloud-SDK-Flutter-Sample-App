@@ -113,4 +113,10 @@ class AppRoute {
 
   static const globalUserSearch = 'globalUserSearch';
   static const globalUserSearchRoute = '/globalUserSearchRoute';
+
+  static const postRTE = 'postRTE';
+  static const postRTERoute = '/postRTE';
+
+  static const commentRTE = 'commentRTE';
+  static const commentRTERoute = '/commentRTE';
 }

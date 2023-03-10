@@ -19,12 +19,14 @@ class CommentWidget extends StatefulWidget {
     Key? key,
     required this.communityId,
     required this.isPublic,
+    this.disableAction = false,
   }) : super(key: key);
   final String postId;
   final String? communityId;
   final bool? isPublic;
   final AmityComment amityComment;
   final ValueChanged<AmityComment> onReply;
+  final bool disableAction;
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
 }
@@ -37,6 +39,14 @@ class _CommentWidgetState extends State<CommentWidget> {
   @override
   void initState() {
     super.initState();
+
+    // widget.amityComment
+    //     .subscription(AmityCommentEvents.COMMENT)
+    //     .subscribeTopic()
+    //     .then((value) {
+    //   print('Post RTE subscription success');
+    // });
+
     periodicTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -47,7 +57,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
 
     return StreamBuilder<AmityComment>(
       stream: widget.amityComment.listen.stream,
@@ -65,7 +75,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       const SizedBox(width: 12),
                       Text(
                         'Comment has been deleted',
-                        style: _themeData.textTheme.caption,
+                        style: themeData.textTheme.caption,
                       )
                     ],
                   ),
@@ -77,10 +87,10 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   Widget _getBody(BuildContext context, AmityComment value) {
-    final _themeData = Theme.of(context);
-    AmityUser _user = value.user!;
+    final themeData = Theme.of(context);
+    AmityUser user = value.user!;
 
-    bool _isLikedByMe = value.myReactions?.isNotEmpty ?? false;
+    bool isLikedByMe = value.myReactions?.isNotEmpty ?? false;
 
     AmityCommentData data = value.data!;
     if (data is CommentTextData) text = data.text!;
@@ -96,9 +106,9 @@ class _CommentWidgetState extends State<CommentWidget> {
             decoration: BoxDecoration(
                 shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
             clipBehavior: Clip.antiAliasWithSaveLayer,
-            child: _user.avatarUrl != null
+            child: user.avatarUrl != null
                 ? Image.network(
-                    _user.avatarUrl!,
+                    user.avatarUrl!,
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
@@ -112,8 +122,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: _user.displayName!,
-                        style: _themeData.textTheme.bodyLarge!.copyWith(
+                        text: user.displayName!,
+                        style: themeData.textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -150,12 +160,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                   children: [
                     Text(
                       value.createdAt!.beforeTime(),
-                      style: _themeData.textTheme.bodySmall!.copyWith(),
+                      style: themeData.textTheme.bodySmall!.copyWith(),
                     ),
                     const SizedBox(width: 12),
                     InkWell(
                       onTap: () {
-                        if (_isLikedByMe) {
+                        if (isLikedByMe) {
                           value.react().removeReaction('like');
                         } else {
                           value.react().addReaction('like');
@@ -167,7 +177,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       child: Text(
                         '${value.reactionCount} Likes',
-                        style: _themeData.textTheme.caption!.copyWith(),
+                        style: themeData.textTheme.caption!.copyWith(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -177,7 +187,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       child: Text(
                         'Reply',
-                        style: _themeData.textTheme.caption!.copyWith(),
+                        style: themeData.textTheme.caption!.copyWith(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -207,13 +217,18 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       child: Text(
                         '${value.flagCount} Flag',
-                        style: _themeData.textTheme.caption!.copyWith(
+                        style: themeData.textTheme.caption!.copyWith(
                             fontWeight: value.isFlaggedByMe
                                 ? FontWeight.bold
                                 : FontWeight.normal),
                       ),
                     )
                   ],
+                ),
+                const SizedBox(height: 6),
+                SelectableText(
+                  'Comment ID - ${value.commentId}',
+                  style: themeData.textTheme.caption,
                 ),
                 const SizedBox(height: 6),
                 if (value.childrenNumber! > 0)
@@ -230,7 +245,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                               margin: const EdgeInsets.only(top: 6),
                               child: Text(
                                 '~~~~~~ View ${value.childrenNumber} more reply',
-                                style: _themeData.textTheme.caption!.copyWith(),
+                                style: themeData.textTheme.caption!.copyWith(),
                               ),
                             ),
                           )
@@ -248,8 +263,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                                   margin: const EdgeInsets.only(top: 6),
                                   child: Text(
                                     '~~~~~~ Hide reply',
-                                    style: _themeData.textTheme.caption!
-                                        .copyWith(),
+                                    style:
+                                        themeData.textTheme.caption!.copyWith(),
                                   ),
                                 ),
                               ),
@@ -263,73 +278,87 @@ class _CommentWidgetState extends State<CommentWidget> {
               ],
             ),
           ),
-          PopupMenuButton(
-            itemBuilder: (context) {
-              return [
-                if (_user.userId == AmityCoreClient.getUserId())
-                  const PopupMenuItem(
-                    value: 1,
-                    child: Text("Edit"),
-                  ),
-                if (_user.userId == AmityCoreClient.getUserId())
-                  const PopupMenuItem(
-                    value: 2,
-                    child: Text("Delete (Soft)"),
-                  ),
-                if (_user.userId == AmityCoreClient.getUserId())
-                  const PopupMenuItem(
-                    value: 3,
-                    enabled: false,
-                    child: Text("Delete (Hard)"),
-                  ),
-                PopupMenuItem(
-                  value: 4,
-                  child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
-                ),
-              ];
-            },
-            child: const Icon(
-              Icons.more_vert_rounded,
-              size: 18,
-            ),
-            onSelected: (index1) {
-              if (index1 == 1) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => UpdateCommentScreen(
-                      amityComment: value,
-                      communityId: widget.communityId,
-                      isPublic: widget.isPublic ?? false,
+          if (!widget.disableAction)
+            PopupMenuButton(
+              itemBuilder: (context) {
+                return [
+                  if (user.userId == AmityCoreClient.getUserId())
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text("Edit"),
                     ),
+                  if (user.userId == AmityCoreClient.getUserId())
+                    const PopupMenuItem(
+                      value: 2,
+                      child: Text("Delete (Soft)"),
+                    ),
+                  if (user.userId == AmityCoreClient.getUserId())
+                    const PopupMenuItem(
+                      value: 3,
+                      enabled: false,
+                      child: Text("Delete (Hard)"),
+                    ),
+                  PopupMenuItem(
+                    value: 4,
+                    child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                   ),
-                );
-              }
-              if (index1 == 2) {
-                value.delete();
-              }
-              if (index1 == 4) {
-                if (value.isFlaggedByMe) {
-                  value
-                      .report()
-                      .unflag()
-                      .then((value) => CommonSnackbar.showPositiveSnackbar(
-                          context, 'Success', 'UnFlag the Comment'))
-                      .onError((error, stackTrace) =>
-                          CommonSnackbar.showNagativeSnackbar(
-                              context, 'Error', error.toString()));
-                } else {
-                  value
-                      .report()
-                      .flag()
-                      .then((value) => CommonSnackbar.showPositiveSnackbar(
-                          context, 'Success', 'Flag the Comment'))
-                      .onError((error, stackTrace) =>
-                          CommonSnackbar.showNagativeSnackbar(
-                              context, 'Error', error.toString()));
+                  const PopupMenuItem(
+                    value: 5,
+                    child: Text("RTE"),
+                  ),
+                ];
+              },
+              child: const Icon(
+                Icons.more_vert_rounded,
+                size: 18,
+              ),
+              onSelected: (index1) {
+                if (index1 == 1) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => UpdateCommentScreen(
+                        amityComment: value,
+                        communityId: widget.communityId,
+                        isPublic: widget.isPublic ?? false,
+                      ),
+                    ),
+                  );
                 }
-              }
-            },
-          ),
+                if (index1 == 2) {
+                  value.delete();
+                }
+                if (index1 == 4) {
+                  if (value.isFlaggedByMe) {
+                    value
+                        .report()
+                        .unflag()
+                        .then((value) => CommonSnackbar.showPositiveSnackbar(
+                            context, 'Success', 'UnFlag the Comment'))
+                        .onError((error, stackTrace) =>
+                            CommonSnackbar.showNagativeSnackbar(
+                                context, 'Error', error.toString()));
+                  } else {
+                    value
+                        .report()
+                        .flag()
+                        .then((value) => CommonSnackbar.showPositiveSnackbar(
+                            context, 'Success', 'Flag the Comment'))
+                        .onError((error, stackTrace) =>
+                            CommonSnackbar.showNagativeSnackbar(
+                                context, 'Error', error.toString()));
+                  }
+                }
+                if (index1 == 5) {
+                  GoRouter.of(context)
+                      .pushNamed(AppRoute.commentRTE, queryParams: {
+                    'commentId': value.commentId,
+                    'postId': widget.postId,
+                    'communityId': widget.communityId,
+                    'isPublic': widget.isPublic.toString()
+                  });
+                }
+              },
+            ),
         ],
       ),
     );
