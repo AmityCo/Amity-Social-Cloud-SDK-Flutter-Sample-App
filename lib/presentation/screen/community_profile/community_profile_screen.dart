@@ -4,6 +4,7 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/raw_data_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_banned_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
@@ -24,7 +25,8 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
   late AmityCommunity _amityCommunity;
   Future<AmityCommunity>? _future;
 
-  final memberList = GlobalKey<CommunityMemberScreenState>();
+  GlobalKey<CommunityMemberScreenState> memberList =
+      GlobalKey<CommunityMemberScreenState>();
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
@@ -36,15 +38,6 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    final memberScreen = CommunityMemberScreen(
-      key: memberList,
-      communityId: widget.communityId,
-      showAppBar: false,
-    );
-    final memberBannedScreen = CommunityMemberBannedScreen(
-      communityId: widget.communityId,
-      showAppBar: false,
-    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Community Profile'),
@@ -69,6 +62,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                   value: 4,
                   enabled: true,
                   child: Text("Check my permission"),
+                ),
+                PopupMenuItem(
+                  value: 5,
+                  enabled: true,
+                  child: Text("RTE"),
                 )
               ];
             },
@@ -80,7 +78,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
               if (index == 1) {
                 //Open Edit Community
                 GoRouter.of(context).goNamed(AppRoute.updateCommunity,
-                    params: {'communityId': widget.communityId});
+                    queryParams: {'communityId': widget.communityId});
               }
               if (index == 2) {
                 //Delete Community
@@ -109,6 +107,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                   }
                 });
               }
+              if (index == 5) {
+                //Open RTE event for community
+                GoRouter.of(context).pushNamed(AppRoute.communityRTE,
+                    queryParams: {'communityId': widget.communityId});
+              }
             },
           ),
         ],
@@ -123,6 +126,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                 initialData: _amityCommunity,
                 builder: (context, snapshot) {
                   _amityCommunity = snapshot.data!;
+                  print('AMITY:COMMUNITY:UPDATE');
                   return NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
                       return [
@@ -160,8 +164,15 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                           showAppBar: false,
                           isPublic: _amityCommunity.isPublic ?? true,
                         ),
-                        memberScreen,
-                        memberBannedScreen,
+                        CommunityMemberScreen(
+                          key: memberList,
+                          communityId: _amityCommunity.communityId!,
+                          showAppBar: false,
+                        ),
+                        CommunityMemberBannedScreen(
+                          communityId: widget.communityId,
+                          showAppBar: false,
+                        ),
                       ],
                     ),
                   );
@@ -402,7 +413,8 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                   child: const Text('Pending Post'),
                 ),
               ),
-            )
+            ),
+          RawDataWidget(jsonRawData: amityCommunity.toJson()),
         ],
       ),
     );

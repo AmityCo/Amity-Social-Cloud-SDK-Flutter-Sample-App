@@ -55,6 +55,18 @@ class _CommunityMemberScreenState extends State<CommunityMemberBannedScreen> {
       _controller.fetchNextPage();
     });
 
+    // AmitySocialClient.newCommunityRepository()
+    //     .getCommunity(widget.communityId)
+    //     .then((value) {
+    //   /// Listen to community change and refresh the list
+    //   value.listen.stream.listen((event) {
+    //     _controller.reset();
+    //     _controller.fetchNextPage();
+    //   });
+    // }, onError: (error) {
+    //   ErrorDialog.show(context, title: 'Error', message: error.toString());
+    // });
+
     scrollcontroller.addListener(pagination);
 
     super.initState();

@@ -36,6 +36,7 @@ import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comm
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_message/reaction_list_message_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/comment_rte_event_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/rte_event/community_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
@@ -298,6 +299,19 @@ class AppRouter {
             postId: state.queryParams['postId']!,
             communityId: state.queryParams['communityId'],
             isPublic: state.queryParams['isPublic'] == 'true',
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoute.communityRTE,
+        path: AppRoute.communityRTERoute,
+        builder: (context, state) {
+          return CommunityRteEventScreen(
+            communityId: state.queryParams['communityId']!,
+            // commentId: state.queryParams['commentId']!,
+            // postId: state.queryParams['postId']!,
+            // communityId: state.queryParams['communityId'],
+            // isPublic: state.queryParams['isPublic'] == 'true',
           );
         },
       ),
