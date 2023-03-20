@@ -66,62 +66,65 @@ class FeedWidget extends StatelessWidget {
                       options: disableAction
                           ? null
                           : [
-                              if (amityPost.postedUserId ==
-                                  AmityCoreClient.getUserId())
-                                PopupMenuButton(
-                                  itemBuilder: (context) {
-                                    return const [
-                                      PopupMenuItem(
+                              PopupMenuButton(
+                                itemBuilder: (context) {
+                                  return [
+                                    if (amityPost.postedUserId ==
+                                        AmityCoreClient.getUserId())
+                                      const PopupMenuItem(
                                         value: 1,
                                         child: Text("Edit"),
                                       ),
-                                      PopupMenuItem(
+                                    if (amityPost.postedUserId ==
+                                        AmityCoreClient.getUserId())
+                                      const PopupMenuItem(
                                         value: 2,
                                         child: Text("Delete (Soft)"),
                                       ),
-                                      PopupMenuItem(
+                                    if (amityPost.postedUserId ==
+                                        AmityCoreClient.getUserId())
+                                      const PopupMenuItem(
                                         value: 3,
                                         enabled: false,
                                         child: Text("Delete (Hard)"),
                                       ),
-                                      PopupMenuItem(
-                                        value: 4,
-                                        child: Text("RTE"),
-                                      )
-                                    ];
-                                  },
-                                  child: const Icon(
-                                    Icons.more_vert,
-                                    size: 18,
-                                  ),
-                                  onSelected: (index) {
-                                    if (index == 1) {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              UpdatePostScreen(
-                                            amityPost: value,
-                                            communityId: communityId,
-                                            isPublic: isPublic,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    if (index == 2) {
-                                      amityPost.delete();
-                                    }
-                                    if (index == 4) {
-                                      /// jumpe to Post RTE screen
-                                      GoRouter.of(context).pushNamed(
-                                          AppRoute.postRTE,
-                                          queryParams: {
-                                            'postId': value.postId!,
-                                            'communityId': communityId,
-                                            'isPublic': isPublic.toString()
-                                          });
-                                    }
-                                  },
+                                    const PopupMenuItem(
+                                      value: 4,
+                                      child: Text("RTE"),
+                                    )
+                                  ];
+                                },
+                                child: const Icon(
+                                  Icons.more_vert,
+                                  size: 18,
                                 ),
+                                onSelected: (index) {
+                                  if (index == 1) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => UpdatePostScreen(
+                                          amityPost: value,
+                                          communityId: communityId,
+                                          isPublic: isPublic,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if (index == 2) {
+                                    amityPost.delete();
+                                  }
+                                  if (index == 4) {
+                                    /// jumpe to Post RTE screen
+                                    GoRouter.of(context).pushNamed(
+                                        AppRoute.postRTE,
+                                        queryParams: {
+                                          'postId': value.postId!,
+                                          'communityId': communityId,
+                                          'isPublic': isPublic.toString()
+                                        });
+                                  }
+                                },
+                              ),
                             ],
                     ),
                     Container(

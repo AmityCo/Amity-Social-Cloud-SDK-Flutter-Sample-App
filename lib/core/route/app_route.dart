@@ -119,4 +119,7 @@ class AppRoute {
 
   static const commentRTE = 'commentRTE';
   static const commentRTERoute = '/commentRTE';
+
+  static const communityRTE = 'communityRTE';
+  static const communityRTERoute = '/communityRTE';
 }
