@@ -1,5 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/text_check_box_widget.dart';
@@ -81,13 +82,35 @@ class _PostRteEventScreenState extends State<PostRteEventScreen> {
                                     _post!
                                         .subscription(
                                             AmityPostEvents.values[index])
-                                        .subscribeTopic();
+                                        .subscribeTopic()
+                                        .then((value) {
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context,
+                                          'Success',
+                                          'Subcribed to ${AmityPostEvents.values[index].name}');
+                                    }).onError((error, stackTrace) {
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context,
+                                          'Error',
+                                          'Failed to subscribe to ${AmityPostEvents.values[index].name}');
+                                    });
                                   } else {
                                     ///Unsubscribe to the event
                                     _post!
                                         .subscription(
                                             AmityPostEvents.values[index])
-                                        .unsubscribeTopic();
+                                        .unsubscribeTopic()
+                                        .then((value) {
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context,
+                                          'Success',
+                                          'Unsubcribed to ${AmityPostEvents.values[index].name}');
+                                    }).onError((error, stackTrace) {
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context,
+                                          'Error',
+                                          'Failed to unsubscribe to ${AmityPostEvents.values[index].name}');
+                                    });
                                   }
                                   setState(() {});
                                 },

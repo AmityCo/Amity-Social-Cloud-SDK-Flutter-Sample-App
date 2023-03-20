@@ -61,11 +61,13 @@ class FeedWidget extends StatelessWidget {
                                         value: 1,
                                         child: Text("Edit"),
                                       ),
+
                                     if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 2,
                                         child: Text("Delete (Soft)"),
                                       ),
+
                                     if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 3,
