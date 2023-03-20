@@ -20,14 +20,16 @@ class FeedWidget extends StatelessWidget {
   final bool isPublic;
   final AmityPost amityPost;
   final bool disableAction;
+  final bool disableAddComment;
   // final VoidCallback onCommentCallback;
-  const FeedWidget({
-    Key? key,
-    required this.amityPost,
-    this.communityId,
-    this.isPublic = false,
-    this.disableAction = false,
-  }) : super(key: key);
+  const FeedWidget(
+      {Key? key,
+      required this.amityPost,
+      this.communityId,
+      this.isPublic = false,
+      this.disableAction = false,
+      this.disableAddComment = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +63,11 @@ class FeedWidget extends StatelessWidget {
                                         value: 1,
                                         child: Text("Edit"),
                                       ),
-
                                     if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 2,
                                         child: Text("Delete (Soft)"),
                                       ),
-
                                     if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 3,
@@ -194,37 +194,38 @@ class FeedWidget extends StatelessWidget {
                           );
                         }),
                     const SizedBox(height: 12),
-                    AddCommentWidget(
-                      AmityCoreClient.getCurrentUser(),
-                      (text, user) {
-                        final mentionUsers = <AmityUser>[];
+                    if (!disableAddComment)
+                      AddCommentWidget(
+                        AmityCoreClient.getCurrentUser(),
+                        (text, user) {
+                          final mentionUsers = <AmityUser>[];
 
-                        mentionUsers.clear();
-                        mentionUsers.addAll(user);
+                          mentionUsers.clear();
+                          mentionUsers.addAll(user);
 
-                        //Clean up mention user list, as user might have removed some tagged user
-                        mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
+                          //Clean up mention user list, as user might have removed some tagged user
+                          mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
 
-                        final amityMentioneesMetadata = mentionUsers
-                            .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-                                userId: e.userId!,
-                                index: text.indexOf('@${e.displayName!}'),
-                                length: e.displayName!.length))
-                            .toList();
+                          final amityMentioneesMetadata = mentionUsers
+                              .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+                                  userId: e.userId!,
+                                  index: text.indexOf('@${e.displayName!}'),
+                                  length: e.displayName!.length))
+                              .toList();
 
-                        Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+                          Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
 
-                        value
-                            .comment()
-                            .create()
-                            .text(text)
-                            .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
-                            .metadata(metadata)
-                            .send();
-                      },
-                      communityId: communityId,
-                      isPublic: isPublic,
-                    ),
+                          value
+                              .comment()
+                              .create()
+                              .text(text)
+                              .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
+                              .metadata(metadata)
+                              .send();
+                        },
+                        communityId: communityId,
+                        isPublic: isPublic,
+                      ),
                   ],
                 ),
               ),
