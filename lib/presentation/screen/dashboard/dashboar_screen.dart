@@ -57,8 +57,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.userFeed,
-                        params: {'userId': 'victimIOS'});
+                    EditTextDialog.show(
+                      context,
+                      hintText: 'Enter User Id',
+                      onPress: (value) {
+                        GoRouter.of(context).goNamed(AppRoute.userFeed,
+                            params: {'userId': value});
+                      },
+                    );
                   },
                   child: const Text('User Feed'),
                 ),

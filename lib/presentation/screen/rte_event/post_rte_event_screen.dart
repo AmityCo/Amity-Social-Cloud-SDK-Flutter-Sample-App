@@ -1,16 +1,13 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/text_check_box_widget.dart';
 import 'package:go_router/go_router.dart';
 
 class PostRteEventScreen extends StatefulWidget {
-  const PostRteEventScreen(
-      {super.key,
-      required this.postId,
-      this.communityId,
-      this.isPublic = false});
+  const PostRteEventScreen({super.key, required this.postId, this.communityId, this.isPublic = false});
   final String postId;
   final String? communityId;
   final bool isPublic;
@@ -26,8 +23,7 @@ class _PostRteEventScreenState extends State<PostRteEventScreen> {
   late Future<AmityPost> _amityPostFuture;
   @override
   void initState() {
-    _amityPostFuture =
-        AmitySocialClient.newPostRepository().getPost(widget.postId);
+    _amityPostFuture = AmitySocialClient.newPostRepository().getPost(widget.postId);
 
     super.initState();
   }
@@ -67,27 +63,28 @@ class _PostRteEventScreenState extends State<PostRteEventScreen> {
                               AmityPostEvents.values.length,
                               (index) => TextCheckBox(
                                 title: AmityPostEvents.values[index].name,
-                                value: eventPool[
-                                        AmityPostEvents.values[index].name] ??
-                                    false,
+                                value: eventPool[AmityPostEvents.values[index].name] ?? false,
                                 onChanged: (value) {
-                                  eventPool[AmityPostEvents
-                                      .values[index].name] = value ?? false;
+                                  eventPool[AmityPostEvents.values[index].name] = value ?? false;
 
-                                  if (eventPool[
-                                          AmityPostEvents.values[index].name] ??
-                                      false) {
+                                  if (eventPool[AmityPostEvents.values[index].name] ?? false) {
                                     ///Subscribe to the event
-                                    _post!
-                                        .subscription(
-                                            AmityPostEvents.values[index])
-                                        .subscribeTopic();
+                                    _post!.subscription(AmityPostEvents.values[index]).subscribeTopic().then((value) {
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context, 'Success', 'Subcribed to ${AmityPostEvents.values[index].name}');
+                                    }).onError((error, stackTrace) {
+                                      CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                                          'Failed to subscribe to ${AmityPostEvents.values[index].name}');
+                                    });
                                   } else {
                                     ///Unsubscribe to the event
-                                    _post!
-                                        .subscription(
-                                            AmityPostEvents.values[index])
-                                        .unsubscribeTopic();
+                                    _post!.subscription(AmityPostEvents.values[index]).unsubscribeTopic().then((value) {
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context, 'Success', 'Unsubcribed to ${AmityPostEvents.values[index].name}');
+                                    }).onError((error, stackTrace) {
+                                      CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                                          'Failed to unsubscribe to ${AmityPostEvents.values[index].name}');
+                                    });
                                   }
                                   setState(() {});
                                 },
@@ -101,6 +98,7 @@ class _PostRteEventScreenState extends State<PostRteEventScreen> {
                         communityId: widget.communityId,
                         isPublic: widget.isPublic,
                         disableAction: true,
+                        disableAddComment: true,
                       ),
                     ],
                   ),

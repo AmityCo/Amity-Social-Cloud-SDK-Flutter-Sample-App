@@ -28,7 +28,7 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
     _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newFeedRepository()
           .getUserFeed(widget.userId)
-          .includeDeleted(false)
+          // .includeDeleted(false)
           .sortBy(_sortOption)
           .types(_dataType)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),

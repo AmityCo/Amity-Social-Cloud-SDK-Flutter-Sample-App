@@ -20,31 +20,21 @@ class FeedWidget extends StatelessWidget {
   final bool isPublic;
   final AmityPost amityPost;
   final bool disableAction;
+  final bool disableAddComment;
   // final VoidCallback onCommentCallback;
-  const FeedWidget({
-    Key? key,
-    required this.amityPost,
-    this.communityId,
-    this.isPublic = false,
-    this.disableAction = false,
-  }) : super(key: key);
+  const FeedWidget(
+      {Key? key,
+      required this.amityPost,
+      this.communityId,
+      this.isPublic = false,
+      this.disableAction = false,
+      this.disableAddComment = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final _themeData = Theme.of(context);
 
-    // amityPost.subscription(AmityPostEvents.POST).subscribeTopic().then((value) {
-    //   print('Post RTE subscription success');
-    // });
-
-    // amityPost
-    //     .subscription(AmityPostEvents.COMMENTS)
-    //     .subscribeTopic()
-    //     .then((value) {
-    //   print('Post Comment RTE subscription success');
-    // });
-
-    //
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen.stream,
       initialData: amityPost,
@@ -60,8 +50,7 @@ class FeedWidget extends StatelessWidget {
                   children: [
                     UserProfileInfoRowWidget(
                       userId: value.postedUser!.userId!,
-                      userAvatar: value.postedUser?.avatarUrl ??
-                          value.postedUser!.avatarCustomUrl,
+                      userAvatar: value.postedUser?.avatarUrl ?? value.postedUser!.avatarCustomUrl,
                       userName: value.postedUser!.displayName!,
                       options: disableAction
                           ? null
@@ -69,20 +58,17 @@ class FeedWidget extends StatelessWidget {
                               PopupMenuButton(
                                 itemBuilder: (context) {
                                   return [
-                                    if (amityPost.postedUserId ==
-                                        AmityCoreClient.getUserId())
+                                    if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 1,
                                         child: Text("Edit"),
                                       ),
-                                    if (amityPost.postedUserId ==
-                                        AmityCoreClient.getUserId())
+                                    if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 2,
                                         child: Text("Delete (Soft)"),
                                       ),
-                                    if (amityPost.postedUserId ==
-                                        AmityCoreClient.getUserId())
+                                    if (amityPost.postedUserId == AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 3,
                                         enabled: false,
@@ -111,17 +97,15 @@ class FeedWidget extends StatelessWidget {
                                     );
                                   }
                                   if (index == 2) {
-                                    amityPost.delete();
+                                    value.delete();
                                   }
                                   if (index == 4) {
                                     /// jumpe to Post RTE screen
-                                    GoRouter.of(context).pushNamed(
-                                        AppRoute.postRTE,
-                                        queryParams: {
-                                          'postId': value.postId!,
-                                          'communityId': communityId,
-                                          'isPublic': isPublic.toString()
-                                        });
+                                    GoRouter.of(context).pushNamed(AppRoute.postRTE, queryParams: {
+                                      'postId': value.postId!,
+                                      'communityId': communityId,
+                                      'isPublic': isPublic.toString()
+                                    });
                                   }
                                 },
                               ),
@@ -162,35 +146,27 @@ class FeedWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (value.data != null)
-                            FeedContentWidget(
-                                amityPost: value, amityPostData: value.data!),
+                          if (value.data != null) FeedContentWidget(amityPost: value, amityPostData: value.data!),
                           const SizedBox(height: 8),
                           if (value.children != null)
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
                               children: [
-                                ...List.generate(value.children!.length,
-                                    (index) {
+                                ...List.generate(value.children!.length, (index) {
                                   final amityChildPost = value.children![index];
                                   if (amityChildPost.data == null) {
                                     return Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                          color: Colors.red.shade400,
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
+                                          color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
                                       child: Text(
                                         'Media Type ${amityChildPost.type} not supported',
-                                        style: _themeData.textTheme.bodyText1!
-                                            .copyWith(color: Colors.white),
+                                        style: _themeData.textTheme.bodyText1!.copyWith(color: Colors.white),
                                       ),
                                     );
                                   }
-                                  return FeedContentWidget(
-                                      amityPost: value,
-                                      amityPostData: amityChildPost.data!);
+                                  return FeedContentWidget(amityPost: value, amityPostData: amityChildPost.data!);
                                 })
                               ],
                             )
@@ -211,54 +187,49 @@ class FeedWidget extends StatelessWidget {
                           GoRouter.of(context).pushNamed(
                             AppRoute.commentList,
                             queryParams: {
-                              'postId': amityPost.postId!,
+                              'postId': value.postId!,
                               'communityId': communityId,
                               'isPublic': isPublic.toString()
                             },
                           );
                         }),
                     const SizedBox(height: 12),
-                    AddCommentWidget(
-                      AmityCoreClient.getCurrentUser(),
-                      (text, user) {
-                        final mentionUsers = <AmityUser>[];
+                    if (!disableAddComment)
+                      AddCommentWidget(
+                        AmityCoreClient.getCurrentUser(),
+                        (text, user) {
+                          final mentionUsers = <AmityUser>[];
 
-                        mentionUsers.clear();
-                        mentionUsers.addAll(user);
+                          mentionUsers.clear();
+                          mentionUsers.addAll(user);
 
-                        //Clean up mention user list, as user might have removed some tagged user
-                        mentionUsers.removeWhere(
-                            (element) => !text.contains(element.displayName!));
+                          //Clean up mention user list, as user might have removed some tagged user
+                          mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
 
-                        final amityMentioneesMetadata = mentionUsers
-                            .map<AmityUserMentionMetadata>((e) =>
-                                AmityUserMentionMetadata(
-                                    userId: e.userId!,
-                                    index: text.indexOf('@${e.displayName!}'),
-                                    length: e.displayName!.length))
-                            .toList();
+                          final amityMentioneesMetadata = mentionUsers
+                              .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+                                  userId: e.userId!,
+                                  index: text.indexOf('@${e.displayName!}'),
+                                  length: e.displayName!.length))
+                              .toList();
 
-                        Map<String, dynamic> metadata =
-                            AmityMentionMetadataCreator(amityMentioneesMetadata)
-                                .create();
+                          Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
 
-                        value
-                            .comment()
-                            .create()
-                            .text(text)
-                            .mentionUsers(mentionUsers
-                                .map<String>((e) => e.userId!)
-                                .toList())
-                            .metadata(metadata)
-                            .send();
-                      },
-                      communityId: communityId,
-                      isPublic: isPublic,
-                    ),
+                          value
+                              .comment()
+                              .create()
+                              .text(text)
+                              .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
+                              .metadata(metadata)
+                              .send();
+                        },
+                        communityId: communityId,
+                        isPublic: isPublic,
+                      ),
                   ],
                 ),
               ),
-              if (amityPost.isDeleted ?? false)
+              if (value.isDeleted ?? false)
                 Positioned.fill(
                   child: Container(
                     margin: const EdgeInsets.all(12),
@@ -269,13 +240,10 @@ class FeedWidget extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: Colors.red.shade400,
-                            borderRadius: BorderRadius.circular(12)),
+                        decoration: BoxDecoration(color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
                         child: Text(
                           'Soft Deleted Amity Post',
-                          style: _themeData.textTheme.bodyText1!
-                              .copyWith(color: Colors.white),
+                          style: _themeData.textTheme.bodyText1!.copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -293,9 +261,7 @@ class FeedWidget extends StatelessWidget {
 class FeedContentWidget extends StatelessWidget {
   final AmityPost amityPost;
   final AmityPostData amityPostData;
-  const FeedContentWidget(
-      {Key? key, required this.amityPost, required this.amityPostData})
-      : super(key: key);
+  const FeedContentWidget({Key? key, required this.amityPost, required this.amityPostData}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -306,14 +272,10 @@ class FeedContentWidget extends StatelessWidget {
       if (data.text != null && data.text!.isNotEmpty) {
         return DynamicTextHighlighting(
           text: data.text ?? '',
-          highlights: amityPost.mentionees
-                  ?.map<String>((e) => '@${e.user?.displayName ?? ''}')
-                  .toList() ??
-              [],
+          highlights: amityPost.mentionees?.map<String>((e) => '@${e.user?.displayName ?? ''}').toList() ?? [],
           onHighlightClick: (String value) {
-            final amityUser = amityPost.mentionees!.firstWhereOrNull(
-                (element) =>
-                    element.user!.displayName == value.replaceAll('@', ''));
+            final amityUser = amityPost.mentionees!
+                .firstWhereOrNull((element) => element.user!.displayName == value.replaceAll('@', ''));
             if (amityUser != null) {
               GoRouter.of(context).pushNamed(
                 AppRoute.profile,
@@ -331,14 +293,16 @@ class FeedContentWidget extends StatelessWidget {
 
     if (amityPostData is ImageData) {
       final data = amityPostData as ImageData;
-      return SizedBox(
-        width: 100,
-        height: 100,
-        child: Image.network(
-          data.image.getUrl(AmityImageSize.MEDIUM),
-          fit: BoxFit.cover,
-        ),
-      );
+      if (data.image != null) {
+        return SizedBox(
+          width: 100,
+          height: 100,
+          child: Image.network(
+            data.image!.getUrl(AmityImageSize.MEDIUM),
+            fit: BoxFit.cover,
+          ),
+        );
+      }
     }
 
     if (amityPostData is VideoData) {
@@ -412,8 +376,7 @@ class FeedContentWidget extends StatelessWidget {
 
 class FeedReactionInfoWidget extends StatelessWidget {
   final AmityPost amityPost;
-  const FeedReactionInfoWidget({Key? key, required this.amityPost})
-      : super(key: key);
+  const FeedReactionInfoWidget({Key? key, required this.amityPost}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -424,8 +387,7 @@ class FeedReactionInfoWidget extends StatelessWidget {
         children: [
           TextButton.icon(
             onPressed: () {
-              GoRouter.of(context).pushNamed(AppRoute.postReaction,
-                  params: {'postId': amityPost.postId!});
+              GoRouter.of(context).pushNamed(AppRoute.postReaction, params: {'postId': amityPost.postId!});
               // amityPost.getReaction().getPagingData().then((value) {
               //   print(value);
               // });
@@ -437,21 +399,18 @@ class FeedReactionInfoWidget extends StatelessWidget {
             ),
             label: Text(
               '${amityPost.reactionCount}',
-              style: _themeData.textTheme.subtitle1!
-                  .copyWith(color: Colors.black54),
+              style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
             ),
           ),
           const Spacer(),
           Text(
             '${amityPost.commentCount} Comment',
-            style:
-                _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
+            style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
           ),
           const SizedBox(width: 12),
           Text(
             '${amityPost.flagCount} Flag',
-            style:
-                _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
+            style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
           )
         ],
       ),
@@ -462,9 +421,7 @@ class FeedReactionInfoWidget extends StatelessWidget {
 class FeedReactionActionWidget extends StatelessWidget {
   final AmityPost amityPost;
   final VoidCallback onCommentCallback;
-  FeedReactionActionWidget(
-      {Key? key, required this.amityPost, required this.onCommentCallback})
-      : super(key: key);
+  FeedReactionActionWidget({Key? key, required this.amityPost, required this.onCommentCallback}) : super(key: key);
   final LayerLink link = LayerLink();
 
   @override
@@ -511,8 +468,7 @@ class FeedReactionActionWidget extends StatelessWidget {
               ),
               label: Text(
                 'Like',
-                style: _themeData.textTheme.subtitle1!.copyWith(
-                    color: Colors.black54, fontWeight: FontWeight.w600),
+                style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -521,8 +477,7 @@ class FeedReactionActionWidget extends StatelessWidget {
             icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
             label: Text(
               'Comment',
-              style: _themeData.textTheme.subtitle1!
-                  .copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+              style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
             ),
           ),
           Visibility(
@@ -531,19 +486,15 @@ class FeedReactionActionWidget extends StatelessWidget {
               onPressed: () {
                 if (amityPost.isFlaggedByMe) {
                   amityPost.report().unflag().then((value) {
-                    CommonSnackbar.showPositiveSnackbar(
-                        context, 'Success', 'Unflagged the Post');
+                    CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Unflagged the Post');
                   }).onError((error, stackTrace) {
-                    CommonSnackbar.showNagativeSnackbar(
-                        context, 'Error', error.toString());
+                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
                   });
                 } else {
                   amityPost.report().flag().then((value) {
-                    CommonSnackbar.showPositiveSnackbar(
-                        context, 'Success', 'Flag the Post');
+                    CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Flag the Post');
                   }).onError((error, stackTrace) {
-                    CommonSnackbar.showNagativeSnackbar(
-                        context, 'Error', error.toString());
+                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
                   });
                 }
               },
@@ -557,8 +508,7 @@ class FeedReactionActionWidget extends StatelessWidget {
               // icon: Image.asset('assets/ic_comment.png'),
               label: Text(
                 amityPost.isFlaggedByMe ? 'Falgged' : 'Flag',
-                style: _themeData.textTheme.subtitle1!.copyWith(
-                    color: Colors.black54, fontWeight: FontWeight.w600),
+                style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
               ),
             ),
           )
