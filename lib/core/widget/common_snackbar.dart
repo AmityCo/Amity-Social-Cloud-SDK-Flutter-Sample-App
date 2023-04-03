@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CommonSnackbar {
-  static void showPositiveSnackbar(
-      BuildContext context, String title, String message) {
+  static void showPositiveSnackbar(BuildContext context, String title, String message,
+      {Duration duration = const Duration(seconds: 1)}) {
     final _themeData = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -25,6 +25,7 @@ class CommonSnackbar {
             ),
           ],
         ),
+        duration: duration,
         backgroundColor: Colors.black,
       ),
     );
@@ -32,9 +33,8 @@ class CommonSnackbar {
     //     backgroundColor: Colors.white, colorText: Colors.black);
   }
 
-  static void showNagativeSnackbar(
-      BuildContext context, String title, String message,
-      {Duration duration = const Duration(seconds: 3)}) {
+  static void showNagativeSnackbar(BuildContext context, String title, String message,
+      {Duration duration = const Duration(seconds: 1)}) {
     final _themeData = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
