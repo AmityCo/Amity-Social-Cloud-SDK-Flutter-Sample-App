@@ -12,27 +12,23 @@ import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/c
 import 'package:go_router/go_router.dart';
 
 class CommunityProfileScreen extends StatefulWidget {
-  const CommunityProfileScreen({Key? key, required this.communityId})
-      : super(key: key);
+  const CommunityProfileScreen({Key? key, required this.communityId}) : super(key: key);
   final String communityId;
   @override
   State<CommunityProfileScreen> createState() => _CommunityProfileScreenState();
 }
 
-class _CommunityProfileScreenState extends State<CommunityProfileScreen>
-    with TickerProviderStateMixin {
+class _CommunityProfileScreenState extends State<CommunityProfileScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   late AmityCommunity _amityCommunity;
   Future<AmityCommunity>? _future;
 
-  GlobalKey<CommunityMemberScreenState> memberList =
-      GlobalKey<CommunityMemberScreenState>();
+  GlobalKey<CommunityMemberScreenState> memberList = GlobalKey<CommunityMemberScreenState>();
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
 
-    _future = AmitySocialClient.newCommunityRepository()
-        .getCommunity(widget.communityId);
+    _future = AmitySocialClient.newCommunityRepository().getCommunity(widget.communityId);
     super.initState();
   }
 
@@ -77,40 +73,32 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
             onSelected: (index) {
               if (index == 1) {
                 //Open Edit Community
-                GoRouter.of(context).goNamed(AppRoute.updateCommunity,
-                    queryParams: {'communityId': widget.communityId});
+                GoRouter.of(context)
+                    .goNamed(AppRoute.updateCommunity, queryParams: {'communityId': widget.communityId});
               }
               if (index == 2) {
                 //Delete Community
-                AmitySocialClient.newCommunityRepository()
-                    .deleteCommunity(widget.communityId);
+                AmitySocialClient.newCommunityRepository().deleteCommunity(widget.communityId);
               }
               if (index == 4) {
                 EditTextDialog.show(context,
                     title: 'Check my permission in this community',
                     hintText: 'Enter permission name', onPress: (value) {
-                  final permissions =
-                      AmityPermission.values.where((v) => v.value == value);
+                  final permissions = AmityPermission.values.where((v) => v.value == value);
 
                   if (permissions.isEmpty) {
-                    ErrorDialog.show(context,
-                        title: 'Error', message: 'permission does not exist');
+                    ErrorDialog.show(context, title: 'Error', message: 'permission does not exist');
                   } else {
                     final hasPermission =
-                        AmityCoreClient.hasPermission(permissions.first)
-                            .atCommunity(widget.communityId)
-                            .check();
+                        AmityCoreClient.hasPermission(permissions.first).atCommunity(widget.communityId).check();
                     PositiveDialog.show(context,
-                        title: 'Permission',
-                        message:
-                            'The permission "$value" is valid = $hasPermission');
+                        title: 'Permission', message: 'The permission "$value" is valid = $hasPermission');
                   }
                 });
               }
               if (index == 5) {
                 //Open RTE event for community
-                GoRouter.of(context).pushNamed(AppRoute.communityRTE,
-                    queryParams: {'communityId': widget.communityId});
+                GoRouter.of(context).pushNamed(AppRoute.communityRTE, queryParams: {'communityId': widget.communityId});
               }
             },
           ),
@@ -126,13 +114,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                 initialData: _amityCommunity,
                 builder: (context, snapshot) {
                   _amityCommunity = snapshot.data!;
-                  print('AMITY:COMMUNITY:UPDATE');
                   return NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
                       return [
                         SliverToBoxAdapter(
-                          child: _CommunityProfileHeaderWidget(
-                              amityCommunity: _amityCommunity),
+                          child: _CommunityProfileHeaderWidget(amityCommunity: _amityCommunity),
                         ),
                         SliverToBoxAdapter(
                           child: DefaultTabController(
@@ -199,8 +185,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         onPressed: () {
                           Navigator.of(context).pop();
                           //show create post for community
-                          GoRouter.of(context)
-                              .pushNamed(AppRoute.createPost, queryParams: {
+                          GoRouter.of(context).pushNamed(AppRoute.createPost, queryParams: {
                             'communityId': _amityCommunity.communityId,
                             'isPublic': _amityCommunity.isPublic.toString(),
                           });
@@ -216,8 +201,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                           //show create post for community
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) {
-                              return CreatePollPostScreen(
-                                  communityId: widget.communityId);
+                              return CreatePollPostScreen(communityId: widget.communityId);
                             },
                           ));
                         },
@@ -226,16 +210,13 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                     ),
                   ],
                 ),
-                actions: [
-                  ElevatedButton(onPressed: () {}, child: const Text('Cancel'))
-                ],
+                actions: [ElevatedButton(onPressed: () {}, child: const Text('Cancel'))],
               ),
             );
           } else {
             //show add member action
-            EditTextDialog.show(context,
-                title: 'Add Member',
-                hintText: 'Enter Comma seperated user Ids', onPress: (value) {
+            EditTextDialog.show(context, title: 'Add Member', hintText: 'Enter Comma seperated user Ids',
+                onPress: (value) {
               AmitySocialClient.newCommunityRepository()
                   .membership(widget.communityId)
                   .addMembers(value.split(','))
@@ -245,8 +226,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                 }
                 //
               }).onError((error, stackTrace) {
-                ErrorDialog.show(context,
-                    title: 'Error', message: error.toString());
+                ErrorDialog.show(context, title: 'Error', message: error.toString());
               });
             });
           }
@@ -258,8 +238,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
 }
 
 class _CommunityProfileHeaderWidget extends StatelessWidget {
-  const _CommunityProfileHeaderWidget({Key? key, required this.amityCommunity})
-      : super(key: key);
+  const _CommunityProfileHeaderWidget({Key? key, required this.amityCommunity}) : super(key: key);
   final AmityCommunity amityCommunity;
   @override
   Widget build(BuildContext context) {
@@ -274,18 +253,14 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
               Container(
                 width: 64,
                 height: 64,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child:
-                    amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) !=
-                            null
-                        ? Image.network(
-                            amityCommunity.avatarImage!
-                                .getUrl(AmityImageSize.MEDIUM),
-                            fit: BoxFit.fill,
-                          )
-                        : Image.asset('assets/user_placeholder.png'),
+                child: amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) != null
+                    ? Image.network(
+                        amityCommunity.avatarImage!.getUrl(AmityImageSize.MEDIUM),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.asset('assets/user_placeholder.png'),
               ),
               const SizedBox(width: 18),
               Expanded(
@@ -298,12 +273,9 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityCommunity.postsCount}\n',
-                            style: _themeData.textTheme.subtitle1!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: _themeData.textTheme.subtitle1!.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          TextSpan(
-                              text: 'Posts',
-                              style: _themeData.textTheme.bodyText2),
+                          TextSpan(text: 'Posts', style: _themeData.textTheme.bodyText2),
                         ],
                       ),
                     ),
@@ -313,12 +285,9 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityCommunity.membersCount}\n',
-                            style: _themeData.textTheme.subtitle1!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: _themeData.textTheme.subtitle1!.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          TextSpan(
-                              text: 'Members',
-                              style: _themeData.textTheme.bodyText2),
+                          TextSpan(text: 'Members', style: _themeData.textTheme.bodyText2),
                         ],
                       ),
                     )
@@ -361,38 +330,32 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                         .joinCommunity(amityCommunity.communityId!)
                         .then((value) {})
                         .onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   } else {
                     AmitySocialClient.newCommunityRepository()
                         .leaveCommunity(amityCommunity.communityId!)
                         .then((value) {})
                         .onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   }
                 },
-                child:
-                    Text(!(amityCommunity.isJoined ?? true) ? 'Join' : 'Leave'),
+                child: Text(!(amityCommunity.isJoined ?? true) ? 'Join' : 'Leave'),
               ),
             ),
           ),
-          if (amityCommunity
-                  .hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
+          if (amityCommunity.hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
               amityCommunity.isPostReviewEnabled!)
             Center(
               child: SizedBox(
                 width: 260,
                 child: ElevatedButton(
                   onPressed: () {
-                    GoRouter.of(context).pushNamed(
-                        AppRoute.communityInReviewPost,
-                        queryParams: {
-                          'communityId': amityCommunity.communityId,
-                          'isPublic': amityCommunity.isPublic!.toString()
-                        });
+                    GoRouter.of(context).pushNamed(AppRoute.communityInReviewPost, queryParams: {
+                      'communityId': amityCommunity.communityId,
+                      'isPublic': amityCommunity.isPublic!.toString()
+                    });
                   },
                   child: const Text('Review Post'),
                 ),
@@ -404,8 +367,7 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 width: 260,
                 child: ElevatedButton(
                   onPressed: () {
-                    GoRouter.of(context)
-                        .pushNamed(AppRoute.communityPendingPost, queryParams: {
+                    GoRouter.of(context).pushNamed(AppRoute.communityPendingPost, queryParams: {
                       'communityId': amityCommunity.communityId,
                       'isPublic': amityCommunity.isPublic!.toString()
                     });

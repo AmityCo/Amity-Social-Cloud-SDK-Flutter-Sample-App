@@ -7,11 +7,7 @@ import 'package:go_router/go_router.dart';
 
 class CommentRteEventScreen extends StatefulWidget {
   const CommentRteEventScreen(
-      {super.key,
-      required this.postId,
-      required this.commentId,
-      this.communityId,
-      this.isPublic = false});
+      {super.key, required this.postId, required this.commentId, this.communityId, this.isPublic = false});
   final String postId;
   final String? communityId;
   final bool isPublic;
@@ -28,8 +24,7 @@ class _CommentRteEventScreenState extends State<CommentRteEventScreen> {
   late Future<AmityComment> _amityCommentFuture;
   @override
   void initState() {
-    _amityCommentFuture = AmitySocialClient.newCommentRepository()
-        .getComment(commentId: widget.commentId);
+    _amityCommentFuture = AmitySocialClient.newCommentRepository().getComment(commentId: widget.commentId);
 
     super.initState();
   }
@@ -69,27 +64,16 @@ class _CommentRteEventScreenState extends State<CommentRteEventScreen> {
                               AmityCommentEvents.values.length,
                               (index) => TextCheckBox(
                                 title: AmityCommentEvents.values[index].name,
-                                value: eventPool[AmityCommentEvents
-                                        .values[index].name] ??
-                                    false,
+                                value: eventPool[AmityCommentEvents.values[index].name] ?? false,
                                 onChanged: (value) {
-                                  eventPool[AmityCommentEvents
-                                      .values[index].name] = value ?? false;
+                                  eventPool[AmityCommentEvents.values[index].name] = value ?? false;
 
-                                  if (eventPool[AmityCommentEvents
-                                          .values[index].name] ??
-                                      false) {
+                                  if (eventPool[AmityCommentEvents.values[index].name] ?? false) {
                                     ///Subscribe to the event
-                                    _comment!
-                                        .subscription(
-                                            AmityCommentEvents.values[index])
-                                        .subscribeTopic();
+                                    _comment!.subscription(AmityCommentEvents.values[index]).subscribeTopic();
                                   } else {
                                     ///Unsubscribe to the event
-                                    _comment!
-                                        .subscription(
-                                            AmityCommentEvents.values[index])
-                                        .unsubscribeTopic();
+                                    _comment!.subscription(AmityCommentEvents.values[index]).unsubscribeTopic();
                                   }
                                   setState(() {});
                                 },
@@ -125,5 +109,10 @@ class _CommentRteEventScreenState extends State<CommentRteEventScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
