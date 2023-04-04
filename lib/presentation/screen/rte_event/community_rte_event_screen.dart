@@ -63,7 +63,7 @@ class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
                                   CommonSnackbar.showPositiveSnackbar(
                                       context, 'Success', 'Subcribed to ${AmityCommunityEvents.values[index].name}');
                                 }).onError((error, stackTrace) {
-                                  completer.completeError(error.toString());
+                                  completer.complete();
                                   CommonSnackbar.showNagativeSnackbar(context, 'Error',
                                       'Failed to subscribe to ${AmityCommunityEvents.values[index].name} $error');
                                 });
@@ -77,7 +77,7 @@ class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
                                   CommonSnackbar.showPositiveSnackbar(
                                       context, 'Success', 'Unsubcribed to ${AmityCommunityEvents.values[index].name}');
                                 }).onError((error, stackTrace) {
-                                  completer.completeError(error.toString());
+                                  completer.complete();
                                   CommonSnackbar.showNagativeSnackbar(context, 'Error',
                                       'Failed to unsubscribe to ${AmityCommunityEvents.values[index].name} $error');
                                 });
