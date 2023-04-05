@@ -7,9 +7,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
 class CommunityMemberScreen extends StatefulWidget {
-  CommunityMemberScreen(
-      {Key? key, required this.communityId, this.showAppBar = true})
-      : super(key: key);
+  CommunityMemberScreen({Key? key, required this.communityId, this.showAppBar = true}) : super(key: key);
   final String communityId;
   final bool showAppBar;
   // late _CommunityMemberScreenState screenState;
@@ -27,10 +25,8 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
-  AmityCommunityMembershipFilter _filter =
-      AmityCommunityMembershipFilter.MEMBER;
-  AmityCommunityMembershipSortOption _sort =
-      AmityCommunityMembershipSortOption.LAST_CREATED;
+  AmityCommunityMembershipFilter _filter = AmityCommunityMembershipFilter.MEMBER;
+  AmityCommunityMembershipSortOption _sort = AmityCommunityMembershipSortOption.LAST_CREATED;
   @override
   void initState() {
     _controller = PagingController(
@@ -53,8 +49,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
           } else {
             //Error on pagination controller
             setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
           }
         },
       );
@@ -68,34 +63,34 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
     super.initState();
   }
 
-  void addMembers(List<AmityCommunityMember> members) {
-    _controller.addAll(members);
-  }
+  // void addMembers(List<AmityCommunityMember> members) {
+  //   _controller.addAll(members);
+  // }
 
   void removeMembers(List<String> userIds) {
     _controller.removeWhere((member) {
-      print(
-          ' ${member.userId} does it contain ${userIds.contains(member.userId)}');
+      print(' ${member.userId} does it contain ${userIds.contains(member.userId)}');
       return userIds.contains(member.userId);
     });
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
     }
   }
 
+  void refreshList() {
+    _controller.reset();
+    _controller.fetchNextPage();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.showAppBar
-          ? AppBar(title: Text('Community Members - ${widget.communityId}'))
-          : null,
+      appBar: widget.showAppBar ? AppBar(title: Text('Community Members - ${widget.communityId}')) : null,
       body: Column(
         children: [
           Container(
@@ -126,13 +121,11 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                         ),
                         PopupMenuItem(
                           value: 2,
-                          child:
-                              Text(AmityCommunityMembershipFilter.MEMBER.name),
+                          child: Text(AmityCommunityMembershipFilter.MEMBER.name),
                         ),
                         PopupMenuItem(
                           value: 3,
-                          child:
-                              Text(AmityCommunityMembershipFilter.BANNED.name),
+                          child: Text(AmityCommunityMembershipFilter.BANNED.name),
                         )
                       ];
                     },
@@ -163,13 +156,11 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                       return [
                         PopupMenuItem(
                           value: 1,
-                          child: Text(AmityCommunityMembershipSortOption
-                              .FIRST_CREATED.name),
+                          child: Text(AmityCommunityMembershipSortOption.FIRST_CREATED.name),
                         ),
                         PopupMenuItem(
                           value: 2,
-                          child: Text(AmityCommunityMembershipSortOption
-                              .LAST_CREATED.name),
+                          child: Text(AmityCommunityMembershipSortOption.LAST_CREATED.name),
                         ),
                       ];
                     },
@@ -179,8 +170,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                     ),
                     onSelected: (index) {
                       if (index == 1) {
-                        _sort =
-                            AmityCommunityMembershipSortOption.FIRST_CREATED;
+                        _sort = AmityCommunityMembershipSortOption.FIRST_CREATED;
                       }
                       if (index == 2) {
                         _sort = AmityCommunityMembershipSortOption.LAST_CREATED;
@@ -206,8 +196,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                       controller: scrollcontroller,
                       itemCount: amityCommunityMembers.length,
                       itemBuilder: (context, index) {
-                        final amityCommunityMember =
-                            amityCommunityMembers[index];
+                        final amityCommunityMember = amityCommunityMembers[index];
                         return CommunityMemberWidget(
                           key: UniqueKey(),
                           amityCommunityMember: amityCommunityMember,
@@ -215,33 +204,20 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                           options: [
                             PopupMenuButton(
                               itemBuilder: (context) {
-                                final isMemberBanned =
-                                    amityCommunityMember.isBanned ?? false;
-                                final canBanMember =
-                                    AmityCoreClient.hasPermission(
-                                            AmityPermission.BAN_COMMUNITY_USER)
-                                        .atCommunity(
-                                            amityCommunityMember.communityId!)
-                                        .check();
+                                final isMemberBanned = amityCommunityMember.isBanned ?? false;
+                                final canBanMember = AmityCoreClient.hasPermission(AmityPermission.BAN_COMMUNITY_USER)
+                                    .atCommunity(amityCommunityMember.communityId!)
+                                    .check();
                                 final canRemoveMember =
-                                    AmityCoreClient.hasPermission(
-                                            AmityPermission
-                                                .REMOVE_COMMUNITY_USER)
-                                        .atCommunity(
-                                            amityCommunityMember.communityId!)
+                                    AmityCoreClient.hasPermission(AmityPermission.REMOVE_COMMUNITY_USER)
+                                        .atCommunity(amityCommunityMember.communityId!)
                                         .check();
-                                final canAddRole =
-                                    AmityCoreClient.hasPermission(
-                                            AmityPermission.CREATE_ROLE)
-                                        .atCommunity(
-                                            amityCommunityMember.communityId!)
-                                        .check();
-                                final canRemoveRole =
-                                    AmityCoreClient.hasPermission(
-                                            AmityPermission.DELETE_ROLE)
-                                        .atCommunity(
-                                            amityCommunityMember.communityId!)
-                                        .check();
+                                final canAddRole = AmityCoreClient.hasPermission(AmityPermission.CREATE_ROLE)
+                                    .atCommunity(amityCommunityMember.communityId!)
+                                    .check();
+                                final canRemoveRole = AmityCoreClient.hasPermission(AmityPermission.DELETE_ROLE)
+                                    .atCommunity(amityCommunityMember.communityId!)
+                                    .check();
                                 return [
                                   PopupMenuItem(
                                     value: 1,
@@ -299,9 +275,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Members'),
+                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Members'),
                   ),
           ),
           if (_controller.isFetching && amityCommunityMembers.isNotEmpty)
@@ -318,10 +292,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
     AmitySocialClient.newCommunityRepository()
         .membership(member.communityId!)
         .removeMembers([member.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
+        .onError((error, stackTrace) => {ErrorDialog.show(context, title: 'Error', message: error.toString())})
         .then((value) => {
               removeMembers([member.userId!])
             });
@@ -331,15 +302,11 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
     AmitySocialClient.newCommunityRepository()
         .moderation(value.communityId!)
         .banMember([value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
+        .onError((error, stackTrace) => {ErrorDialog.show(context, title: 'Error', message: error.toString())})
         .then((value) {
           _controller.reset();
           _controller.fetchNextPage();
-          PositiveDialog.show(context,
-              title: 'Complete', message: 'Member banned successfully');
+          PositiveDialog.show(context, title: 'Complete', message: 'Member banned successfully');
         });
   }
 
@@ -347,33 +314,20 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
     AmitySocialClient.newCommunityRepository()
         .moderation(value.communityId!)
         .unbanMember([value.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
-        .then((value) => {
-              PositiveDialog.show(context,
-                  title: 'Complete', message: 'Member unbanned successfully')
-            });
+        .onError((error, stackTrace) => {ErrorDialog.show(context, title: 'Error', message: error.toString())})
+        .then((value) => {PositiveDialog.show(context, title: 'Complete', message: 'Member unbanned successfully')});
   }
 
   void _addRole(BuildContext context, AmityCommunityMember member) {
     AmitySocialClient.newCommunityRepository()
         .moderation(member.communityId!)
         .addRole('community-moderator', [member.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
+        .onError((error, stackTrace) => {ErrorDialog.show(context, title: 'Error', message: error.toString())})
         .then((value) => {
               AmitySocialClient.newCommunityRepository()
                   .moderation(member.communityId!)
                   .addRole('channel-moderator', [member.userId!]).then(
-                      (value) => {
-                            PositiveDialog.show(context,
-                                title: 'Complete',
-                                message: 'Role added successfully')
-                          })
+                      (value) => {PositiveDialog.show(context, title: 'Complete', message: 'Role added successfully')})
             });
   }
 
@@ -381,19 +335,12 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
     AmitySocialClient.newCommunityRepository()
         .moderation(member.communityId!)
         .removeRole('community-moderator', [member.userId!])
-        .onError((error, stackTrace) => {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString())
-            })
+        .onError((error, stackTrace) => {ErrorDialog.show(context, title: 'Error', message: error.toString())})
         .then((value) => {
               AmitySocialClient.newCommunityRepository()
                   .moderation(member.communityId!)
-                  .removeRole('channel-moderator', [member.userId!]).then(
-                      (value) => {
-                            PositiveDialog.show(context,
-                                title: 'Complete',
-                                message: 'Role removed successfully')
-                          })
+                  .removeRole('channel-moderator', [member.userId!]).then((value) =>
+                      {PositiveDialog.show(context, title: 'Complete', message: 'Role removed successfully')})
             });
   }
 }
