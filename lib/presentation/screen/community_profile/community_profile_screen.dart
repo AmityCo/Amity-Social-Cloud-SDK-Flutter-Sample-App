@@ -222,7 +222,7 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                   .addMembers(value.split(','))
                   .then((value) {
                 if (memberList.currentState != null) {
-                  memberList.currentState!.addMembers(value);
+                  memberList.currentState!.refreshList();
                 }
                 //
               }).onError((error, stackTrace) {
