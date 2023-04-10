@@ -10,36 +10,27 @@ class CommunityMemberWidget extends StatelessWidget {
   final VoidCallback onMemberCallback;
   final List<Widget>? options;
   const CommunityMemberWidget(
-      {Key? key,
-      required this.amityCommunityMember,
-      required this.onMemberCallback,
-      this.options})
+      {Key? key, required this.amityCommunityMember, required this.onMemberCallback, this.options})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), boxShadow: const [
+        BoxShadow(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.white,
-              blurRadius: 10,
-            ),
-          ]),
+          blurRadius: 10,
+        ),
+      ]),
       margin: const EdgeInsets.all(2),
       padding: const EdgeInsets.all(2),
-      child: _CommunityMemberInfoRowWidget(
-          communityMember: amityCommunityMember, options: options),
+      child: _CommunityMemberInfoRowWidget(communityMember: amityCommunityMember, options: options),
     );
   }
 }
 
 class _CommunityMemberInfoRowWidget extends StatelessWidget {
-  const _CommunityMemberInfoRowWidget(
-      {Key? key, required this.communityMember, this.options})
-      : super(key: key);
+  const _CommunityMemberInfoRowWidget({Key? key, required this.communityMember, this.options}) : super(key: key);
   final AmityCommunityMember communityMember;
   final List<Widget>? options;
 
@@ -65,9 +56,7 @@ class _CommunityMemberInfoRowWidget extends StatelessWidget {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.withOpacity(.3)),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: value.user?.avatarUrl != null
                       ? Image.network(
@@ -79,8 +68,7 @@ class _CommunityMemberInfoRowWidget extends StatelessWidget {
                 const SizedBox(width: 18),
                 InkWell(
                   onTap: () {
-                    GoRouter.of(context).goNamed(AppRoute.profile,
-                        params: {'userId': value.userId ?? ''});
+                    GoRouter.of(context).pushNamed(AppRoute.profile, params: {'userId': value.userId ?? ''});
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
