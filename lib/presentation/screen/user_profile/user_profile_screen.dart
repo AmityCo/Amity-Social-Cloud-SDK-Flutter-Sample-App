@@ -121,6 +121,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                 context, 'Error', 'User Unblocked Error ${error.toString()}');
                           });
                         }
+                        if (index == 4) {
+                          GoRouter.of(context).pushNamed(AppRoute.userBlock);
+                        }
                       },
                     ),
                   ],

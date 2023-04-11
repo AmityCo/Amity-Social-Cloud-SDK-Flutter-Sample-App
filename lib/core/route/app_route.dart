@@ -122,4 +122,7 @@ class AppRoute {
 
   static const communityRTE = 'communityRTE';
   static const communityRTERoute = '/communityRTE';
+
+  static const userBlock = 'userBlock';
+  static const userBlockRoute = '/userBlock';
 }
