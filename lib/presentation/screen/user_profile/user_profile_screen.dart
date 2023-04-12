@@ -108,6 +108,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                         if (index == 2) {
                           amityUser.block().then((value) {
                             CommonSnackbar.showPositiveSnackbar(context, 'User-Block', 'User Blocked');
+                            setState(() {});
                           }).onError((error, stackTrace) {
                             CommonSnackbar.showNagativeSnackbar(
                                 context, 'Error', 'User Blocked Error ${error.toString()}');
@@ -116,6 +117,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                         if (index == 3) {
                           amityUser.unblock().then((value) {
                             CommonSnackbar.showPositiveSnackbar(context, 'User-Unblock', 'User Blocked');
+                            setState(() {});
                           }).onError((error, stackTrace) {
                             CommonSnackbar.showNagativeSnackbar(
                                 context, 'Error', 'User Unblocked Error ${error.toString()}');
