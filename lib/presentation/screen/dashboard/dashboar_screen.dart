@@ -33,8 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.profile,
-                        params: {'userId': AmityCoreClient.getUserId()});
+                    GoRouter.of(context).goNamed(AppRoute.profile, params: {'userId': AmityCoreClient.getUserId()});
                   },
                   child: const Text('User Profile'),
                 ),
@@ -48,9 +47,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.userFeed, params: {
-                      'userId': AmityCoreClient.getCurrentUser().userId!
-                    });
+                    GoRouter.of(context)
+                        .goNamed(AppRoute.userFeed, params: {'userId': AmityCoreClient.getCurrentUser().userId!});
                   },
                   child: const Text('My Feed'),
                 ),
@@ -61,8 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       context,
                       hintText: 'Enter User Id',
                       onPress: (value) {
-                        GoRouter.of(context).goNamed(AppRoute.userFeed,
-                            params: {'userId': value});
+                        GoRouter.of(context).goNamed(AppRoute.userFeed, params: {'userId': value});
                       },
                     );
                   },
@@ -85,8 +82,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       context,
                       hintText: 'Enter Comment Id',
                       onPress: (value) {
-                        GoRouter.of(context).goNamed(AppRoute.postDetail,
-                            params: {'postId': value});
+                        GoRouter.of(context).goNamed(AppRoute.postDetail, params: {'postId': value});
                       },
                     );
                   },
@@ -104,14 +100,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   onPressed: () async {
                     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-                    NotificationSettings settings =
-                        await messaging.requestPermission();
+                    NotificationSettings settings = await messaging.requestPermission();
 
-                    if (settings.authorizationStatus ==
-                        AuthorizationStatus.authorized) {
+                    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
                       print('User granted permission');
-                    } else if (settings.authorizationStatus ==
-                        AuthorizationStatus.provisional) {
+                    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
                       print('User granted provisional permission');
                     } else {
                       print('User declined or has not accepted permission');
@@ -119,13 +112,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     }
 
                     final token = await messaging.getToken();
-                    AmityCoreClient.registerDeviceNotification(token!)
-                        .then((value) {
-                      PositiveDialog.show(context,
-                          title: 'Success', message: token);
+                    AmityCoreClient.registerDeviceNotification(token!).then((value) {
+                      PositiveDialog.show(context, title: 'Success', message: token);
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   },
                   child: const Text('Register notification'),
@@ -133,14 +123,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    AmityCoreClient.unregisterDeviceNotification()
-                        .then((value) {
-                      PositiveDialog.show(context,
-                          title: 'Success',
-                          message: 'Device Unregister Successfully');
+                    AmityCoreClient.unregisterDeviceNotification().then((value) {
+                      PositiveDialog.show(context, title: 'Success', message: 'Device Unregister Successfully');
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   },
                   child: const Text('Unregister notification'),
@@ -176,16 +162,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context)
-                        .goNamed(AppRoute.communityTrendingList);
+                    GoRouter.of(context).goNamed(AppRoute.communityTrendingList);
                   },
                   child: const Text('Trending Communities'),
                 ),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context)
-                        .goNamed(AppRoute.communityRecommendedList);
+                    GoRouter.of(context).goNamed(AppRoute.communityRecommendedList);
                   },
                   child: const Text('Recommended Communities'),
                 ),
@@ -199,10 +183,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    AmityChatClient.newMessageRepository()
-                        .getMessages('prod23')
-                        .stackFromEnd(true)
-                        .getPagingData();
+                    AmityChatClient.newMessageRepository().getMessages('prod23').stackFromEnd(true).getPagingData();
                     // GoRouter.of(context).goNamed(AppRoute.tokenExchange);
                   },
                   child: const Text('Messsage'),
@@ -210,11 +191,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    EditTextDialog.show(context,
-                        hintText: 'Enter Channel Name',
-                        buttonText: 'Join', onPress: (value) {
-                      GoRouter.of(context)
-                          .goNamed(AppRoute.chat, params: {'channelId': value});
+                    EditTextDialog.show(context, hintText: 'Enter Channel Name', buttonText: 'Join', onPress: (value) {
+                      GoRouter.of(context).goNamed(AppRoute.chat, params: {'channelId': value});
                     });
                   },
                   child: const Text('Chat Screen'),
@@ -226,8 +204,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         hintText: 'Enter Channel Name',
                         // defString: 'live200',
                         buttonText: 'Join', onPress: (value) {
-                      GoRouter.of(context).pushNamed(AppRoute.channelProfile,
-                          params: {'channelId': value});
+                      GoRouter.of(context).pushNamed(AppRoute.channelProfile, params: {'channelId': value});
                       // AmityChatClient.newChannelRepository().getChannel(value);
                     });
                   },
@@ -250,7 +227,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.globalUserSearch);
+                    GoRouter.of(context).pushNamed(AppRoute.globalUserSearch);
                   },
                   child: const Text('Gloabl User Search'),
                 ),
@@ -263,8 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: Text(
                     'Logout',
-                    style: _themeData.textTheme.subtitle1!
-                        .copyWith(color: Colors.red),
+                    style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.red),
                   ),
                 ),
               ],
