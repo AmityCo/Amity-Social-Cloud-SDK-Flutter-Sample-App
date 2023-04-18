@@ -349,12 +349,37 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                         onPressed: () {
                                                           if (snapshot.hasData) {
                                                             if (snapshot.data!.status == AmityFollowStatus.BLOCKED) {
-                                                              amityUser.relationship().unblock();
+                                                              amityUser.relationship().unblock().then((value) {
+                                                                setState(() {});
+                                                                CommonSnackbar.showPositiveSnackbar(
+                                                                    context, 'User-Unblock', 'User Unblocked');
+                                                              }).onError((error, stackTrace) {
+                                                                CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                                                                    'User Blocked Error - ${error.toString()}');
+                                                              });
                                                             } else if (snapshot.data!.status ==
                                                                 AmityFollowStatus.NONE) {
-                                                              amityUser.relationship().follow();
+                                                              amityUser
+                                                                  .relationship()
+                                                                  .follow()
+                                                                  .then((value) => CommonSnackbar.showPositiveSnackbar(
+                                                                      context, 'User-Follow', 'User Follow'))
+                                                                  .onError((error, stackTrace) =>
+                                                                      CommonSnackbar.showNagativeSnackbar(
+                                                                          context,
+                                                                          'Error',
+                                                                          'User Follow Error - ${error.toString()}'));
                                                             } else {
-                                                              amityUser.relationship().unfollow();
+                                                              amityUser
+                                                                  .relationship()
+                                                                  .unfollow()
+                                                                  .then((value) => CommonSnackbar.showPositiveSnackbar(
+                                                                      context, 'User-Unfollow', 'User Unfollow'))
+                                                                  .onError((error, stackTrace) =>
+                                                                      CommonSnackbar.showNagativeSnackbar(
+                                                                          context,
+                                                                          'Error',
+                                                                          'User Unfollow Error - ${error.toString()}'));
                                                             }
                                                           }
                                                         },
