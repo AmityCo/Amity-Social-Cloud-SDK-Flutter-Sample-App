@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/raw_data_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_post/user_post_screen.dart';
 import 'package:go_router/go_router.dart';
@@ -286,120 +287,130 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                             return Container();
                                           }
                                           return StreamBuilder<AmityUserFollowInfo>(
-                                              initialData: snapshot.data,
-                                              stream: snapshot.data!.listen.stream,
-                                              builder: (context, snapshot) {
-                                                return Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            initialData: snapshot.data,
+                                            stream: snapshot.data!.listen.stream,
+                                            builder: (context, snapshot) {
+                                              return Column(
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          GoRouter.of(context).goNamed(AppRoute.followersUser,
+                                                              params: {'userId': widget.userId});
+                                                        },
+                                                        child: RichText(
+                                                          textAlign: TextAlign.center,
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: 'Followers\n',
+                                                                style: _themeData.textTheme.subtitle1,
+                                                              ),
+                                                              TextSpan(
+                                                                text: snapshot.hasData
+                                                                    ? '${snapshot.data!.followerCount}'
+                                                                    : '0',
+                                                                style: _themeData.textTheme.subtitle1,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          GoRouter.of(context).goNamed(AppRoute.followingsUser,
+                                                              params: {'userId': widget.userId});
+                                                        },
+                                                        child: RichText(
+                                                          textAlign: TextAlign.center,
+                                                          text: TextSpan(
+                                                            children: [
+                                                              TextSpan(
+                                                                text: 'Following\n',
+                                                                style: _themeData.textTheme.subtitle1,
+                                                              ),
+                                                              TextSpan(
+                                                                text: snapshot.hasData
+                                                                    ? '${snapshot.data!.followingCount}'
+                                                                    : '0',
+                                                                style: _themeData.textTheme.subtitle1,
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    width: 160,
+                                                    margin: const EdgeInsets.only(top: 12),
+                                                    child: Column(
                                                       children: [
-                                                        InkWell(
-                                                          onTap: () {
-                                                            GoRouter.of(context).goNamed(AppRoute.followersUser,
-                                                                params: {'userId': widget.userId});
+                                                        ElevatedButton(
+                                                          onPressed: () {
+                                                            if (snapshot.hasData) {
+                                                              if (snapshot.data!.status == AmityFollowStatus.BLOCKED) {
+                                                                amityUser.relationship().unblock().then((value) {
+                                                                  setState(() {});
+                                                                  CommonSnackbar.showPositiveSnackbar(
+                                                                      context, 'User-Unblock', 'User Unblocked');
+                                                                }).onError((error, stackTrace) {
+                                                                  CommonSnackbar.showNagativeSnackbar(context, 'Error',
+                                                                      'User Blocked Error - ${error.toString()}');
+                                                                });
+                                                              } else if (snapshot.data!.status ==
+                                                                  AmityFollowStatus.NONE) {
+                                                                amityUser
+                                                                    .relationship()
+                                                                    .follow()
+                                                                    .then((value) =>
+                                                                        CommonSnackbar.showPositiveSnackbar(
+                                                                            context, 'User-Follow', 'User Follow'))
+                                                                    .onError((error, stackTrace) =>
+                                                                        CommonSnackbar.showNagativeSnackbar(
+                                                                            context,
+                                                                            'Error',
+                                                                            'User Follow Error - ${error.toString()}'));
+                                                              } else {
+                                                                amityUser
+                                                                    .relationship()
+                                                                    .unfollow()
+                                                                    .then((value) =>
+                                                                        CommonSnackbar.showPositiveSnackbar(
+                                                                            context, 'User-Unfollow', 'User Unfollow'))
+                                                                    .onError((error, stackTrace) =>
+                                                                        CommonSnackbar.showNagativeSnackbar(
+                                                                            context,
+                                                                            'Error',
+                                                                            'User Unfollow Error - ${error.toString()}'));
+                                                              }
+                                                            }
                                                           },
-                                                          child: RichText(
-                                                            textAlign: TextAlign.center,
-                                                            text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text: 'Followers\n',
-                                                                  style: _themeData.textTheme.subtitle1,
-                                                                ),
-                                                                TextSpan(
-                                                                  text: snapshot.hasData
-                                                                      ? '${snapshot.data!.followerCount}'
-                                                                      : '0',
-                                                                  style: _themeData.textTheme.subtitle1,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          child: Text(snapshot.hasData
+                                                              ? snapshot.data!.status == AmityFollowStatus.BLOCKED
+                                                                  ? 'Unblocked'
+                                                                  : snapshot.data!.status == AmityFollowStatus.ACCEPTED
+                                                                      ? 'Unfollow'
+                                                                      : snapshot.data!.status ==
+                                                                              AmityFollowStatus.PENDING
+                                                                          ? 'Cancel Request'
+                                                                          : snapshot.data!.status ==
+                                                                                  AmityFollowStatus.NONE
+                                                                              ? 'Follow'
+                                                                              : 'Unknow Status'
+                                                              : 'No Data'),
                                                         ),
-                                                        InkWell(
-                                                          onTap: () {
-                                                            GoRouter.of(context).goNamed(AppRoute.followingsUser,
-                                                                params: {'userId': widget.userId});
-                                                          },
-                                                          child: RichText(
-                                                            textAlign: TextAlign.center,
-                                                            text: TextSpan(
-                                                              children: [
-                                                                TextSpan(
-                                                                  text: 'Following\n',
-                                                                  style: _themeData.textTheme.subtitle1,
-                                                                ),
-                                                                TextSpan(
-                                                                  text: snapshot.hasData
-                                                                      ? '${snapshot.data!.followingCount}'
-                                                                      : '0',
-                                                                  style: _themeData.textTheme.subtitle1,
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
+                                                        if (snapshot.hasData)
+                                                          RawDataWidget(jsonRawData: snapshot.data!.toJson()),
                                                       ],
                                                     ),
-                                                    Container(
-                                                      width: 160,
-                                                      margin: const EdgeInsets.only(top: 12),
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          if (snapshot.hasData) {
-                                                            if (snapshot.data!.status == AmityFollowStatus.BLOCKED) {
-                                                              amityUser.relationship().unblock().then((value) {
-                                                                setState(() {});
-                                                                CommonSnackbar.showPositiveSnackbar(
-                                                                    context, 'User-Unblock', 'User Unblocked');
-                                                              }).onError((error, stackTrace) {
-                                                                CommonSnackbar.showNagativeSnackbar(context, 'Error',
-                                                                    'User Blocked Error - ${error.toString()}');
-                                                              });
-                                                            } else if (snapshot.data!.status ==
-                                                                AmityFollowStatus.NONE) {
-                                                              amityUser
-                                                                  .relationship()
-                                                                  .follow()
-                                                                  .then((value) => CommonSnackbar.showPositiveSnackbar(
-                                                                      context, 'User-Follow', 'User Follow'))
-                                                                  .onError((error, stackTrace) =>
-                                                                      CommonSnackbar.showNagativeSnackbar(
-                                                                          context,
-                                                                          'Error',
-                                                                          'User Follow Error - ${error.toString()}'));
-                                                            } else {
-                                                              amityUser
-                                                                  .relationship()
-                                                                  .unfollow()
-                                                                  .then((value) => CommonSnackbar.showPositiveSnackbar(
-                                                                      context, 'User-Unfollow', 'User Unfollow'))
-                                                                  .onError((error, stackTrace) =>
-                                                                      CommonSnackbar.showNagativeSnackbar(
-                                                                          context,
-                                                                          'Error',
-                                                                          'User Unfollow Error - ${error.toString()}'));
-                                                            }
-                                                          }
-                                                        },
-                                                        child: Text(snapshot.hasData
-                                                            ? snapshot.data!.status == AmityFollowStatus.BLOCKED
-                                                                ? 'Unblocked'
-                                                                : snapshot.data!.status == AmityFollowStatus.ACCEPTED
-                                                                    ? 'Unfollow'
-                                                                    : snapshot.data!.status == AmityFollowStatus.PENDING
-                                                                        ? 'Cancel Request'
-                                                                        : snapshot.data!.status ==
-                                                                                AmityFollowStatus.NONE
-                                                                            ? 'Follow'
-                                                                            : 'Unknow Status'
-                                                            : 'No Data'),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              });
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                         },
                                       )
                               ],
@@ -425,6 +436,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                       const SizedBox(height: 8),
                       Text('Meta Data - ${amityUser.metadata}'),
                       const SizedBox(height: 8),
+                      // RawDataWidget(jsonRawData: amityUser.toJson()),
                       DefaultTabController(
                         length: 2,
                         child: TabBar(

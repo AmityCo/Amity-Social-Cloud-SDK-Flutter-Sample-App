@@ -26,16 +26,13 @@ class _RawDataWidgetState extends State<RawDataWidget> {
               child: Text(
                 'Tap to ${hide ? 'see' : 'hide'} Raw Data',
                 style: const TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Colors.blue,
-                    fontWeight: FontWeight.bold),
+                    decoration: TextDecoration.underline, color: Colors.blue, fontWeight: FontWeight.bold),
               )),
           const SizedBox(height: 12),
           AnimatedContainer(
             height: hide ? 0 : null,
             duration: const Duration(milliseconds: 500),
-            child: Text(const JsonEncoder.withIndent('  ')
-                .convert(json.decode(widget.jsonRawData))),
+            child: Text(const JsonEncoder.withIndent('  ').convert(json.decode(widget.jsonRawData))),
           ),
         ],
       ),
