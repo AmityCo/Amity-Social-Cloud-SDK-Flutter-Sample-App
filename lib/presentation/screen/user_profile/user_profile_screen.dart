@@ -107,7 +107,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                           }
                         }
                         if (index == 2) {
-                          amityUser.block().then((value) {
+                          amityUser.blockUser().then((value) {
                             CommonSnackbar.showPositiveSnackbar(context, 'User-Block', 'User Blocked');
                             setState(() {});
                           }).onError((error, stackTrace) {
@@ -116,7 +116,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                           });
                         }
                         if (index == 3) {
-                          amityUser.unblock().then((value) {
+                          amityUser.unblockUser().then((value) {
                             CommonSnackbar.showPositiveSnackbar(context, 'User-Unblock', 'User Blocked');
                             setState(() {});
                           }).onError((error, stackTrace) {
@@ -352,7 +352,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                           onPressed: () {
                                                             if (snapshot.hasData) {
                                                               if (snapshot.data!.status == AmityFollowStatus.BLOCKED) {
-                                                                amityUser.relationship().unblock().then((value) {
+                                                                amityUser.unblockUser().then((value) {
                                                                   setState(() {});
                                                                   CommonSnackbar.showPositiveSnackbar(
                                                                       context, 'User-Unblock', 'User Unblocked');

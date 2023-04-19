@@ -213,7 +213,7 @@ class UserBlockedListScreenState extends State<UserBlockedListScreen> {
                                 ),
                                 onSelected: (index) {
                                   if (index == 1) {
-                                    amityUser.unblock().then((value) {
+                                    amityUser.unblockUser().then((value) {
                                       _controller.reset();
                                       _controller.fetchNextPage();
                                       CommonSnackbar.showPositiveSnackbar(context, 'User-Unblock', 'User Blocked');
