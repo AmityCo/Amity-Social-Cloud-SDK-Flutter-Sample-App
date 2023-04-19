@@ -7,8 +7,8 @@ class AmityUserBlock {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter Block user example
     */
-  void blockUser(AmityUser user) {
-    user.relationship().block().then((value) {
+  void blockUser(String userId) {
+    AmityCoreClient.newUserRepository().relationship().blockUser(userId).then((value) {
       //success
     }).onError((error, stackTrace) {
       //handle error

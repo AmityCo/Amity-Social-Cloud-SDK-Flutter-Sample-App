@@ -7,8 +7,8 @@ class AmityUserUnblock {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter unblock user example
     */
-  void unBlockUser(AmityUser user) {
-    user.relationship().unblock().then((value) {
+  void unBlockUser(String userId) {
+    AmityCoreClient.newUserRepository().relationship().unblockUser(userId).then((value) {
       //success
     }).onError((error, stackTrace) {
       //handle error
