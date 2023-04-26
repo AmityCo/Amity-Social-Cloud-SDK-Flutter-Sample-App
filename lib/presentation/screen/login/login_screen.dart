@@ -19,16 +19,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     //DEV Server
-    _userIdTextController.text = 'victimAndroid';
-    _displayNameTextController.text = 'Victim Android';
-    _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.DEV.value;
-
-    //STAGING Server
     // _userIdTextController.text = 'victimAndroid';
     // _displayNameTextController.text = 'Victim Android';
-    // _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.STAGING.value;
+    // _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
+    // _serverUrlTextController.text = 'https://api.dev.amity.co/';
+
+    //STAGING Server
+    _userIdTextController.text = 'victimAndroid';
+    _displayNameTextController.text = 'Victim Android';
+    _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    _serverUrlTextController.text = 'https://api.staging.amity.co/';
 
     //SG Server
     // 1
@@ -104,9 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     await AmityCoreClient.setup(
                       option: AmityCoreClientOption(
                           apiKey: apikey,
-                          httpEndpoint:
-                              AmityRegionalHttpEndpoint.values.where((element) => element.value == serverUrl).first,
-                          mqttEndpoint: AmityRegionalMqttEndpoint.STAGING,
+                          httpEndpoint: AmityRegionalHttpEndpoint.custom(serverUrl),
+                          mqttEndpoint: AmityRegionalMqttEndpoint.custom(serverUrl),
                           showLogs: true),
                       sycInitialization: true,
                     );

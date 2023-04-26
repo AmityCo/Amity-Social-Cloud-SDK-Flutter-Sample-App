@@ -14,11 +14,8 @@ void main() {
 
       final loginRobot = LoginRobot(widgetTester);
 
-      await loginRobot.fillLoginForm(
-          'victimAndroid',
-          'Victim Android',
-          'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c',
-          AmityRegionalHttpEndpoint.STAGING.value);
+      await loginRobot.fillLoginForm('victimAndroid', 'Victim Android',
+          'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c', AmityRegionalHttpEndpoint.SG.endpoint);
 
       await widgetTester.pumpAndSettle(const Duration(seconds: 2));
 
