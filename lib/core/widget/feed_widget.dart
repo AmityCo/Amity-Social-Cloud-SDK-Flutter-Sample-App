@@ -197,7 +197,7 @@ class FeedWidget extends StatelessWidget {
                     if (!disableAddComment)
                       AddCommentWidget(
                         AmityCoreClient.getCurrentUser(),
-                        (text, user) {
+                        (text, user, attachments ) {
                           final mentionUsers = <AmityUser>[];
 
                           mentionUsers.clear();
