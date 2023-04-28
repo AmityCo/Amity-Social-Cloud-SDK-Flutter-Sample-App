@@ -67,8 +67,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           return !(snapshot.data!.isDeleted ?? false)
               ? _getBody(context, snapshot.data!)
               : Container(
-                  margin:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
                   child: Row(
                     children: [
                       const Icon(Icons.info_rounded),
@@ -103,8 +102,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           Container(
             width: 36,
             height: 36,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: user.avatarUrl != null
                 ? Image.network(
@@ -131,16 +129,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                       WidgetSpan(
                         child: DynamicTextHighlighting(
                           text: text,
-                          highlights: value.mentionees
-                                  ?.map<String>(
-                                      (e) => '@${e.user?.displayName ?? ''}')
-                                  .toList() ??
-                              [],
+                          highlights:
+                              value.mentionees?.map<String>((e) => '@${e.user?.displayName ?? ''}').toList() ?? [],
                           onHighlightClick: (String displayName) {
-                            final amityUser = value.mentionees!
-                                .firstWhereOrNull((element) =>
-                                    element.user!.displayName ==
-                                    displayName.replaceAll('@', ''));
+                            final amityUser = value.mentionees!.firstWhereOrNull(
+                                (element) => element.user!.displayName == displayName.replaceAll('@', ''));
                             if (amityUser != null) {
                               GoRouter.of(context).pushNamed(
                                 AppRoute.profile,
@@ -172,8 +165,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                         }
                       },
                       onLongPress: () {
-                        GoRouter.of(context).pushNamed(AppRoute.commentReaction,
-                            params: {'commentId': value.commentId!});
+                        GoRouter.of(context)
+                            .pushNamed(AppRoute.commentReaction, params: {'commentId': value.commentId!});
                       },
                       child: Text(
                         '${value.reactionCount} Likes',
@@ -198,29 +191,23 @@ class _CommentWidgetState extends State<CommentWidget> {
                               .report()
                               .unflag()
                               .then((value) =>
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'UnFlag the Comment'))
+                                  CommonSnackbar.showPositiveSnackbar(context, 'Success', 'UnFlag the Comment'))
                               .onError((error, stackTrace) =>
-                                  CommonSnackbar.showNagativeSnackbar(
-                                      context, 'Error', error.toString()));
+                                  CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()));
                         } else {
                           value
                               .report()
                               .flag()
                               .then((value) =>
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Flag the Comment'))
+                                  CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Flag the Comment'))
                               .onError((error, stackTrace) =>
-                                  CommonSnackbar.showNagativeSnackbar(
-                                      context, 'Error', error.toString()));
+                                  CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()));
                         }
                       },
                       child: Text(
                         '${value.flagCount} Flag',
-                        style: themeData.textTheme.caption!.copyWith(
-                            fontWeight: value.isFlaggedByMe
-                                ? FontWeight.bold
-                                : FontWeight.normal),
+                        style: themeData.textTheme.caption!
+                            .copyWith(fontWeight: value.isFlaggedByMe ? FontWeight.bold : FontWeight.normal),
                       ),
                     )
                   ],
@@ -230,6 +217,33 @@ class _CommentWidgetState extends State<CommentWidget> {
                   'Comment ID - ${value.commentId}',
                   style: themeData.textTheme.caption,
                 ),
+                if ((value.attachments ??= []).isNotEmpty)
+                  SizedBox(
+                    height: 56,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: List.generate(
+                          value.attachments!.length,
+                          (index) => Row(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                    margin: const EdgeInsets.only(right: 6),
+                                    child: SizedBox(
+                                      width: 56,
+                                      height: 56,
+                                      child: Image.network(
+                                        (value.attachments![index] as CommentImageAttachment).getImage()!.fileUrl,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                    ),
+                  ),
+                // Text('Attachments - ${(value.attachments ??= []).isNotEmpty}'),
                 const SizedBox(height: 6),
                 if (value.childrenNumber! > 0)
                   Container(
@@ -263,8 +277,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                   margin: const EdgeInsets.only(top: 6),
                                   child: Text(
                                     '~~~~~~ Hide reply',
-                                    style:
-                                        themeData.textTheme.caption!.copyWith(),
+                                    style: themeData.textTheme.caption!.copyWith(),
                                   ),
                                 ),
                               ),
@@ -332,25 +345,20 @@ class _CommentWidgetState extends State<CommentWidget> {
                     value
                         .report()
                         .unflag()
-                        .then((value) => CommonSnackbar.showPositiveSnackbar(
-                            context, 'Success', 'UnFlag the Comment'))
+                        .then((value) => CommonSnackbar.showPositiveSnackbar(context, 'Success', 'UnFlag the Comment'))
                         .onError((error, stackTrace) =>
-                            CommonSnackbar.showNagativeSnackbar(
-                                context, 'Error', error.toString()));
+                            CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()));
                   } else {
                     value
                         .report()
                         .flag()
-                        .then((value) => CommonSnackbar.showPositiveSnackbar(
-                            context, 'Success', 'Flag the Comment'))
+                        .then((value) => CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Flag the Comment'))
                         .onError((error, stackTrace) =>
-                            CommonSnackbar.showNagativeSnackbar(
-                                context, 'Error', error.toString()));
+                            CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()));
                   }
                 }
                 if (index1 == 5) {
-                  GoRouter.of(context)
-                      .pushNamed(AppRoute.commentRTE, queryParams: {
+                  GoRouter.of(context).pushNamed(AppRoute.commentRTE, queryParams: {
                     'commentId': value.commentId,
                     'postId': widget.postId,
                     'communityId': widget.communityId,

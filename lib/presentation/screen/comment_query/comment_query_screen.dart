@@ -1,15 +1,16 @@
+import 'dart:async';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/comment_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 
 class CommentQueryScreen extends StatefulWidget {
-  const CommentQueryScreen(this._postId,
-      {Key? key, this.communityId, this.isPublic = false})
-      : super(key: key);
+  const CommentQueryScreen(this._postId, {Key? key, this.communityId, this.isPublic = false}) : super(key: key);
   final String? communityId;
   final bool isPublic;
   final String _postId;
@@ -49,8 +50,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
           } else {
             //Error on pagination controller
             setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
+            print(_controller.stacktrace);
           }
         },
       );
@@ -65,9 +66,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -76,7 +75,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('Location - ' + GoRouter.of(context).location);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Comment Feed'),
@@ -145,9 +143,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Comment'),
+                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Comment'),
                   ),
           ),
           if (_controller.isFetching && amityComments.isNotEmpty)
@@ -181,56 +177,69 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
             margin: const EdgeInsets.all(12),
             child: AddCommentWidget(
               AmityCoreClient.getCurrentUser(),
-              (text, user) async {
-                mentionUsers.clear();
-                mentionUsers.addAll(user);
+              showMediaButton: true,
+              (text, user, attachments) async {
+                final completer = Completer();
+                ProgressDialog.showCompleter(context, completer);
 
-                //Clean up mention user list, as user might have removed some tagged user
-                mentionUsers.removeWhere(
-                    (element) => !text.contains(element.displayName!));
+                try {
+                  mentionUsers.clear();
+                  mentionUsers.addAll(user);
 
-                final amityMentioneesMetadata = mentionUsers
-                    .map<AmityUserMentionMetadata>((e) =>
-                        AmityUserMentionMetadata(
-                            userId: e.userId!,
-                            index: text.indexOf('@${e.displayName!}'),
-                            length: e.displayName!.length))
-                    .toList();
+                  //Clean up mention user list, as user might have removed some tagged user
+                  mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
 
-                Map<String, dynamic> metadata =
-                    AmityMentionMetadataCreator(amityMentioneesMetadata)
-                        .create();
+                  final amityMentioneesMetadata = mentionUsers
+                      .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+                          userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
+                      .toList();
 
-                if (_replyToComment != null) {
-                  ///Add comment to [_replyToComment] comment
-                  final _comment = await _replyToComment!
-                      .comment()
+                  Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+
+                  if (_replyToComment != null) {
+                    ///Add comment to [_replyToComment] comment
+                    final _comment = await _replyToComment!
+                        .comment()
+                        .create()
+                        .text(text)
+                        .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
+                        .metadata(metadata)
+                        .send();
+
+                    setState(() {
+                      _replyToComment = null;
+                    });
+
+                    return;
+                  }
+
+                  List<CommentImageAttachment> amityImages = [];
+                  if (attachments.isNotEmpty) {
+                    for (var element in attachments) {
+                      final image = await waitForUploadComplete(
+                          AmityCoreClient.newFileRepository().image(element).upload().stream);
+                      amityImages.add(CommentImageAttachment(fileId: image.fileId));
+                    }
+                  }
+
+                  final _comment = await AmitySocialClient.newCommentRepository()
+                      .createComment()
+                      .post(widget._postId)
                       .create()
+                      .attachments(amityImages)
                       .text(text)
-                      .mentionUsers(
-                          mentionUsers.map<String>((e) => e.userId!).toList())
+                      .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
                       .metadata(metadata)
                       .send();
 
-                  setState(() {
-                    _replyToComment = null;
-                  });
+                  completer.complete();
 
-                  return;
+                  /// Remove this line Post Comment Create RTE will refresh the list
+                  _controller.addAtIndex(0, _comment);
+                } catch (error) {
+                  CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
+                  completer.completeError(error);
                 }
-
-                final _comment = await AmitySocialClient.newCommentRepository()
-                    .createComment()
-                    .post(widget._postId)
-                    .create()
-                    .text(text)
-                    .mentionUsers(
-                        mentionUsers.map<String>((e) => e.userId!).toList())
-                    .metadata(metadata)
-                    .send();
-
-                /// Remove this line Post Comment Create RTE will refresh the list
-                // _controller.addAtIndex(0, _comment);
                 return;
               },
               communityId: widget.communityId,
@@ -240,5 +249,11 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
         ],
       ),
     );
+  }
+
+  Future<AmityImage> waitForUploadComplete(Stream<AmityUploadResult> source) {
+    return source
+        .firstWhere((AmityUploadResult item) => item is AmityUploadComplete)
+        .then((value) => (value as AmityUploadComplete).file);
   }
 }
