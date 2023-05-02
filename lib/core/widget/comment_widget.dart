@@ -287,7 +287,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                               ),
                             ],
                           ),
-                  )
+                  ),
+                Text(value.dataTypes.toString()),
               ],
             ),
           ),

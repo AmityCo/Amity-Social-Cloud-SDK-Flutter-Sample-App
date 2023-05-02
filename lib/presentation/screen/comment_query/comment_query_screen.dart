@@ -31,6 +31,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   final mentionUsers = <AmityUser>[];
 
+  AmityCommentDataTypeFilter? dataTypes;
+
   @override
   void initState() {
     _controller = PagingController(
@@ -38,6 +40,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
           .getComments()
           .post(widget._postId)
           .sortBy(_sortOption)
+          .dataTypes(dataTypes)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -90,6 +93,26 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   value: 2,
                   child: Text(AmityCommentSortOption.FIRST_CREATED.apiKey),
                 ),
+                const PopupMenuItem(
+                  value: 3,
+                  child: Text('Excat TEXT'),
+                ),
+                const PopupMenuItem(
+                  value: 4,
+                  child: Text('Excat IMAGE'),
+                ),
+                const PopupMenuItem(
+                  value: 5,
+                  child: Text('Any TEXT'),
+                ),
+                const PopupMenuItem(
+                  value: 6,
+                  child: Text('Any IMAGE'),
+                ),
+                const PopupMenuItem(
+                  value: 7,
+                  child: Text('Clear'),
+                ),
               ];
             },
             child: const Icon(
@@ -99,14 +122,34 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
             onSelected: (index1) {
               if (index1 == 1) {
                 _sortOption = AmityCommentSortOption.LAST_CREATED;
-                _controller.reset();
-                _controller.fetchNextPage();
               }
               if (index1 == 2) {
                 _sortOption = AmityCommentSortOption.FIRST_CREATED;
-                _controller.reset();
-                _controller.fetchNextPage();
               }
+
+              if (index1 == 3) {
+                dataTypes = AmityCommentDataTypeFilter.exact(dataTypes: [AmityDataType.TEXT]);
+              }
+
+              if (index1 == 4) {
+                dataTypes = AmityCommentDataTypeFilter.exact(dataTypes: [AmityDataType.IMAGE]);
+              }
+
+              if (index1 == 5) {
+                dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.TEXT]);
+              }
+
+              if (index1 == 6) {
+                dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.IMAGE]);
+              }
+
+              if (index1 == 7) {
+                dataTypes = null;
+              }
+
+              setState(() {});
+              _controller.reset();
+              _controller.fetchNextPage();
             },
           )
         ],
