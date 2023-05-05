@@ -223,27 +223,29 @@ class _CommentWidgetState extends State<CommentWidget> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: List.generate(
-                          value.attachments!.length,
-                          (index) => Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                                    margin: const EdgeInsets.only(right: 6),
-                                    child: SizedBox(
-                                      width: 56,
-                                      height: 56,
-                                      child: Image.network(
-                                        (value.attachments![index] as CommentImageAttachment).getImage()!.fileUrl,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )),
+                        value.attachments!.length,
+                        (index) => Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              margin: const EdgeInsets.only(right: 6),
+                              child: SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: Image.network(
+                                  (value.attachments![index] as CommentImageAttachment).getImage()!.fileUrl,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 // Text('Attachments - ${(value.attachments ??= []).isNotEmpty}'),
+                Text(value.dataTypes.toString()),
                 const SizedBox(height: 6),
                 if (value.childrenNumber! > 0)
                   Container(
@@ -288,7 +290,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                             ],
                           ),
                   ),
-                Text(value.dataTypes.toString()),
               ],
             ),
           ),
