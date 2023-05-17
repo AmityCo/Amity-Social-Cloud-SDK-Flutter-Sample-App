@@ -14,8 +14,7 @@ class AmityFollowOtherFollowingQuery {
     _followerController = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
           .relationship()
-          .user(userId = userId)
-          .getFollowings()
+          .getFollowings(userId)
           .getPagingData(token: token, limit: 20),
       pageSize: 20,
     )..addListener(

@@ -10,8 +10,7 @@ class AmityFollowDecline {
   void declineFollowRequest(String userId) {
     AmityCoreClient.newUserRepository()
         .relationship()
-        .me()
-        .decline(userId = userId)
+        .declineMyFollower(userId = userId)
         .then((value) => {
               //success
             })

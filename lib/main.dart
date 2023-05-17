@@ -55,12 +55,10 @@ class _MyAppState extends State<MyApp> {
 
     var keyboardVisibilityController = KeyboardVisibilityController();
     // Query
-    print(
-        'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
+    print('Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
 
     // Subscribe
-    keyboardSubscription =
-        keyboardVisibilityController.onChange.listen((bool visible) {
+    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
       if (!visible) {
         UserSuggesionOverlay.instance.hideOverLay();
       }
@@ -97,8 +95,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         backgroundColor: Colors.white,
-        snackBarTheme:
-            _themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
+        snackBarTheme: _themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
         tabBarTheme: const TabBarTheme(labelColor: Colors.black),
       ),
       themeMode: ThemeMode.light,

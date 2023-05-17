@@ -10,8 +10,7 @@ class AmityFollowAccept {
   void acceptFollowRequest(String userId) {
     AmityCoreClient.newUserRepository()
         .relationship()
-        .me()
-        .accept(userId = userId)
+        .acceptMyFollower(userId = userId)
         .then((value) => {
               //success
             })

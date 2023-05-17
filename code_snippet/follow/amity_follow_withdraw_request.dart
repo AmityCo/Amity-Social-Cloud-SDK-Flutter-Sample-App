@@ -10,14 +10,13 @@ class AmityFollowWithdrawRequest {
   void withdrawFollowRequest(String userId) {
     AmityCoreClient.newUserRepository()
         .relationship()
-        .me()
         .unfollow(userId = userId)
         .then((value) => {
-          //success
-        })
+              //success
+            })
         .onError((error, stackTrace) => {
-          //handle error
-        }); 
+              //handle error
+            });
   }
-    /* end_sample_code */
+  /* end_sample_code */
 }
