@@ -286,6 +286,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                               NestedCommentWidget(
                                 postId: widget.postId,
                                 commentId: value.commentId!,
+                                communityId: widget.communityId,
+                                isPublic: widget.isPublic,
                               ),
                             ],
                           ),

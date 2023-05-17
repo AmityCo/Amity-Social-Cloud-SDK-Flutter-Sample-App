@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/edit_comment_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class NestedCommentWidget extends StatefulWidget {
   const NestedCommentWidget(
-      {Key? key, required this.postId, required this.commentId})
+      {Key? key, required this.postId, required this.commentId, required this.communityId, this.isPublic = false})
       : super(key: key);
   final String postId;
   final String commentId;
+
+  final String? communityId;
+  final bool? isPublic;
 
   @override
   State<NestedCommentWidget> createState() => _NestedCommentWidgetState();
@@ -42,8 +45,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
           } else {
             //Error on pagination controller
             setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
           }
         },
       );
@@ -86,9 +88,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                             Container(
                               width: 30,
                               height: 30,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey.withOpacity(.3)),
+                              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                               child: _user.avatarUrl != null
                                   ? Image.network(
                                       _user.avatarUrl!,
@@ -107,51 +107,71 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                       children: [
                                         TextSpan(
                                           text: _user.displayName!,
-                                          style: _themeData.textTheme.bodyText1!
-                                              .copyWith(
+                                          style: _themeData.textTheme.bodyText1!.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const WidgetSpan(
-                                            child: SizedBox(width: 6)),
+                                        const WidgetSpan(child: SizedBox(width: 6)),
                                         TextSpan(
                                           text: text ?? '',
-                                          style: _themeData.textTheme.bodyText2!
-                                              .copyWith(),
+                                          style: _themeData.textTheme.bodyText2!.copyWith(),
                                         )
                                       ],
                                     ),
                                   ),
                                   const SizedBox(height: 6),
+                                  if ((value.attachments ??= []).isNotEmpty)
+                                    SizedBox(
+                                      height: 56,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        children: List.generate(
+                                          value.attachments!.length,
+                                          (index) => Row(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                                margin: const EdgeInsets.only(right: 6),
+                                                child: SizedBox(
+                                                  width: 56,
+                                                  height: 56,
+                                                  child: Image.network(
+                                                    (value.attachments![index] as CommentImageAttachment)
+                                                        .getImage()!
+                                                        .fileUrl,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  const SizedBox(height: 6),
                                   Row(
                                     children: [
                                       Text(
                                         value.createdAt!.beforeTime(),
-                                        style: _themeData.textTheme.caption!
-                                            .copyWith(),
+                                        style: _themeData.textTheme.caption!.copyWith(),
                                       ),
                                       const SizedBox(width: 12),
                                       InkWell(
                                         onTap: () {
                                           if (_isLikedByMe) {
-                                            value
-                                                .react()
-                                                .removeReaction('like');
+                                            value.react().removeReaction('like');
                                           } else {
                                             value.react().addReaction('like');
                                           }
                                         },
                                         onLongPress: () {
-                                          GoRouter.of(context).pushNamed(
-                                              AppRoute.commentReaction,
-                                              params: {
-                                                'commentId': value.commentId!
-                                              });
+                                          GoRouter.of(context).pushNamed(AppRoute.commentReaction,
+                                              params: {'commentId': value.commentId!});
                                         },
                                         child: Text(
                                           '${value.reactionCount} Likes',
-                                          style: _themeData.textTheme.caption!
-                                              .copyWith(),
+                                          style: _themeData.textTheme.caption!.copyWith(),
                                         ),
                                       ),
                                       const SizedBox(width: 12),
@@ -161,42 +181,24 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                             value
                                                 .report()
                                                 .unflag()
-                                                .then((value) => CommonSnackbar
-                                                    .showPositiveSnackbar(
-                                                        context,
-                                                        'Success',
-                                                        'UnFlag the Comment'))
-                                                .onError((error, stackTrace) =>
-                                                    CommonSnackbar
-                                                        .showNagativeSnackbar(
-                                                            context,
-                                                            'Error',
-                                                            error.toString()));
+                                                .then((value) => CommonSnackbar.showPositiveSnackbar(
+                                                    context, 'Success', 'UnFlag the Comment'))
+                                                .onError((error, stackTrace) => CommonSnackbar.showNagativeSnackbar(
+                                                    context, 'Error', error.toString()));
                                           } else {
                                             value
                                                 .report()
                                                 .flag()
-                                                .then((value) => CommonSnackbar
-                                                    .showPositiveSnackbar(
-                                                        context,
-                                                        'Success',
-                                                        'Flag the Comment'))
-                                                .onError((error, stackTrace) =>
-                                                    CommonSnackbar
-                                                        .showNagativeSnackbar(
-                                                            context,
-                                                            'Error',
-                                                            error.toString()));
+                                                .then((value) => CommonSnackbar.showPositiveSnackbar(
+                                                    context, 'Success', 'Flag the Comment'))
+                                                .onError((error, stackTrace) => CommonSnackbar.showNagativeSnackbar(
+                                                    context, 'Error', error.toString()));
                                           }
                                         },
                                         child: Text(
                                           '${value.flagCount} Flag',
-                                          style: _themeData.textTheme.caption!
-                                              .copyWith(
-                                                  fontWeight:
-                                                      value.isFlaggedByMe
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal),
+                                          style: _themeData.textTheme.caption!.copyWith(
+                                              fontWeight: value.isFlaggedByMe ? FontWeight.bold : FontWeight.normal),
                                         ),
                                       )
                                     ],
@@ -207,29 +209,24 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                             PopupMenuButton(
                               itemBuilder: (context) {
                                 return [
-                                  if (_user.userId ==
-                                      AmityCoreClient.getUserId())
+                                  if (_user.userId == AmityCoreClient.getUserId())
                                     const PopupMenuItem(
                                       child: Text("Edit"),
                                       value: 1,
                                     ),
-                                  if (_user.userId ==
-                                      AmityCoreClient.getUserId())
+                                  if (_user.userId == AmityCoreClient.getUserId())
                                     const PopupMenuItem(
                                       child: Text("Delete (Soft)"),
                                       value: 2,
                                     ),
-                                  if (_user.userId ==
-                                      AmityCoreClient.getUserId())
+                                  if (_user.userId == AmityCoreClient.getUserId())
                                     const PopupMenuItem(
                                       child: Text("Delete (Hard)"),
                                       value: 3,
                                       enabled: false,
                                     ),
                                   PopupMenuItem(
-                                    child: Text(value.isFlaggedByMe
-                                        ? 'Unflagged'
-                                        : 'Flag'),
+                                    child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                                     value: 4,
                                   ),
                                 ];
@@ -240,8 +237,16 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                               ),
                               onSelected: (index1) {
                                 if (index1 == 1) {
-                                  EditCommentDialog.show(context,
-                                      amityComment: value);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => UpdateCommentScreen(
+                                        amityComment: value,
+                                        communityId: widget.communityId,
+                                        isPublic: widget.isPublic ?? false,
+                                      ),
+                                    ),
+                                  );
+                                  // EditCommentDialog.show(context, amityComment: value);
                                 }
                                 if (index1 == 2) {
                                   value.delete();
@@ -251,30 +256,18 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                     value
                                         .report()
                                         .unflag()
-                                        .then((value) =>
-                                            CommonSnackbar.showPositiveSnackbar(
-                                                context,
-                                                'Success',
-                                                'UnFlag the Comment'))
+                                        .then((value) => CommonSnackbar.showPositiveSnackbar(
+                                            context, 'Success', 'UnFlag the Comment'))
                                         .onError((error, stackTrace) =>
-                                            CommonSnackbar.showNagativeSnackbar(
-                                                context,
-                                                'Error',
-                                                error.toString()));
+                                            CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()));
                                   } else {
                                     value
                                         .report()
                                         .flag()
                                         .then((value) =>
-                                            CommonSnackbar.showPositiveSnackbar(
-                                                context,
-                                                'Success',
-                                                'Flag the Comment'))
+                                            CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Flag the Comment'))
                                         .onError((error, stackTrace) =>
-                                            CommonSnackbar.showNagativeSnackbar(
-                                                context,
-                                                'Error',
-                                                error.toString()));
+                                            CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()));
                                   }
                                 }
                               },
