@@ -226,51 +226,32 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                 try {
                   ProgressDialog.showCompleter(context, completer);
 
-                  try {
-                    mentionUsers.clear();
-                    mentionUsers.addAll(user);
+                  mentionUsers.clear();
+                  mentionUsers.addAll(user);
 
-                    //Clean up mention user list, as user might have removed some tagged user
-                    mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
+                  //Clean up mention user list, as user might have removed some tagged user
+                  mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
 
-                    final amityMentioneesMetadata = mentionUsers
-                        .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-                            userId: e.userId!,
-                            index: text.indexOf('@${e.displayName!}'),
-                            length: e.displayName!.length))
-                        .toList();
+                  final amityMentioneesMetadata = mentionUsers
+                      .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+                          userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
+                      .toList();
 
-                    Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+                  Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
 
-                    if (_replyToComment != null) {
-                      ///Add comment to [_replyToComment] comment
-                      final _comment = await _replyToComment!
-                          .comment()
-                          .create()
-                          .text(text)
-                          .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
-                          .metadata(metadata)
-                          .send();
-
-                      setState(() {
-                        _replyToComment = null;
-                      });
-
-                      return;
+                  List<CommentImageAttachment> amityImages = [];
+                  if (attachments.isNotEmpty) {
+                    for (var element in attachments) {
+                      final image = await waitForUploadComplete(
+                          AmityCoreClient.newFileRepository().image(element).upload().stream);
+                      amityImages.add(CommentImageAttachment(fileId: image.fileId));
                     }
+                  }
 
-                    List<CommentImageAttachment> amityImages = [];
-                    if (attachments.isNotEmpty) {
-                      for (var element in attachments) {
-                        final image = await waitForUploadComplete(
-                            AmityCoreClient.newFileRepository().image(element).upload().stream);
-                        amityImages.add(CommentImageAttachment(fileId: image.fileId));
-                      }
-                    }
-
-                    final _comment = await AmitySocialClient.newCommentRepository()
-                        .createComment()
-                        .post(widget._postId)
+                  if (_replyToComment != null) {
+                    ///Add comment to [_replyToComment] comment
+                    final _comment = await _replyToComment!
+                        .comment()
                         .create()
                         .attachments(amityImages)
                         .text(text)
@@ -278,14 +259,25 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                         .metadata(metadata)
                         .send();
 
-                    completer.complete();
+                    setState(() {
+                      _replyToComment = null;
+                    });
 
-                    /// Remove this line Post Comment Create RTE will refresh the list
-                    _controller.addAtIndex(0, _comment);
-                  } catch (error) {
-                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
-                    completer.completeError(error);
+                    return;
                   }
+
+                  final _comment = await AmitySocialClient.newCommentRepository()
+                      .createComment()
+                      .post(widget._postId)
+                      .create()
+                      .attachments(amityImages)
+                      .text(text)
+                      .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
+                      .metadata(metadata)
+                      .send();
+
+                  /// Remove this line Post Comment Create RTE will refresh the list
+                  _controller.addAtIndex(0, _comment);
                   return;
                 } catch (error, stackTrace) {
                   if (error is AmityException) {
