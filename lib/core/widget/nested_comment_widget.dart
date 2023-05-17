@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/edit_comment_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
+import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class NestedCommentWidget extends StatefulWidget {
-  const NestedCommentWidget({Key? key, required this.postId, required this.commentId}) : super(key: key);
+  const NestedCommentWidget(
+      {Key? key, required this.postId, required this.commentId, required this.communityId, this.isPublic = false})
+      : super(key: key);
   final String postId;
   final String commentId;
+
+  final String? communityId;
+  final bool? isPublic;
 
   @override
   State<NestedCommentWidget> createState() => _NestedCommentWidgetState();
@@ -232,7 +237,16 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                               ),
                               onSelected: (index1) {
                                 if (index1 == 1) {
-                                  EditCommentDialog.show(context, amityComment: value);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => UpdateCommentScreen(
+                                        amityComment: value,
+                                        communityId: widget.communityId,
+                                        isPublic: widget.isPublic ?? false,
+                                      ),
+                                    ),
+                                  );
+                                  // EditCommentDialog.show(context, amityComment: value);
                                 }
                                 if (index1 == 2) {
                                   value.delete();
