@@ -10,8 +10,7 @@ class AmityMyFollowInfo {
   void getFollowInfo() {
     AmityCoreClient.newUserRepository()
         .relationship()
-        .me()
-        .getFollowInfo()
+        .getMyFollowInfo()
         .then((myFollowInfo) => {
               //my follower count
               myFollowInfo.followerCount,

@@ -26,8 +26,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
     _controller = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
           .relationship()
-          .user(widget.userId)
-          .getFollowings()
+          .getFollowings(widget.userId)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -40,8 +39,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
           } else {
             //Error on pagination controller
             setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
           }
         },
       );
@@ -56,9 +54,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -86,18 +82,14 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: amityFollowRelationships.length,
                       itemBuilder: (context, index) {
-                        final amityFollowRelationship =
-                            amityFollowRelationships[index];
-                        return FollowingInfoWidget(
-                            amityFollowRelationship: amityFollowRelationship);
+                        final amityFollowRelationship = amityFollowRelationships[index];
+                        return FollowingInfoWidget(amityFollowRelationship: amityFollowRelationship);
                       },
                     ),
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Followers'),
+                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Followers'),
                   ),
           ),
           if (_controller.isFetching && amityFollowRelationships.isNotEmpty)
@@ -112,8 +104,7 @@ class _FollowingListScreenState extends State<FollowingListScreen> {
 }
 
 class FollowingInfoWidget extends StatelessWidget {
-  const FollowingInfoWidget({Key? key, required this.amityFollowRelationship})
-      : super(key: key);
+  const FollowingInfoWidget({Key? key, required this.amityFollowRelationship}) : super(key: key);
   final AmityFollowRelationship amityFollowRelationship;
   @override
   Widget build(BuildContext context) {
@@ -130,8 +121,7 @@ class FollowingInfoWidget extends StatelessWidget {
           Container(
             width: 48,
             height: 48,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
             child: amityFollowRelationship.targetUser!.avatarUrl != null
                 ? Image.network(
                     amityFollowRelationship.targetUser!.avatarUrl!,
@@ -147,8 +137,7 @@ class FollowingInfoWidget extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            amityFollowRelationship.targetUser!.displayName ??
-                'No Display name',
+            amityFollowRelationship.targetUser!.displayName ?? 'No Display name',
             style: _themeData.textTheme.bodyText2,
           )
         ],

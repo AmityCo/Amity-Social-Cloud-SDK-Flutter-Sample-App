@@ -190,7 +190,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                 const SizedBox(height: 16),
                                 _isOwnerProfile
                                     ? FutureBuilder<AmityMyFollowInfo>(
-                                        future: amityUser.me().getFollowInfo(),
+                                        future: amityUser.relationship().getMyFollowInfo(),
                                         builder: (context, snapshot) {
                                           return Column(
                                             children: [
@@ -281,7 +281,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                         },
                                       )
                                     : FutureBuilder<AmityUserFollowInfo>(
-                                        future: amityUser.relationship().getFollowInfo(),
+                                        future: amityUser.relationship().getFollowInfo(widget.userId),
                                         builder: (context, snapshot) {
                                           if (!snapshot.hasData) {
                                             return Container();
@@ -364,7 +364,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                                   AmityFollowStatus.NONE) {
                                                                 amityUser
                                                                     .relationship()
-                                                                    .follow()
+                                                                    .follow(widget.userId)
                                                                     .then((value) =>
                                                                         CommonSnackbar.showPositiveSnackbar(
                                                                             context, 'User-Follow', 'User Follow'))
@@ -376,7 +376,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                               } else {
                                                                 amityUser
                                                                     .relationship()
-                                                                    .unfollow()
+                                                                    .unfollow(widget.userId)
                                                                     .then((value) =>
                                                                         CommonSnackbar.showPositiveSnackbar(
                                                                             context, 'User-Unfollow', 'User Unfollow'))
