@@ -12,7 +12,7 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     // final isBanned = channelMember.
     return StreamBuilder<AmityChannelMember>(
       stream: channelMember.listen.stream,
@@ -63,32 +63,32 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                       children: [
                         Text(
                           value.user?.displayName ?? 'unknown',
-                          style: _themeData.textTheme.subtitle1,
+                          style: themeData.textTheme.titleMedium,
                           textAlign: TextAlign.start,
                         ),
                         Text(
                           'roles - $rolesText',
-                          style: _themeData.textTheme.caption,
+                          style: themeData.textTheme.bodySmall,
                           textAlign: TextAlign.start,
                         ),
                         Text(
                           'permissions - $permissionText',
-                          style: _themeData.textTheme.caption,
+                          style: themeData.textTheme.bodySmall,
                           textAlign: TextAlign.start,
                         ),
                         Text(
                           'isBanned - ${value.isBanned ?? false}',
-                          style: _themeData.textTheme.caption,
+                          style: themeData.textTheme.bodySmall,
                           textAlign: TextAlign.start,
                         ),
                         Text(
                           'isMuted - ${value.isMuted ?? false}',
-                          style: _themeData.textTheme.caption,
+                          style: themeData.textTheme.bodySmall,
                           textAlign: TextAlign.start,
                         ),
                         Text(
                           'Flag Count - ${value.user?.flagCount ?? 0}',
-                          style: _themeData.textTheme.caption,
+                          style: themeData.textTheme.bodySmall,
                           textAlign: TextAlign.start,
                         ),
                       ],

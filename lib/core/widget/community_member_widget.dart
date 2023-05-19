@@ -36,7 +36,7 @@ class _CommunityMemberInfoRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     // final isBanned = communityMember.
     return StreamBuilder<AmityCommunityMember>(
       stream: communityMember.listen.stream,
@@ -75,17 +75,17 @@ class _CommunityMemberInfoRowWidget extends StatelessWidget {
                     children: [
                       Text(
                         value.user?.displayName ?? 'unknown',
-                        style: _themeData.textTheme.subtitle1,
+                        style: themeData.textTheme.titleMedium,
                         textAlign: TextAlign.start,
                       ),
                       Text(
                         'roles - $rolesText',
-                        style: _themeData.textTheme.caption,
+                        style: themeData.textTheme.bodySmall,
                         textAlign: TextAlign.start,
                       ),
                       Text(
                         'isBanned - ${value.isBanned ?? false}',
-                        style: _themeData.textTheme.caption,
+                        style: themeData.textTheme.bodySmall,
                         textAlign: TextAlign.start,
                       ),
                     ],

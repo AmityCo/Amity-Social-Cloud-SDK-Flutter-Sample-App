@@ -54,7 +54,7 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Update Comment')),
       body: Container(
@@ -211,9 +211,9 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                   onPressed: () async {
                     FocusManager.instance.primaryFocus!.unfocus();
 
-                    final ImagePicker _picker = ImagePicker();
+                    final ImagePicker picker = ImagePicker();
                     // Pick an image
-                    final image = await _picker.pickImage(source: ImageSource.gallery);
+                    final image = await picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
                       setState(() {
                         localAttachmetns.add(File(image.path));
@@ -227,9 +227,9 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                   onPressed: () async {
                     FocusManager.instance.primaryFocus!.unfocus();
 
-                    final ImagePicker _picker = ImagePicker();
+                    final ImagePicker picker = ImagePicker();
                     // Pick an image
-                    final image = await _picker.pickImage(source: ImageSource.camera);
+                    final image = await picker.pickImage(source: ImageSource.camera);
                     if (image != null) {
                       setState(() {
                         localAttachmetns.add(File(image.path));
@@ -246,7 +246,7 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
               child: TextButton(
                 onPressed: () async {
                   ProgressDialog.show<bool>(context, asyncFunction: updateComment).then((value) {
-                    if (value != null && value) {
+                    if (value) {
                       Navigator.of(context).pop();
                     }
                   }).onError((error, stackTrace) {
@@ -258,8 +258,7 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                   });
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  primary: Colors.white,
+                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
                   padding: const EdgeInsets.all(12),
                 ),
                 child: Container(

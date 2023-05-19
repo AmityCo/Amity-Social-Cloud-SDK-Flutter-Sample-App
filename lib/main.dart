@@ -71,11 +71,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     userId = 'victimAndroid';
     userDisplayName = 'victimAndroid';
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return MaterialApp.router(
       routerConfig: AppRouter.router,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
         inputDecorationTheme: const InputDecorationTheme(
           labelStyle: TextStyle(
             color: Colors.grey,
@@ -84,19 +83,17 @@ class _MyAppState extends State<MyApp> {
             borderSide: BorderSide(color: Colors.grey),
           ),
         ),
-        textTheme: _themeData.textTheme.apply(bodyColor: Colors.black),
+        textTheme: themeData.textTheme.apply(bodyColor: Colors.black),
         iconTheme: const IconThemeData(color: Colors.grey, size: 18),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            primary: Colors.black,
-            minimumSize: Size.zero,
+            foregroundColor: Colors.black, minimumSize: Size.zero,
             padding: EdgeInsets.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
         ),
-        backgroundColor: Colors.white,
-        snackBarTheme: _themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
-        tabBarTheme: const TabBarTheme(labelColor: Colors.black),
+        snackBarTheme: themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
+        tabBarTheme: const TabBarTheme(labelColor: Colors.black), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(background: Colors.white),
       ),
       themeMode: ThemeMode.light,
     );

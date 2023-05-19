@@ -22,7 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return SafeArea(
       key: const Key('dashboard_screen_key'),
       child: Scaffold(
@@ -240,7 +240,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: Text(
                     'Logout',
-                    style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.red),
+                    style: themeData.textTheme.titleMedium!.copyWith(color: Colors.red),
                   ),
                 ),
               ],

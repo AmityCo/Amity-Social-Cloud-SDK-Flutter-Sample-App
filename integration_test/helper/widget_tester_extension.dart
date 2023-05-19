@@ -19,7 +19,7 @@ extension WidgetTesterExtension on WidgetTester {
 
   // Always Required, and by defualt this will login screen
   Future<void> pumpMyApp() async {
-    return pumpWidget(MyApp());
+    return pumpWidget(const MyApp());
   }
 
   Future<void> pumpMyAppAndSettle() async {

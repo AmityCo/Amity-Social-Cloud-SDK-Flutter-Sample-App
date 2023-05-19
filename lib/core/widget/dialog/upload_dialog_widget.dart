@@ -79,7 +79,7 @@ class UploadProgressDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Material(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 300),
@@ -103,7 +103,7 @@ class UploadProgressDialog extends StatelessWidget {
                     Text(
                       message,
                       textAlign: TextAlign.justify,
-                      style: _themeData.textTheme.subtitle1!
+                      style: themeData.textTheme.titleMedium!
                           .copyWith(color: Colors.black),
                     ),
                     StreamBuilder<UploadInfo>(

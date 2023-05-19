@@ -15,9 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen(
-      {Key? key, this.userId, this.communityId, this.isPublic = false})
-      : super(key: key);
+  const CreatePostScreen({Key? key, this.userId, this.communityId, this.isPublic = false}) : super(key: key);
   final String? userId;
   final String? communityId;
   final bool isPublic;
@@ -57,10 +55,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
-    final _isCommunityPost = widget.communityId != null;
+    final themeData = Theme.of(context);
+    final isCommunityPost = widget.communityId != null;
     var targetLabel = '';
-    if (_isCommunityPost) {
+    if (isCommunityPost) {
       targetLabel = 'Target community';
     } else {
       targetLabel = 'Target user';
@@ -76,7 +74,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             children: [
               TextFormField(
                 controller: _targetuserTextEditController,
-                enabled: !_isCommunityPost,
+                enabled: !isCommunityPost,
                 decoration: InputDecoration(
                   label: Text(targetLabel),
                 ),
@@ -91,57 +89,37 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onChanged: (value) {
                   UserSuggesionOverlay.instance.hideOverLay();
 
-                  if (widget.communityId == null ||
-                      widget.communityId!.isEmpty ||
-                      widget.isPublic) {
+                  if (widget.communityId == null || widget.communityId!.isEmpty || widget.isPublic) {
                     UserSuggesionOverlay.instance.updateOverLay(
-                        context,
-                        UserSuggestionType.global,
-                        _postTextTextFieldKey,
-                        value, (keyword, user) {
+                        context, UserSuggestionType.global, _postTextTextFieldKey, value, (keyword, user) {
                       mentionUsers.add(user);
                       if (keyword.isNotEmpty) {
                         final length = _postTextEditController.text.length;
-                        _postTextEditController.text =
-                            _postTextEditController.text.replaceRange(
-                                length - keyword.length,
-                                length,
-                                user.displayName ?? '');
+                        _postTextEditController.text = _postTextEditController.text
+                            .replaceRange(length - keyword.length, length, user.displayName ?? '');
                       } else {
-                        _postTextEditController.text =
-                            (_postTextEditController.text + user.displayName!);
+                        _postTextEditController.text = (_postTextEditController.text + user.displayName!);
                       }
 
                       _postTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(
-                              offset: _postTextEditController.text.length));
+                          TextSelection.fromPosition(TextPosition(offset: _postTextEditController.text.length));
                     }, postion: UserSuggestionPostion.bottom);
                   } else {
                     UserSuggesionOverlay.instance.updateOverLay(
-                        context,
-                        UserSuggestionType.community,
-                        _postTextTextFieldKey,
-                        value, (keyword, user) {
+                        context, UserSuggestionType.community, _postTextTextFieldKey, value, (keyword, user) {
                       mentionUsers.add(user);
 
                       if (keyword.isNotEmpty) {
                         final length = _postTextEditController.text.length;
-                        _postTextEditController.text =
-                            _postTextEditController.text.replaceRange(
-                                length - keyword.length,
-                                length,
-                                user.displayName ?? '');
+                        _postTextEditController.text = _postTextEditController.text
+                            .replaceRange(length - keyword.length, length, user.displayName ?? '');
                       } else {
-                        _postTextEditController.text =
-                            (_postTextEditController.text + user.displayName!);
+                        _postTextEditController.text = (_postTextEditController.text + user.displayName!);
                       }
 
                       _postTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(
-                              offset: _postTextEditController.text.length));
-                    },
-                        communityId: widget.communityId,
-                        postion: UserSuggestionPostion.bottom);
+                          TextSelection.fromPosition(TextPosition(offset: _postTextEditController.text.length));
+                    }, communityId: widget.communityId, postion: UserSuggestionPostion.bottom);
                   }
                 },
               ),
@@ -154,12 +132,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               const SizedBox(height: 20),
               Column(
                 children: List.generate(files.length, (index) {
-                  final _file = files[index];
+                  final file = files[index];
                   return TextButton.icon(
                       onPressed: () {},
                       icon: Icon(isTextPost ? Icons.image : Icons.attach_file),
-                      label: Text(basename(_file.path)),
-                      style: TextButton.styleFrom(primary: Colors.blue));
+                      label: Text(basename(file.path)),
+                      style: TextButton.styleFrom(foregroundColor: Colors.blue));
                 }),
               ),
               const Spacer(),
@@ -168,12 +146,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(allowMultiple: true);
+                    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
                     if (result != null) {
-                      files.addAll(
-                          result.paths.map((path) => File(path!)).toList());
+                      files.addAll(result.paths.map((path) => File(path!)).toList());
                     }
                     setState(() {
                       isTextPost = false;
@@ -184,21 +160,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   },
                   icon: const Icon(Icons.attach_file_outlined),
                   label: const Text('Attach File'),
-                  style: TextButton.styleFrom(primary: Colors.blue)),
+                  style: TextButton.styleFrom(foregroundColor: Colors.blue)),
               const SizedBox(height: 12),
               TextButton.icon(
                   onPressed: () async {
                     files.clear();
 
                     FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                            type: FileType.custom,
-                            allowMultiple: true,
-                            allowedExtensions: ['mp4', 'mov']);
+                        .pickFiles(type: FileType.custom, allowMultiple: true, allowedExtensions: ['mp4', 'mov']);
 
                     if (result != null) {
-                      files.addAll(
-                          result.paths.map((path) => File(path!)).toList());
+                      files.addAll(result.paths.map((path) => File(path!)).toList());
                     }
                     setState(() {
                       isTextPost = false;
@@ -209,17 +181,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   },
                   icon: const Icon(Icons.video_camera_back_rounded),
                   label: const Text('Attach Video'),
-                  style: TextButton.styleFrom(primary: Colors.blue)),
+                  style: TextButton.styleFrom(foregroundColor: Colors.blue)),
               const SizedBox(height: 12),
               TextButton.icon(
                   onPressed: () async {
                     files.clear();
-                    final ImagePicker _picker = ImagePicker();
+                    final ImagePicker picker = ImagePicker();
                     // Pick an image
-                    final image = await _picker.pickMultiImage();
-                    if (image != null) {
-                      files.addAll(image.map((e) => File(e.path)).toList());
-                    }
+                    final image = await picker.pickMultiImage();
+                    files.addAll(image.map((e) => File(e.path)).toList());
 
                     setState(() {
                       isTextPost = false;
@@ -230,7 +200,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   },
                   icon: const Icon(Icons.add_a_photo),
                   label: const Text('Attach Image'),
-                  style: TextButton.styleFrom(primary: Colors.blue)),
+                  style: TextButton.styleFrom(foregroundColor: Colors.blue)),
               const SizedBox(height: 48),
               Center(
                 child: TextButton(
@@ -239,20 +209,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       context,
                       asyncFunction: () => _createPost(context),
                     ).then((value) {
-                      PositiveDialog.show(context,
-                          title: 'Post Created',
-                          message: 'Post Created Successfully',
+                      PositiveDialog.show(context, title: 'Post Created', message: 'Post Created Successfully',
                           onPostiveCallback: () {
                         GoRouter.of(context).pop();
                       });
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   },
                   style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
                     backgroundColor: Colors.blue,
-                    primary: Colors.white,
                     padding: const EdgeInsets.all(12),
                   ),
                   child: Container(
@@ -282,27 +249,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     UploadProgressDialog.show(context, uploadInfoStream);
 
     FocusManager.instance.primaryFocus?.unfocus();
-    final _target = _targetuserTextEditController.text.trim();
-    final _text = _postTextEditController.text.trim();
-    final _isCommunityPost = widget.communityId != null;
+    final target = _targetuserTextEditController.text.trim();
+    final text = _postTextEditController.text.trim();
+    final isCommunityPost = widget.communityId != null;
     // final _metadataString = _metadataEditController.text.trim();
 
     ///Mention user logic
     //Clean up mention user list, as user might have removed some tagged user
-    mentionUsers
-        .removeWhere((element) => !_text.contains(element.displayName!));
+    mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
 
     final mentionedUserIds = mentionUsers.map((e) => e.userId!).toList();
 
     final amityMentioneesMetadata = mentionUsers
         .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-            userId: e.userId!,
-            index: _text.indexOf('@${e.displayName!}'),
-            length: e.displayName!.length))
+            userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
         .toList();
 
-    Map<String, dynamic> _metadata =
-        AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+    Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
     // try {
     //   _metadata = jsonDecode(_metadataString);
     // } catch (e) {
@@ -310,42 +273,38 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     // }
 
     if (isTextPost) {
-      if (_isCommunityPost) {
+      if (isCommunityPost) {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetCommunity(_target)
-            .text(_text)
+            .targetCommunity(target)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       } else {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetUser(_target)
-            .text(_text)
+            .targetUser(target)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       }
     }
 
     if (isImagePost) {
-      List<AmityImage> _images = [];
+      List<AmityImage> images = [];
 
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
-          AmityCoreClient.newFileRepository()
-              .image(_file)
-              .upload()
-              .stream
-              .listen((event) {
+          AmityCoreClient.newFileRepository().image(_file).upload().stream.listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
 
             event.when(
               progress: (uploadInfo, cancelToken) {},
               complete: (file) {
-                _images.add(file as AmityImage);
+                images.add(file as AmityImage);
 
                 ///check if all file is uploaded
                 // if (_images.length == files.length) {
@@ -362,81 +321,76 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       }
 
-      if (_isCommunityPost) {
+      if (isCommunityPost) {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetCommunity(_target)
-            .image(_images)
-            .text(_text)
+            .targetCommunity(target)
+            .image(images)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       } else {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetUser(_target)
-            .image(_images)
-            .text(_text)
+            .targetUser(target)
+            .image(images)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       }
     }
 
     if (isVideoPost) {
-      List<AmityVideo> _video = [];
+      List<AmityVideo> video = [];
       for (final _file in files) {
         AmityUploadResult<AmityVideo> amityUploadResult =
             await AmityCoreClient.newFileRepository().video(_file).upload();
         if (amityUploadResult is AmityUploadComplete) {
           final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-          _video.add(amityUploadComplete.getFile as AmityVideo);
+          video.add(amityUploadComplete.getFile as AmityVideo);
         }
       }
 
-      if (_isCommunityPost) {
+      if (isCommunityPost) {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetCommunity(_target)
-            .video(_video)
-            .text(_text)
+            .targetCommunity(target)
+            .video(video)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       } else {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetUser(_target)
-            .video(_video)
-            .text(_text)
+            .targetUser(target)
+            .video(video)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       }
     }
 
     if (isFilePost) {
-      List<AmityFile> _files = [];
+      List<AmityFile> amityFiles = [];
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
-          AmityCoreClient.newFileRepository()
-              .file(_file)
-              .upload()
-              .stream
-              .listen((event) {
+          AmityCoreClient.newFileRepository().file(_file).upload().stream.listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
             event.when(
               progress: (uploadInfo, cancelToken) {},
               complete: (file) {
-                _files.add(file as AmityFile);
+                amityFiles.add(file as AmityFile);
 
                 ///check if all file is uploaded
                 uploadCompleter.complete();
               },
               error: (error) {
-                CommonSnackbar.showNagativeSnackbar(
-                    context, 'Error', error.message);
+                CommonSnackbar.showNagativeSnackbar(context, 'Error', error.message);
                 uploadCompleter.completeError(error);
               },
               cancel: () {},
@@ -446,23 +400,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       }
 
-      if (_isCommunityPost) {
+      if (isCommunityPost) {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetCommunity(_target)
-            .file(_files)
-            .text(_text)
+            .targetCommunity(target)
+            .file(amityFiles)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       } else {
         await AmitySocialClient.newPostRepository()
             .createPost()
-            .targetUser(_target)
-            .file(_files)
-            .text(_text)
+            .targetUser(target)
+            .file(amityFiles)
+            .text(text)
             .mentionUsers(mentionedUserIds)
-            .metadata(_metadata)
+            .metadata(metadata)
             .post();
       }
     }

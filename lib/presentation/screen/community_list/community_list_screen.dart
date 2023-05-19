@@ -9,7 +9,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityListScreen extends StatefulWidget {
-  CommunityListScreen({Key? key}) : super(key: key);
+  const CommunityListScreen({Key? key}) : super(key: key);
 
   @override
   State<CommunityListScreen> createState() => _CommunityListScreenState();
@@ -109,16 +109,16 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
-                          child: Text(AmityCommunityFilter.ALL.name),
                           value: 1,
+                          child: Text(AmityCommunityFilter.ALL.name),
                         ),
                         PopupMenuItem(
-                          child: Text(AmityCommunityFilter.MEMBER.name),
                           value: 2,
+                          child: Text(AmityCommunityFilter.MEMBER.name),
                         ),
                         PopupMenuItem(
-                          child: Text(AmityCommunityFilter.NOT_MEMBER.name),
                           value: 3,
+                          child: Text(AmityCommunityFilter.NOT_MEMBER.name),
                         )
                       ];
                     },
@@ -148,19 +148,19 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
+                          value: 1,
                           child:
                               Text(AmityCommunitySortOption.DISPLAY_NAME.name),
-                          value: 1,
                         ),
                         PopupMenuItem(
+                          value: 2,
                           child:
                               Text(AmityCommunitySortOption.FIRST_CREATED.name),
-                          value: 2,
                         ),
                         PopupMenuItem(
+                          value: 3,
                           child:
                               Text(AmityCommunitySortOption.LAST_CREATED.name),
-                          value: 3,
                         )
                       ];
                     },

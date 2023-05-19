@@ -33,6 +33,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   AmityCommentDataTypeFilter? dataTypes;
 
+  bool _includeDeleted = false;
+
   @override
   void initState() {
     _controller = PagingController(
@@ -41,6 +43,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
           .post(widget._postId)
           .sortBy(_sortOption)
           .dataTypes(dataTypes)
+          .includeDeleted(_includeDeleted)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -90,8 +93,16 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   child: Text(AmityCommentSortOption.LAST_CREATED.apiKey),
                 ),
                 PopupMenuItem(
-                  value: 2,
-                  child: Text(AmityCommentSortOption.FIRST_CREATED.apiKey),
+                  value: 8,
+                  child: Text(AmityCommentSortOption.LAST_UPDATED.apiKey),
+                ),
+                PopupMenuItem(
+                  value: 1,
+                  child: Text(AmityCommentSortOption.LAST_CREATED.apiKey),
+                ),
+                PopupMenuItem(
+                  value: 9,
+                  child: Text(AmityCommentSortOption.FIRST_UPDATED.apiKey),
                 ),
                 const PopupMenuItem(
                   value: 3,
@@ -113,6 +124,10 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   value: 7,
                   child: Text('Clear'),
                 ),
+                const PopupMenuItem(
+                  value: 10,
+                  child: Text('Include Deleted'),
+                ),
               ];
             },
             child: const Icon(
@@ -125,6 +140,12 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
               }
               if (index1 == 2) {
                 _sortOption = AmityCommentSortOption.FIRST_CREATED;
+              }
+              if (index1 == 8) {
+                _sortOption = AmityCommentSortOption.LAST_UPDATED;
+              }
+              if (index1 == 9) {
+                _sortOption = AmityCommentSortOption.FIRST_UPDATED;
               }
 
               if (index1 == 3) {
@@ -145,6 +166,10 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
               if (index1 == 7) {
                 dataTypes = null;
+              }
+
+              if (index1 == 10) {
+                _includeDeleted = !_includeDeleted;
               }
 
               setState(() {});

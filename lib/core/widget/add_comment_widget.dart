@@ -39,7 +39,7 @@ class _AddCommentWidgetState extends State<AddCommentWidget> {
       child: Column(
         children: [
           attachments.isNotEmpty
-              ? Container(
+              ? SizedBox(
                   height: 100,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
@@ -81,9 +81,9 @@ class _AddCommentWidgetState extends State<AddCommentWidget> {
                   onPressed: () async {
                     FocusManager.instance.primaryFocus!.unfocus();
 
-                    final ImagePicker _picker = ImagePicker();
+                    final ImagePicker picker = ImagePicker();
                     // Pick an image
-                    final image = await _picker.pickImage(source: ImageSource.gallery);
+                    final image = await picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
                       setState(() {
                         attachments.add(File(image.path));
@@ -97,9 +97,9 @@ class _AddCommentWidgetState extends State<AddCommentWidget> {
                   onPressed: () async {
                     FocusManager.instance.primaryFocus!.unfocus();
 
-                    final ImagePicker _picker = ImagePicker();
+                    final ImagePicker picker = ImagePicker();
                     // Pick an image
-                    final image = await _picker.pickImage(source: ImageSource.camera);
+                    final image = await picker.pickImage(source: ImageSource.camera);
                     if (image != null) {
                       setState(() {
                         attachments.add(File(image.path));

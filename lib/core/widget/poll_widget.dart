@@ -114,7 +114,7 @@ class _PollWidgetState extends State<PollWidget> {
                     Row(
                       children: [
                         Text(
-                            '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString() + ' left'}'),
+                            '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : '${snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString()} left'}'),
                         const Spacer(),
                         if (value.answerType == AmityPollAnswerType.MULTIPLE &&
                             !(value.isVoted ?? false))
@@ -254,18 +254,18 @@ class _VoteCountWidgetState extends State<VoteCountWidget> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (widget.isMyVote) Icon(Icons.check),
+                              if (widget.isMyVote) const Icon(Icons.check),
                               Text(
                                 widget.title,
                                 style: Theme.of(context)
                                     .textTheme
-                                    .subtitle1!
+                                    .titleMedium!
                                     .copyWith(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold),
                               ),
                               Text('  ${widget.voteCount} Votes',
-                                  style: Theme.of(context).textTheme.caption)
+                                  style: Theme.of(context).textTheme.bodySmall)
                             ],
                           ),
                         ),
@@ -291,11 +291,11 @@ class _VoteCountWidgetState extends State<VoteCountWidget> {
                 children: [
                   Text(
                     widget.title,
-                    style: Theme.of(context).textTheme.subtitle1!.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Colors.blue, fontWeight: FontWeight.bold),
                   ),
                   Text('  ${widget.voteCount} Votes',
-                      style: Theme.of(context).textTheme.caption)
+                      style: Theme.of(context).textTheme.bodySmall)
                 ],
               ),
             ),

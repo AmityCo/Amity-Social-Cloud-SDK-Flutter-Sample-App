@@ -12,10 +12,10 @@ class ReactionActionWidget extends StatelessWidget {
   final LayerLink layerLink;
   static void showAsOverLay(BuildContext context, LayerLink link,
       ValueChanged<String> onTapReaction) {
-    OverlayState _state = Overlay.of(context)!;
-    late OverlayEntry _entry;
+    OverlayState state = Overlay.of(context);
+    late OverlayEntry entry;
 
-    _entry = OverlayEntry(
+    entry = OverlayEntry(
       builder: (context) {
         return ReactionActionWidget(
           layerLink: link,
@@ -23,13 +23,13 @@ class ReactionActionWidget extends StatelessWidget {
             onTapReaction(reaction);
           },
           removeCallback: () {
-            _entry.remove();
+            entry.remove();
           },
         );
       },
     );
 
-    _state.insert(_entry);
+    state.insert(entry);
   }
 
   @override

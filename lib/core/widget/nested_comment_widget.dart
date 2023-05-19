@@ -59,7 +59,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(
@@ -72,8 +72,8 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 final value = snapshot.data!;
-                AmityUser _user = value.user!;
-                bool _isLikedByMe = value.myReactions?.isNotEmpty ?? false;
+                AmityUser user = value.user!;
+                bool isLikedByMe = value.myReactions?.isNotEmpty ?? false;
                 AmityCommentData data = value.data!;
 
                 String? text;
@@ -89,13 +89,13 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                               width: 30,
                               height: 30,
                               decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
-                              child: _user.avatarUrl != null
+                              clipBehavior: Clip.antiAliasWithSaveLayer,
+                              child: user.avatarUrl != null
                                   ? Image.network(
-                                      _user.avatarUrl!,
+                                      user.avatarUrl!,
                                       fit: BoxFit.fill,
                                     )
                                   : Image.asset('assets/user_placeholder.png'),
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -106,15 +106,15 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                     text: TextSpan(
                                       children: [
                                         TextSpan(
-                                          text: _user.displayName!,
-                                          style: _themeData.textTheme.bodyText1!.copyWith(
+                                          text: user.displayName!,
+                                          style: themeData.textTheme.bodyLarge!.copyWith(
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         const WidgetSpan(child: SizedBox(width: 6)),
                                         TextSpan(
                                           text: text ?? '',
-                                          style: _themeData.textTheme.bodyText2!.copyWith(),
+                                          style: themeData.textTheme.bodyMedium!.copyWith(),
                                         )
                                       ],
                                     ),
@@ -154,12 +154,12 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                     children: [
                                       Text(
                                         value.createdAt!.beforeTime(),
-                                        style: _themeData.textTheme.caption!.copyWith(),
+                                        style: themeData.textTheme.bodySmall!.copyWith(),
                                       ),
                                       const SizedBox(width: 12),
                                       InkWell(
                                         onTap: () {
-                                          if (_isLikedByMe) {
+                                          if (isLikedByMe) {
                                             value.react().removeReaction('like');
                                           } else {
                                             value.react().addReaction('like');
@@ -171,7 +171,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                         },
                                         child: Text(
                                           '${value.reactionCount} Likes',
-                                          style: _themeData.textTheme.caption!.copyWith(),
+                                          style: themeData.textTheme.bodySmall!.copyWith(),
                                         ),
                                       ),
                                       const SizedBox(width: 12),
@@ -197,7 +197,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                         },
                                         child: Text(
                                           '${value.flagCount} Flag',
-                                          style: _themeData.textTheme.caption!.copyWith(
+                                          style: themeData.textTheme.bodySmall!.copyWith(
                                               fontWeight: value.isFlaggedByMe ? FontWeight.bold : FontWeight.normal),
                                         ),
                                       )
@@ -209,25 +209,25 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                             PopupMenuButton(
                               itemBuilder: (context) {
                                 return [
-                                  if (_user.userId == AmityCoreClient.getUserId())
+                                  if (user.userId == AmityCoreClient.getUserId())
                                     const PopupMenuItem(
-                                      child: Text("Edit"),
                                       value: 1,
+                                      child: Text("Edit"),
                                     ),
-                                  if (_user.userId == AmityCoreClient.getUserId())
+                                  if (user.userId == AmityCoreClient.getUserId())
                                     const PopupMenuItem(
-                                      child: Text("Delete (Soft)"),
                                       value: 2,
+                                      child: Text("Delete (Soft)"),
                                     ),
-                                  if (_user.userId == AmityCoreClient.getUserId())
+                                  if (user.userId == AmityCoreClient.getUserId())
                                     const PopupMenuItem(
-                                      child: Text("Delete (Hard)"),
                                       value: 3,
                                       enabled: false,
+                                      child: Text("Delete (Hard)"),
                                     ),
                                   PopupMenuItem(
-                                    child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                                     value: 4,
+                                    child: Text(value.isFlaggedByMe ? 'Unflagged' : 'Flag'),
                                   ),
                                 ];
                               },
@@ -291,7 +291,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                     },
                     child: Text(
                       'Load more',
-                      style: _themeData.textTheme.caption!.copyWith(),
+                      style: themeData.textTheme.bodySmall!.copyWith(),
                     ),
                   ),
                 )

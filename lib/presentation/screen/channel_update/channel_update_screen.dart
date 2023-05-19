@@ -86,6 +86,7 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withOpacity(.3)),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: _avatar != null
                       ? Image.file(
                           File(
@@ -120,14 +121,13 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
                                 ],
                               ),
                             ),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
                 ElevatedButton(
                     onPressed: () async {
-                      final ImagePicker _picker = ImagePicker();
+                      final ImagePicker picker = ImagePicker();
                       // Pick an image
                       final image =
-                          await _picker.pickImage(source: ImageSource.gallery);
+                          await picker.pickImage(source: ImageSource.gallery);
 
                       setState(() {
                         _avatar = image;
@@ -190,7 +190,7 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
   }
 
   Future _updateChannel() async {
-    AmityImage? _communityAvatar;
+    AmityImage? communityAvatar;
     if (_avatar != null) {
       AmityUploadResult<AmityImage> amityUploadResult =
           await AmityCoreClient.newFileRepository()
@@ -200,7 +200,7 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
               .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        _communityAvatar = amityUploadComplete.getFile as AmityImage;
+        communityAvatar = amityUploadComplete.getFile as AmityImage;
         // _images.add(amityUploadComplete.getFile as AmityImage);
       }
     }
@@ -208,10 +208,10 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
     // String channeld = _channelIdEditController.text.trim();
     String name = _nameEditController.text.trim();
 
-    final _metadataString = _metadataEditController.text.trim();
-    Map<String, dynamic> _metadata = {};
+    final metadataString = _metadataEditController.text.trim();
+    Map<String, dynamic> metadata = {};
     try {
-      _metadata = jsonDecode(_metadataString);
+      metadata = jsonDecode(metadataString);
     } catch (e) {
       print('metadata decode failed');
     }
@@ -221,9 +221,9 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
 
     if (name.isNotEmpty) builder.displayName(name);
 
-    if (_communityAvatar != null) builder.avatar(_communityAvatar);
+    if (communityAvatar != null) builder.avatar(communityAvatar);
 
-    if (_metadata.isNotEmpty) builder.metadata(_metadata);
+    if (metadata.isNotEmpty) builder.metadata(metadata);
 
     if (_tagsEditController.text.isNotEmpty) {
       builder.tags(_tagsEditController.text.trim().split(','));

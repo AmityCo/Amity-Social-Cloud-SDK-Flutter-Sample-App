@@ -20,7 +20,7 @@ class UserBlockedListScreenState extends State<UserBlockedListScreen> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
-  String _keyboard = '';
+  final String _keyboard = '';
 
   final _debouncer = Debouncer(milliseconds: 500);
 

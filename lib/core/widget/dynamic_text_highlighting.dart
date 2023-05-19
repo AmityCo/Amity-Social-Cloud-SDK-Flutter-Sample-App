@@ -50,7 +50,6 @@ class DynamicTextHighlighting extends StatelessWidget {
     }
     for (int i = 0; i < highlights.length; i++) {
       if (highlights[i] == null) {
-        assert(highlights[i] != null);
         return _richText(_normalSpan(text));
       }
       if (highlights[i].isEmpty) {
@@ -67,9 +66,9 @@ class DynamicTextHighlighting extends StatelessWidget {
     String lowerCaseText = text.toLowerCase();
     List<String> lowerCaseHighlights = [];
 
-    highlights.forEach((element) {
+    for (var element in highlights) {
       lowerCaseHighlights.add(element.toLowerCase());
-    });
+    }
 
     while (true) {
       Map<int, String> highlightsMap = {}; //key (index), value (highlight).

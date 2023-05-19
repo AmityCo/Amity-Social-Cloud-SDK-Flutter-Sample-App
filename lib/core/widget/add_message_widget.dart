@@ -157,10 +157,10 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                     onPressed: () async {
                       FocusManager.instance.primaryFocus!.unfocus();
 
-                      final ImagePicker _picker = ImagePicker();
+                      final ImagePicker picker = ImagePicker();
                       // Pick an image
                       final image =
-                          await _picker.pickImage(source: ImageSource.gallery);
+                          await picker.pickImage(source: ImageSource.gallery);
                       if (image != null) {
                         setState(() {
                           _selectedImage = File(image.path);
@@ -175,10 +175,10 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                     onPressed: () async {
                       FocusManager.instance.primaryFocus!.unfocus();
 
-                      final ImagePicker _picker = ImagePicker();
+                      final ImagePicker picker = ImagePicker();
                       // Pick an image
                       final image =
-                          await _picker.pickImage(source: ImageSource.camera);
+                          await picker.pickImage(source: ImageSource.camera);
                       if (image != null) {
                         setState(() {
                           _selectedImage = File(image.path);
@@ -211,7 +211,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(
-                      constraints: BoxConstraints(maxHeight: 100),
+                      constraints: const BoxConstraints(maxHeight: 100),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20, vertical: 10),
                       decoration: BoxDecoration(

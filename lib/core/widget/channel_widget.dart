@@ -54,7 +54,7 @@ class _ChannelInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -64,13 +64,13 @@ class _ChannelInfoWidget extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
                 shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: amityChannel.avatar?.getUrl(AmityImageSize.MEDIUM) != null
                 ? Image.network(
                     amityChannel.avatar!.getUrl(AmityImageSize.MEDIUM),
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 18),
           Expanded(
@@ -79,27 +79,27 @@ class _ChannelInfoWidget extends StatelessWidget {
               children: [
                 Text(
                   amityChannel.displayName ?? '<< No display name >>',
-                  style: _themeData.textTheme.headline6,
+                  style: themeData.textTheme.titleLarge,
                 ),
                 Text(
-                  'Channel type - ' + amityChannel.amityChannelType.value,
-                  style: _themeData.textTheme.subtitle1,
+                  'Channel type - ${amityChannel.amityChannelType.value}',
+                  style: themeData.textTheme.titleMedium,
                 ),
                 Text(
                   'metadata: ${amityChannel.metadata ?? 'NaN'}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
                 Text(
                   'tags: ${amityChannel.tags?.tags?.join(', ') ?? 'NaN'}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
                 Text(
                   'last Activity: ${amityChannel.lastActivity?.toIso8601String() ?? 'NaN'}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
                 SelectableText(
                   'Channel ID : ${amityChannel.channelId ?? 'NaN'}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
               ],
             ),

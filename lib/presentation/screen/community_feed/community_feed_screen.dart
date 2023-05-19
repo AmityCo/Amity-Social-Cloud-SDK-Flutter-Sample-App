@@ -26,7 +26,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   final scrollcontroller = ScrollController();
   bool loading = false;
   AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
-  List<AmityDataType> _dataType = [];
+  final List<AmityDataType> _dataType = [];
   List<String> _tags = [];
   @override
   void initState() {
@@ -94,19 +94,19 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                     itemBuilder: (context) {
                       return [
                         CheckedPopupMenuItem(
-                          child: Text(AmityDataType.IMAGE.name),
                           value: 2,
                           checked: _dataType.contains(AmityDataType.IMAGE),
+                          child: Text(AmityDataType.IMAGE.name),
                         ),
                         CheckedPopupMenuItem(
-                          child: Text(AmityDataType.VIDEO.name),
                           value: 3,
                           checked: _dataType.contains(AmityDataType.VIDEO),
+                          child: Text(AmityDataType.VIDEO.name),
                         ),
                         CheckedPopupMenuItem(
-                          child: Text(AmityDataType.FILE.name),
                           value: 4,
                           checked: _dataType.contains(AmityDataType.FILE),
+                          child: Text(AmityDataType.FILE.name),
                         )
                       ];
                     },
@@ -151,14 +151,14 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
+                          value: 2,
                           child:
                               Text(AmityUserFeedSortOption.FIRST_CREATED.name),
-                          value: 2,
                         ),
                         PopupMenuItem(
+                          value: 3,
                           child:
                               Text(AmityUserFeedSortOption.LAST_CREATED.name),
-                          value: 3,
                         )
                       ];
                     },
