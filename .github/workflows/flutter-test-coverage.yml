@@ -9,6 +9,7 @@ on:
   pull_request:
     branches:
       - develop
+      - sprint
 
 permissions:
   contents: read # Required when overriding permissions
