@@ -324,8 +324,15 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
   }
 
   Future<AmityImage> waitForUploadComplete(Stream<AmityUploadResult> source) {
-    return source
-        .firstWhere((AmityUploadResult item) => item is AmityUploadComplete)
-        .then((value) => (value as AmityUploadComplete).file);
+    final completer = Completer<AmityImage>();
+    source.listen((event) {
+      event.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) => completer.complete(file),
+        error: (error) => completer.completeError(error),
+        cancel: () {},
+      );
+    });
+    return completer.future;
   }
 }
