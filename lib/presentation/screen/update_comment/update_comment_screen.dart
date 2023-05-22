@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -258,7 +259,8 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                   });
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
                   padding: const EdgeInsets.all(12),
                 ),
                 child: Container(
@@ -284,10 +286,10 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
     final metadataString = _commentMetadataEditController.text.trim();
     Map<String, dynamic> metadata = {};
 
-    if (text.isEmpty) {
-      CommonSnackbar.showNagativeSnackbar(context, 'Error', 'Please enter text in comment');
-      return false;
-    }
+    // if (text.isEmpty) {
+    //   CommonSnackbar.showNagativeSnackbar(context, 'Error', 'Please enter text in comment');
+    //   return false;
+    // }
 
     if (mentionUsers.isNotEmpty) {
       ///Mention user logic
@@ -333,8 +335,15 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
   }
 
   Future<AmityImage> waitForUploadComplete(Stream<AmityUploadResult> source) {
-    return source
-        .firstWhere((AmityUploadResult item) => item is AmityUploadComplete)
-        .then((value) => (value as AmityUploadComplete).file);
+    final completer = Completer<AmityImage>();
+    source.listen((event) {
+      event.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) => completer.complete(file),
+        error: (error) => completer.completeError(error),
+        cancel: () {},
+      );
+    });
+    return completer.future;
   }
 }

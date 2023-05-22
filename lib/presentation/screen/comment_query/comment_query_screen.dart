@@ -333,15 +333,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
         cancel: () {},
       );
     });
-    //  source
-    //     .firstWhere(
-    //       (AmityUploadResult item) => item is AmityUploadComplete,
-    //       orElse: () => throw Exception('Updaloading failed'),
-    //     )
-    //     .then((value) => (value as AmityUploadComplete).file)
-    //     .onError(
-    //       (error, stackTrace) => throw Exception('Updaloading failed'),
-    //     );
     return completer.future;
   }
 }
