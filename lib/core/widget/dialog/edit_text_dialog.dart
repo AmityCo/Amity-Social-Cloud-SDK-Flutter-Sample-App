@@ -48,8 +48,8 @@ class EditTextDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                   onPress?.call(text ?? '');
                 },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: Text(buttonText ?? 'Update'),
-                style: ElevatedButton.styleFrom(primary: Colors.red),
               ),
             ],
           );

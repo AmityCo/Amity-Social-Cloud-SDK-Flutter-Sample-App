@@ -108,7 +108,7 @@ class FollowingInfoWidget extends StatelessWidget {
   final AmityFollowRelationship amityFollowRelationship;
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -122,6 +122,7 @@ class FollowingInfoWidget extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: amityFollowRelationship.targetUser!.avatarUrl != null
                 ? Image.network(
                     amityFollowRelationship.targetUser!.avatarUrl!,
@@ -133,12 +134,11 @@ class FollowingInfoWidget extends StatelessWidget {
                         fit: BoxFit.fill,
                       )
                     : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 12),
           Text(
             amityFollowRelationship.targetUser!.displayName ?? 'No Display name',
-            style: _themeData.textTheme.bodyText2,
+            style: themeData.textTheme.bodyMedium,
           )
         ],
       ),

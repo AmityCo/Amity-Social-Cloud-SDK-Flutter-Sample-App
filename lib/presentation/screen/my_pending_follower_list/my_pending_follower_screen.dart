@@ -113,7 +113,7 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
   final AmityFollowRelationship amityFollowRelationship;
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return StreamBuilder<AmityFollowRelationship>(
       initialData: amityFollowRelationship,
       stream: amityFollowRelationship.listen.stream,
@@ -139,6 +139,7 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: data.sourceUser!.avatarUrl != null
                         ? Image.network(
                             data.sourceUser!.avatarUrl!,
@@ -150,12 +151,11 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                                 fit: BoxFit.fill,
                               )
                             : Image.asset('assets/user_placeholder.png'),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
                   ),
                   const SizedBox(width: 12),
                   Text(
                     data.sourceUser!.displayName ?? 'No Display name',
-                    style: _themeData.textTheme.bodyText2,
+                    style: themeData.textTheme.bodyMedium,
                   ),
                 ],
               ),
@@ -188,10 +188,10 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                               title: 'Error', message: 'Error in Decline the follow request ${error.toString()}');
                         });
                       },
-                      child: const Text('Denied'),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
+                        backgroundColor: Colors.red,
                       ),
+                      child: const Text('Denied'),
                     ),
                   ),
                 ],

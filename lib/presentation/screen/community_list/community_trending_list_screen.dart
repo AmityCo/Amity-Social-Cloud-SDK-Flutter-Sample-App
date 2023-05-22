@@ -28,7 +28,7 @@ class _CommunityTrendingListScreenState
     return FutureBuilder<List<AmityCommunity>>(
         future: AmitySocialClient.newCommunityRepository()
             .getTrendingCommunities()
-            .whenComplete(() => {isLoading = false}),
+            .whenComplete(() => isLoading = false),
         builder: (context, snapshot) {
           return Expanded(
             child: (snapshot.data != null && snapshot.data!.isNotEmpty)

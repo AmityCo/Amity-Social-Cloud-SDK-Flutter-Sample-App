@@ -33,7 +33,7 @@ class FeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
 
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen.stream,
@@ -118,25 +118,25 @@ class FeedWidget extends StatelessWidget {
                         children: [
                           Text(
                             'Created At - ${value.createdAt!.format()}',
-                            style: _themeData.textTheme.caption,
+                            style: themeData.textTheme.bodySmall,
                           ),
                           Text(
                             'Updated At - ${value.updatedAt!.format()}',
-                            style: _themeData.textTheme.caption,
+                            style: themeData.textTheme.bodySmall,
                           ),
                           SelectableText(
                             'Post ID - ${value.postId!}',
-                            style: _themeData.textTheme.caption,
+                            style: themeData.textTheme.bodySmall,
                           ),
                           if (value.target is UserTarget)
                             Text(
                               'Posted On : ${(value.target as UserTarget).targetUser?.displayName ?? 'No name'}',
-                              style: _themeData.textTheme.caption,
+                              style: themeData.textTheme.bodySmall,
                             ),
                           if (value.target is CommunityTarget)
                             Text(
                               'Posted On : ${(value.target as CommunityTarget).targetCommunity?.displayName ?? 'No name'} Community',
-                              style: _themeData.textTheme.caption,
+                              style: themeData.textTheme.bodySmall,
                             ),
                         ],
                       ),
@@ -162,7 +162,7 @@ class FeedWidget extends StatelessWidget {
                                           color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
                                       child: Text(
                                         'Media Type ${amityChildPost.type} not supported',
-                                        style: _themeData.textTheme.bodyText1!.copyWith(color: Colors.white),
+                                        style: themeData.textTheme.bodyLarge!.copyWith(color: Colors.white),
                                       ),
                                     );
                                   }
@@ -243,7 +243,7 @@ class FeedWidget extends StatelessWidget {
                         decoration: BoxDecoration(color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
                         child: Text(
                           'Soft Deleted Amity Post',
-                          style: _themeData.textTheme.bodyText1!.copyWith(color: Colors.white),
+                          style: themeData.textTheme.bodyLarge!.copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -265,7 +265,7 @@ class FeedContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
 
     if (amityPostData is TextData) {
       final data = amityPostData as TextData;
@@ -285,7 +285,7 @@ class FeedContentWidget extends StatelessWidget {
               );
             }
           },
-          style: _themeData.textTheme.subtitle1!,
+          style: themeData.textTheme.titleMedium!,
         );
       }
       return Container();
@@ -354,7 +354,7 @@ class FeedContentWidget extends StatelessWidget {
         icon: const Icon(Icons.attach_file_rounded, color: Colors.blue),
         label: Text(
           data.fileInfo.fileName,
-          style: _themeData.textTheme.bodyText1!.copyWith(color: Colors.blue),
+          style: themeData.textTheme.bodyLarge!.copyWith(color: Colors.blue),
         ),
       );
     }
@@ -380,7 +380,7 @@ class FeedReactionInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       child: Row(
@@ -399,18 +399,18 @@ class FeedReactionInfoWidget extends StatelessWidget {
             ),
             label: Text(
               '${amityPost.reactionCount}',
-              style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
+              style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54),
             ),
           ),
           const Spacer(),
           Text(
             '${amityPost.commentCount} Comment',
-            style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
+            style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54),
           ),
           const SizedBox(width: 12),
           Text(
             '${amityPost.flagCount} Flag',
-            style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54),
+            style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54),
           )
         ],
       ),
@@ -426,8 +426,8 @@ class FeedReactionActionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
-    bool _isFlagedByMe = amityPost.myReactions?.isNotEmpty ?? false;
+    final themeData = Theme.of(context);
+    bool isFlagedByMe = amityPost.myReactions?.isNotEmpty ?? false;
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       child: Row(
@@ -437,7 +437,7 @@ class FeedReactionActionWidget extends StatelessWidget {
             link: link,
             child: TextButton.icon(
               onPressed: () {
-                if (_isFlagedByMe) {
+                if (isFlagedByMe) {
                   amityPost.react().removeReaction('like').then((value) {
                     print(value.myReactions);
                   });
@@ -453,7 +453,7 @@ class FeedReactionActionWidget extends StatelessWidget {
                   context,
                   link,
                   (reaction) {
-                    if (_isFlagedByMe) {
+                    if (isFlagedByMe) {
                       amityPost.react().removeReaction(reaction);
                     } else {
                       amityPost.react().addReaction(reaction);
@@ -462,13 +462,13 @@ class FeedReactionActionWidget extends StatelessWidget {
                 );
               },
               icon: Image.asset(
-                _isFlagedByMe ? 'assets/ic_liked.png' : 'assets/ic_like.png',
+                isFlagedByMe ? 'assets/ic_liked.png' : 'assets/ic_like.png',
                 height: 18,
                 width: 18,
               ),
               label: Text(
                 'Like',
-                style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+                style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -477,7 +477,7 @@ class FeedReactionActionWidget extends StatelessWidget {
             icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
             label: Text(
               'Comment',
-              style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+              style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
             ),
           ),
           Visibility(
@@ -508,7 +508,7 @@ class FeedReactionActionWidget extends StatelessWidget {
               // icon: Image.asset('assets/ic_comment.png'),
               label: Text(
                 amityPost.isFlaggedByMe ? 'Falgged' : 'Flag',
-                style: _themeData.textTheme.subtitle1!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+                style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
               ),
             ),
           )

@@ -43,7 +43,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
 
     return SafeArea(
       child: Material(
@@ -141,9 +141,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                         children: [
                           InkWell(
                             onTap: () async {
-                              final ImagePicker _picker = ImagePicker();
+                              final ImagePicker picker = ImagePicker();
                               // Pick an image
-                              final image = await _picker.pickImage(source: ImageSource.gallery);
+                              final image = await picker.pickImage(source: ImageSource.gallery);
 
                               setState(() {
                                 _avatar = image;
@@ -185,7 +185,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                               children: [
                                 Text(
                                   '${amityUser.userId}',
-                                  style: _themeData.textTheme.headline5!.copyWith(fontWeight: FontWeight.bold),
+                                  style: themeData.textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 16),
                                 _isOwnerProfile
@@ -208,13 +208,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                         children: [
                                                           TextSpan(
                                                             text: 'Followers\n',
-                                                            style: _themeData.textTheme.subtitle1,
+                                                            style: themeData.textTheme.titleMedium,
                                                           ),
                                                           TextSpan(
                                                             text: snapshot.hasData
                                                                 ? '${snapshot.data!.followerCount}'
                                                                 : '0',
-                                                            style: _themeData.textTheme.subtitle1,
+                                                            style: themeData.textTheme.titleMedium,
                                                           )
                                                         ],
                                                       ),
@@ -231,13 +231,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                         children: [
                                                           TextSpan(
                                                             text: 'Following\n',
-                                                            style: _themeData.textTheme.subtitle1,
+                                                            style: themeData.textTheme.titleMedium,
                                                           ),
                                                           TextSpan(
                                                             text: snapshot.hasData
                                                                 ? '${snapshot.data!.followingCount}'
                                                                 : '0',
-                                                            style: _themeData.textTheme.subtitle1,
+                                                            style: themeData.textTheme.titleMedium,
                                                           )
                                                         ],
                                                       ),
@@ -254,13 +254,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                         children: [
                                                           TextSpan(
                                                             text: 'Pending\n',
-                                                            style: _themeData.textTheme.subtitle1,
+                                                            style: themeData.textTheme.titleMedium,
                                                           ),
                                                           TextSpan(
                                                             text: snapshot.hasData
                                                                 ? '${snapshot.data!.pendingRequestCount}'
                                                                 : '0',
-                                                            style: _themeData.textTheme.subtitle1,
+                                                            style: themeData.textTheme.titleMedium,
                                                           )
                                                         ],
                                                       ),
@@ -306,13 +306,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                             children: [
                                                               TextSpan(
                                                                 text: 'Followers\n',
-                                                                style: _themeData.textTheme.subtitle1,
+                                                                style: themeData.textTheme.titleMedium,
                                                               ),
                                                               TextSpan(
                                                                 text: snapshot.hasData
                                                                     ? '${snapshot.data!.followerCount}'
                                                                     : '0',
-                                                                style: _themeData.textTheme.subtitle1,
+                                                                style: themeData.textTheme.titleMedium,
                                                               ),
                                                             ],
                                                           ),
@@ -329,13 +329,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                             children: [
                                                               TextSpan(
                                                                 text: 'Following\n',
-                                                                style: _themeData.textTheme.subtitle1,
+                                                                style: themeData.textTheme.titleMedium,
                                                               ),
                                                               TextSpan(
                                                                 text: snapshot.hasData
                                                                     ? '${snapshot.data!.followingCount}'
                                                                     : '0',
-                                                                style: _themeData.textTheme.subtitle1,
+                                                                style: themeData.textTheme.titleMedium,
                                                               )
                                                             ],
                                                           ),
@@ -421,7 +421,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                       const SizedBox(height: 20),
                       Text(
                         'Display name - ${amityUser.displayName}',
-                        style: _themeData.textTheme.subtitle1!.copyWith(fontWeight: FontWeight.w500),
+                        style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 8),
                       Text('Description - ${amityUser.description}'),
@@ -478,7 +478,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
   }
 
   Future _updateAvatar() async {
-    AmityImage? _userAvatar;
+    AmityImage? userAvatar;
     if (_avatar != null) {
       AmityUploadResult<AmityImage> amityUploadResult = await AmityCoreClient.newFileRepository()
           .image(File(_avatar!.path))
@@ -487,10 +487,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
           .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        _userAvatar = amityUploadComplete.getFile as AmityImage;
+        userAvatar = amityUploadComplete.getFile as AmityImage;
       }
     }
 
-    await _amityUser!.update().avatarFileId(_userAvatar!.fileId).update();
+    await _amityUser!.update().avatarFileId(userAvatar!.fileId).update();
   }
 }

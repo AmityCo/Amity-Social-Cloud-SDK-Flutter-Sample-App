@@ -142,38 +142,38 @@ class _ChannelMemberBannedScreenState extends State<ChannelMemberBannedScreen> {
                                     .check();
                                 return [
                                   PopupMenuItem(
-                                    child: const Text("Remove"),
                                     value: 1,
                                     enabled: canRemoveMember,
+                                    child: const Text("Remove"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Ban"),
                                     value: 2,
                                     enabled: canBanMember && !isMemberBanned,
+                                    child: const Text("Ban"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Unban"),
                                     value: 3,
                                     enabled: canBanMember && isMemberBanned,
+                                    child: const Text("Unban"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Add role"),
                                     value: 4,
                                     enabled: canAddRole && !isMemberBanned,
+                                    child: const Text("Add role"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Remove role"),
                                     value: 5,
                                     enabled: canRemoveRole && !isMemberBanned,
+                                    child: const Text("Remove role"),
                                   ),
                                   const PopupMenuItem(
-                                    child: Text("Check Permission"),
                                     value: 6,
+                                    child: Text("Check Permission"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Mute"),
                                     value: 7,
                                     enabled: canMuteRole,
+                                    child: const Text("Mute"),
                                   )
                                 ];
                               },

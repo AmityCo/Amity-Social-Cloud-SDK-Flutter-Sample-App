@@ -27,7 +27,7 @@ class _TokenExchangeScreenState extends State<TokenExchangeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Get user token')),
       body: Builder(builder: (context) {
@@ -72,6 +72,10 @@ class _TokenExchangeScreenState extends State<TokenExchangeScreen> {
                           title: 'Error', message: error.toString());
                     });
                   },
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.all(12),
+                  ),
                   child: Container(
                     width: 200,
                     alignment: Alignment.center,
@@ -79,11 +83,6 @@ class _TokenExchangeScreenState extends State<TokenExchangeScreen> {
                         text: const TextSpan(children: [
                       TextSpan(text: 'Exchange!'),
                     ])),
-                  ),
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    primary: Colors.white,
-                    padding: const EdgeInsets.all(12),
                   ),
                 ),
               )
@@ -96,14 +95,14 @@ class _TokenExchangeScreenState extends State<TokenExchangeScreen> {
 
   Future<AmityUserToken> getUserToken() async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final _userId = _userIdTextEditController.text.trim();
-    final _displayname = _displaynameTextEditController.text.trim();
-    final _secureToken = _secureTokenTextEditController.text.trim();
+    final userId = _userIdTextEditController.text.trim();
+    final displayname = _displaynameTextEditController.text.trim();
+    final secureToken = _secureTokenTextEditController.text.trim();
 
     return await AmityUserTokenManager(
             apiKey: "b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25",
             endpoint: AmityRegionalHttpEndpoint.SG)
-        .createUserToken(_userId,
-            displayname: _displayname, secureToken: _secureToken);
+        .createUserToken(userId,
+            displayname: displayname, secureToken: secureToken);
   }
 }

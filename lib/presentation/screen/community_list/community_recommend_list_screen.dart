@@ -28,7 +28,7 @@ class _CommunityRecommendListScreenState
     return FutureBuilder<List<AmityCommunity>>(
         future: AmitySocialClient.newCommunityRepository()
             .getRecommendedCommunities()
-            .whenComplete(() => {isLoading = false}),
+            .whenComplete(() => isLoading = false),
         builder: (context, snapshot) {
           return Expanded(
             child: (snapshot.data != null && snapshot.data!.isNotEmpty)

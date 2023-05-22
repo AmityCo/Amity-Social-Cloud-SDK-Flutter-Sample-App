@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
     //     'b0eeed0f3fd2a4311d658d1f030e168884008ce0e8673924';
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.US.value;
 
-    ThemeData _themeData = Theme.of(context);
+    ThemeData themeData = Theme.of(context);
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               const SizedBox(height: 24),
-              Text('ASC Flutter SDK', style: _themeData.textTheme.headline6),
+              Text('ASC Flutter SDK', style: themeData.textTheme.titleLarge),
               const SizedBox(height: 24),
               TextFormField(
                 key: const Key('user_id_txtip'),

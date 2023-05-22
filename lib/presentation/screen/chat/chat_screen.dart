@@ -18,7 +18,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final scrollcontroller = ScrollController();
 
   AmityMessageDataType? _type;
-  AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
+  final AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
   List<String>? _tags;
   List<String>? _excludingTags;
   bool parentsOnly = false;

@@ -25,8 +25,8 @@ class ErrorDialog extends StatelessWidget {
                 onPressed: () {
                   GoRouter.of(context).goNamed(AppRoute.login);
                 },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: const Text('Logout'),
-                style: ElevatedButton.styleFrom(primary: Colors.red),
               ),
             ],
           );

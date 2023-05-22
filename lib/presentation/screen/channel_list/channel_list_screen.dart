@@ -27,7 +27,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
   final _debouncer = Debouncer(milliseconds: 500);
 
   AmityChannelFilter _filter = AmityChannelFilter.ALL;
-  List<AmityChannelType> _type = [];
+  final List<AmityChannelType> _type = [];
   AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
   List<String>? _tags;
   List<String>? _excludingTags;
@@ -111,16 +111,16 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
-                          child: Text(AmityChannelFilter.ALL.name),
                           value: 1,
+                          child: Text(AmityChannelFilter.ALL.name),
                         ),
                         PopupMenuItem(
-                          child: Text(AmityChannelFilter.MEMBER.name),
                           value: 2,
+                          child: Text(AmityChannelFilter.MEMBER.name),
                         ),
                         PopupMenuItem(
-                          child: Text(AmityChannelFilter.NOT_MEMBER.name),
                           value: 3,
+                          child: Text(AmityChannelFilter.NOT_MEMBER.name),
                         )
                       ];
                     },
@@ -150,30 +150,30 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                     itemBuilder: (context) {
                       return [
                         CheckedPopupMenuItem(
-                          child: const Text('ALL'),
                           value: 0,
                           checked: _type.isEmpty,
+                          child: const Text('ALL'),
                         ),
                         CheckedPopupMenuItem(
-                          child: Text(AmityChannelType.COMMUNITY.value),
                           value: 1,
                           checked: _type.contains(AmityChannelType.COMMUNITY),
+                          child: Text(AmityChannelType.COMMUNITY.value),
                         ),
                         CheckedPopupMenuItem(
-                          child: Text(AmityChannelType.LIVE.value),
                           value: 2,
                           checked: _type.contains(AmityChannelType.LIVE),
+                          child: Text(AmityChannelType.LIVE.value),
                         ),
                         CheckedPopupMenuItem(
-                          child: Text(AmityChannelType.BROADCAST.value),
                           value: 3,
                           checked: _type.contains(AmityChannelType.BROADCAST),
+                          child: Text(AmityChannelType.BROADCAST.value),
                         ),
                         CheckedPopupMenuItem(
-                          child: Text(AmityChannelType.CONVERSATION.value),
                           value: 4,
                           checked:
                               _type.contains(AmityChannelType.CONVERSATION),
+                          child: Text(AmityChannelType.CONVERSATION.value),
                         )
                       ];
                     },
@@ -226,9 +226,9 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
+                          value: 1,
                           child:
                               Text(AmityChannelSortOption.LAST_ACTIVITY.name),
-                          value: 1,
                         ),
                       ];
                     },

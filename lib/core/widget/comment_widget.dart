@@ -74,7 +74,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       const SizedBox(width: 12),
                       Text(
                         'Comment has been deleted',
-                        style: themeData.textTheme.caption,
+                        style: themeData.textTheme.bodySmall,
                       )
                     ],
                   ),
@@ -170,7 +170,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       child: Text(
                         '${value.reactionCount} Likes',
-                        style: themeData.textTheme.caption!.copyWith(),
+                        style: themeData.textTheme.bodySmall!.copyWith(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -180,7 +180,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       child: Text(
                         'Reply',
-                        style: themeData.textTheme.caption!.copyWith(),
+                        style: themeData.textTheme.bodySmall!.copyWith(),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -206,7 +206,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       child: Text(
                         '${value.flagCount} Flag',
-                        style: themeData.textTheme.caption!
+                        style: themeData.textTheme.bodySmall!
                             .copyWith(fontWeight: value.isFlaggedByMe ? FontWeight.bold : FontWeight.normal),
                       ),
                     )
@@ -215,7 +215,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                 const SizedBox(height: 6),
                 SelectableText(
                   'Comment ID - ${value.commentId}',
-                  style: themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
                 if ((value.attachments ??= []).isNotEmpty)
                   SizedBox(
@@ -261,7 +261,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                               margin: const EdgeInsets.only(top: 6),
                               child: Text(
                                 '~~~~~~ View ${value.childrenNumber} more reply',
-                                style: themeData.textTheme.caption!.copyWith(),
+                                style: themeData.textTheme.bodySmall!.copyWith(),
                               ),
                             ),
                           )
@@ -279,7 +279,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                   margin: const EdgeInsets.only(top: 6),
                                   child: Text(
                                     '~~~~~~ Hide reply',
-                                    style: themeData.textTheme.caption!.copyWith(),
+                                    style: themeData.textTheme.bodySmall!.copyWith(),
                                   ),
                                 ),
                               ),

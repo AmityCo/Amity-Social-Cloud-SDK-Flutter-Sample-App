@@ -91,7 +91,7 @@ class AppRouter {
             name: AppRoute.globalFeed,
             path: AppRoute.globalFeedRoute,
             builder: (context, state) => const GlobalFeedScreen(),
-            routes: [],
+            routes: const [],
           ),
           GoRoute(
             name: AppRoute.communityFeed,
@@ -114,7 +114,7 @@ class AppRouter {
           GoRoute(
             name: AppRoute.communityList,
             path: AppRoute.communityListRoute,
-            builder: (context, state) => CommunityListScreen(),
+            builder: (context, state) => const CommunityListScreen(),
             routes: [
               GoRoute(
                   name: AppRoute.communityProfile,

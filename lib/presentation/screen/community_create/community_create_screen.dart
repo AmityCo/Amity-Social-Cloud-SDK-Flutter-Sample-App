@@ -69,6 +69,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                   decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withOpacity(.3)),
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: _avatar != null
                       ? Image.file(
                           File(
@@ -78,9 +79,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                         )
                       : InkWell(
                           onTap: () async {
-                            final ImagePicker _picker = ImagePicker();
+                            final ImagePicker picker = ImagePicker();
                             // Pick an image
-                            final image = await _picker.pickImage(
+                            final image = await picker.pickImage(
                                 source: ImageSource.gallery);
 
                             setState(() {
@@ -107,7 +108,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                             ],
                           ),
                         ),
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
@@ -233,7 +233,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   }
 
   Future _createCommunity() async {
-    AmityImage? _communityAvatar;
+    AmityImage? communityAvatar;
     if (_avatar != null) {
       AmityUploadResult<AmityImage> amityUploadResult =
           await AmityCoreClient.newFileRepository()
@@ -243,17 +243,17 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        _communityAvatar = amityUploadComplete.getFile as AmityImage;
+        communityAvatar = amityUploadComplete.getFile as AmityImage;
         // _images.add(amityUploadComplete.getFile as AmityImage);
       }
     }
 
     String name = _nameEditController.text.trim();
     String des = _desEditController.text.trim();
-    final _metadataString = _metadataEditController.text.trim();
-    Map<String, dynamic> _metadata = {};
+    final metadataString = _metadataEditController.text.trim();
+    Map<String, dynamic> metadata = {};
     try {
-      _metadata = jsonDecode(_metadataString);
+      metadata = jsonDecode(metadataString);
     } catch (e) {
       print('metadata decode failed');
     }
@@ -261,7 +261,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     final communityCreator = AmitySocialClient.newCommunityRepository()
         .createCommunity(name)
         .description(des)
-        .metadata(_metadata)
+        .metadata(metadata)
         .isPublic(_isPublic)
         .isPostReviewEnabled(_isPostReviewEnable);
 
@@ -283,8 +283,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
           .toList());
     }
 
-    if (_communityAvatar != null) {
-      communityCreator.avatar(_communityAvatar);
+    if (communityAvatar != null) {
+      communityCreator.avatar(communityAvatar);
     }
 
     await communityCreator.create();

@@ -236,7 +236,7 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
   final AmityChannel amityChannel;
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -270,12 +270,12 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityChannel.messageCount}\n',
-                            style: _themeData.textTheme.subtitle1!
+                            style: themeData.textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
                               text: 'Messages',
-                              style: _themeData.textTheme.bodyText2),
+                              style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     ),
@@ -285,12 +285,12 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityChannel.memberCount}\n',
-                            style: _themeData.textTheme.subtitle1!
+                            style: themeData.textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
                               text: 'Members',
-                              style: _themeData.textTheme.bodyText2),
+                              style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     )
@@ -302,12 +302,12 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             amityChannel.displayName ?? '',
-            style: _themeData.textTheme.headline6,
+            style: themeData.textTheme.titleLarge,
           ),
           const SizedBox(height: 6),
           SelectableText(
             amityChannel.channelId ?? '',
-            style: _themeData.textTheme.subtitle1,
+            style: themeData.textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           const Text('Current User Roles & Permission'),

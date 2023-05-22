@@ -18,7 +18,7 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
   final scrollcontroller = ScrollController();
   bool loading = false;
 
-  List<AmityDataType> _dataType = [];
+  final List<AmityDataType> _dataType = [];
 
   @override
   void initState() {
@@ -41,9 +41,7 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
             print(_controller.stacktrace);
             ErrorDialog.show(context,
                 title: 'Error',
-                message: _controller.error.toString() +
-                    '\n' +
-                    _controller.stacktrace.toString());
+                message: '${_controller.error}\n${_controller.stacktrace}');
           }
         },
       );
@@ -81,19 +79,19 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
                   itemBuilder: (context) {
                     return [
                       CheckedPopupMenuItem(
-                        child: Text(AmityDataType.IMAGE.name),
                         value: 2,
                         checked: _dataType.contains(AmityDataType.IMAGE),
+                        child: Text(AmityDataType.IMAGE.name),
                       ),
                       CheckedPopupMenuItem(
-                        child: Text(AmityDataType.VIDEO.name),
                         value: 3,
                         checked: _dataType.contains(AmityDataType.VIDEO),
+                        child: Text(AmityDataType.VIDEO.name),
                       ),
                       CheckedPopupMenuItem(
-                        child: Text(AmityDataType.FILE.name),
                         value: 4,
                         checked: _dataType.contains(AmityDataType.FILE),
+                        child: Text(AmityDataType.FILE.name),
                       )
                     ];
                   },

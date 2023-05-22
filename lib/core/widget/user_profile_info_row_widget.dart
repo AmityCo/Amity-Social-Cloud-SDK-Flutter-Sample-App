@@ -19,7 +19,7 @@ class UserProfileInfoRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -37,13 +37,13 @@ class UserProfileInfoRowWidget extends StatelessWidget {
                 .3,
               ),
             ),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: userAvatar != null
                 ? Image.network(
                     userAvatar!,
                     fit: BoxFit.fill,
                   )
                 : Image.asset('assets/user_placeholder.png'),
-            clipBehavior: Clip.antiAliasWithSaveLayer,
           ),
           const SizedBox(width: 18),
           InkWell(
@@ -55,11 +55,11 @@ class UserProfileInfoRowWidget extends StatelessWidget {
               children: [
                 Text(
                   userName,
-                  style: _themeData.textTheme.headline6,
+                  style: themeData.textTheme.titleLarge,
                 ),
                 Text(
                   subTitle ?? '',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
               ],
             ),

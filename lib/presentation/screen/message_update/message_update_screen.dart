@@ -104,8 +104,8 @@ class MessageUpdateScreen extends StatelessWidget {
       builder.text(text);
     }
 
-    final _metadataString = _metadataEditController.text.trim();
-    if (_metadataString.isNotEmpty) {
+    final metadataString = _metadataEditController.text.trim();
+    if (metadataString.isNotEmpty) {
       builder.text(text);
     }
 
