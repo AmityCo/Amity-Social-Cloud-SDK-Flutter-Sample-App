@@ -97,8 +97,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   child: Text(AmityCommentSortOption.LAST_UPDATED.apiKey),
                 ),
                 PopupMenuItem(
-                  value: 1,
-                  child: Text(AmityCommentSortOption.LAST_CREATED.apiKey),
+                  value: 2,
+                  child: Text(AmityCommentSortOption.FIRST_CREATED.apiKey),
                 ),
                 PopupMenuItem(
                   value: 9,
