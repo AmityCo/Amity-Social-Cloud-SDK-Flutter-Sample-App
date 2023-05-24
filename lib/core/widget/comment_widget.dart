@@ -323,6 +323,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                     value: 5,
                     child: Text("RTE"),
                   ),
+                  const PopupMenuItem(
+                    value: 6,
+                    child: Text("Reply Comment List"),
+                  ),
                 ];
               },
               child: const Icon(
@@ -368,6 +372,23 @@ class _CommentWidgetState extends State<CommentWidget> {
                     'communityId': widget.communityId,
                     'isPublic': widget.isPublic.toString()
                   });
+                }
+                if (index1 == 6) {
+                  GoRouter.of(context).pushNamed(
+                    AppRoute.commentListReply,
+                    queryParams: {
+                      'postId': widget.postId,
+                      'parentId': value.commentId,
+                      'communityId': widget.communityId,
+                      'isPublic': widget.isPublic.toString()
+                    },
+                  );
+                  // GoRouter.of(context).pushNamed(AppRoute.commentRTE, queryParams: {
+                  //   'commentId': value.commentId,
+                  //   'postId': widget.postId,
+                  //   'communityId': widget.communityId,
+                  //   'isPublic': widget.isPublic.toString()
+                  // });
                 }
               },
             ),
