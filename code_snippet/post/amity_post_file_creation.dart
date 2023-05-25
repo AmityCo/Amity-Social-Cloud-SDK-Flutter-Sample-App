@@ -12,8 +12,7 @@ class AmityPostFileCreation {
   void uploadFile(File uploadinFile) {
     //first, upload file
     AmityCoreClient.newFileRepository()
-        .file(uploadinFile)
-        .upload()
+        .uploadFile(uploadinFile)
         .stream
         .listen((AmityUploadResult<AmityFile> amityResult) {
       amityResult.when(
@@ -41,8 +40,7 @@ class AmityPostFileCreation {
   void createFilePost(AmityFile uploadedFile) {
     AmitySocialClient.newPostRepository()
         .createPost()
-        .targetUser(
-            'userId') // or targetMe(), targetCommunity(communityId: String)
+        .targetUser('userId') // or targetMe(), targetCommunity(communityId: String)
         .file([uploadedFile])
         .text('Hello from flutter with file!')
         .post()

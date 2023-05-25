@@ -11,8 +11,7 @@ class AmityFileUpload {
     */
   void uploadFile(File uploadingFile) async {
     AmityCoreClient.newFileRepository()
-        .file(uploadingFile)
-        .upload()
+        .uploadFile(uploadingFile)
         .stream
         .listen((AmityUploadResult<AmityFile> amityUploadResult) {
       amityUploadResult.when(

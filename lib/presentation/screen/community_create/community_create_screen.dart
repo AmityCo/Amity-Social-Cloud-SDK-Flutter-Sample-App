@@ -66,9 +66,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 Container(
                   width: 120,
                   height: 120,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.withOpacity(.3)),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                   child: _avatar != null
                       ? Image.file(
                           File(
@@ -80,8 +78,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                           onTap: () async {
                             final ImagePicker _picker = ImagePicker();
                             // Pick an image
-                            final image = await _picker.pickImage(
-                                source: ImageSource.gallery);
+                            final image = await _picker.pickImage(source: ImageSource.gallery);
 
                             setState(() {
                               _avatar = image;
@@ -112,8 +109,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _nameEditController,
-                  decoration:
-                      const InputDecoration(hintText: 'Enter Community Name'),
+                  decoration: const InputDecoration(hintText: 'Enter Community Name'),
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
@@ -171,9 +167,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                           context: context,
                           builder: (context) {
                             return CommunityCategoryListScreen(
-                                selectedCategoryIds: _catsEditController.text
-                                        .trim()
-                                        .isNotEmpty
+                                selectedCategoryIds: _catsEditController.text.trim().isNotEmpty
                                     ? _catsEditController.text.trim().split(',')
                                     : null);
                           }).then((value) {
@@ -208,18 +202,14 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _metadataEditController,
-                  decoration: const InputDecoration(
-                      hintText: 'Enter Community metadata'),
+                  decoration: const InputDecoration(hintText: 'Enter Community metadata'),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    ProgressDialog.show(context,
-                            asyncFunction: _createCommunity)
-                        .then((value) {
+                    ProgressDialog.show(context, asyncFunction: _createCommunity).then((value) {
                       GoRouter.of(context).pop();
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   },
                   child: const Text('Create Community'),
@@ -235,12 +225,10 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   Future _createCommunity() async {
     AmityImage? _communityAvatar;
     if (_avatar != null) {
-      AmityUploadResult<AmityImage> amityUploadResult =
-          await AmityCoreClient.newFileRepository()
-              .image(File(_avatar!.path))
-              .upload()
-              .stream
-              .firstWhere((element) => element is AmityUploadComplete);
+      AmityUploadResult<AmityImage> amityUploadResult = await AmityCoreClient.newFileRepository()
+          .uploadImage(File(_avatar!.path))
+          .stream
+          .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
         _communityAvatar = amityUploadComplete.getFile as AmityImage;
@@ -266,21 +254,13 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
         .isPostReviewEnabled(_isPostReviewEnable);
 
     if (_catsEditController.text.isNotEmpty) {
-      communityCreator.categoryIds(_catsEditController.text
-          .trim()
-          .split(',')
-          .map((e) => e.trim())
-          .toList());
+      communityCreator.categoryIds(_catsEditController.text.trim().split(',').map((e) => e.trim()).toList());
     }
     if (_tagsEditController.text.isNotEmpty) {
       communityCreator.tags(_tagsEditController.text.trim().split(','));
     }
     if (_userIdsEditController.text.isNotEmpty) {
-      communityCreator.userIds(_userIdsEditController.text
-          .trim()
-          .split(',')
-          .map((e) => e.trim())
-          .toList());
+      communityCreator.userIds(_userIdsEditController.text.trim().split(',').map((e) => e.trim()).toList());
     }
 
     if (_communityAvatar != null) {

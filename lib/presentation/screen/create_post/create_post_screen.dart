@@ -15,9 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen(
-      {Key? key, this.userId, this.communityId, this.isPublic = false})
-      : super(key: key);
+  const CreatePostScreen({Key? key, this.userId, this.communityId, this.isPublic = false}) : super(key: key);
   final String? userId;
   final String? communityId;
   final bool isPublic;
@@ -91,57 +89,37 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onChanged: (value) {
                   UserSuggesionOverlay.instance.hideOverLay();
 
-                  if (widget.communityId == null ||
-                      widget.communityId!.isEmpty ||
-                      widget.isPublic) {
+                  if (widget.communityId == null || widget.communityId!.isEmpty || widget.isPublic) {
                     UserSuggesionOverlay.instance.updateOverLay(
-                        context,
-                        UserSuggestionType.global,
-                        _postTextTextFieldKey,
-                        value, (keyword, user) {
+                        context, UserSuggestionType.global, _postTextTextFieldKey, value, (keyword, user) {
                       mentionUsers.add(user);
                       if (keyword.isNotEmpty) {
                         final length = _postTextEditController.text.length;
-                        _postTextEditController.text =
-                            _postTextEditController.text.replaceRange(
-                                length - keyword.length,
-                                length,
-                                user.displayName ?? '');
+                        _postTextEditController.text = _postTextEditController.text
+                            .replaceRange(length - keyword.length, length, user.displayName ?? '');
                       } else {
-                        _postTextEditController.text =
-                            (_postTextEditController.text + user.displayName!);
+                        _postTextEditController.text = (_postTextEditController.text + user.displayName!);
                       }
 
                       _postTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(
-                              offset: _postTextEditController.text.length));
+                          TextSelection.fromPosition(TextPosition(offset: _postTextEditController.text.length));
                     }, postion: UserSuggestionPostion.bottom);
                   } else {
                     UserSuggesionOverlay.instance.updateOverLay(
-                        context,
-                        UserSuggestionType.community,
-                        _postTextTextFieldKey,
-                        value, (keyword, user) {
+                        context, UserSuggestionType.community, _postTextTextFieldKey, value, (keyword, user) {
                       mentionUsers.add(user);
 
                       if (keyword.isNotEmpty) {
                         final length = _postTextEditController.text.length;
-                        _postTextEditController.text =
-                            _postTextEditController.text.replaceRange(
-                                length - keyword.length,
-                                length,
-                                user.displayName ?? '');
+                        _postTextEditController.text = _postTextEditController.text
+                            .replaceRange(length - keyword.length, length, user.displayName ?? '');
                       } else {
-                        _postTextEditController.text =
-                            (_postTextEditController.text + user.displayName!);
+                        _postTextEditController.text = (_postTextEditController.text + user.displayName!);
                       }
 
                       _postTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(
-                              offset: _postTextEditController.text.length));
-                    },
-                        communityId: widget.communityId,
-                        postion: UserSuggestionPostion.bottom);
+                          TextSelection.fromPosition(TextPosition(offset: _postTextEditController.text.length));
+                    }, communityId: widget.communityId, postion: UserSuggestionPostion.bottom);
                   }
                 },
               ),
@@ -168,12 +146,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(allowMultiple: true);
+                    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
 
                     if (result != null) {
-                      files.addAll(
-                          result.paths.map((path) => File(path!)).toList());
+                      files.addAll(result.paths.map((path) => File(path!)).toList());
                     }
                     setState(() {
                       isTextPost = false;
@@ -191,14 +167,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     files.clear();
 
                     FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                            type: FileType.custom,
-                            allowMultiple: true,
-                            allowedExtensions: ['mp4', 'mov']);
+                        .pickFiles(type: FileType.custom, allowMultiple: true, allowedExtensions: ['mp4', 'mov']);
 
                     if (result != null) {
-                      files.addAll(
-                          result.paths.map((path) => File(path!)).toList());
+                      files.addAll(result.paths.map((path) => File(path!)).toList());
                     }
                     setState(() {
                       isTextPost = false;
@@ -239,15 +211,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       context,
                       asyncFunction: () => _createPost(context),
                     ).then((value) {
-                      PositiveDialog.show(context,
-                          title: 'Post Created',
-                          message: 'Post Created Successfully',
+                      PositiveDialog.show(context, title: 'Post Created', message: 'Post Created Successfully',
                           onPostiveCallback: () {
                         GoRouter.of(context).pop();
                       });
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   },
                   style: TextButton.styleFrom(
@@ -289,20 +258,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     ///Mention user logic
     //Clean up mention user list, as user might have removed some tagged user
-    mentionUsers
-        .removeWhere((element) => !_text.contains(element.displayName!));
+    mentionUsers.removeWhere((element) => !_text.contains(element.displayName!));
 
     final mentionedUserIds = mentionUsers.map((e) => e.userId!).toList();
 
     final amityMentioneesMetadata = mentionUsers
         .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-            userId: e.userId!,
-            index: _text.indexOf('@${e.displayName!}'),
-            length: e.displayName!.length))
+            userId: e.userId!, index: _text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
         .toList();
 
-    Map<String, dynamic> _metadata =
-        AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+    Map<String, dynamic> _metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
     // try {
     //   _metadata = jsonDecode(_metadataString);
     // } catch (e) {
@@ -335,11 +300,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
-          AmityCoreClient.newFileRepository()
-              .image(_file)
-              .upload()
-              .stream
-              .listen((event) {
+          AmityCoreClient.newFileRepository().uploadImage(_file).stream.listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
 
             event.when(
@@ -386,8 +347,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (isVideoPost) {
       List<AmityVideo> _video = [];
       for (final _file in files) {
-        AmityUploadResult<AmityVideo> amityUploadResult =
-            await AmityCoreClient.newFileRepository().video(_file).upload();
+        AmityUploadResult<AmityVideo> amityUploadResult = await AmityCoreClient.newFileRepository().uploadVideo(_file);
         if (amityUploadResult is AmityUploadComplete) {
           final amityUploadComplete = amityUploadResult as AmityUploadComplete;
           _video.add(amityUploadComplete.getFile as AmityVideo);
@@ -420,11 +380,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
-          AmityCoreClient.newFileRepository()
-              .file(_file)
-              .upload()
-              .stream
-              .listen((event) {
+          AmityCoreClient.newFileRepository().uploadFile(_file).stream.listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
             event.when(
               progress: (uploadInfo, cancelToken) {},
@@ -435,8 +391,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 uploadCompleter.complete();
               },
               error: (error) {
-                CommonSnackbar.showNagativeSnackbar(
-                    context, 'Error', error.message);
+                CommonSnackbar.showNagativeSnackbar(context, 'Error', error.message);
                 uploadCompleter.completeError(error);
               },
               cancel: () {},

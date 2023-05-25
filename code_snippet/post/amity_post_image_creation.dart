@@ -12,8 +12,7 @@ class AmityPostImageCreation {
   void uploadImage(File uploadingImage) {
     //first, upload image
     AmityCoreClient.newFileRepository()
-        .image(uploadingImage)
-        .upload()
+        .uploadImage(uploadingImage)
         .stream
         .listen((AmityUploadResult<AmityImage> amityResult) {
       amityResult.when(
@@ -41,8 +40,7 @@ class AmityPostImageCreation {
   void createImagePost(AmityImage uploadedImage) {
     AmitySocialClient.newPostRepository()
         .createPost()
-        .targetUser(
-            'userId') // or targetMe(), targetCommunity(communityId: String)
+        .targetUser('userId') // or targetMe(), targetCommunity(communityId: String)
         .image([uploadedImage])
         .text('Hello from flutter with image!')
         .post()

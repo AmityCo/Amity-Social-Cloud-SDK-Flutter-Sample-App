@@ -12,8 +12,7 @@ class AmityPostVideoCreation {
   void uploadVideo(File uploadingVideo) {
     //first, upload video
     AmityCoreClient.newFileRepository()
-        .video(uploadingVideo)
-        .upload()
+        .uploadVideo(uploadingVideo)
         .then((AmityUploadResult<AmityVideo> amityUploadResult) {
       //check if the upload result is complete
       if (amityUploadResult is AmityUploadComplete) {
@@ -38,8 +37,7 @@ class AmityPostVideoCreation {
   void createVideoPost(AmityVideo uploadedVideo) {
     AmitySocialClient.newPostRepository()
         .createPost()
-        .targetUser(
-            'userId') // or targetMe(), targetCommunity(communityId: String)
+        .targetUser('userId') // or targetMe(), targetCommunity(communityId: String)
         .video([uploadedVideo])
         .text('Hello from flutter with video!')
         .post()
