@@ -481,8 +481,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     AmityImage? _userAvatar;
     if (_avatar != null) {
       AmityUploadResult<AmityImage> amityUploadResult = await AmityCoreClient.newFileRepository()
-          .image(File(_avatar!.path))
-          .upload()
+          .uploadImage(File(_avatar!.path))
           .stream
           .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {

@@ -11,8 +11,7 @@ class AmityUserAvatar {
     */
   void uploadAvatar(File imageFile) {
     AmityCoreClient.newFileRepository()
-        .image(imageFile)
-        .upload()
+        .uploadImage(imageFile)
         .stream
         .listen((AmityUploadResult<AmityImage> amityResult) {
       amityResult.when(
@@ -34,11 +33,7 @@ class AmityUserAvatar {
   }
 
   void updateUserAvatar(String avatarFileId) {
-    AmityCoreClient.newUserRepository()
-        .updateUser('userId')
-        .avatarFileId(avatarFileId)
-        .update()
-        .then((AmityUser user) {
+    AmityCoreClient.newUserRepository().updateUser('userId').avatarFileId(avatarFileId).update().then((AmityUser user) {
       //handle result
     }).onError<AmityException>((error, stackTrace) {
       //handle error

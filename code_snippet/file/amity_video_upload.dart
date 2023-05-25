@@ -10,9 +10,8 @@ class AmityVideoUpload {
     description: Flutter Video upload with progress example
     */
   void uploadVideo(File uploadingVideo) async {
-   AmityCoreClient.newFileRepository()
-        .video(uploadingVideo)
-        .upload()
+    AmityCoreClient.newFileRepository()
+        .uploadVideo(uploadingVideo)
         .then((AmityUploadResult<AmityVideo> amityUploadResult) {
       //check if the upload result is complete
       if (amityUploadResult is AmityUploadComplete) {
