@@ -111,7 +111,7 @@ class _CommentQueryReplyScreenState extends State<CommentQueryReplyScreen> {
                 ),
                 const PopupMenuItem(
                   value: 11,
-                  child: Text('Excat IMAGE & Text'),
+                  child: Text('Excat IMAGE & TEXT'),
                 ),
                 const PopupMenuItem(
                   value: 5,
@@ -122,12 +122,20 @@ class _CommentQueryReplyScreenState extends State<CommentQueryReplyScreen> {
                   child: Text('Any IMAGE'),
                 ),
                 const PopupMenuItem(
+                  value: 12,
+                  child: Text('Any IMAGE & TEXT'),
+                ),
+                const PopupMenuItem(
                   value: 7,
                   child: Text('Clear'),
                 ),
                 const PopupMenuItem(
                   value: 10,
                   child: Text('Include Deleted'),
+                ),
+                const PopupMenuItem(
+                  value: 13,
+                  child: Text('Exclude Deleted'),
                 ),
               ];
             },
@@ -168,12 +176,20 @@ class _CommentQueryReplyScreenState extends State<CommentQueryReplyScreen> {
                 dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.IMAGE]);
               }
 
+              if (index1 == 12) {
+                dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.IMAGE, AmityDataType.TEXT]);
+              }
+
               if (index1 == 7) {
                 dataTypes = null;
               }
 
               if (index1 == 10) {
-                _includeDeleted = !_includeDeleted;
+                _includeDeleted = true;
+              }
+
+              if (index1 == 13) {
+                _includeDeleted = false;
               }
 
               setState(() {});
