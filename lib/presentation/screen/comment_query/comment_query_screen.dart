@@ -188,11 +188,11 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
               }
 
               if (index1 == 10) {
-                _includeDeleted = !_includeDeleted;
+                _includeDeleted = true;
               }
 
               if (index1 == 13) {
-                _includeDeleted = !_includeDeleted;
+                _includeDeleted = false;
               }
 
               setState(() {});
