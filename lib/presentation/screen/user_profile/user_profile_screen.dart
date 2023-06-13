@@ -281,7 +281,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                         },
                                       )
                                     : FutureBuilder<AmityUserFollowInfo>(
-                                        future: amityUser.relationship().getFollowInfo(),
+                                        future: AmityCoreClient.newUserRepository()
+                                            .relationship()
+                                            .getFollowInfo(amityUser.userId!),
                                         builder: (context, snapshot) {
                                           if (!snapshot.hasData) {
                                             return Container();
@@ -362,9 +364,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                                 });
                                                               } else if (snapshot.data!.status ==
                                                                   AmityFollowStatus.NONE) {
-                                                                amityUser
+                                                                AmityCoreClient.newUserRepository()
                                                                     .relationship()
-                                                                    .follow()
+                                                                    .follow(amityUser.userId!)
                                                                     .then((value) =>
                                                                         CommonSnackbar.showPositiveSnackbar(
                                                                             context, 'User-Follow', 'User Follow'))
@@ -374,9 +376,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                                                                             'Error',
                                                                             'User Follow Error - ${error.toString()}'));
                                                               } else {
-                                                                amityUser
+                                                                AmityCoreClient.newUserRepository()
                                                                     .relationship()
-                                                                    .unfollow()
+                                                                    .unfollow(amityUser.userId!)
                                                                     .then((value) =>
                                                                         CommonSnackbar.showPositiveSnackbar(
                                                                             context, 'User-Unfollow', 'User Unfollow'))
