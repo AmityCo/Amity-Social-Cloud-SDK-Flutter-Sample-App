@@ -18,7 +18,7 @@ void main() {
           'victimAndroid',
           'Victim Android',
           'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c',
-          AmityRegionalHttpEndpoint.STAGING.value);
+          AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint);
 
       await widgetTester.pumpAndSettle(const Duration(seconds: 2));
 

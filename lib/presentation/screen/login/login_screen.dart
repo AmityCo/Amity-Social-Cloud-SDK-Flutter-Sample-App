@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _userIdTextController.text = 'victimAndroid';
     _displayNameTextController.text = 'Victim Android';
     _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.DEV.value;
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.endpoint;
 
     //STAGING Server
     // _userIdTextController.text = 'victimAndroid';
@@ -104,9 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     await AmityCoreClient.setup(
                       option: AmityCoreClientOption(
                           apiKey: apikey,
-                          httpEndpoint:
-                              AmityRegionalHttpEndpoint.values.where((element) => element.value == serverUrl).first,
-                          mqttEndpoint: AmityRegionalMqttEndpoint.STAGING,
+                          httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
+                          mqttEndpoint: AmityRegionalMqttEndpoint.SG,
                           showLogs: true),
                       sycInitialization: true,
                     );
