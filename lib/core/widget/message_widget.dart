@@ -6,18 +6,16 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/core/utils/download_service.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_downloader/image_downloader.dart';
 
 class MessageWidget extends StatelessWidget {
-  const MessageWidget(
-      {Key? key, required this.message, required this.onReplyTap})
-      : super(key: key);
+  const MessageWidget({Key? key, required this.message, required this.onReplyTap}) : super(key: key);
   final AmityMessage message;
   final ValueChanged<AmityMessage> onReplyTap;
   @override
@@ -37,8 +35,7 @@ class MessageWidget extends StatelessWidget {
 
     // if (value.messageId == '631882bd09045c4fc8281a57') print(value.toString());
 
-    if (value.reactions!.reactions != null &&
-        value.reactions!.reactions!.isNotEmpty) {
+    if (value.reactions!.reactions != null && value.reactions!.reactions!.isNotEmpty) {
       value.reactions!.reactions!.removeWhere((key, value) => value == 0);
     }
 
@@ -74,17 +71,12 @@ class MessageWidget extends StatelessWidget {
         final Completer completer = Completer();
         ProgressDialog.showCompleter(context, completer);
 
-        AmityChatClient.newMessageRepository()
-            .getMessage(message.messageId!)
-            .then((value) {
+        AmityChatClient.newMessageRepository().getMessage(message.messageId!).then((value) {
           completer.complete();
-          PositiveDialog.show(context,
-              title: 'Message View',
-              message: value.toString().replaceAll(',', ', \n\n'));
+          PositiveDialog.show(context, title: 'Message View', message: value.toString().replaceAll(',', ', \n\n'));
         }).onError((error, stackTrace) {
           completer.completeError(error!);
-          CommonSnackbar.showNagativeSnackbar(
-              context, 'Error', error.toString());
+          CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
         });
       },
       onLongPress: () {
@@ -98,9 +90,7 @@ class MessageWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: const [
-                BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)
-              ],
+              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 2)],
             ),
             // color: Colors.red,
             child: Row(
@@ -109,15 +99,12 @@ class MessageWidget extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    GoRouter.of(context).pushNamed(AppRoute.profile,
-                        params: {'userId': user.userId ?? ''});
+                    GoRouter.of(context).pushNamed(AppRoute.profile, params: {'userId': user.userId ?? ''});
                   },
                   child: Container(
                     width: 36,
                     height: 36,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(.3)),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: user.avatarUrl != null
                         ? Image.network(
@@ -145,8 +132,7 @@ class MessageWidget extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            value.createdAt?.toLocal().toIso8601String() ??
-                                DateTime.now().toLocal().toIso8601String(),
+                            value.createdAt?.toLocal().toIso8601String() ?? DateTime.now().toLocal().toIso8601String(),
                             style: themeData.textTheme.caption!.copyWith(),
                           ),
                           const SizedBox(width: 12),
@@ -160,14 +146,12 @@ class MessageWidget extends StatelessWidget {
                         'Message Id - ${value.messageId}',
                         style: themeData.textTheme.caption!.copyWith(),
                       ),
-                      if (value.myReactions != null &&
-                          value.myReactions!.isNotEmpty)
+                      if (value.myReactions != null && value.myReactions!.isNotEmpty)
                         Text(
                           'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
                           style: themeData.textTheme.caption!.copyWith(),
                         ),
-                      if (value.amityTags != null &&
-                          value.amityTags!.tags!.isNotEmpty)
+                      if (value.amityTags != null && value.amityTags!.tags!.isNotEmpty)
                         Text(
                           'Tags - ${value.amityTags?.tags?.join(',') ?? ' Null'}',
                           style: themeData.textTheme.caption!.copyWith(),
@@ -183,15 +167,13 @@ class MessageWidget extends StatelessWidget {
                           'PreantID - ${value.parentId?.toString() ?? ' Null'}',
                           style: themeData.textTheme.caption!.copyWith(),
                         ),
-                      if (value.childrenNumber != null &&
-                          value.childrenNumber! > 0)
+                      if (value.childrenNumber != null && value.childrenNumber! > 0)
                         Text(
                           'Child Count - ${value.childrenNumber?.toString() ?? ' Null'}',
                           style: themeData.textTheme.caption!.copyWith(),
                         ),
 
-                      if (value.user!.flagCount != null &&
-                          value.user!.flagCount! > 0)
+                      if (value.user!.flagCount != null && value.user!.flagCount! > 0)
                         Text(
                           'User Flag Count - ${value.user?.flagCount?.toString() ?? ' Null'}',
                           style: themeData.textTheme.caption!.copyWith(),
@@ -206,37 +188,29 @@ class MessageWidget extends StatelessWidget {
                     if (message.isFlaggedByMe) {
                       message.unflag().then((value) {
                         completer.complete();
-                        CommonSnackbar.showPositiveSnackbar(
-                            context, 'Message', 'Unflagged');
+                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged');
                       }).onError((error, stackTrace) {
                         completer.completeError(error!, stackTrace);
-                        CommonSnackbar.showPositiveSnackbar(
-                            context, 'Message', 'Unflag Error - ${error}');
+                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - ${error}');
                       });
                     } else {
                       message.flag().then((value) {
                         completer.complete();
-                        CommonSnackbar.showPositiveSnackbar(
-                            context, 'Message', 'Flagged');
+                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged');
                       }).onError((error, stackTrace) {
                         completer.completeError(error!, stackTrace);
-                        CommonSnackbar.showPositiveSnackbar(
-                            context, 'Message', 'Flag Error - ${error}');
+                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - ${error}');
                       });
                     }
                   },
                   child: Container(
                     margin: const EdgeInsets.symmetric(horizontal: 6),
                     padding: const EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 1)),
+                    decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 1)),
                     child: Row(
                       children: [
-                        Icon(value.isFlaggedByMe
-                            ? Icons.flag_rounded
-                            : Icons.flag_outlined),
-                        if ((value.flagCount ?? 0) > 0)
-                          Text('${value.flagCount}')
+                        Icon(value.isFlaggedByMe ? Icons.flag_rounded : Icons.flag_outlined),
+                        if ((value.flagCount ?? 0) > 0) Text('${value.flagCount}')
                       ],
                     ),
                   ),
@@ -259,8 +233,7 @@ class MessageWidget extends StatelessWidget {
                       ),
                       PopupMenuItem(
                         value: 3,
-                        child: Text(
-                            '${message.isFlaggedByMe ? 'Unflag' : 'flag'} Message'),
+                        child: Text('${message.isFlaggedByMe ? 'Unflag' : 'flag'} Message'),
                       ),
                       const PopupMenuItem(
                         value: 4,
@@ -284,17 +257,15 @@ class MessageWidget extends StatelessWidget {
                       case 1:
                         if (message.data is MessageTextData) {
                           /// Update Message
-                          GoRouter.of(context).pushNamed(AppRoute.updateMessage,
-                              queryParams: {'messageId': message.messageId!});
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.updateMessage, queryParams: {'messageId': message.messageId!});
                         }
                         break;
                       case 2:
                         message.delete().then((value) {
-                          CommonSnackbar.showPositiveSnackbar(
-                              context, 'Message', 'Deleted');
+                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Deleted');
                         }).onError((error, stackTrace) {
-                          CommonSnackbar.showPositiveSnackbar(
-                              context, 'Message', 'Delete Error - ${error}');
+                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Delete Error - ${error}');
                         });
 
                         /// Delete Message
@@ -302,46 +273,32 @@ class MessageWidget extends StatelessWidget {
                       case 3:
                         if (message.isFlaggedByMe) {
                           message.unflag().then((value) {
-                            CommonSnackbar.showPositiveSnackbar(
-                                context, 'Message', 'Unflagged');
+                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged');
                           }).onError((error, stackTrace) {
-                            CommonSnackbar.showPositiveSnackbar(
-                                context, 'Message', 'Unflag Error - ${error}');
+                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - ${error}');
                           });
                         } else {
                           message.flag().then((value) {
-                            CommonSnackbar.showPositiveSnackbar(
-                                context, 'Message', 'Flagged');
+                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged');
                           }).onError((error, stackTrace) {
-                            CommonSnackbar.showPositiveSnackbar(
-                                context, 'Message', 'Flag Error - ${error}');
+                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - ${error}');
                           });
                         }
                         break;
                       case 4:
-                        UserRepository()
-                            .report(message.userId!)
-                            .flag()
-                            .then((value) {
-                          CommonSnackbar.showPositiveSnackbar(
-                              context, 'Message', 'Flagged User');
+                        UserRepository().report(message.userId!).flag().then((value) {
+                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged User');
                         }).onError((error, stackTrace) {
-                          CommonSnackbar.showPositiveSnackbar(
-                              context, 'Message', 'flagged Error - ${error}');
+                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'flagged Error - ${error}');
                         });
 
                         /// Delete Message
                         break;
                       case 5:
-                        UserRepository()
-                            .report(message.userId!)
-                            .unflag()
-                            .then((value) {
-                          CommonSnackbar.showPositiveSnackbar(
-                              context, 'Message', 'Unflagged User');
+                        UserRepository().report(message.userId!).unflag().then((value) {
+                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged User');
                         }).onError((error, stackTrace) {
-                          CommonSnackbar.showPositiveSnackbar(
-                              context, 'Message', 'Unflagged Error - ${error}');
+                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged Error - ${error}');
                         });
 
                         /// Delete Message
@@ -354,20 +311,13 @@ class MessageWidget extends StatelessWidget {
                           defString: message.amityTags?.tags?.join(','),
                           onPress: (value) {
                             if (value.isNotEmpty) {
-                              message
-                                  .upate()
-                                  .tags(value.split(','))
-                                  .update()
-                                  .then((value) {
-                                CommonSnackbar.showPositiveSnackbar(
-                                    context, 'Message', 'Tag Updated');
+                              message.upate().tags(value.split(',')).update().then((value) {
+                                CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag Updated');
                               }).onError((error, stackTrace) {
-                                CommonSnackbar.showPositiveSnackbar(context,
-                                    'Message', 'Tag message Error - $error');
+                                CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag message Error - $error');
                               });
                             } else {
-                              CommonSnackbar.showNagativeSnackbar(
-                                  context, 'Tags', 'Please enter tags');
+                              CommonSnackbar.showNagativeSnackbar(context, 'Tags', 'Please enter tags');
                             }
                           },
                         );
@@ -381,8 +331,7 @@ class MessageWidget extends StatelessWidget {
               ],
             ),
           ),
-          if (value.reactions!.reactions != null &&
-              value.reactions!.reactions!.isNotEmpty)
+          if (value.reactions!.reactions != null && value.reactions!.reactions!.isNotEmpty)
             Positioned.fill(
               child: Align(
                 alignment: Alignment.bottomRight,
@@ -390,8 +339,8 @@ class MessageWidget extends StatelessWidget {
                   // color: Colors.red,
                   child: InkWell(
                     onLongPress: () {
-                      GoRouter.of(context).pushNamed(AppRoute.messageReaction,
-                          params: {'messageId': message.messageId!});
+                      GoRouter.of(context)
+                          .pushNamed(AppRoute.messageReaction, params: {'messageId': message.messageId!});
                     },
                     child: Stack(
                       // mainAxisSize: MainAxisSize.min,
@@ -413,20 +362,13 @@ class MessageWidget extends StatelessWidget {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                message
-                                    .react()
-                                    .removeReaction('like')
-                                    .then((value) {
+                                message.react().removeReaction('like').then((value) {
                                   CommonSnackbar.showPositiveSnackbar(
-                                      context,
-                                      'Success',
-                                      'Reaction Removed Successfully');
+                                      context, 'Success', 'Reaction Removed Successfully');
                                 }).onError(
                                   (error, stackTrace) {
                                     CommonSnackbar.showNagativeSnackbar(
-                                        context,
-                                        'Fail',
-                                        'Reaction Removed Failed ${error.toString()}');
+                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
                                   },
                                 );
                               },
@@ -435,11 +377,8 @@ class MessageWidget extends StatelessWidget {
                                   Container(
                                     margin: const EdgeInsets.only(top: 8),
                                     child: Text(
-                                      value.reactions!
-                                          .getCount('like')
-                                          .toString(),
-                                      style: themeData.textTheme.caption!
-                                          .copyWith(fontSize: 14),
+                                      value.reactions!.getCount('like').toString(),
+                                      style: themeData.textTheme.caption!.copyWith(fontSize: 14),
                                     ),
                                   ),
                                   const SizedBox(width: 2),
@@ -469,20 +408,13 @@ class MessageWidget extends StatelessWidget {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                message
-                                    .react()
-                                    .removeReaction('like')
-                                    .then((value) {
+                                message.react().removeReaction('like').then((value) {
                                   CommonSnackbar.showPositiveSnackbar(
-                                      context,
-                                      'Success',
-                                      'Reaction Removed Successfully');
+                                      context, 'Success', 'Reaction Removed Successfully');
                                 }).onError(
                                   (error, stackTrace) {
                                     CommonSnackbar.showNagativeSnackbar(
-                                        context,
-                                        'Fail',
-                                        'Reaction Removed Failed ${error.toString()}');
+                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
                                   },
                                 );
                               },
@@ -491,11 +423,8 @@ class MessageWidget extends StatelessWidget {
                                   Container(
                                     margin: const EdgeInsets.only(top: 8),
                                     child: Text(
-                                      value.reactions!
-                                          .getCount('like')
-                                          .toString(),
-                                      style: themeData.textTheme.caption!
-                                          .copyWith(fontSize: 14),
+                                      value.reactions!.getCount('like').toString(),
+                                      style: themeData.textTheme.caption!.copyWith(fontSize: 14),
                                     ),
                                   ),
                                   const SizedBox(width: 2),
@@ -526,31 +455,21 @@ class MessageWidget extends StatelessWidget {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                message
-                                    .react()
-                                    .removeReaction('love')
-                                    .then((value) {
+                                message.react().removeReaction('love').then((value) {
                                   CommonSnackbar.showPositiveSnackbar(
-                                      context,
-                                      'Success',
-                                      'Reaction Removed Successfully');
+                                      context, 'Success', 'Reaction Removed Successfully');
                                 }).onError(
                                   (error, stackTrace) {
                                     CommonSnackbar.showNagativeSnackbar(
-                                        context,
-                                        'Fail',
-                                        'Reaction Removed Failed ${error.toString()}');
+                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
                                   },
                                 );
                               },
                               icon: Row(
                                 children: [
                                   Text(
-                                    value.reactions!
-                                        .getCount('love')
-                                        .toString(),
-                                    style: themeData.textTheme.caption!
-                                        .copyWith(fontSize: 14),
+                                    value.reactions!.getCount('love').toString(),
+                                    style: themeData.textTheme.caption!.copyWith(fontSize: 14),
                                   ),
                                   const SizedBox(width: 2),
                                   Image.asset(
@@ -580,31 +499,21 @@ class MessageWidget extends StatelessWidget {
                             ),
                             child: IconButton(
                               onPressed: () {
-                                message
-                                    .react()
-                                    .removeReaction('love')
-                                    .then((value) {
+                                message.react().removeReaction('love').then((value) {
                                   CommonSnackbar.showPositiveSnackbar(
-                                      context,
-                                      'Success',
-                                      'Reaction Removed Successfully');
+                                      context, 'Success', 'Reaction Removed Successfully');
                                 }).onError(
                                   (error, stackTrace) {
                                     CommonSnackbar.showNagativeSnackbar(
-                                        context,
-                                        'Fail',
-                                        'Reaction Removed Failed ${error.toString()}');
+                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
                                   },
                                 );
                               },
                               icon: Row(
                                 children: [
                                   Text(
-                                    value.reactions!
-                                        .getCount('love')
-                                        .toString(),
-                                    style: themeData.textTheme.caption!
-                                        .copyWith(fontSize: 14),
+                                    value.reactions!.getCount('love').toString(),
+                                    style: themeData.textTheme.caption!.copyWith(fontSize: 14),
                                   ),
                                   const SizedBox(width: 2),
                                   Image.asset(
@@ -646,17 +555,16 @@ class MessageWidget extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {
                       if (myReaction.contains('like')) {
-                        CommonSnackbar.showNagativeSnackbar(context, 'Error',
-                            'You already have like reaction on this message');
+                        CommonSnackbar.showNagativeSnackbar(
+                            context, 'Error', 'You already have like reaction on this message');
                       } else {
                         Navigator.of(context).pop();
                         message.react().addReaction('like').then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context,
-                              'Success', 'Reaction Added Successfully - like');
+                          CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Added Successfully - like');
                         }).onError(
                           (error, stackTrace) {
-                            CommonSnackbar.showNagativeSnackbar(context, 'Fail',
-                                'Reaction Added Failed ${error.toString()} - like');
+                            CommonSnackbar.showNagativeSnackbar(
+                                context, 'Fail', 'Reaction Added Failed ${error.toString()} - like');
                           },
                         );
                       }
@@ -677,17 +585,16 @@ class MessageWidget extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {
                       if (myReaction.contains('love')) {
-                        CommonSnackbar.showNagativeSnackbar(context, 'Error',
-                            'You already have love reaction on this message');
+                        CommonSnackbar.showNagativeSnackbar(
+                            context, 'Error', 'You already have love reaction on this message');
                       } else {
                         Navigator.of(context).pop();
                         message.react().addReaction('love').then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context,
-                              'Success', 'Reaction Added Successfully - love');
+                          CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Added Successfully - love');
                         }).onError(
                           (error, stackTrace) {
-                            CommonSnackbar.showNagativeSnackbar(context, 'Fail',
-                                'Reaction Added Failed ${error.toString()} - love');
+                            CommonSnackbar.showNagativeSnackbar(
+                                context, 'Fail', 'Reaction Added Failed ${error.toString()} - love');
                           },
                         );
                       }
@@ -717,8 +624,7 @@ class MessageWidget extends StatelessWidget {
 }
 
 class AmityMessageContentWidget extends StatelessWidget {
-  const AmityMessageContentWidget({Key? key, required this.amityMessage})
-      : super(key: key);
+  const AmityMessageContentWidget({Key? key, required this.amityMessage}) : super(key: key);
   final AmityMessage amityMessage;
   @override
   Widget build(BuildContext context) {
@@ -732,44 +638,35 @@ class AmityMessageContentWidget extends StatelessWidget {
             : [
                 ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
                     .getMentionedUsers()
-                    .map<String>((e) =>
-                        data.text!.substring(e.index, e.index + e.length + 1))
+                    .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
                     .toList(),
                 ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
                     .getMentionedChannels()
-                    .map<String>((e) =>
-                        data.text!.substring(e.index, e.index + e.length + 1))
+                    .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
                     .toList()
               ],
         style: themeData.textTheme.bodyText2!.copyWith(),
         onHighlightClick: (value) {
           if (value.toLowerCase().contains('all')) {
-            final temp =
-                AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
-                    .getMentionedUsers();
+            final temp = AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers();
             log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
                 .getMentionedUsers()
-                .map<String>((e) =>
-                    data.text!.substring(e.index, e.index + e.length + 1))
+                .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
                 .toList()
                 .toString());
             log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
                 .getMentionedChannels()
-                .map<String>((e) =>
-                    data.text!.substring(e.index, e.index + e.length + 1))
+                .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
                 .toList()
                 .toString());
-            CommonSnackbar.showPositiveSnackbar(
-                context, 'Click', 'Click on @all show channel profile');
+            CommonSnackbar.showPositiveSnackbar(context, 'Click', 'Click on @all show channel profile');
           } else {
             print(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
                 .getMentionedUsers()
-                .map<String>((e) =>
-                    data.text!.substring(e.index, e.index + e.length + 1))
+                .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
                 .toList());
-            final amityUser = amityMessage.mentionees!.firstWhereOrNull(
-                (element) =>
-                    element.user!.displayName == value.replaceAll('@', ''));
+            final amityUser = amityMessage.mentionees!
+                .firstWhereOrNull((element) => element.user!.displayName == value.replaceAll('@', ''));
             if (amityUser != null) {
               GoRouter.of(context).pushNamed(
                 AppRoute.profile,
@@ -810,34 +707,19 @@ class AmityMessageContentWidget extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.black.withOpacity(.3)),
+                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
                             child: InkWell(
                               child: const Icon(
                                 Icons.download,
                                 color: Colors.white,
                               ),
                               onTap: () async {
-                                var imageId =
-                                    await ImageDownloader.downloadImage(data
-                                        .image!
-                                        .getUrl(AmityImageSize.MEDIUM));
-                                if (imageId == null) {
-                                  return;
-                                }
-
-                                // Below is a method of obtaining saved image information.
-                                var fileName =
-                                    await ImageDownloader.findName(imageId);
-                                var path =
-                                    await ImageDownloader.findPath(imageId);
+                                String fileName = await MobileDownloadService()
+                                    .download(url: data.image!.getUrl(AmityImageSize.MEDIUM));
 
                                 print(fileName);
-                                print(path);
 
-                                CommonSnackbar.showPositiveSnackbar(
-                                    context, 'Success', 'Image Save $fileName');
+                                CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Image Save $fileName');
                               },
                             ),
                           ),
@@ -877,27 +759,16 @@ class AmityMessageContentWidget extends StatelessWidget {
                     trailing: Container(
                       padding: const EdgeInsets.all(4),
                       margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(.3)),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
                       child: InkWell(
                         child: const Icon(
                           Icons.download,
                           color: Colors.white,
                         ),
                         onTap: () async {
-                          var fileId = await ImageDownloader.downloadImage(
-                              data.file!.getUrl);
-                          if (fileId == null) {
-                            return;
-                          }
-
-                          // Below is a method of obtaining saved image information.
-                          var fileName = await ImageDownloader.findName(fileId);
-                          var path = await ImageDownloader.findPath(fileId);
+                          String fileName = await MobileDownloadService().download(url: data.file!.getUrl);
 
                           print(fileName);
-                          print(path);
                         },
                       ),
                     ),
