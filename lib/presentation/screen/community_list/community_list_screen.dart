@@ -26,7 +26,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
 
   final _debouncer = Debouncer(milliseconds: 500);
 
-  AmityCommunityFilter _filter = AmityCommunityFilter.ALL;
+  AmityCommunityFilter _filter = AmityCommunityFilter.MEMBER;
   AmityCommunitySortOption _sort = AmityCommunitySortOption.LAST_CREATED;
   List<String>? _tags;
 
@@ -56,8 +56,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
             setState(() {});
             print(_controller.error.toString());
             print(_controller.stacktrace.toString());
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
           }
         },
       );
@@ -72,9 +71,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -148,18 +145,15 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                     itemBuilder: (context) {
                       return [
                         PopupMenuItem(
-                          child:
-                              Text(AmityCommunitySortOption.DISPLAY_NAME.name),
+                          child: Text(AmityCommunitySortOption.DISPLAY_NAME.name),
                           value: 1,
                         ),
                         PopupMenuItem(
-                          child:
-                              Text(AmityCommunitySortOption.FIRST_CREATED.name),
+                          child: Text(AmityCommunitySortOption.FIRST_CREATED.name),
                           value: 2,
                         ),
                         PopupMenuItem(
-                          child:
-                              Text(AmityCommunitySortOption.LAST_CREATED.name),
+                          child: Text(AmityCommunitySortOption.LAST_CREATED.name),
                           value: 3,
                         )
                       ];
@@ -189,9 +183,8 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                   child: InkWell(
                     child: const Icon(Icons.tag, size: 18),
                     onTap: () {
-                      EditTextDialog.show(context,
-                          title: 'Enter tags, separate by comma',
-                          hintText: 'type tags here', onPress: (value) {
+                      EditTextDialog.show(context, title: 'Enter tags, separate by comma', hintText: 'type tags here',
+                          onPress: (value) {
                         if (value.isNotEmpty) {
                           _tags = value.trim().split(',');
                           _controller.reset();
@@ -250,9 +243,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Post'),
+                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Post'),
                   ),
           ),
           if (_controller.isFetching && amityCommunities.isNotEmpty)
