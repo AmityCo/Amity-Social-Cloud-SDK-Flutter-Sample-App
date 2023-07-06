@@ -10,12 +10,7 @@ class AmityImageUpload {
     description: Flutter Image upload with progress example
     */
   void uploadImage(File uploadingImage) async {
-    AmityCoreClient.newFileRepository()
-        .image(uploadingImage)
-        .isFullImage(false)
-        .upload()
-        .stream
-        .listen((amityUploadResult) {
+    AmityCoreClient.newFileRepository().uploadImage(uploadingImage).stream.listen((amityUploadResult) {
       amityUploadResult.when(
         progress: (uploadInfo, cancelToken) {
           int progress = uploadInfo.getProgressPercentage();

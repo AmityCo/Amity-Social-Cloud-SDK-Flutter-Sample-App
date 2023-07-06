@@ -262,10 +262,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     final amityMentioneesMetadata = mentionUsers
         .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
+
             userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
         .toList();
 
     Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+
     // try {
     //   _metadata = jsonDecode(_metadataString);
     // } catch (e) {
@@ -298,7 +300,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
+
           AmityCoreClient.newFileRepository().image(_file).upload().stream.listen((event) {
+
             uploadInfoStream.add(UploadInfo(_file.path, event));
 
             event.when(
@@ -345,8 +349,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (isVideoPost) {
       List<AmityVideo> video = [];
       for (final _file in files) {
-        AmityUploadResult<AmityVideo> amityUploadResult =
-            await AmityCoreClient.newFileRepository().video(_file).upload();
+        AmityUploadResult<AmityVideo> amityUploadResult = await AmityCoreClient.newFileRepository().uploadVideo(_file);
         if (amityUploadResult is AmityUploadComplete) {
           final amityUploadComplete = amityUploadResult as AmityUploadComplete;
           video.add(amityUploadComplete.getFile as AmityVideo);
@@ -379,7 +382,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
-          AmityCoreClient.newFileRepository().file(_file).upload().stream.listen((event) {
+          AmityCoreClient.newFileRepository().uploadFile(_file).stream.listen((event) {
+
             uploadInfoStream.add(UploadInfo(_file.path, event));
             event.when(
               progress: (uploadInfo, cancelToken) {},

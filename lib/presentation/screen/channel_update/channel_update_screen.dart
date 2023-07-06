@@ -33,17 +33,14 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
 
   @override
   void initState() {
-    AmityChatClient.newChannelRepository()
-        .getChannel(widget.channelId)
-        .then((value) {
+    AmityChatClient.newChannelRepository().getChannel(widget.channelId).then((value) {
       setState(() {
         _channelType = value.amityChannelType;
         avatarUrl = value.avatar?.fileUrl;
         _channelIdEditController.text = value.channelId!;
         _nameEditController.text = value.displayName ?? '';
 
-        _metadataEditController.text =
-            value.metadata != null ? jsonEncode(value.metadata) : '';
+        _metadataEditController.text = value.metadata != null ? jsonEncode(value.metadata) : '';
         _tagsEditController.text = (value.tags?.tags ?? []).join(',');
       });
     }).onError((error, stackTrace) {
@@ -126,9 +123,7 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
                     onPressed: () async {
                       final ImagePicker picker = ImagePicker();
                       // Pick an image
-                      final image =
-                          await picker.pickImage(source: ImageSource.gallery);
-
+                      final image = await _picker.pickImage(source: ImageSource.gallery);
                       setState(() {
                         _avatar = image;
                       });
@@ -138,14 +133,12 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
                 TextFormField(
                   controller: _channelIdEditController,
                   enabled: false,
-                  decoration: const InputDecoration(
-                      hintText: 'Enter Channel ID (optional)'),
+                  decoration: const InputDecoration(hintText: 'Enter Channel ID (optional)'),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _nameEditController,
-                  decoration:
-                      const InputDecoration(hintText: 'Enter Channel Name'),
+                  decoration: const InputDecoration(hintText: 'Enter Channel Name'),
                 ),
                 SizedBox(
                   height: 80,
@@ -162,21 +155,17 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _metadataEditController,
-                  decoration:
-                      const InputDecoration(hintText: 'Enter Channel metadata'),
+                  decoration: const InputDecoration(hintText: 'Enter Channel metadata'),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: _channelType == null
                       ? null
                       : () {
-                          ProgressDialog.show(context,
-                                  asyncFunction: _updateChannel)
-                              .then((value) {
+                          ProgressDialog.show(context, asyncFunction: _updateChannel).then((value) {
                             GoRouter.of(context).pop();
                           }).onError((error, stackTrace) {
-                            ErrorDialog.show(context,
-                                title: 'Error', message: error.toString());
+                            ErrorDialog.show(context, title: 'Error', message: error.toString());
                           });
                         },
                   child: const Text('Create Channel'),
@@ -192,12 +181,10 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
   Future _updateChannel() async {
     AmityImage? communityAvatar;
     if (_avatar != null) {
-      AmityUploadResult<AmityImage> amityUploadResult =
-          await AmityCoreClient.newFileRepository()
-              .image(File(_avatar!.path))
-              .upload()
-              .stream
-              .firstWhere((element) => element is AmityUploadComplete);
+      AmityUploadResult<AmityImage> amityUploadResult = await AmityCoreClient.newFileRepository()
+          .uploadImage(File(_avatar!.path))
+          .stream
+          .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
         communityAvatar = amityUploadComplete.getFile as AmityImage;
@@ -216,8 +203,7 @@ class _ChannelUpdateScreenState extends State<ChannelUpdateScreen> {
       print('metadata decode failed');
     }
 
-    final builder =
-        AmityChatClient.newChannelRepository().updateChannel(widget.channelId);
+    final builder = AmityChatClient.newChannelRepository().updateChannel(widget.channelId);
 
     if (name.isNotEmpty) builder.displayName(name);
 

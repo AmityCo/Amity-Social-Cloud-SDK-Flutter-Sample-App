@@ -8,8 +8,7 @@ class AmityCommunityRepoInitialization {
     description: Flutter create community repo example
     */
   void initCommentRepo() {
-    CommunityRepository communityRepository =
-        AmitySocialClient.newCommunityRepository();
+    AmityCommunityRepository communityRepository = AmitySocialClient.newCommunityRepository();
   }
   /* end_sample_code */
 }

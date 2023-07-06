@@ -41,11 +41,7 @@ class AmityCommunityCreation {
   //(optional) to attach community avatar, it's required to upload image frist.
   void createAvatar(File uploadingImage) {
     // upload image
-    AmityCoreClient.newFileRepository()
-        .image(uploadingImage)
-        .upload()
-        .stream
-        .listen((amityUploadResult) {
+    AmityCoreClient.newFileRepository().uploadImage(uploadingImage).stream.listen((amityUploadResult) {
       amityUploadResult.when(
         progress: (uploadInfo, cancelToken) {},
         complete: (file) {

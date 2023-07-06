@@ -88,8 +88,8 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                           onTap: () async {
                             final ImagePicker picker = ImagePicker();
                             // Pick an image
-                            final image = await picker.pickImage(
-                                source: ImageSource.gallery);
+
+                            final image = await _picker.pickImage(source: ImageSource.gallery);
 
                             setState(() {
                               _avatar = image;
@@ -119,14 +119,12 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _channelIdEditController,
-                  decoration: const InputDecoration(
-                      hintText: 'Enter Channel ID (optional)'),
+                  decoration: const InputDecoration(hintText: 'Enter Channel ID (optional)'),
                 ),
                 const SizedBox(height: 32),
                 TextFormField(
                   controller: _nameEditController,
-                  decoration:
-                      const InputDecoration(hintText: 'Enter Channel Name'),
+                  decoration: const InputDecoration(hintText: 'Enter Channel Name'),
                 ),
                 SizedBox(
                   height: 80,
@@ -156,8 +154,7 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _metadataEditController,
-                  decoration:
-                      const InputDecoration(hintText: 'Enter Channel metadata'),
+                  decoration: const InputDecoration(hintText: 'Enter Channel metadata'),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
@@ -167,18 +164,13 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
                           if (_channelType == AmityChannelType.CONVERSATION &&
                               _userIdsEditController.text.trim().isEmpty) {
                             CommonSnackbar.showNagativeSnackbar(
-                                context,
-                                'Error',
-                                'Please enter userId for conversation channel');
+                                context, 'Error', 'Please enter userId for conversation channel');
                             return;
                           }
-                          ProgressDialog.show(context,
-                                  asyncFunction: _createChannel)
-                              .then((value) {
+                          ProgressDialog.show(context, asyncFunction: _createChannel).then((value) {
                             GoRouter.of(context).pop();
                           }).onError((error, stackTrace) {
-                            ErrorDialog.show(context,
-                                title: 'Error', message: error.toString());
+                            ErrorDialog.show(context, title: 'Error', message: error.toString());
                           });
                         },
                   child: const Text('Create Channel'),
@@ -194,12 +186,10 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
   Future _createChannel() async {
     AmityImage? communityAvatar;
     if (_avatar != null) {
-      AmityUploadResult<AmityImage> amityUploadResult =
-          await AmityCoreClient.newFileRepository()
-              .image(File(_avatar!.path))
-              .upload()
-              .stream
-              .firstWhere((element) => element is AmityUploadComplete);
+      AmityUploadResult<AmityImage> amityUploadResult = await AmityCoreClient.newFileRepository()
+          .uploadImage(File(_avatar!.path))
+          .stream
+          .firstWhere((element) => element is AmityUploadComplete);
       if (amityUploadResult is AmityUploadComplete) {
         final amityUploadComplete = amityUploadResult as AmityUploadComplete;
         communityAvatar = amityUploadComplete.getFile as AmityImage;
@@ -220,26 +210,18 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
 
     List<String> userIds = [];
     if (_userIdsEditController.text.isNotEmpty) {
-      userIds = _userIdsEditController.text
-          .trim()
-          .split(',')
-          .map((e) => e.trim())
-          .toList();
+      userIds = _userIdsEditController.text.trim().split(',').map((e) => e.trim()).toList();
     }
 
     ChannelCreatorBuilder? builder;
     switch (_channelType) {
       case AmityChannelType.CONVERSATION:
         if (userIds.isEmpty) {
-          CommonSnackbar.showNagativeSnackbar(
-              context, 'Error', 'Please enter userId for conversation channel');
+          CommonSnackbar.showNagativeSnackbar(context, 'Error', 'Please enter userId for conversation channel');
           return;
         }
 
-        builder = AmityChatClient.newChannelRepository()
-            .createChannel()
-            .conversationType()
-            .withUserIds(userIds);
+        builder = AmityChatClient.newChannelRepository().createChannel().conversationType().withUserIds(userIds);
 
         if (channeld.isEmpty) channeld = const Uuid().v4();
         builder.channelId(channeld);
@@ -247,15 +229,9 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
         break;
       case AmityChannelType.COMMUNITY:
         if (channeld.isNotEmpty) {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .communityType()
-              .withChannelId(channeld);
+          builder = AmityChatClient.newChannelRepository().createChannel().communityType().withChannelId(channeld);
         } else {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .communityType()
-              .withDisplayName(name);
+          builder = AmityChatClient.newChannelRepository().createChannel().communityType().withDisplayName(name);
 
           if (channeld.isEmpty) channeld = const Uuid().v4();
           builder.channelId(channeld);
@@ -263,15 +239,9 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
         break;
       case AmityChannelType.LIVE:
         if (channeld.isNotEmpty) {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .liveType()
-              .withChannelId(channeld);
+          builder = AmityChatClient.newChannelRepository().createChannel().liveType().withChannelId(channeld);
         } else {
-          builder = AmityChatClient.newChannelRepository()
-              .createChannel()
-              .liveType()
-              .withDisplayName(name);
+          builder = AmityChatClient.newChannelRepository().createChannel().liveType().withDisplayName(name);
           if (channeld.isEmpty) channeld = const Uuid().v4();
           builder.channelId(channeld);
         }
