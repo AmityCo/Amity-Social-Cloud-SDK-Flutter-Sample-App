@@ -10,8 +10,7 @@ class AmityOtherFollowInfo {
   void getFollowInfo(String userId) {
     AmityCoreClient.newUserRepository()
         .relationship()
-        .user(userId = userId)
-        .getFollowInfo()
+        .getFollowInfo(userId)
         .then((otherFollowInfo) => {
               //my follower count
               otherFollowInfo.followerCount,
@@ -22,5 +21,5 @@ class AmityOtherFollowInfo {
               //handle error
             });
   }
-    /* end_sample_code */
+  /* end_sample_code */
 }

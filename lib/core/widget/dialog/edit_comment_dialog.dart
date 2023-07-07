@@ -35,8 +35,8 @@ class EditCommentDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                   amityComment.edit().text(text!).build().update();
                 },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: const Text('Update'),
-                style: ElevatedButton.styleFrom(primary: Colors.red),
               ),
             ],
           );

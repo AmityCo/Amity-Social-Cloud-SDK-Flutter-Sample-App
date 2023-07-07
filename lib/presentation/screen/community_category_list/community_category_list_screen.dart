@@ -94,17 +94,17 @@ class _CommunityCategoryListScreenState
                   itemBuilder: (context) {
                     return [
                       PopupMenuItem(
-                        child: Text(AmityCommunityCategorySortOption.NAME.name),
                         value: 1,
+                        child: Text(AmityCommunityCategorySortOption.NAME.name),
                       ),
                       PopupMenuItem(
+                        value: 2,
                         child:
                             Text(AmityCommunitySortOption.FIRST_CREATED.name),
-                        value: 2,
                       ),
                       PopupMenuItem(
-                        child: Text(AmityCommunitySortOption.LAST_CREATED.name),
                         value: 3,
+                        child: Text(AmityCommunitySortOption.LAST_CREATED.name),
                       )
                     ];
                   },

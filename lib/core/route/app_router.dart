@@ -8,6 +8,7 @@ import 'package:flutter_social_sample_app/presentation/screen/channel_profile/ch
 import 'package:flutter_social_sample_app/presentation/screen/channel_update/channel_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
@@ -91,7 +92,7 @@ class AppRouter {
             name: AppRoute.globalFeed,
             path: AppRoute.globalFeedRoute,
             builder: (context, state) => const GlobalFeedScreen(),
-            routes: [],
+            routes: const [],
           ),
           GoRoute(
             name: AppRoute.communityFeed,
@@ -114,7 +115,7 @@ class AppRouter {
           GoRoute(
             name: AppRoute.communityList,
             path: AppRoute.communityListRoute,
-            builder: (context, state) => CommunityListScreen(),
+            builder: (context, state) => const CommunityListScreen(),
             routes: [
               GoRoute(
                   name: AppRoute.communityProfile,
@@ -259,6 +260,18 @@ class AppRouter {
         builder: (context, state) {
           return CommentQueryScreen(
             state.queryParams['postId']!,
+            communityId: state.queryParams['communityId'],
+            isPublic: state.queryParams['isPublic'] == 'true',
+          );
+        },
+      ),
+      GoRoute(
+        name: AppRoute.commentListReply,
+        path: AppRoute.commentListReplyRoute,
+        builder: (context, state) {
+          return CommentQueryReplyScreen(
+            state.queryParams['postId']!,
+            state.queryParams['parentId']!,
             communityId: state.queryParams['communityId'],
             isPublic: state.queryParams['isPublic'] == 'true',
           );

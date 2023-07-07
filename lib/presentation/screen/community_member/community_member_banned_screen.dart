@@ -147,29 +147,29 @@ class _CommunityMemberScreenState extends State<CommunityMemberBannedScreen> {
                                         .check();
                                 return [
                                   PopupMenuItem(
-                                    child: const Text("Remove"),
                                     value: 1,
                                     enabled: canRemoveMember,
+                                    child: const Text("Remove"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Ban"),
                                     value: 2,
                                     enabled: canBanMember && !isMemberBanned,
+                                    child: const Text("Ban"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Unban"),
                                     value: 3,
                                     enabled: canBanMember && isMemberBanned,
+                                    child: const Text("Unban"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Add role"),
                                     value: 4,
                                     enabled: canAddRole && !isMemberBanned,
+                                    child: const Text("Add role"),
                                   ),
                                   PopupMenuItem(
-                                    child: const Text("Remove role"),
                                     value: 5,
                                     enabled: canRemoveRole && !isMemberBanned,
+                                    child: const Text("Remove role"),
                                   )
                                 ];
                               },

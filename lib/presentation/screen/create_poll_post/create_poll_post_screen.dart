@@ -22,11 +22,11 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
   List<String> _option = [];
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
 
-    final _isCommunityPost = widget.communityId != null;
+    final isCommunityPost = widget.communityId != null;
     var targetLabel = '';
-    if (_isCommunityPost) {
+    if (isCommunityPost) {
       targetLabel = 'Target community';
       _targetuserTextEditController.text = widget.communityId!;
     } else {
@@ -44,7 +44,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
               onPressed: () async {
                 try {
                   FocusManager.instance.primaryFocus?.unfocus();
-                  final _target = _targetuserTextEditController.text.trim();
+                  final target = _targetuserTextEditController.text.trim();
                   String question = _pollQuestionTextController.text.trim();
                   int closeInMins =
                       int.tryParse(_pollScheduleTextController.text.trim()) ??
@@ -76,11 +76,11 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                       .closedIn(
                           closedIn: Duration(milliseconds: closeInMins * 60000))
                       .create();
-                  if (_isCommunityPost) {
+                  if (isCommunityPost) {
                     final amityPost =
                         await AmitySocialClient.newPostRepository()
                             .createPost()
-                            .targetCommunity(_target)
+                            .targetCommunity(target)
                             .poll(amityPoll.pollId!)
                             .text(amityPoll.question!)
                             .post();
@@ -88,7 +88,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
                     final amityPost =
                         await AmitySocialClient.newPostRepository()
                             .createPost()
-                            .targetUser(_target)
+                            .targetUser(target)
                             .poll(amityPoll.pollId!)
                             .text(amityPoll.question!)
                             .post();
@@ -113,7 +113,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
             children: [
               TextFormField(
                 controller: _targetuserTextEditController,
-                enabled: !_isCommunityPost,
+                enabled: !isCommunityPost,
                 decoration: InputDecoration(
                   label: Text(targetLabel),
                 ),
@@ -121,7 +121,7 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
               const SizedBox(height: 12),
               Text(
                 'Poll Question',
-                style: _themeData.textTheme.subtitle1!.copyWith(
+                style: themeData.textTheme.titleMedium!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -153,13 +153,13 @@ class _CreatePollPostScreenState extends State<CreatePollPostScreen> {
               const SizedBox(height: 12),
               Text(
                 'Schedule Poll (Option)',
-                style: _themeData.textTheme.subtitle1!.copyWith(
+                style: themeData.textTheme.titleMedium!.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 'Poll will close after the end of chosen time frame in min. You can setup upto 30 days (max 30 * 1440 min) (by default 60 min)',
-                style: _themeData.textTheme.caption!.copyWith(),
+                style: themeData.textTheme.bodySmall!.copyWith(),
               ),
               TextFormField(
                 controller: _pollScheduleTextController,
@@ -189,20 +189,20 @@ class _AddAnswerWidgetState extends State<AddAnswerWidget> {
   final List<String> _option = [];
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Options',
-            style: _themeData.textTheme.subtitle1!.copyWith(
+            style: themeData.textTheme.titleMedium!.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),
           Text(
             'Create at least two option',
-            style: _themeData.textTheme.caption!.copyWith(),
+            style: themeData.textTheme.bodySmall!.copyWith(),
           ),
           const SizedBox(height: 8),
           ...List.generate(
@@ -222,7 +222,7 @@ class _AddAnswerWidgetState extends State<AddAnswerWidget> {
                       widget.valueChanged(_option);
                       setState(() {});
                     },
-                    icon: Icon(Icons.cancel),
+                    icon: const Icon(Icons.cancel),
                   ),
                   onTap: () {
                     EditTextDialog.show(context,

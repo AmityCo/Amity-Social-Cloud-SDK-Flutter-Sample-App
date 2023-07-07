@@ -9,12 +9,12 @@ class AmityTokenExchange {
     asc_page: https://docs.amity.co/social/flutter
     description: Flutter exchange token example
     */
-  void createUserToken(String _userId, String _displayname, String _secureToken) {
+  void createUserToken(String userId, String displayname, String secureToken) {
     AmityUserTokenManager(
             apiKey: "your api key", endpoint: AmityRegionalHttpEndpoint.SG)
         //displayname and secureToken are optional
-        .createUserToken(_userId,
-            displayname: _displayname, secureToken: _secureToken)
+        .createUserToken(userId,
+            displayname: displayname, secureToken: secureToken)
         .then((AmityUserToken token) {
             log("accessToken = ${token.accessToken}");
     });

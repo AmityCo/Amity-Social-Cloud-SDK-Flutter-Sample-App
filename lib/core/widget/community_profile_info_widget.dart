@@ -11,7 +11,7 @@ class CommunityProfileInfoWidget extends StatelessWidget {
   final AmityCommunity amityCommunity;
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -46,12 +46,12 @@ class CommunityProfileInfoWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityCommunity.postsCount}\n',
-                            style: _themeData.textTheme.subtitle1!
+                            style: themeData.textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
                               text: 'Posts',
-                              style: _themeData.textTheme.bodyText2),
+                              style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     ),
@@ -61,12 +61,12 @@ class CommunityProfileInfoWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityCommunity.membersCount}\n',
-                            style: _themeData.textTheme.subtitle1!
+                            style: themeData.textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
                               text: 'Members',
-                              style: _themeData.textTheme.bodyText2),
+                              style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     )
@@ -78,12 +78,12 @@ class CommunityProfileInfoWidget extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             amityCommunity.displayName ?? '',
-            style: _themeData.textTheme.headline6,
+            style: themeData.textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text(
             amityCommunity.description ?? '',
-            style: _themeData.textTheme.caption,
+            style: themeData.textTheme.bodySmall,
           ),
           const SizedBox(height: 18),
           FutureBuilder<List<String>>(

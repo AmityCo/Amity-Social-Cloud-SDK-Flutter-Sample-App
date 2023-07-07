@@ -7,7 +7,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 
 class CommunityMemberScreen extends StatefulWidget {
-  CommunityMemberScreen({Key? key, required this.communityId, this.showAppBar = true}) : super(key: key);
+  const CommunityMemberScreen({Key? key, required this.communityId, this.showAppBar = true}) : super(key: key);
   final String communityId;
   final bool showAppBar;
   // late _CommunityMemberScreenState screenState;

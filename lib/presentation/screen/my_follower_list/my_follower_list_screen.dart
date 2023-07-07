@@ -28,8 +28,7 @@ class _MyFollowerListScreenState extends State<MyFollowerListScreen> {
     _controller = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
           .relationship()
-          .me()
-          .getFollowers()
+          .getMyFollowers()
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -42,8 +41,7 @@ class _MyFollowerListScreenState extends State<MyFollowerListScreen> {
           } else {
             //Error on pagination controller
             setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
           }
         },
       );
@@ -58,9 +56,7 @@ class _MyFollowerListScreenState extends State<MyFollowerListScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -88,18 +84,14 @@ class _MyFollowerListScreenState extends State<MyFollowerListScreen> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: amityFollowRelationships.length,
                       itemBuilder: (context, index) {
-                        final amityFollowRelationship =
-                            amityFollowRelationships[index];
-                        return MyFollowerInfoWidget(
-                            amityFollowRelationship: amityFollowRelationship);
+                        final amityFollowRelationship = amityFollowRelationships[index];
+                        return MyFollowerInfoWidget(amityFollowRelationship: amityFollowRelationship);
                       },
                     ),
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Followers'),
+                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Followers'),
                   ),
           ),
           if (_controller.isFetching && amityFollowRelationships.isNotEmpty)
@@ -114,12 +106,11 @@ class _MyFollowerListScreenState extends State<MyFollowerListScreen> {
 }
 
 class MyFollowerInfoWidget extends StatelessWidget {
-  const MyFollowerInfoWidget({Key? key, required this.amityFollowRelationship})
-      : super(key: key);
+  const MyFollowerInfoWidget({Key? key, required this.amityFollowRelationship}) : super(key: key);
   final AmityFollowRelationship amityFollowRelationship;
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return StreamBuilder<AmityFollowRelationship>(
         initialData: amityFollowRelationship,
         stream: amityFollowRelationship.listen.stream,
@@ -132,8 +123,7 @@ class MyFollowerInfoWidget extends StatelessWidget {
 
           return InkWell(
             onTap: () {
-              GoRouter.of(context).pushNamed(AppRoute.profile,
-                  params: {'userId': data.sourceUserId!});
+              GoRouter.of(context).pushNamed(AppRoute.profile, params: {'userId': data.sourceUserId!});
             },
             child: Container(
               margin: const EdgeInsets.all(12),
@@ -147,9 +137,8 @@ class MyFollowerInfoWidget extends StatelessWidget {
                   Container(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(.3)),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: data.sourceUser!.avatarUrl != null
                         ? Image.network(
                             data.sourceUser!.avatarUrl!,
@@ -161,23 +150,19 @@ class MyFollowerInfoWidget extends StatelessWidget {
                                 fit: BoxFit.fill,
                               )
                             : Image.asset('assets/user_placeholder.png'),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
                   ),
                   const SizedBox(width: 12),
                   Text(
                     data.sourceUser!.displayName ?? 'No Display name',
-                    style: _themeData.textTheme.bodyText2,
+                    style: themeData.textTheme.bodyMedium,
                   ),
                   const Spacer(),
                   ElevatedButton(
                     onPressed: () {
                       data.removeFollower().then((value) {
-                        PositiveDialog.show(context,
-                            title: 'Unfollow', message: 'User Unfollow');
+                        PositiveDialog.show(context, title: 'Unfollow', message: 'User Unfollow');
                       }).onError((error, stackTrace) {
-                        ErrorDialog.show(context,
-                            title: 'Error',
-                            message: 'Error in Unfollow ${error.toString()}');
+                        ErrorDialog.show(context, title: 'Error', message: 'Error in Unfollow ${error.toString()}');
                       });
                     },
                     child: const Text('Remove'),

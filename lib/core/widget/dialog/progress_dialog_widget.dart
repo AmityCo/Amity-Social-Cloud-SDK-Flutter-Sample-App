@@ -7,8 +7,7 @@ class ProgressDialog extends StatelessWidget {
   const ProgressDialog({Key? key, required this.message}) : super(key: key);
 
   static Future<T> show<T>(BuildContext context,
-      {required Future<T> Function() asyncFunction,
-      Widget? loadingWidget}) async {
+      {required Future<T> Function() asyncFunction, Widget? loadingWidget}) async {
     //Show loading overlay
     final overlayState = Navigator.of(context).overlay!;
 
@@ -40,8 +39,7 @@ class ProgressDialog extends StatelessWidget {
     return data;
   }
 
-  static Future<T> showCompleter<T>(BuildContext context, Completer completer,
-      {String message = ''}) async {
+  static Future<T> showCompleter<T>(BuildContext context, Completer completer, {String message = ''}) async {
     //Show loading overlay
     final overlayState = Navigator.of(context).overlay!;
 
@@ -74,13 +72,12 @@ class ProgressDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       constraints: const BoxConstraints(maxWidth: 300),
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(6)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -93,8 +90,7 @@ class ProgressDialog extends StatelessWidget {
               child: Text(
                 message,
                 textAlign: TextAlign.justify,
-                style: _themeData.textTheme.subtitle1!
-                    .copyWith(color: Colors.black),
+                style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black),
               ),
             ),
         ],

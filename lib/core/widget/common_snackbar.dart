@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CommonSnackbar {
   static void showPositiveSnackbar(BuildContext context, String title, String message,
       {Duration duration = const Duration(seconds: 1)}) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Column(
@@ -12,14 +12,14 @@ class CommonSnackbar {
           children: [
             Text(
               title,
-              style: _themeData.textTheme.subtitle1!.copyWith(
+              style: themeData.textTheme.titleMedium!.copyWith(
                 color: Colors.white,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               message,
-              style: _themeData.textTheme.caption!.copyWith(
+              style: themeData.textTheme.bodySmall!.copyWith(
                 color: Colors.white,
               ),
             ),
@@ -34,8 +34,8 @@ class CommonSnackbar {
   }
 
   static void showNagativeSnackbar(BuildContext context, String title, String message,
-      {Duration duration = const Duration(seconds: 1)}) {
-    final _themeData = Theme.of(context);
+      {Duration duration = const Duration(seconds: 2)}) {
+    final themeData = Theme.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Column(
@@ -44,14 +44,14 @@ class CommonSnackbar {
           children: [
             Text(
               title,
-              style: _themeData.textTheme.subtitle1!.copyWith(
+              style: themeData.textTheme.titleMedium!.copyWith(
                 color: Colors.white,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               message,
-              style: _themeData.textTheme.caption!.copyWith(
+              style: themeData.textTheme.bodySmall!.copyWith(
                 color: Colors.white,
               ),
             ),

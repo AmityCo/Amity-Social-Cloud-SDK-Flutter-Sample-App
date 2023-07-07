@@ -14,6 +14,9 @@ class AppRoute {
   static const commentList = 'commentList';
   static const commentListRoute = '/commentList';
 
+  static const commentListReply = 'commentListReply';
+  static const commentListReplyRoute = '/commentListReply';
+
   static const landing = 'landing';
   static const landingRoute = '/landing';
 

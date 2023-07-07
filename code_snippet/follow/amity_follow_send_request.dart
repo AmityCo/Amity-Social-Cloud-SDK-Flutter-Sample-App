@@ -10,8 +10,7 @@ class AmityFollowSendRequest {
   void sendFollowRequest(String userId) {
     AmityCoreClient.newUserRepository()
         .relationship()
-        .user(userId = userId)
-        .follow()
+        .follow(userId)
         .then((AmityFollowStatus followStatus) => {
               //success
             })

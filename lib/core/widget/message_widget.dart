@@ -59,7 +59,7 @@ class MessageWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               'Message has been deleted',
-              style: themeData.textTheme.caption,
+              style: themeData.textTheme.bodySmall,
             )
           ],
         ),
@@ -121,7 +121,7 @@ class MessageWidget extends StatelessWidget {
                     children: [
                       Text(
                         user.displayName!,
-                        style: themeData.textTheme.bodyText1!.copyWith(
+                        style: themeData.textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -132,51 +132,53 @@ class MessageWidget extends StatelessWidget {
                       Row(
                         children: [
                           Text(
+
                             value.createdAt?.toLocal().toIso8601String() ?? DateTime.now().toLocal().toIso8601String(),
                             style: themeData.textTheme.caption!.copyWith(),
+
                           ),
                           const SizedBox(width: 12),
                           Text(
                             value.syncState!.value.toUpperCase(),
-                            style: themeData.textTheme.caption!.copyWith(),
+                            style: themeData.textTheme.bodySmall!.copyWith(),
                           ),
                         ],
                       ),
                       Text(
                         'Message Id - ${value.messageId}',
-                        style: themeData.textTheme.caption!.copyWith(),
+                        style: themeData.textTheme.bodySmall!.copyWith(),
                       ),
                       if (value.myReactions != null && value.myReactions!.isNotEmpty)
                         Text(
                           'My Reaction - ${value.myReactions?.join(',') ?? ' Null'}',
-                          style: themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.bodySmall!.copyWith(),
                         ),
                       if (value.amityTags != null && value.amityTags!.tags!.isNotEmpty)
                         Text(
                           'Tags - ${value.amityTags?.tags?.join(',') ?? ' Null'}',
-                          style: themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.bodySmall!.copyWith(),
                         ),
                       if (value.metadata != null)
                         Text(
                           'Metadata - ${value.metadata?.toString() ?? ' Null'}',
-                          style: themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.bodySmall!.copyWith(),
                         ),
 
                       if (value.parentId != null)
                         Text(
                           'PreantID - ${value.parentId?.toString() ?? ' Null'}',
-                          style: themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.bodySmall!.copyWith(),
                         ),
                       if (value.childrenNumber != null && value.childrenNumber! > 0)
                         Text(
                           'Child Count - ${value.childrenNumber?.toString() ?? ' Null'}',
-                          style: themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.bodySmall!.copyWith(),
                         ),
 
                       if (value.user!.flagCount != null && value.user!.flagCount! > 0)
                         Text(
                           'User Flag Count - ${value.user?.flagCount?.toString() ?? ' Null'}',
-                          style: themeData.textTheme.caption!.copyWith(),
+                          style: themeData.textTheme.bodySmall!.copyWith(),
                         ),
                     ],
                   ),
@@ -191,6 +193,7 @@ class MessageWidget extends StatelessWidget {
                         CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged');
                       }).onError((error, stackTrace) {
                         completer.completeError(error!, stackTrace);
+
                         CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - ${error}');
                       });
                     } else {
@@ -199,7 +202,9 @@ class MessageWidget extends StatelessWidget {
                         CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged');
                       }).onError((error, stackTrace) {
                         completer.completeError(error!, stackTrace);
+
                         CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - ${error}');
+
                       });
                     }
                   },
@@ -265,7 +270,9 @@ class MessageWidget extends StatelessWidget {
                         message.delete().then((value) {
                           CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Deleted');
                         }).onError((error, stackTrace) {
+
                           CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Delete Error - ${error}');
+
                         });
 
                         /// Delete Message
@@ -275,13 +282,17 @@ class MessageWidget extends StatelessWidget {
                           message.unflag().then((value) {
                             CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged');
                           }).onError((error, stackTrace) {
+
                             CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - ${error}');
+
                           });
                         } else {
                           message.flag().then((value) {
                             CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged');
                           }).onError((error, stackTrace) {
+
                             CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - ${error}');
+
                           });
                         }
                         break;
@@ -289,7 +300,9 @@ class MessageWidget extends StatelessWidget {
                         UserRepository().report(message.userId!).flag().then((value) {
                           CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged User');
                         }).onError((error, stackTrace) {
+
                           CommonSnackbar.showPositiveSnackbar(context, 'Message', 'flagged Error - ${error}');
+
                         });
 
                         /// Delete Message
@@ -298,7 +311,9 @@ class MessageWidget extends StatelessWidget {
                         UserRepository().report(message.userId!).unflag().then((value) {
                           CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged User');
                         }).onError((error, stackTrace) {
+
                           CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged Error - ${error}');
+
                         });
 
                         /// Delete Message
@@ -377,8 +392,10 @@ class MessageWidget extends StatelessWidget {
                                   Container(
                                     margin: const EdgeInsets.only(top: 8),
                                     child: Text(
+
                                       value.reactions!.getCount('like').toString(),
                                       style: themeData.textTheme.caption!.copyWith(fontSize: 14),
+
                                     ),
                                   ),
                                   const SizedBox(width: 2),
@@ -423,8 +440,10 @@ class MessageWidget extends StatelessWidget {
                                   Container(
                                     margin: const EdgeInsets.only(top: 8),
                                     child: Text(
+
                                       value.reactions!.getCount('like').toString(),
                                       style: themeData.textTheme.caption!.copyWith(fontSize: 14),
+
                                     ),
                                   ),
                                   const SizedBox(width: 2),
@@ -645,7 +664,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                     .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
                     .toList()
               ],
-        style: themeData.textTheme.bodyText2!.copyWith(),
+        style: themeData.textTheme.bodyMedium!.copyWith(),
         onHighlightClick: (value) {
           if (value.toLowerCase().contains('all')) {
             final temp = AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers();
@@ -731,7 +750,7 @@ class AmityMessageContentWidget extends StatelessWidget {
           if (data.caption != null && data.caption!.isNotEmpty)
             Text(
               '${data.caption}',
-              style: themeData.textTheme.bodyText2,
+              style: themeData.textTheme.bodyMedium,
             ),
         ],
       );
@@ -795,7 +814,7 @@ class AmityMessageContentWidget extends StatelessWidget {
           if (data.caption != null && data.caption!.isNotEmpty)
             Text(
               '${data.caption}',
-              style: themeData.textTheme.bodyText2,
+              style: themeData.textTheme.bodyMedium,
             ),
         ],
       );
@@ -803,7 +822,7 @@ class AmityMessageContentWidget extends StatelessWidget {
 
     return Text(
       'Still not supported',
-      style: themeData.textTheme.bodyText2!.copyWith(),
+      style: themeData.textTheme.bodyMedium!.copyWith(),
     );
   }
 }

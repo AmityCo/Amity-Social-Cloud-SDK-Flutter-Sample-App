@@ -61,8 +61,8 @@ class _CommunityInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
-    final _hasPermission =
+    final themeData = Theme.of(context);
+    final hasPermission =
         AmityCoreClient.hasPermission(AmityPermission.EDIT_COMMUNITY)
             .atCommunity(amityCommunity.communityId ?? '')
             .check();
@@ -95,24 +95,24 @@ class _CommunityInfoWidget extends StatelessWidget {
               children: [
                 Text(
                   amityCommunity.displayName ?? '',
-                  style: _themeData.textTheme.headline6,
+                  style: themeData.textTheme.titleLarge,
                 ),
                 Text(
                   'descritpion: ${amityCommunity.description ?? ''}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
                 Text(
                   'tags: ${amityCommunity.tags.toString()}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
                 Text(
                   'Public: ${amityCommunity.isPublic}',
-                  style: _themeData.textTheme.caption,
+                  style: themeData.textTheme.bodySmall,
                 ),
               ],
             ),
           ),
-          if (_hasPermission)
+          if (hasPermission)
             PopupMenuButton(
               itemBuilder: (context) {
                 return const [
@@ -151,11 +151,11 @@ class _CommunityInfoWidget extends StatelessWidget {
             children: [
               TextButton.icon(
                   onPressed: () {},
-                  icon: Icon(Icons.person),
+                  icon: const Icon(Icons.person),
                   label: Text('${amityCommunity.membersCount}')),
               TextButton.icon(
                   onPressed: () {},
-                  icon: Icon(Icons.post_add_rounded),
+                  icon: const Icon(Icons.post_add_rounded),
                   label: Text('${amityCommunity.postsCount}'))
             ],
           )
@@ -191,7 +191,7 @@ class _CommunityOwnerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
       // decoration: BoxDecoration(color: Colors.grey.withOpacity(.1)),
@@ -220,7 +220,7 @@ class _CommunityOwnerWidget extends StatelessWidget {
               },
               child: Text(
                 amityUser.displayName!,
-                style: _themeData.textTheme.bodyText1,
+                style: themeData.textTheme.bodyLarge,
               ),
             ),
           ),

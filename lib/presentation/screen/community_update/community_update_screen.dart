@@ -185,10 +185,10 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
     String name = _nameEditController.text.trim();
     String des = _desEditController.text.trim();
 
-    final _metadataString = _metadataEditController.text.trim();
-    Map<String, dynamic> _metadata = {};
+    final metadataString = _metadataEditController.text.trim();
+    Map<String, dynamic> metadata = {};
     try {
-      _metadata = jsonDecode(_metadataString);
+      metadata = jsonDecode(metadataString);
     } catch (e) {
       print('metadata decode failed');
     }
@@ -197,7 +197,7 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
         .updateCommunity(widget.communityId)
         .displayName(name)
         .description(des)
-        .metadata(_metadata)
+        .metadata(metadata)
         .isPublic(_isPublic)
         .isPostReviewEnabled(_isPostReviewEnable);
 

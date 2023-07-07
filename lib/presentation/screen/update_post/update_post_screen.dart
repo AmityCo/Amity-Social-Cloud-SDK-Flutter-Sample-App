@@ -143,8 +143,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                   });
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  primary: Colors.white,
+                  foregroundColor: Colors.white, backgroundColor: Colors.blue,
                   padding: const EdgeInsets.all(12),
                 ),
                 child: Container(

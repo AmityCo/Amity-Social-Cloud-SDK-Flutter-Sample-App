@@ -7,8 +7,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dar
 class MyPendingFollowerScreen extends StatefulWidget {
   const MyPendingFollowerScreen({Key? key}) : super(key: key);
   @override
-  State<MyPendingFollowerScreen> createState() =>
-      _MyPendingFollowerScreenState();
+  State<MyPendingFollowerScreen> createState() => _MyPendingFollowerScreenState();
 }
 
 class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
@@ -27,8 +26,7 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
     _controller = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
           .relationship()
-          .me()
-          .getFollowers()
+          .getMyFollowers()
           .status(AmityFollowStatusFilter.PENDING)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
@@ -42,8 +40,7 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
           } else {
             //Error on pagination controller
             setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
           }
         },
       );
@@ -58,9 +55,7 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -88,22 +83,18 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
                       physics: const AlwaysScrollableScrollPhysics(),
                       itemCount: amityFollowRelationships.length,
                       itemBuilder: (context, index) {
-                        final amityFollowRelationship =
-                            amityFollowRelationships[index];
+                        final amityFollowRelationship = amityFollowRelationships[index];
                         // return Container(
                         //   child: Text(
                         //       '${amityFollowRelationship.sourceUserId}_${amityFollowRelationship.targetUserId}'),
                         // );
-                        return MyPendingFollowerInfoWidget(
-                            amityFollowRelationship: amityFollowRelationship);
+                        return MyPendingFollowerInfoWidget(amityFollowRelationship: amityFollowRelationship);
                       },
                     ),
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Followers'),
+                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Followers'),
                   ),
           ),
           if (_controller.isFetching && amityFollowRelationships.isNotEmpty)
@@ -118,13 +109,11 @@ class _MyPendingFollowerScreenState extends State<MyPendingFollowerScreen> {
 }
 
 class MyPendingFollowerInfoWidget extends StatelessWidget {
-  const MyPendingFollowerInfoWidget(
-      {Key? key, required this.amityFollowRelationship})
-      : super(key: key);
+  const MyPendingFollowerInfoWidget({Key? key, required this.amityFollowRelationship}) : super(key: key);
   final AmityFollowRelationship amityFollowRelationship;
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     return StreamBuilder<AmityFollowRelationship>(
       initialData: amityFollowRelationship,
       stream: amityFollowRelationship.listen.stream,
@@ -149,9 +138,8 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                   Container(
                     width: 48,
                     height: 48,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.withOpacity(.3)),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
                     child: data.sourceUser!.avatarUrl != null
                         ? Image.network(
                             data.sourceUser!.avatarUrl!,
@@ -163,12 +151,11 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                                 fit: BoxFit.fill,
                               )
                             : Image.asset('assets/user_placeholder.png'),
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
                   ),
                   const SizedBox(width: 12),
                   Text(
                     data.sourceUser!.displayName ?? 'No Display name',
-                    style: _themeData.textTheme.bodyText2,
+                    style: themeData.textTheme.bodyMedium,
                   ),
                 ],
               ),
@@ -181,14 +168,10 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         data.accept().then((value) {
-                          PositiveDialog.show(context,
-                              title: 'Accepted',
-                              message: 'Acceped the follow reauest');
+                          PositiveDialog.show(context, title: 'Accepted', message: 'Acceped the follow reauest');
                         }).onError((error, stackTrace) {
                           ErrorDialog.show(context,
-                              title: 'Error',
-                              message:
-                                  'Error in accept the follow request ${error.toString()}');
+                              title: 'Error', message: 'Error in accept the follow request ${error.toString()}');
                         });
                       },
                       child: const Text('Accept'),
@@ -199,20 +182,16 @@ class MyPendingFollowerInfoWidget extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         data.decline().then((value) {
-                          PositiveDialog.show(context,
-                              title: 'Decline',
-                              message: 'Decline the follow request');
+                          PositiveDialog.show(context, title: 'Decline', message: 'Decline the follow request');
                         }).onError((error, stackTrace) {
                           ErrorDialog.show(context,
-                              title: 'Error',
-                              message:
-                                  'Error in Decline the follow request ${error.toString()}');
+                              title: 'Error', message: 'Error in Decline the follow request ${error.toString()}');
                         });
                       },
-                      child: const Text('Denied'),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
+                        backgroundColor: Colors.red,
                       ),
+                      child: const Text('Denied'),
                     ),
                   ),
                 ],

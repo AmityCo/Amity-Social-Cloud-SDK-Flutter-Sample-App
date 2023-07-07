@@ -11,7 +11,7 @@ class AmityUserInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _themeData = Theme.of(context);
+    final themeData = Theme.of(context);
     // final isBanned = channelMember.
     return StreamBuilder<AmityUser>(
       stream: amityUser.listen.stream,
@@ -62,7 +62,7 @@ class AmityUserInfoWidget extends StatelessWidget {
                       children: [
                         Text(
                           value.displayName ?? 'unknown',
-                          style: _themeData.textTheme.subtitle1,
+                          style: themeData.textTheme.titleMedium,
                           textAlign: TextAlign.start,
                         ),
                         // Text(

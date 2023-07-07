@@ -38,13 +38,13 @@ class _CommunityCategoryWidgetState extends State<CommunityCategoryWidget> {
           height: 36,
           decoration: BoxDecoration(
               shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+          clipBehavior: Clip.antiAliasWithSaveLayer,
           child: widget.amityCommunityCategory.avatarId != null
               ? Image.network(
                   widget.amityCommunityCategory.avatar!.fileUrl,
                   fit: BoxFit.fill,
                 )
               : Image.asset('assets/user_placeholder.png'),
-          clipBehavior: Clip.antiAliasWithSaveLayer,
         ),
         title: Text(widget.amityCommunityCategory.name!),
         subtitle: Text(widget.amityCommunityCategory.categoryId!),
