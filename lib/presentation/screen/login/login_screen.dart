@@ -25,16 +25,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.endpoint;
 
     //STAGING Server
-    // _userIdTextController.text = 'victimAndroid';
-    // _displayNameTextController.text = 'Victim Android';
-    // _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
-    // _serverUrlTextController.text = 'https://api.dev.amity.co/';
-
-    //STAGING Server
     _userIdTextController.text = 'victimAndroid';
     _displayNameTextController.text = 'Victim Android';
     _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    _serverUrlTextController.text = 'https://api.staging.amity.co/';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
 
     //SG Server
     // 1
@@ -44,10 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.endpoint;
 
     //2
-    _userIdTextController.text = 'bb01';
-    _displayNameTextController.text = 'BB01';
-    _apiKeyTextController.text = 'b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.endpoint;
+    // _userIdTextController.text = 'bb01';
+    // _displayNameTextController.text = 'BB01';
+    // _apiKeyTextController.text = 'b0eeed0f3fd3f5614b31894d560e1688845adeeabe3c3d25';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.endpoint;
 
     //US Server
     // _apiKeyTextController.text =
