@@ -66,9 +66,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 Container(
                   width: 120,
                   height: 120,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey.withOpacity(.3)),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                   clipBehavior: Clip.antiAliasWithSaveLayer,
                   child: _avatar != null
                       ? Image.file(
@@ -82,7 +80,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                             final ImagePicker picker = ImagePicker();
                             // Pick an image
 
-                            final image = await _picker.pickImage(source: ImageSource.gallery);
+                            final image = await picker.pickImage(source: ImageSource.gallery);
 
                             setState(() {
                               _avatar = image;

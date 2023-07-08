@@ -315,7 +315,7 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
     List<CommentImageAttachment> amityImages = [];
     if (localAttachmetns.isNotEmpty) {
       for (var element in localAttachmetns) {
-        final image = await waitForUploadComplete(AmityCoreClient.newFileRepository().image(element).upload().stream);
+        final image = await waitForUploadComplete(AmityCoreClient.newFileRepository().uploadImage(element).stream);
         amityImages.add(CommentImageAttachment(fileId: image.fileId));
       }
     }
