@@ -262,7 +262,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     final amityMentioneesMetadata = mentionUsers
         .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-
             userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
         .toList();
 
@@ -301,8 +300,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         for (final _file in files) {
           final uploadCompleter = Completer();
 
-          AmityCoreClient.newFileRepository().image(_file).upload().stream.listen((event) {
-
+          AmityCoreClient.newFileRepository().uploadImage(_file).stream.listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
 
             event.when(
@@ -383,7 +381,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         for (final _file in files) {
           final uploadCompleter = Completer();
           AmityCoreClient.newFileRepository().uploadFile(_file).stream.listen((event) {
-
             uploadInfoStream.add(UploadInfo(_file.path, event));
             event.when(
               progress: (uploadInfo, cancelToken) {},
