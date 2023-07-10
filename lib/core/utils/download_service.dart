@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:universal_html/html.dart';
+import 'package:universal_html/html.dart' as html;
 
 abstract class DownloadService {
   Future<String> download({required String url});
@@ -10,7 +12,7 @@ abstract class DownloadService {
 class WebDownloadService implements DownloadService {
   @override
   Future<String> download({required String url}) async {
-    window.open(url, "_blank");
+    html.window.open(url, "_blank");
     return '';
   }
 }
@@ -22,7 +24,7 @@ class MobileDownloadService implements DownloadService {
     if (!hasPermission) return '';
 
     Dio dio = Dio();
-    var dir = await getDownloadsDirectory();
+    var dir = await (Platform.isAndroid ? getExternalStorageDirectory() : getLibraryDirectory());
 
     // You should put the name you want for the file here.
     // Take in account the extension.
