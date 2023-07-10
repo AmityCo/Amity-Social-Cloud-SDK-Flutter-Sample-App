@@ -179,7 +179,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       isVideoPost = true;
                     });
                   },
-                  icon: const Icon(Icons.video_camera_back_rounded),
+                  icon: const Icon(Icons.video_file),
                   label: const Text('Attach Video'),
                   style: TextButton.styleFrom(foregroundColor: Colors.blue)),
               const SizedBox(height: 12),
@@ -421,5 +421,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .post();
       }
     }
+  }
+
+  Future<AmityImage> waitForUploadComplete(Stream<AmityUploadResult> source) {
+    final completer = Completer<AmityImage>();
+    source.listen((event) {
+      event.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) => completer.complete(file),
+        error: (error) => completer.completeError(error),
+        cancel: () {},
+      );
+    });
+    return completer.future;
   }
 }
