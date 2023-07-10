@@ -179,7 +179,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       isVideoPost = true;
                     });
                   },
-                  icon: const Icon(Icons.video_camera_back_rounded),
+                  icon: const Icon(Icons.video_file),
                   label: const Text('Attach Video'),
                   style: TextButton.styleFrom(foregroundColor: Colors.blue)),
               const SizedBox(height: 12),
@@ -262,7 +262,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     final amityMentioneesMetadata = mentionUsers
         .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-
             userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
         .toList();
 
@@ -301,8 +300,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         for (final _file in files) {
           final uploadCompleter = Completer();
 
-          AmityCoreClient.newFileRepository().image(_file).upload().stream.listen((event) {
-
+          AmityCoreClient.newFileRepository().uploadImage(_file).stream.listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
 
             event.when(
@@ -383,7 +381,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         for (final _file in files) {
           final uploadCompleter = Completer();
           AmityCoreClient.newFileRepository().uploadFile(_file).stream.listen((event) {
-
             uploadInfoStream.add(UploadInfo(_file.path, event));
             event.when(
               progress: (uploadInfo, cancelToken) {},
@@ -424,5 +421,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             .post();
       }
     }
+  }
+
+  Future<AmityImage> waitForUploadComplete(Stream<AmityUploadResult> source) {
+    final completer = Completer<AmityImage>();
+    source.listen((event) {
+      event.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) => completer.complete(file),
+        error: (error) => completer.completeError(error),
+        cancel: () {},
+      );
+    });
+    return completer.future;
   }
 }
