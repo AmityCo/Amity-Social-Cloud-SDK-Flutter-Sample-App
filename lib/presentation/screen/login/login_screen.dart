@@ -102,8 +102,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     await AmityCoreClient.setup(
                       option: AmityCoreClientOption(
                           apiKey: apikey,
-                          httpEndpoint: AmityRegionalHttpEndpoint.custom(serverUrl),
-                          mqttEndpoint: AmityRegionalMqttEndpoint.custom(serverUrl),
+                          httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
+                          mqttEndpoint: AmityRegionalMqttEndpoint.STAGGING,
                           showLogs: true),
                       sycInitialization: true,
                     );
