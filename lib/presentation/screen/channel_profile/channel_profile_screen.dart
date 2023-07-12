@@ -20,6 +20,9 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
   late TabController _tabController;
   late AmityChannel _amityChannel;
   Future<AmityChannel>? _future;
+
+  GlobalKey<ChannelMemberScreenState> memberList = GlobalKey<ChannelMemberScreenState>();
+
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
@@ -187,6 +190,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                         children: [
                           // Container(),
                           ChannelMemberScreen(
+                            key: memberList,
                             channelId: widget.channelId,
                             showAppBar: false,
                           ),
@@ -217,7 +221,9 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
             AmityChatClient.newChannelRepository()
                 .addMembers(_amityChannel.channelId!, value.split(','))
                 .then((value) {
-              // memberScreen.screenState.addMembers(value);
+                  if (memberList.currentState != null) {
+                  memberList.currentState!.refreshList();
+                }
             }).onError((error, stackTrace) {
               ErrorDialog.show(context,
                   title: 'Error', message: error.toString());

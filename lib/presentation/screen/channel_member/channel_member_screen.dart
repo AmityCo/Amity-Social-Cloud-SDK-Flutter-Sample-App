@@ -15,10 +15,10 @@ class ChannelMemberScreen extends StatefulWidget {
   final String channelId;
   final bool showAppBar;
   @override
-  State<ChannelMemberScreen> createState() => _ChannelMemberScreenState();
+  State<ChannelMemberScreen> createState() => ChannelMemberScreenState();
 }
 
-class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
+class ChannelMemberScreenState extends State<ChannelMemberScreen> {
   late PagingController<AmityChannelMember> _controller;
   final amityChannelMembers = <AmityChannelMember>[];
 
@@ -69,7 +69,11 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
   }
 
   void removeMembers(List<String> userIds) {
-    _controller.removeWhere((member) => userIds.contains(member.userId));
+    _controller.removeWhere((member) {
+      print(
+          ' ${member.userId} does it contain ${userIds.contains(member.userId)}');
+      return userIds.contains(member.userId);
+    });
   }
 
   void pagination() {
@@ -118,6 +122,7 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                       itemBuilder: (context, index) {
                         final amityChannelMember = amityChannelMembers[index];
                         return ChannelMemberWidget(
+                          key: UniqueKey(),
                           amityChannelMember: amityChannelMember,
                           onMemberCallback: () {},
                           options: [
@@ -213,7 +218,7 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
                               ),
                               onSelected: (index) {
                                 if (index == 1) {
-                                  // _removeMember(context, amityChannelMember);
+                                  _removeMember(context, amityChannelMember);
                                 }
                                 if (index == 2) {
                                   _banMember(context, amityChannelMember);
@@ -332,18 +337,17 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
             });
   }
 
-  // void _removeMember(BuildContext context, AmityChannelMember member) {
-  //   AmitySocialClient.newChannelRepository()
-  //       .membership(member.channelId!)
-  //       .removeMembers([member.userId!])
-  //       .onError((error, stackTrace) => {
-  //             ErrorDialog.show(context,
-  //                 title: 'Error', message: error.toString())
-  //           })
-  //       .then((value) => {
-  //             removeMembers([member.userId!])
-  //           });
-  // }
+  void _removeMember(BuildContext context, AmityChannelMember member) {
+    AmityChatClient.newChannelRepository()
+        .removeMembers(member.channelId!, [member.userId!])
+        .onError((error, stackTrace) => {
+              ErrorDialog.show(context,
+                  title: 'Error', message: error.toString())
+            })
+        .then((value) => {
+              removeMembers([member.userId!])
+            });
+  }
 
   void _banMember(BuildContext context, AmityChannelMember value) {
     AmityChatClient.newChannelRepository()
@@ -417,5 +421,10 @@ class _ChannelMemberScreenState extends State<ChannelMemberScreen> {
 
           //             })
         });
+  }
+
+  void refreshList() {
+    _controller.reset();
+    _controller.fetchNextPage();
   }
 }
