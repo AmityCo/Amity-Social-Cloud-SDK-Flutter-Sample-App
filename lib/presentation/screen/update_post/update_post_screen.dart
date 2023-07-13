@@ -79,8 +79,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
       appBar: AppBar(title: const Text('Update Post')),
       body: Container(
         margin: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             const SizedBox(height: 20),
             TextFormField(
