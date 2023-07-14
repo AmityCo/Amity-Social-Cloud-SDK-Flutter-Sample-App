@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +112,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       return;
                     }
 
-                    final token = await messaging.getToken();
+                    final token = Platform.isIOS ?  await messaging.getAPNSToken() : await messaging.getToken();
                     AmityCoreClient.registerDeviceNotification(token!).then((value) {
                       PositiveDialog.show(context, title: 'Success', message: token);
                     }).onError((error, stackTrace) {
