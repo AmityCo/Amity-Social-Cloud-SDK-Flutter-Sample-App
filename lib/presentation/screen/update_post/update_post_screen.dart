@@ -205,7 +205,6 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                     Container(margin: const EdgeInsets.symmetric(vertical: 6), child: const Text('Post Image')),
                   ),
               ),
-            const Spacer(),
             if (files.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
