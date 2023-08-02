@@ -42,6 +42,7 @@ import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/user_post/my_post.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -318,6 +319,14 @@ class AppRouter {
         path: AppRoute.userBlockRoute,
         builder: (context, state) {
           return const UserBlockedListScreen();
+        },
+      ),
+
+      GoRoute(
+        name: AppRoute.myPostRoute,
+        path: AppRoute.myPostRoute,
+        builder: (context, state) {
+          return const MyPosts();
         },
       ),
     ],

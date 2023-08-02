@@ -128,4 +128,6 @@ class AppRoute {
 
   static const userBlock = 'userBlock';
   static const userBlockRoute = '/userBlock';
+
+  static const myPostRoute = '/myPost' ;
 }

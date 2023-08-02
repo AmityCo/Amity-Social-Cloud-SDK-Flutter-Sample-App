@@ -46,6 +46,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Global Feed'),
                 ),
+
+                const SizedBox(height: 20),
+                
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(AppRoute.myPostRoute);
+                  },
+                  child: const Text('My Posts'),
+                ),
+
+
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
