@@ -149,7 +149,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                         },
                         icon: const Icon(Icons.clear),
                       ),
-                      label: Text(basename((_post.data as ImageData).image!.fileName)),
+                      label: Text(basename((_post.data as ImageData).image!.fileName!)),
                       style: TextButton.styleFrom(primary: Colors.blue));
                 })
                   ..insert(
@@ -173,7 +173,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                         },
                         icon: const Icon(Icons.clear),
                       ),
-                      label: Text(basename((_post.data as ImageData).image!.fileName)),
+                      label: Text(basename((_post.data as ImageData).image!.fileName!)),
                       style: TextButton.styleFrom(primary: Colors.blue));
                 })
                   ..insert(
@@ -197,7 +197,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                         },
                         icon: const Icon(Icons.clear),
                       ),
-                      label: Text(basename((_post.data as ImageData).image!.fileName)),
+                      label: Text(basename((_post.data as ImageData).image!.fileName!)),
                       style: TextButton.styleFrom(primary: Colors.blue));
                 })
                   ..insert(

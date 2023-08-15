@@ -41,7 +41,7 @@ class _CommunityCategoryWidgetState extends State<CommunityCategoryWidget> {
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: widget.amityCommunityCategory.avatarId != null
               ? Image.network(
-                  widget.amityCommunityCategory.avatar!.fileUrl,
+                  widget.amityCommunityCategory.avatar!.fileUrl!,
                   fit: BoxFit.fill,
                 )
               : Image.asset('assets/user_placeholder.png'),

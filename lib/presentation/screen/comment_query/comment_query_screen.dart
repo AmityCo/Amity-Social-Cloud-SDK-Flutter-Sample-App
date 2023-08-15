@@ -292,7 +292,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                     for (var element in attachments) {
                       final image =
                           await waitForUploadComplete(AmityCoreClient.newFileRepository().uploadImage(element).stream);
-                      amityImages.add(CommentImageAttachment(fileId: image.fileId));
+                      amityImages.add(CommentImageAttachment(fileId: image.fileId!));
                     }
                   }
 

@@ -139,7 +139,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                                   child: Image.network(
                                                     (value.attachments![index] as CommentImageAttachment)
                                                         .getImage()!
-                                                        .fileUrl,
+                                                        .fileUrl!,
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),

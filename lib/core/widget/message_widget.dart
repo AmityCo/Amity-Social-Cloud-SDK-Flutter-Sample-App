@@ -703,12 +703,13 @@ class AmityMessageContentWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          (data.image!.hasLocalPreview !=null)?
           Container(
             // color: Colors.red,
             child: SizedBox(
               width: 100,
               height: 100,
-              child: data.image!.hasLocalPreview
+              child: data.image!.hasLocalPreview!
                   ? Image.file(
                       File(data.image!.getFilePath!),
                       fit: BoxFit.cover,
@@ -746,7 +747,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                       ],
                     ),
             ),
-          ),
+          ) : Container(width: 30 , height: 30, color: Colors.amber,),
           if (data.caption != null && data.caption!.isNotEmpty)
             Text(
               '${data.caption}',
@@ -760,7 +761,7 @@ class AmityMessageContentWidget extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          data.file!.hasLocalPreview
+          (data.file?.hasLocalPreview!=null)
               ? TextButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.attach_file_rounded),
@@ -773,7 +774,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                   child: ListTile(
                     leading: const Icon(Icons.attach_file_rounded),
                     title: Text(
-                      data.file!.fileName,
+                      data.file!.fileName!,
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.all(4),
@@ -785,7 +786,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                           color: Colors.white,
                         ),
                         onTap: () async {
-                          String fileName = await MobileDownloadService().download(url: data.file!.getUrl);
+                          String fileName = await MobileDownloadService().download(url: data.file!.getUrl!);
 
                           print(fileName);
                         },
