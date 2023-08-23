@@ -11,8 +11,8 @@ class AmityPostFileGet {
     final AmityPostData? amityPostData = post.data;
     if (amityPostData != null) {
       final fileData = amityPostData as FileData;
-      final AmityFile amityFile = fileData.file;
-      final String fileUrl = amityFile.fileUrl;
+      final AmityFile amityFile = fileData.file!;
+      final String? fileUrl = amityFile.fileUrl;
     }
   }
   /* end_sample_code */

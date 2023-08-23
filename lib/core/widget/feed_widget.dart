@@ -50,7 +50,8 @@ class FeedWidget extends StatelessWidget {
                   children: [
                     UserProfileInfoRowWidget(
                       userId: value.postedUser!.userId!,
-                      userAvatar: value.postedUser?.avatarUrl ?? value.postedUser!.avatarCustomUrl,
+                      userAvatar: value.postedUser?.avatarUrl ??
+                          value.postedUser!.avatarCustomUrl,
                       userName: value.postedUser!.displayName!,
                       options: disableAction
                           ? null
@@ -58,17 +59,20 @@ class FeedWidget extends StatelessWidget {
                               PopupMenuButton(
                                 itemBuilder: (context) {
                                   return [
-                                    if (amityPost.postedUserId == AmityCoreClient.getUserId())
+                                    if (amityPost.postedUserId ==
+                                        AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 1,
                                         child: Text("Edit"),
                                       ),
-                                    if (amityPost.postedUserId == AmityCoreClient.getUserId())
+                                    if (amityPost.postedUserId ==
+                                        AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 2,
                                         child: Text("Delete (Soft)"),
                                       ),
-                                    if (amityPost.postedUserId == AmityCoreClient.getUserId())
+                                    if (amityPost.postedUserId ==
+                                        AmityCoreClient.getUserId())
                                       const PopupMenuItem(
                                         value: 3,
                                         enabled: false,
@@ -101,11 +105,13 @@ class FeedWidget extends StatelessWidget {
                                   }
                                   if (index == 4) {
                                     /// jumpe to Post RTE screen
-                                    GoRouter.of(context).pushNamed(AppRoute.postRTE, queryParams: {
-                                      'postId': value.postId!,
-                                      'communityId': communityId,
-                                      'isPublic': isPublic.toString()
-                                    });
+                                    GoRouter.of(context).pushNamed(
+                                        AppRoute.postRTE,
+                                        queryParams: {
+                                          'postId': value.postId!,
+                                          'communityId': communityId,
+                                          'isPublic': isPublic.toString()
+                                        });
                                   }
                                 },
                               ),
@@ -146,27 +152,35 @@ class FeedWidget extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (value.data != null) FeedContentWidget(amityPost: value, amityPostData: value.data!),
+                          if (value.data != null)
+                            FeedContentWidget(
+                                amityPost: value, amityPostData: value.data!),
                           const SizedBox(height: 8),
                           if (value.children != null)
                             Wrap(
                               spacing: 8,
                               runSpacing: 8,
                               children: [
-                                ...List.generate(value.children!.length, (index) {
+                                ...List.generate(value.children!.length,
+                                    (index) {
                                   final amityChildPost = value.children![index];
                                   if (amityChildPost.data == null) {
                                     return Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                          color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
+                                          color: Colors.red.shade400,
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
                                       child: Text(
                                         'Media Type ${amityChildPost.type} not supported',
-                                        style: themeData.textTheme.bodyLarge!.copyWith(color: Colors.white),
+                                        style: themeData.textTheme.bodyLarge!
+                                            .copyWith(color: Colors.white),
                                       ),
                                     );
                                   }
-                                  return FeedContentWidget(amityPost: value, amityPostData: amityChildPost.data!);
+                                  return FeedContentWidget(
+                                      amityPost: value,
+                                      amityPostData: amityChildPost.data!);
                                 })
                               ],
                             )
@@ -197,29 +211,36 @@ class FeedWidget extends StatelessWidget {
                     if (!disableAddComment)
                       AddCommentWidget(
                         AmityCoreClient.getCurrentUser(),
-                        (text, user, attachments ) {
+                        (text, user, attachments) {
                           final mentionUsers = <AmityUser>[];
 
                           mentionUsers.clear();
                           mentionUsers.addAll(user);
 
                           //Clean up mention user list, as user might have removed some tagged user
-                          mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
+                          mentionUsers.removeWhere((element) =>
+                              !text.contains(element.displayName!));
 
                           final amityMentioneesMetadata = mentionUsers
-                              .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-                                  userId: e.userId!,
-                                  index: text.indexOf('@${e.displayName!}'),
-                                  length: e.displayName!.length))
+                              .map<AmityUserMentionMetadata>((e) =>
+                                  AmityUserMentionMetadata(
+                                      userId: e.userId!,
+                                      index: text.indexOf('@${e.displayName!}'),
+                                      length: e.displayName!.length))
                               .toList();
 
-                          Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+                          Map<String, dynamic> metadata =
+                              AmityMentionMetadataCreator(
+                                      amityMentioneesMetadata)
+                                  .create();
 
                           value
                               .comment()
                               .create()
                               .text(text)
-                              .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
+                              .mentionUsers(mentionUsers
+                                  .map<String>((e) => e.userId!)
+                                  .toList())
                               .metadata(metadata)
                               .send();
                         },
@@ -240,10 +261,13 @@ class FeedWidget extends StatelessWidget {
                     child: Center(
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: Colors.red.shade400, borderRadius: BorderRadius.circular(12)),
+                        decoration: BoxDecoration(
+                            color: Colors.red.shade400,
+                            borderRadius: BorderRadius.circular(12)),
                         child: Text(
                           'Soft Deleted Amity Post',
-                          style: themeData.textTheme.bodyLarge!.copyWith(color: Colors.white),
+                          style: themeData.textTheme.bodyLarge!
+                              .copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -261,7 +285,9 @@ class FeedWidget extends StatelessWidget {
 class FeedContentWidget extends StatelessWidget {
   final AmityPost amityPost;
   final AmityPostData amityPostData;
-  const FeedContentWidget({Key? key, required this.amityPost, required this.amityPostData}) : super(key: key);
+  const FeedContentWidget(
+      {Key? key, required this.amityPost, required this.amityPostData})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -272,10 +298,14 @@ class FeedContentWidget extends StatelessWidget {
       if (data.text != null && data.text!.isNotEmpty) {
         return DynamicTextHighlighting(
           text: data.text ?? '',
-          highlights: amityPost.mentionees?.map<String>((e) => '@${e.user?.displayName ?? ''}').toList() ?? [],
+          highlights: amityPost.mentionees
+                  ?.map<String>((e) => '@${e.user?.displayName ?? ''}')
+                  .toList() ??
+              [],
           onHighlightClick: (String value) {
-            final amityUser = amityPost.mentionees!
-                .firstWhereOrNull((element) => element.user!.displayName == value.replaceAll('@', ''));
+            final amityUser = amityPost.mentionees!.firstWhereOrNull(
+                (element) =>
+                    element.user!.displayName == value.replaceAll('@', ''));
             if (amityUser != null) {
               GoRouter.of(context).pushNamed(
                 AppRoute.profile,
@@ -297,66 +327,81 @@ class FeedContentWidget extends StatelessWidget {
         return SizedBox(
           width: 100,
           height: 100,
-          child: Image.network(
-            data.image!.getUrl(AmityImageSize.MEDIUM),
-            fit: BoxFit.cover,
-          ),
+          child: (data.image != null)
+              ? Image.network(
+                  data.image!.getUrl(AmityImageSize.MEDIUM),
+                  fit: BoxFit.cover,
+                )
+              : Text("MEDIA DELETED"),
         );
       }
     }
 
     if (amityPostData is VideoData) {
       final data = amityPostData as VideoData;
-      return SizedBox(
+      return (data.fileId != null)? SizedBox(
         width: 100,
         height: 100,
         // color: Colors.red,
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.network(
-                data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
-                fit: BoxFit.cover,
-              ),
-            ),
-            Align(
-              alignment: Alignment.center,
-              child: IconButton(
-                onPressed: () {
-                  data.getVideo(AmityVideoQuality.HIGH).then((value) {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => FullScreenVideoPlayer(
-                          title: value.fileName,
-                          url: value.fileUrl,
-                        ),
+        child: (data.thumbnail != null && data.fileId != null)
+            ? Stack(
+                children: [
+                  Positioned.fill(
+                    child: Image.network(
+                      data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: IconButton(
+                      onPressed: () {
+                        data.getVideo(AmityVideoQuality.HIGH).then((value) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => FullScreenVideoPlayer(
+                                title: value.fileName!,
+                                url: value.fileUrl!,
+                              ),
+                            ),
+                          );
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.play_circle_fill_rounded,
+                        color: Colors.white,
                       ),
-                    );
-                  });
-                },
-                icon: const Icon(
-                  Icons.play_circle_fill_rounded,
-                  color: Colors.white,
-                ),
-              ),
-            )
-          ],
-        ),
-      );
+                    ),
+                  )
+                ],
+              )
+            : Text("MEDIA DELETED"),
+      ):Container(
+              width: 20,
+              height: 20,
+              color: Colors.amber,
+            );
     }
 
     if (amityPostData is FileData) {
       final data = amityPostData as FileData;
-      return TextButton.icon(
-        onPressed: () {
-          launch(data.fileInfo.fileName);
-        },
-        icon: const Icon(Icons.attach_file_rounded, color: Colors.blue),
-        label: Text(
-          data.fileInfo.fileName,
-          style: themeData.textTheme.bodyLarge!.copyWith(color: Colors.blue),
-        ),
-      );
+      return (data.fileId != null)
+          ? TextButton.icon(
+              onPressed: () {
+                launch(data.fileInfo.fileName!);
+              },
+              icon: const Icon(Icons.attach_file_rounded, color: Colors.blue),
+              label: Text(
+                data.fileInfo.fileName!,
+                style:
+                    themeData.textTheme.bodyLarge!.copyWith(color: Colors.blue),
+              ),
+            )
+          : Container(
+              width: 20,
+              height: 20,
+              color: Colors.amber,
+            );
     }
 
     if (amityPostData is PollData) {
@@ -376,7 +421,8 @@ class FeedContentWidget extends StatelessWidget {
 
 class FeedReactionInfoWidget extends StatelessWidget {
   final AmityPost amityPost;
-  const FeedReactionInfoWidget({Key? key, required this.amityPost}) : super(key: key);
+  const FeedReactionInfoWidget({Key? key, required this.amityPost})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -387,7 +433,8 @@ class FeedReactionInfoWidget extends StatelessWidget {
         children: [
           TextButton.icon(
             onPressed: () {
-              GoRouter.of(context).pushNamed(AppRoute.postReaction, params: {'postId': amityPost.postId!});
+              GoRouter.of(context).pushNamed(AppRoute.postReaction,
+                  params: {'postId': amityPost.postId!});
               // amityPost.getReaction().getPagingData().then((value) {
               //   print(value);
               // });
@@ -399,18 +446,21 @@ class FeedReactionInfoWidget extends StatelessWidget {
             ),
             label: Text(
               '${amityPost.reactionCount}',
-              style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54),
+              style: themeData.textTheme.titleMedium!
+                  .copyWith(color: Colors.black54),
             ),
           ),
           const Spacer(),
           Text(
             '${amityPost.commentCount} Comment',
-            style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54),
+            style: themeData.textTheme.titleMedium!
+                .copyWith(color: Colors.black54),
           ),
           const SizedBox(width: 12),
           Text(
             '${amityPost.flagCount} Flag',
-            style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54),
+            style: themeData.textTheme.titleMedium!
+                .copyWith(color: Colors.black54),
           )
         ],
       ),
@@ -421,7 +471,9 @@ class FeedReactionInfoWidget extends StatelessWidget {
 class FeedReactionActionWidget extends StatelessWidget {
   final AmityPost amityPost;
   final VoidCallback onCommentCallback;
-  FeedReactionActionWidget({Key? key, required this.amityPost, required this.onCommentCallback}) : super(key: key);
+  FeedReactionActionWidget(
+      {Key? key, required this.amityPost, required this.onCommentCallback})
+      : super(key: key);
   final LayerLink link = LayerLink();
 
   @override
@@ -468,7 +520,8 @@ class FeedReactionActionWidget extends StatelessWidget {
               ),
               label: Text(
                 'Like',
-                style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+                style: themeData.textTheme.titleMedium!.copyWith(
+                    color: Colors.black54, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -477,7 +530,8 @@ class FeedReactionActionWidget extends StatelessWidget {
             icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
             label: Text(
               'Comment',
-              style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+              style: themeData.textTheme.titleMedium!
+                  .copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
             ),
           ),
           Visibility(
@@ -486,15 +540,19 @@ class FeedReactionActionWidget extends StatelessWidget {
               onPressed: () {
                 if (amityPost.isFlaggedByMe) {
                   amityPost.report().unflag().then((value) {
-                    CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Unflagged the Post');
+                    CommonSnackbar.showPositiveSnackbar(
+                        context, 'Success', 'Unflagged the Post');
                   }).onError((error, stackTrace) {
-                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
                   });
                 } else {
                   amityPost.report().flag().then((value) {
-                    CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Flag the Post');
+                    CommonSnackbar.showPositiveSnackbar(
+                        context, 'Success', 'Flag the Post');
                   }).onError((error, stackTrace) {
-                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
                   });
                 }
               },
@@ -508,7 +566,8 @@ class FeedReactionActionWidget extends StatelessWidget {
               // icon: Image.asset('assets/ic_comment.png'),
               label: Text(
                 amityPost.isFlaggedByMe ? 'Falgged' : 'Flag',
-                style: themeData.textTheme.titleMedium!.copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+                style: themeData.textTheme.titleMedium!.copyWith(
+                    color: Colors.black54, fontWeight: FontWeight.w600),
               ),
             ),
           )

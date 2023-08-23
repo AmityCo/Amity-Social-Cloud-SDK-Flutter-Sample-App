@@ -139,12 +139,13 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
                             height: 80,
                             child: Stack(
                               children: [
+                                (attachments[index].fileUrl!=null)?
                                 Image.network(
-                                  attachments[index].fileUrl,
+                                  attachments[index].fileUrl!,
                                   width: double.maxFinite,
                                   height: double.maxFinite,
                                   fit: BoxFit.cover,
-                                ),
+                                ): Container(width: 20 , height: 20 , color: Colors.red,),
                                 Align(
                                   alignment: Alignment.topRight,
                                   child: InkWell(
@@ -316,11 +317,11 @@ class _UpdateCommentScreenState extends State<UpdateCommentScreen> {
     if (localAttachmetns.isNotEmpty) {
       for (var element in localAttachmetns) {
         final image = await waitForUploadComplete(AmityCoreClient.newFileRepository().uploadImage(element).stream);
-        amityImages.add(CommentImageAttachment(fileId: image.fileId));
+        amityImages.add(CommentImageAttachment(fileId: image.fileId!));
       }
     }
 
-    amityImages.addAll(attachments.map((e) => CommentImageAttachment(fileId: e.fileId)));
+    amityImages.addAll(attachments.map((e) => CommentImageAttachment(fileId: e.fileId!)));
 
     await widget.amityComment
         .edit()
