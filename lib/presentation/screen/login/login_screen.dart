@@ -32,10 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
     //STAGING Server
-    _userIdTextController.text = 'sara';
-    _displayNameTextController.text = 'sara Android';
-    _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
+    // _userIdTextController.text = 'sara';
+    // _displayNameTextController.text = 'sara Android';
+    // _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
 
     //SG Server
     // 1
@@ -115,8 +115,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           showLogs: true),
                       sycInitialization: true,
                     );
-
-                    // await Future.delayed(Duration(seconds: 1));
 
                     //Login the user
                     String userId = _userIdTextController.text.trim();

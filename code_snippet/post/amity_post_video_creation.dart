@@ -13,21 +13,24 @@ class AmityPostVideoCreation {
     //first, upload video
     AmityCoreClient.newFileRepository()
         .uploadVideo(uploadingVideo)
-        .then((AmityUploadResult<AmityVideo> amityUploadResult) {
-      //check if the upload result is complete
-      if (amityUploadResult is AmityUploadComplete) {
-        final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        //cast amityUploadResult to AmityVideo
-        AmityVideo uploadedVideo = amityUploadComplete.getFile as AmityVideo;
-        //then create a video post
-        createVideoPost(uploadedVideo);
-      }
-      //check if the upload result is complete
-      else if (amityUploadResult is AmityUploadError) {
-        final amityUploadError = amityUploadResult as AmityUploadError;
-        final AmityException amityException = amityUploadError.getError;
-        //handle error
-      }
+        .stream
+        .listen((AmityUploadResult<AmityVideo> amityResult) {
+      amityResult.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) {
+          //handle result
+
+          //then create a video post
+          createVideoPost(file);
+        },
+        error: (error) {
+          final AmityException amityException = error;
+          // handle error
+        },
+        cancel: () {
+          // handle cancel request
+        },
+      );
     });
   }
 
@@ -37,7 +40,8 @@ class AmityPostVideoCreation {
   void createVideoPost(AmityVideo uploadedVideo) {
     AmitySocialClient.newPostRepository()
         .createPost()
-        .targetUser('userId') // or targetMe(), targetCommunity(communityId: String)
+        .targetUser(
+            'userId') // or targetMe(), targetCommunity(communityId: String)
         .video([uploadedVideo])
         .text('Hello from flutter with video!')
         .post()
