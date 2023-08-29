@@ -25,17 +25,25 @@ class _LoginScreenState extends State<LoginScreen> {
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.SG.endpoint;
 
     //STAGING Server
-    _userIdTextController.text = 'victimAndroid';
-    _displayNameTextController.text = 'Victim Android';
-    _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
+    // _userIdTextController.text = 'victimAndroid';
+    // _displayNameTextController.text = 'Victim Android';
+    // _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
 
 
-    //STAGING Server
+    // //STAGING Server
+    // _userIdTextController.text = 'sara';
+    // _displayNameTextController.text = 'sara Android';
+    // _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
+
+
+    //DEV Server
     _userIdTextController.text = 'sara';
     _displayNameTextController.text = 'sara Android';
-    _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
+    _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.dev.amity.co/').endpoint;
+
 
     //SG Server
     // 1
@@ -110,8 +118,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       option: AmityCoreClientOption(
                           apiKey: apikey,
                           httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
-                          mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co'),
-                          // mqttEndpoint: AmityRegionalMqttEndpoint.SG,
+                          mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
+                          // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co'),
+                          // mqttEndpoint: AmityRegionalMqttEndpoint.SG, ssq.dev.amity.co
                           showLogs: true),
                       sycInitialization: true,
                     );
