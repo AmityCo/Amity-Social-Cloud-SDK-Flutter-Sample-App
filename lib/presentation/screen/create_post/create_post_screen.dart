@@ -15,7 +15,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key, this.userId, this.communityId, this.isPublic = false}) : super(key: key);
+  const CreatePostScreen(
+      {Key? key, this.userId, this.communityId, this.isPublic = false})
+      : super(key: key);
   final String? userId;
   final String? communityId;
   final bool isPublic;
@@ -89,37 +91,57 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onChanged: (value) {
                   UserSuggesionOverlay.instance.hideOverLay();
 
-                  if (widget.communityId == null || widget.communityId!.isEmpty || widget.isPublic) {
+                  if (widget.communityId == null ||
+                      widget.communityId!.isEmpty ||
+                      widget.isPublic) {
                     UserSuggesionOverlay.instance.updateOverLay(
-                        context, UserSuggestionType.global, _postTextTextFieldKey, value, (keyword, user) {
+                        context,
+                        UserSuggestionType.global,
+                        _postTextTextFieldKey,
+                        value, (keyword, user) {
                       mentionUsers.add(user);
                       if (keyword.isNotEmpty) {
                         final length = _postTextEditController.text.length;
-                        _postTextEditController.text = _postTextEditController.text
-                            .replaceRange(length - keyword.length, length, user.displayName ?? '');
+                        _postTextEditController.text =
+                            _postTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
                       } else {
-                        _postTextEditController.text = (_postTextEditController.text + user.displayName!);
+                        _postTextEditController.text =
+                            (_postTextEditController.text + user.displayName!);
                       }
 
                       _postTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(offset: _postTextEditController.text.length));
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _postTextEditController.text.length));
                     }, postion: UserSuggestionPostion.bottom);
                   } else {
                     UserSuggesionOverlay.instance.updateOverLay(
-                        context, UserSuggestionType.community, _postTextTextFieldKey, value, (keyword, user) {
+                        context,
+                        UserSuggestionType.community,
+                        _postTextTextFieldKey,
+                        value, (keyword, user) {
                       mentionUsers.add(user);
 
                       if (keyword.isNotEmpty) {
                         final length = _postTextEditController.text.length;
-                        _postTextEditController.text = _postTextEditController.text
-                            .replaceRange(length - keyword.length, length, user.displayName ?? '');
+                        _postTextEditController.text =
+                            _postTextEditController.text.replaceRange(
+                                length - keyword.length,
+                                length,
+                                user.displayName ?? '');
                       } else {
-                        _postTextEditController.text = (_postTextEditController.text + user.displayName!);
+                        _postTextEditController.text =
+                            (_postTextEditController.text + user.displayName!);
                       }
 
                       _postTextEditController.selection =
-                          TextSelection.fromPosition(TextPosition(offset: _postTextEditController.text.length));
-                    }, communityId: widget.communityId, postion: UserSuggestionPostion.bottom);
+                          TextSelection.fromPosition(TextPosition(
+                              offset: _postTextEditController.text.length));
+                    },
+                        communityId: widget.communityId,
+                        postion: UserSuggestionPostion.bottom);
                   }
                 },
               ),
@@ -137,7 +159,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       onPressed: () {},
                       icon: Icon(isTextPost ? Icons.image : Icons.attach_file),
                       label: Text(basename(file.path)),
-                      style: TextButton.styleFrom(foregroundColor: Colors.blue));
+                      style:
+                          TextButton.styleFrom(foregroundColor: Colors.blue));
                 }),
               ),
               const Spacer(),
@@ -146,10 +169,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+                    FilePickerResult? result = await FilePicker.platform
+                        .pickFiles(allowMultiple: true);
 
                     if (result != null) {
-                      files.addAll(result.paths.map((path) => File(path!)).toList());
+                      files.addAll(
+                          result.paths.map((path) => File(path!)).toList());
                     }
                     setState(() {
                       isTextPost = false;
@@ -167,10 +192,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     files.clear();
 
                     FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(type: FileType.custom, allowMultiple: true, allowedExtensions: ['mp4', 'mov']);
+                        .pickFiles(
+                            type: FileType.custom,
+                            allowMultiple: true,
+                            allowedExtensions: ['mp4', 'mov']);
 
                     if (result != null) {
-                      files.addAll(result.paths.map((path) => File(path!)).toList());
+                      files.addAll(
+                          result.paths.map((path) => File(path!)).toList());
                     }
                     setState(() {
                       isTextPost = false;
@@ -209,12 +238,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       context,
                       asyncFunction: () => _createPost(context),
                     ).then((value) {
-                      PositiveDialog.show(context, title: 'Post Created', message: 'Post Created Successfully',
+                      PositiveDialog.show(context,
+                          title: 'Post Created',
+                          message: 'Post Created Successfully',
                           onPostiveCallback: () {
                         GoRouter.of(context).pop();
                       });
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context, title: 'Error', message: error.toString());
+                      ErrorDialog.show(context,
+                          title: 'Error', message: error.toString());
                     });
                   },
                   style: TextButton.styleFrom(
@@ -262,10 +294,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     final amityMentioneesMetadata = mentionUsers
         .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-            userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
+            userId: e.userId!,
+            index: text.indexOf('@${e.displayName!}'),
+            length: e.displayName!.length))
         .toList();
 
-    Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+    Map<String, dynamic> metadata =
+        AmityMentionMetadataCreator(amityMentioneesMetadata).create();
 
     // try {
     //   _metadata = jsonDecode(_metadataString);
@@ -300,7 +335,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         for (final _file in files) {
           final uploadCompleter = Completer();
 
-          AmityCoreClient.newFileRepository().uploadImage(_file).stream.listen((event) {
+          AmityCoreClient.newFileRepository()
+              .uploadImage(_file)
+              .stream
+              .listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
 
             event.when(
@@ -347,11 +385,31 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (isVideoPost) {
       List<AmityVideo> video = [];
       for (final _file in files) {
-        AmityUploadResult<AmityVideo> amityUploadResult = await AmityCoreClient.newFileRepository().uploadVideo(_file);
-        if (amityUploadResult is AmityUploadComplete) {
-          final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-          video.add(amityUploadComplete.getFile as AmityVideo);
-        }
+        final uploadCompleter = Completer();
+        AmityCoreClient.newFileRepository()
+            .uploadVideo(_file)
+            .stream
+            .listen((event) {
+          uploadInfoStream.add(UploadInfo(_file.path, event));
+          uploadInfoStream.add(UploadInfo(_file.path, event));
+
+          event.when(
+            progress: (uploadInfo, cancelToken) {},
+            complete: (file) {
+              video.add(file as AmityVideo);
+
+              ///check if all file is uploaded
+              // if (_video.length == files.length) {
+              uploadCompleter.complete();
+              // }
+            },
+            error: (error) {
+              uploadCompleter.completeError(error);
+            },
+            cancel: () {},
+          );
+        });
+        await uploadCompleter.future;
       }
 
       if (isCommunityPost) {
@@ -380,7 +438,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (files.isNotEmpty) {
         for (final _file in files) {
           final uploadCompleter = Completer();
-          AmityCoreClient.newFileRepository().uploadFile(_file).stream.listen((event) {
+          AmityCoreClient.newFileRepository()
+              .uploadFile(_file)
+              .stream
+              .listen((event) {
             uploadInfoStream.add(UploadInfo(_file.path, event));
             event.when(
               progress: (uploadInfo, cancelToken) {},
@@ -391,7 +452,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 uploadCompleter.complete();
               },
               error: (error) {
-                CommonSnackbar.showNagativeSnackbar(context, 'Error', error.message);
+                CommonSnackbar.showNagativeSnackbar(
+                    context, 'Error', error.message);
                 uploadCompleter.completeError(error);
               },
               cancel: () {},
