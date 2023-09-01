@@ -382,11 +382,8 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
 
       if (files.isNotEmpty) {
         for (var file in files) {
-          AmityUploadResult<AmityVideo> amityUploadResult = await AmityCoreClient.newFileRepository().uploadVideo(file);
-          if (amityUploadResult is AmityUploadComplete) {
-            final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-            attachments.add(amityUploadComplete.getFile as AmityVideo);
-          }
+          final video = await waitForVideoUploadComplete( AmityCoreClient.newFileRepository().uploadVideo(file).stream);
+          attachments.add(video);
         }
       }
 

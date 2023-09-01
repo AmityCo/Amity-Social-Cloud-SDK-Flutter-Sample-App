@@ -12,19 +12,22 @@ class AmityVideoUpload {
   void uploadVideo(File uploadingVideo) async {
     AmityCoreClient.newFileRepository()
         .uploadVideo(uploadingVideo)
-        .then((AmityUploadResult<AmityVideo> amityUploadResult) {
-      //check if the upload result is complete
-      if (amityUploadResult is AmityUploadComplete) {
-        final amityUploadComplete = amityUploadResult as AmityUploadComplete;
-        //cast amityUploadResult to AmityVideo
-        AmityVideo uploadedVideo = amityUploadComplete.getFile as AmityVideo;
-      }
-      //check if the upload result is complete
-      else if (amityUploadResult is AmityUploadError) {
-        final amityUploadError = amityUploadResult as AmityUploadError;
-        final AmityException amityException = amityUploadError.getError;
-        //handle error
-      }
+        .stream
+        .listen((AmityUploadResult<AmityVideo> amityResult) {
+      amityResult.when(
+        progress: (uploadInfo, cancelToken) {},
+        complete: (file) {
+          //handle result
+          AmityVideo uploadedVideo = file;
+        },
+        error: (error) {
+          final AmityException amityException = error;
+          // handle error
+        },
+        cancel: () {
+          // handle cancel request
+        },
+      );
     });
   }
   /* end_sample_code */
