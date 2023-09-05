@@ -169,7 +169,11 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                       ? Column(
                                           children: [
                                             (value.target
-                                                    is CommunityCommentTarget)
+                                                        is CommunityCommentTarget &&
+                                                    ((value.target
+                                                                as CommunityCommentTarget)
+                                                            .creatorMember !=
+                                                        null))
                                                 ? Container(
                                                     child: Row(
                                                       crossAxisAlignment:
@@ -194,7 +198,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                                                 .creatorMember!
                                                                 .roles
                                                                 .toString(),
-                                                                softWrap: true,
+                                                            softWrap: true,
                                                             style: themeData
                                                                 .textTheme
                                                                 .bodySmall!

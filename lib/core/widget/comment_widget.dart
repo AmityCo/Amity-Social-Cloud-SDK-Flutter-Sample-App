@@ -159,7 +159,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                 (value.target != null)
                     ? Column(
                         children: [
-                          (value.target is CommunityCommentTarget)
+                          (value.target is CommunityCommentTarget && ((value.target as CommunityCommentTarget).creatorMember!=null))
                               ? Container(
                                   child: Row(
                                     children: [
@@ -178,7 +178,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                             .toString(),
                                         style: themeData.textTheme.bodySmall!
                                             .copyWith(),
-                                      ),
+                                      )
                                     ],
                                   ),
                                 )
