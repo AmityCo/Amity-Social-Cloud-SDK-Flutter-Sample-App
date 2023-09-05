@@ -156,6 +156,38 @@ class _CommentWidgetState extends State<CommentWidget> {
                   ),
                 ),
                 const SizedBox(height: 6),
+                (value.target != null)
+                    ? Column(
+                        children: [
+                          (value.target is CommunityCommentTarget && ((value.target as CommunityCommentTarget).creatorMember!=null))
+                              ? Container(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Roles:",
+                                        style: themeData.textTheme.bodySmall!
+                                            .copyWith(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        (value.target as CommunityCommentTarget)
+                                            .creatorMember!
+                                            .roles
+                                            .toString(),
+                                        style: themeData.textTheme.bodySmall!
+                                            .copyWith(),
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container(),
+                          const SizedBox(height: 6),
+                        ],
+                      )
+                    : Container(),
+
                 Row(
                   children: [
                     Text(
@@ -259,7 +291,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                             .fileUrl!,
                                         fit: BoxFit.cover,
                                       )
-                                    :const SizedBox(width: 56, height: 56),
+                                    : const SizedBox(width: 56, height: 56),
                               ),
                             ),
                           ],
