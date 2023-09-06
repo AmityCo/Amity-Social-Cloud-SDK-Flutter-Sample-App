@@ -39,11 +39,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
 
-    //DEV Server
-    // _userIdTextController.text = 'sara';
-    // _displayNameTextController.text = 'sara Android';
-    // _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
-    // _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.dev.amity.co/').endpoint;
+    // DEV Server
+    _userIdTextController.text = 'sara';
+    _displayNameTextController.text = 'sara Android';
+    _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.dev.amity.co/').endpoint;
 
     // // SG Server
     // // 1
@@ -118,8 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       option: AmityCoreClientOption(
                           apiKey: apikey,
                           httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
-                          // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
-                          mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co'),
+                          mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
+                          // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co'),
                           // mqttEndpoint: AmityRegionalMqttEndpoint.SG,
                           showLogs: true),
                       sycInitialization: true,

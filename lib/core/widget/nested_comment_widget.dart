@@ -169,11 +169,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                       ? Column(
                                           children: [
                                             (value.target
-                                                        is CommunityCommentTarget &&
-                                                    ((value.target
-                                                                as CommunityCommentTarget)
-                                                            .creatorMember !=
-                                                        null))
+                                                    is CommunityCommentTarget)
                                                 ? Container(
                                                     child: Row(
                                                       crossAxisAlignment:
@@ -192,18 +188,28 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                                           ),
                                                         ),
                                                         Expanded(
-                                                          child: Text(
-                                                            (value.target
-                                                                    as CommunityCommentTarget)
-                                                                .creatorMember!
-                                                                .roles
-                                                                .toString(),
-                                                            softWrap: true,
-                                                            style: themeData
-                                                                .textTheme
-                                                                .bodySmall!
-                                                                .copyWith(),
-                                                          ),
+                                                          child: ((value.target
+                                                                          as CommunityCommentTarget)
+                                                                      .creatorMember !=
+                                                                  null)
+                                                              ? Text(
+                                                                  (value.target
+                                                                          as CommunityCommentTarget)
+                                                                      .creatorMember!
+                                                                      .roles
+                                                                      .toString(),
+                                                                  style: themeData
+                                                                      .textTheme
+                                                                      .bodySmall!
+                                                                      .copyWith(),
+                                                                )
+                                                              : Text(
+                                                                  "[]",
+                                                                  style: themeData
+                                                                      .textTheme
+                                                                      .bodySmall!
+                                                                      .copyWith(),
+                                                                ),
                                                         ),
                                                       ],
                                                     ),
