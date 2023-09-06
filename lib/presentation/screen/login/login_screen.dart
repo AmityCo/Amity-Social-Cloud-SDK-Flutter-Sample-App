@@ -38,12 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
     // _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
 
 
-
     // DEV Server
     _userIdTextController.text = 'sara';
     _displayNameTextController.text = 'sara Android';
     _apiKeyTextController.text = 'b0ecee0c39dca1651d628b1c535d15dbd30ad9b0eb3c3a2f';
     _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.dev.amity.co/').endpoint;
+
 
     // // SG Server
     // // 1

@@ -160,6 +160,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     ? Column(
                         children: [
                           (value.target is CommunityCommentTarget)
+
                               ? Container(
                                   child: Row(
                                     children: [

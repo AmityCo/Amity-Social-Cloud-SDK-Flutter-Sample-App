@@ -170,6 +170,7 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                           children: [
                                             (value.target
                                                     is CommunityCommentTarget)
+
                                                 ? Container(
                                                     child: Row(
                                                       crossAxisAlignment:
