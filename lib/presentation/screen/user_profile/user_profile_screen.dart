@@ -57,7 +57,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             }
             if (snapshot.hasData && snapshot.data != null) {
               final amityUser = snapshot.data!;
-              // _amityUser = amityUser;
+              _amityUser = amityUser;
               return Scaffold(
                 appBar: AppBar(
                   title: Text('User Profile - ${amityUser.displayName}'),
