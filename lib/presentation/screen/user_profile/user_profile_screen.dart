@@ -492,6 +492,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
       }
     }
 
-    await _amityUser!.update().avatarCustomUrl("").update();
+    await _amityUser!.update().avatarFileId(userAvatar!.fileId!).update();
   }
 }
