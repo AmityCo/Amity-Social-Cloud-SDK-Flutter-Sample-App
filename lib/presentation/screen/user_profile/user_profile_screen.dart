@@ -57,7 +57,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             }
             if (snapshot.hasData && snapshot.data != null) {
               final amityUser = snapshot.data!;
-              // _amityUser = amityUser;
+              _amityUser = amityUser;
               return Scaffold(
                 appBar: AppBar(
                   title: Text('User Profile - ${amityUser.displayName}'),
@@ -492,6 +492,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
       }
     }
 
-    await _amityUser!.update().avatarFileId(userAvatar!.fileId!).update();
+    await _amityUser!.update().avatarCustomUrl("").update();
   }
 }
