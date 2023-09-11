@@ -159,7 +159,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                 (value.target != null)
                     ? Column(
                         children: [
-                          (value.target is CommunityCommentTarget && ((value.target as CommunityCommentTarget).creatorMember!=null))
+                          (value.target is CommunityCommentTarget)
+
                               ? Container(
                                   child: Row(
                                     children: [
@@ -171,14 +172,25 @@ class _CommentWidgetState extends State<CommentWidget> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      Text(
-                                        (value.target as CommunityCommentTarget)
-                                            .creatorMember!
-                                            .roles
-                                            .toString(),
-                                        style: themeData.textTheme.bodySmall!
-                                            .copyWith(),
-                                      )
+                                      ((value.target as CommunityCommentTarget)
+                                                  .creatorMember !=
+                                              null)
+                                          ? Text(
+                                              (value.target
+                                                      as CommunityCommentTarget)
+                                                  .creatorMember!
+                                                  .roles
+                                                  .toString(),
+                                              style: themeData
+                                                  .textTheme.bodySmall!
+                                                  .copyWith(),
+                                            )
+                                          : Text(
+                                              "[]",
+                                              style: themeData
+                                                  .textTheme.bodySmall!
+                                                  .copyWith(),
+                                            )
                                     ],
                                   ),
                                 )
