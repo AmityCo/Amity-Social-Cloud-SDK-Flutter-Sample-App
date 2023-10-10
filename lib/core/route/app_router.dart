@@ -39,6 +39,7 @@ import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/comment_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/community_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte_event_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/stream_list/stream_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
@@ -95,6 +96,11 @@ class AppRouter {
             routes: const [],
           ),
           GoRoute(
+            name: AppRoute.stream,
+            path: AppRoute.streamRoute,
+            builder: (context, state) => const StreamListScreen(),
+          ),
+          GoRoute(
             name: AppRoute.communityFeed,
             path: AppRoute.communityFeedRoute,
             builder: (context, state) => CommunityFeedScreen(
@@ -107,6 +113,7 @@ class AppRouter {
             path: AppRoute.communityMemmberRoute,
             builder: (context, state) => CommunityMemberScreen(communityId: state.params['communityId']!),
           ),
+          
           GoRoute(
             name: AppRoute.userFeed,
             path: AppRoute.userFeedRoute,
