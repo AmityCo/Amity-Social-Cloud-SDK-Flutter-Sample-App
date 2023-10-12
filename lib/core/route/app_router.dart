@@ -44,6 +44,7 @@ import 'package:flutter_social_sample_app/presentation/screen/token_exchange/tok
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/view_stream/view_stream.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -99,6 +100,14 @@ class AppRouter {
             name: AppRoute.stream,
             path: AppRoute.streamRoute,
             builder: (context, state) => const StreamListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.viewStream,
+            path: AppRoute.viewStreamRoute,
+            builder: (context, state) {
+              AmityStream amityStream = state.extra as AmityStream;
+              return ViewStream(stream: amityStream);
+              },
           ),
           GoRoute(
             name: AppRoute.communityFeed,

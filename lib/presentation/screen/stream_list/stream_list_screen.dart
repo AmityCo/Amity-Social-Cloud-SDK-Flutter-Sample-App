@@ -1,6 +1,8 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:go_router/go_router.dart';
 
 class StreamListScreen extends StatefulWidget {
   const StreamListScreen({super.key});
@@ -47,14 +49,8 @@ class _StreamListScreenState extends State<StreamListScreen> {
               title: Text(amityStream[index].title ?? ""),
               subtitle: Text(amityStream[index].streamId ?? ""),
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => StreamDetailScreen(
-                //       streamId: amityStream[index].streamId,
-                //     ),
-                //   ),
-                // );
+                GoRouter.of(context).goNamed(AppRoute.viewStream,
+                    extra: amityStream[index]);
               },
             );
           },
