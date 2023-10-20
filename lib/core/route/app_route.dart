@@ -132,6 +132,8 @@ class AppRoute {
   static const stream = 'streamList';
   static const streamRoute = 'streamList';
 
+  static const liveStream = 'livestreamList';
+  static const liveStreamRoute = 'livestreamList';
 
   static const viewStream = 'viewStream';
   static const viewStreamRoute = 'viewStream';

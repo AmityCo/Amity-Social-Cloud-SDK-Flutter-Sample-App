@@ -27,6 +27,7 @@ import 'package:flutter_social_sample_app/presentation/screen/following_list/fol
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_user_search/global_user_search.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/live_stream_list/live_stream_list.dart';
 import 'package:flutter_social_sample_app/presentation/screen/login/login_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/message_update/message_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/my_follower_list_screen.dart';
@@ -100,6 +101,11 @@ class AppRouter {
             name: AppRoute.stream,
             path: AppRoute.streamRoute,
             builder: (context, state) => const StreamListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.liveStream,
+            path: AppRoute.liveStreamRoute,
+            builder: (context, state) => const LiveStreamListScreen(),
           ),
           GoRoute(
             name: AppRoute.viewStream,

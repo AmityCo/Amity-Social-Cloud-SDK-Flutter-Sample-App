@@ -1,26 +1,29 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:go_router/go_router.dart';
 
-class StreamListScreen extends StatefulWidget {
-  const StreamListScreen({super.key});
+class LiveStreamListScreen extends StatefulWidget {
+  const LiveStreamListScreen({super.key});
 
   @override
-  State<StreamListScreen> createState() => _StreamListScreenState();
+  State<LiveStreamListScreen> createState() => _LiveStreamListScreenState();
 }
 
-class _StreamListScreenState extends State<StreamListScreen> {
+class _LiveStreamListScreenState extends State<LiveStreamListScreen> {
+  
   late StreamLiveCollection streamLiveCollection;
   List<AmityStream> amityStream = [];
   final scrollcontroller = ScrollController();
+
 
   @override
   void initState() {
     streamLiveCollection = StreamLiveCollection(
       request: () => AmityVideoClient.newStreamRepository()
           .getStreams()
+          .isLive(true)
+          .status([AmityStreamStatus.live , AmityStreamStatus.recorded])
           .build(),
     );
 
@@ -48,12 +51,12 @@ class _StreamListScreenState extends State<StreamListScreen> {
       streamLiveCollection.loadNext();
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Recorded Streams'),
+        title: const Text('Live Stream'),
       ),
       body: Scaffold(
         body: Column(

@@ -98,6 +98,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   onPressed: () {
                     GoRouter.of(context).pushNamed(AppRoute.stream);
                   },
+                  child: const Text('Recorded Streams'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(AppRoute.liveStream);
+                  },
                   child: const Text('Live Streams'),
                 ),
                 const SizedBox(height: 20),
