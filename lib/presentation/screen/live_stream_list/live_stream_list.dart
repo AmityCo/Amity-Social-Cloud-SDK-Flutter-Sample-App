@@ -23,7 +23,7 @@ class _LiveStreamListScreenState extends State<LiveStreamListScreen> {
       request: () => AmityVideoClient.newStreamRepository()
           .getStreams()
           .isLive(true)
-          .status([AmityStreamStatus.live , AmityStreamStatus.recorded])
+          .status([AmityStreamStatus.live])
           .build(),
     );
 
@@ -79,7 +79,7 @@ class _LiveStreamListScreenState extends State<LiveStreamListScreen> {
                           title: Text(amityStream[index].title ?? ""),
                           subtitle: Text(amityStream[index].streamId ?? ""),
                           onTap: () {
-                            GoRouter.of(context).goNamed(AppRoute.viewStream,
+                            GoRouter.of(context).pushNamed(AppRoute.viewStream,
                                 extra: amityStream[index]);
                           },
                         );

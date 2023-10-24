@@ -1,5 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 
 class ViewStream extends StatefulWidget {
   final AmityStream stream;
@@ -21,6 +23,13 @@ class _ViewStreamState extends State<ViewStream> {
 
   @override
   Widget build(BuildContext context) {
-    return AmityVideoPlayer(controller: controller);
+    return Scaffold(
+      body: AmityVideoPlayer(
+        controller: controller,
+        onStop: () {
+          GoRouter.of(context).pop();
+        },
+      ),
+    );
   }
 }
