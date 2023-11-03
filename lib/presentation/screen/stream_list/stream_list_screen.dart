@@ -21,13 +21,12 @@ class _StreamListScreenState extends State<StreamListScreen> {
     streamLiveCollection = StreamLiveCollection(
       request: () => AmityVideoClient.newStreamRepository()
           .getStreams()
-          .isLive(false)
           .status([AmityStreamStatus.recorded])
           .build(),
     );
 
     streamLiveCollection.getStreamController().stream.listen((event) {
-      print(event.map((e) => "${e.streamId}, ").toList());
+      // print(event.map((e) => "${e.streamId}, ").toList());
       if (mounted) {
         setState(() {
           amityStream = event;
@@ -76,7 +75,15 @@ class _StreamListScreenState extends State<StreamListScreen> {
                       itemBuilder: (context, index) {
                         return ListTile(
                           title: Text(amityStream[index].title ?? ""),
-                          subtitle: Text(amityStream[index].streamId ?? ""),
+                          subtitle: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(amityStream[index].streamId ?? ""),
+                              Text(amityStream[index].status?.name ?? ""),
+                              Text("User -> ${amityStream[index].user?.displayName}" ),
+                            ],
+                          ),
                           onTap: () {
                             GoRouter.of(context).pushNamed(AppRoute.viewStream,
                                 extra: amityStream[index]);
