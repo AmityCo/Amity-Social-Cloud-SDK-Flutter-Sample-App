@@ -1,7 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_video_player/amity_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class ViewStream extends StatefulWidget {
