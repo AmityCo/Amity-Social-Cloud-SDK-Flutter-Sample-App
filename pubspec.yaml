@@ -27,7 +27,7 @@ dependencies:
   gallery_saver: ^2.3.2
   get: ^4.6.3
   go_router: ^5.2.4
-  image_picker: ^0.8.4+10
+  image_picker: ^1.0.4
   intl: ^0.17.0
   path: ^1.8.0
   path_provider: ^2.0.15

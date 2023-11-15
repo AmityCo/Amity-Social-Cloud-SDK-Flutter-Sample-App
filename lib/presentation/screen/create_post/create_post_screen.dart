@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
@@ -44,6 +45,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   final mentionUsers = <AmityUser>[];
 
+  late File _image;
+  final picker = ImagePicker();
+
   @override
   void initState() {
     if (widget.userId != null) {
@@ -57,6 +61,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context = context;
     final themeData = Theme.of(context);
     final isCommunityPost = widget.communityId != null;
     var targetLabel = '';
@@ -215,10 +220,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               TextButton.icon(
                   onPressed: () async {
                     files.clear();
-                    final ImagePicker picker = ImagePicker();
-                    // Pick an image
-                    final image = await picker.pickMultiImage();
-                    files.addAll(image.map((e) => File(e.path)).toList());
+                    showOptions(context);
+                    // final ImagePicker picker = ImagePicker();
+                    // // Pick an image
+                    // final image = await picker.pickMultiImage();
+                    // files.addAll(image.map((e) => File(e.path)).toList());
 
                     setState(() {
                       isTextPost = false;
@@ -345,6 +351,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               progress: (uploadInfo, cancelToken) {},
               complete: (file) {
                 images.add(file as AmityImage);
+                AmityImage amityImage = file as AmityImage;
+                print("Image Width -> ${amityImage.getFileProperties?.width}");
+                print("Image Height -> ${amityImage.getFileProperties?.height}");
 
                 ///check if all file is uploaded
                 // if (_images.length == files.length) {
@@ -397,6 +406,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             progress: (uploadInfo, cancelToken) {},
             complete: (file) {
               video.add(file as AmityVideo);
+
+              AmityVideo videoAmity = file as AmityVideo;
+              print("Video Width -> ${videoAmity.getFileProperties?.width}");
+              print("Video Height -> ${videoAmity.getFileProperties?.height}");
 
               ///check if all file is uploaded
               // if (_video.length == files.length) {
@@ -496,5 +509,55 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
     });
     return completer.future;
+  }
+
+  Future showOptions(BuildContext context ) async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            child: Text('Photo Gallery'),
+            onPressed: () {
+              // close the options modal
+              Navigator.of(context).pop();
+              // get image from gallery
+              getImageFromGallery();
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: Text('Camera'),
+            onPressed: () {
+              // close the options modal
+              Navigator.of(context).pop();
+              // get image from camera
+              getImageFromCamera();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  //Image Picker function to get image from gallery
+  Future getImageFromGallery() async {
+    final pickedImages = await picker.pickMultiImage();
+
+    setState(() {
+      if (pickedImages != null) {
+        files.addAll(pickedImages.map((e) => File(e.path)).toList());
+      }
+    });
+  }
+
+//Image Picker function to get image from camera
+  Future getImageFromCamera() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+
+    setState(() {
+      if (pickedImage != null) {
+          files.add(File(pickedImage.path));
+      }
+    });
   }
 }

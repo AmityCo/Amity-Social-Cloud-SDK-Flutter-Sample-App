@@ -323,6 +323,8 @@ class FeedContentWidget extends StatelessWidget {
 
     if (amityPostData is ImageData) {
       final data = amityPostData as ImageData;
+      print("Image Width -> ${data.fileInfo.getFileProperties?.width}");
+      print("Image Height -> ${data.fileInfo.getFileProperties?.height}");
       if (data.image != null) {
         return SizedBox(
           width: 100,
@@ -339,44 +341,50 @@ class FeedContentWidget extends StatelessWidget {
 
     if (amityPostData is VideoData) {
       final data = amityPostData as VideoData;
-      return (data.fileId != null)? SizedBox(
-        width: 100,
-        height: 100,
-        // color: Colors.red,
-        child: (data.thumbnail != null && data.fileId != null)
-            ? Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.network(
-                      data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      onPressed: () {
-                        data.getVideo(AmityVideoQuality.HIGH).then((value) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenVideoPlayer(
-                                title: value.fileName!,
-                                url: value.fileUrl!,
-                              ),
+      return (data.fileId != null)
+          ? SizedBox(
+              width: 100,
+              height: 100,
+              // color: Colors.red,
+              child: (data.thumbnail != null && data.fileId != null)
+                  ? Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.network(
+                            data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: IconButton(
+                            onPressed: () {
+                              data.getVideo(AmityVideoQuality.HIGH)
+                                  .then((value) {
+                                    print("Video Widthvalue -> ${value.getFileProperties?.width}");
+                                    print("Video Heightvalue -> ${value.getFileProperties?.height}");
+                                  print("Video RawData -> ${data.rawData.toString()}");
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => FullScreenVideoPlayer(
+                                      title: value.fileName!,
+                                      url: value.fileUrl!,
+                                    ),
+                                  ),
+                                );
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.play_circle_fill_rounded,
+                              color: Colors.white,
                             ),
-                          );
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              )
-            : Text("MEDIA DELETED"),
-      ):Container(
+                          ),
+                        )
+                      ],
+                    )
+                  : Text("MEDIA DELETED"),
+            )
+          : Container(
               width: 20,
               height: 20,
               color: Colors.amber,
@@ -408,7 +416,10 @@ class FeedContentWidget extends StatelessWidget {
       final data = amityPostData as PollData;
       return Container(
         // color: Colors.green,
-        child: PollWidget(data: data , createdbyUserId:  amityPost.postedUserId!,),
+        child: PollWidget(
+          data: data,
+          createdbyUserId: amityPost.postedUserId!,
+        ),
       );
     }
 
