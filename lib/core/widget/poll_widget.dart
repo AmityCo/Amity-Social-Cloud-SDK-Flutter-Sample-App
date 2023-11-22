@@ -5,8 +5,9 @@ import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/loading_button.dart';
 
 class PollWidget extends StatefulWidget {
-  const PollWidget({Key? key, required this.data}) : super(key: key);
+  const PollWidget({Key? key, required this.data , required this.createdbyUserId}) : super(key: key);
   final PollData data;
+  final String createdbyUserId;
   @override
   State<PollWidget> createState() => _PollWidgetState();
 }
@@ -161,6 +162,7 @@ class _PollWidgetState extends State<PollWidget> {
                           child: const Icon(Icons.timer_off_outlined),
                         ),
                         const SizedBox(width: 12),
+                        if(widget.createdbyUserId == AmityCoreClient.getUserId())
                         InkWell(
                           onTap: () {
                             value

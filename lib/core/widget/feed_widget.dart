@@ -408,7 +408,7 @@ class FeedContentWidget extends StatelessWidget {
       final data = amityPostData as PollData;
       return Container(
         // color: Colors.green,
-        child: PollWidget(data: data),
+        child: PollWidget(data: data , createdbyUserId:  amityPost.postedUserId!,),
       );
     }
 

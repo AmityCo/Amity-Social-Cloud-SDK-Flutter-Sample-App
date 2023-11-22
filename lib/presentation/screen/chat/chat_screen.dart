@@ -298,7 +298,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (replyToMessage != null) {
                     messageBuilder.parentId(replyToMessage!.messageId);
                   }
-
+                  if(value.tags != null){
+                    messageBuilder.tags(value.tags!);
+                  }
                   messageBuilder.send().then((value) {
                     scrollcontroller.jumpTo(0);
                     setState(() {

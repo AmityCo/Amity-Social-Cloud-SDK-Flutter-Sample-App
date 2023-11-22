@@ -25,10 +25,21 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
   final _commentTextFieldKey = GlobalKey();
   final _commentTextEditController = TextEditingController();
 
+  List<Widget> tags = <Widget>[
+    const Text('TagOne'),
+    const Text('TagTwo'),
+    const Text('TagThree')
+  ];
+
+  final List<bool> _selectedTags = <bool>[false, false, false];
+
   // final ValueChanged<File> _addImageCallback;
   File? _selectedImage;
   File? _selectedFile;
   List<MentionData>? _amityMentionMetadata;
+
+  bool istagOneSelected = false;
+  bool istagTwoSelected = false;
 
   final _focusNode = FocusNode();
 
@@ -189,6 +200,26 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                     icon: const Icon(Icons.camera),
                     iconSize: 28,
                   ),
+                  ToggleButtons(
+                    direction: Axis.horizontal,
+                    onPressed: (int index) {
+                      // All buttons are selectable.
+                      setState(() {
+                        _selectedTags[index] = !_selectedTags[index];
+                      });
+                    },
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    selectedBorderColor: Colors.blue[700],
+                    selectedColor: Colors.white,
+                    fillColor: Colors.blue[200],
+                    color: Colors.blue[400],
+                    constraints: const BoxConstraints(
+                      minHeight: 20.0,
+                      minWidth: 60.0,
+                    ),
+                    isSelected: _selectedTags,
+                    children: tags,
+                  ),
                 ],
               ),
               Row(
@@ -256,11 +287,20 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                         );
                         return;
                       }
+
+                      List<String>? tagToBeAdded  = <String>[];
+                      for (var i = 0; i < _selectedTags.length; i++) {
+                        if (_selectedTags[i]) {
+                          tagToBeAdded.add((tags[i] as Text).data!);
+                        }
+                      }
+
                       widget._addCommentCallback.call(
                         MessageData(
                           message: text,
                           image: _selectedImage,
                           file: _selectedFile,
+                          tags: (tagToBeAdded.isNotEmpty) ? tagToBeAdded : null, 
                           amityMentionMetadata: _amityMentionMetadata,
                         ),
                       );
@@ -400,7 +440,8 @@ class MessageData {
   File? image;
   File? file;
   List<MentionData>? amityMentionMetadata;
-  MessageData({this.message, this.image, this.file, this.amityMentionMetadata});
+  List<String>? tags;
+  MessageData({this.message, this.image,this.tags, this.file, this.amityMentionMetadata});
 }
 
 class MentionData {
