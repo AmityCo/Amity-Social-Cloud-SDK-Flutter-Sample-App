@@ -27,6 +27,7 @@ import 'package:flutter_social_sample_app/presentation/screen/following_list/fol
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_user_search/global_user_search.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/live_stream_list/live_stream_list.dart';
 import 'package:flutter_social_sample_app/presentation/screen/login/login_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/message_update/message_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/my_follower_list_screen.dart';
@@ -39,10 +40,12 @@ import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/comment_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/community_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte_event_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/stream_list/stream_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/view_stream/view_stream.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -95,6 +98,24 @@ class AppRouter {
             routes: const [],
           ),
           GoRoute(
+            name: AppRoute.stream,
+            path: AppRoute.streamRoute,
+            builder: (context, state) => const StreamListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.liveStream,
+            path: AppRoute.liveStreamRoute,
+            builder: (context, state) => const LiveStreamListScreen(),
+          ),
+          GoRoute(
+            name: AppRoute.viewStream,
+            path: AppRoute.viewStreamRoute,
+            builder: (context, state) {
+              AmityStream amityStream = state.extra as AmityStream;
+              return ViewStream(stream: amityStream);
+              },
+          ),
+          GoRoute(
             name: AppRoute.communityFeed,
             path: AppRoute.communityFeedRoute,
             builder: (context, state) => CommunityFeedScreen(
@@ -107,6 +128,7 @@ class AppRouter {
             path: AppRoute.communityMemmberRoute,
             builder: (context, state) => CommunityMemberScreen(communityId: state.params['communityId']!),
           ),
+          
           GoRoute(
             name: AppRoute.userFeed,
             path: AppRoute.userFeedRoute,

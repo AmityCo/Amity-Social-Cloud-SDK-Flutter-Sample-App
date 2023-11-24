@@ -1,4 +1,5 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:amity_video_player/amity_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
@@ -124,6 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           showLogs: true),
                       sycInitialization: true,
                     );
+
+                    AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration());
 
                     //Login the user
                     String userId = _userIdTextController.text.trim();

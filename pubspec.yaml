@@ -1,7 +1,7 @@
 name: flutter_social_sample_app
 description: Demonstrates how to use the flutter_application_1 plugin.
 
-version: 1.1.4+18
+version: 1.1.4+19
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
@@ -15,6 +15,9 @@ environment:
 dependencies:
   amity_sdk:
     path: ../Amity-Social-Cloud-SDK-Flutter-Internal
+  # amity_video_player:
+  #   path: ../amity_social_cloud_flutter_video_player
+  amity_video_player: ^0.0.1
   cached_network_image: ^3.2.0
   chewie: ^1.3.1
   cupertino_icons: ^1.0.2
@@ -37,6 +40,7 @@ dependencies:
   url_launcher: ^6.0.20
   uuid: ^3.0.6
   video_player: ^2.3.0
+
 
 dependency_overrides:
   typed_data: ^1.3.1

@@ -62,5 +62,10 @@
 	<string>We need access to photo library so that photos can be selected</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+  	<key>NSAllowsArbitraryLoads</key>
+  	<true/>
+	</dict>
 </dict>
 </plist>

@@ -128,4 +128,13 @@ class AppRoute {
 
   static const userBlock = 'userBlock';
   static const userBlockRoute = '/userBlock';
+
+  static const stream = 'streamList';
+  static const streamRoute = 'streamList';
+
+  static const liveStream = 'livestreamList';
+  static const liveStreamRoute = 'livestreamList';
+
+  static const viewStream = 'viewStream';
+  static const viewStreamRoute = 'viewStream';
 }

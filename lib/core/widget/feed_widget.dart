@@ -412,6 +412,14 @@ class FeedContentWidget extends StatelessWidget {
       );
     }
 
+    if (amityPostData is LiveStreamData) {
+      final data = amityPostData as LiveStreamData;
+      return Container(
+        // color: Colors.green,
+        child: Text( 'Linked Stream ID -->>>> ${data.streamId}' ?? 'No Stream ID'),
+      );
+    }
+
     return Container(
       color: Colors.red,
       child: Text('>>>>> $amityPostData <<<<<<'),
