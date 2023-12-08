@@ -23,13 +23,17 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
   late AmityCommunity _amityCommunity;
   Future<AmityCommunity>? _future;
 
+  Future<List<String>?>? _rolesFuture;
+
   GlobalKey<CommunityMemberScreenState> memberList = GlobalKey<CommunityMemberScreenState>();
   @override
-  void initState() {
+  void initState()  {
     _tabController = TabController(length: 3, vsync: this);
+    _rolesFuture =  AmitySocialClient.newCommunityRepository().getCurrentUserRoles(widget.communityId);
 
     _future = AmitySocialClient.newCommunityRepository().getCommunity(widget.communityId);
     super.initState();
+
   }
 
   @override
@@ -117,6 +121,15 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                   return NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
                       return [
+                        SliverToBoxAdapter(child: 
+                        FutureBuilder<List<String>?>(
+                          future: _rolesFuture,
+                          builder: (context, snapshot) {
+                             var currentUserRoles = snapshot.data;
+                             return Text("${currentUserRoles ?? "Not A member"}");
+                          },
+                        )
+                        ,),
                         SliverToBoxAdapter(
                           child: _CommunityProfileHeaderWidget(amityCommunity: _amityCommunity),
                         ),
