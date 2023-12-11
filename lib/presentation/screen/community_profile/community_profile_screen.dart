@@ -23,13 +23,17 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
   late AmityCommunity _amityCommunity;
   Future<AmityCommunity>? _future;
 
+  
+
   GlobalKey<CommunityMemberScreenState> memberList = GlobalKey<CommunityMemberScreenState>();
   @override
-  void initState() {
+  void initState()  {
     _tabController = TabController(length: 3, vsync: this);
+    
 
     _future = AmitySocialClient.newCommunityRepository().getCommunity(widget.communityId);
     super.initState();
+
   }
 
   @override
@@ -237,9 +241,26 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
   }
 }
 
-class _CommunityProfileHeaderWidget extends StatelessWidget {
+class _CommunityProfileHeaderWidget extends StatefulWidget {
   const _CommunityProfileHeaderWidget({Key? key, required this.amityCommunity}) : super(key: key);
   final AmityCommunity amityCommunity;
+
+  @override
+  State<_CommunityProfileHeaderWidget> createState() => _CommunityProfileHeaderWidgetState();
+}
+
+class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWidget> {
+  Future<List<String>?>? _rolesFuture;
+
+  @override
+  void initState() {
+    if(widget.amityCommunity.communityId!=null){
+      _rolesFuture =  AmitySocialClient.newCommunityRepository().getCurrentUserRoles(widget.amityCommunity.communityId!);
+    }
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -255,9 +276,9 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 height: 64,
                 decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) != null
+                child: widget.amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) != null
                     ? Image.network(
-                        amityCommunity.avatarImage!.getUrl(AmityImageSize.MEDIUM),
+                        widget.amityCommunity.avatarImage!.getUrl(AmityImageSize.MEDIUM),
                         fit: BoxFit.fill,
                       )
                     : Image.asset('assets/user_placeholder.png'),
@@ -272,7 +293,7 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${amityCommunity.postsCount}\n',
+                            text: '${widget.amityCommunity.postsCount}\n',
                             style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(text: 'Posts', style: themeData.textTheme.bodyMedium),
@@ -284,7 +305,7 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${amityCommunity.membersCount}\n',
+                            text: '${widget.amityCommunity.membersCount}\n',
                             style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(text: 'Members', style: themeData.textTheme.bodyMedium),
@@ -298,25 +319,20 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            amityCommunity.displayName ?? '',
+            widget.amityCommunity.displayName ?? '',
             style: themeData.textTheme.titleLarge,
           ),
           const SizedBox(height: 8),
           Text(
-            amityCommunity.description ?? '',
+            widget.amityCommunity.description ?? '',
             style: themeData.textTheme.bodySmall,
           ),
           const SizedBox(height: 18),
-          FutureBuilder<List<String>>(
-            future: amityCommunity.getCurentUserRoles(),
+          FutureBuilder<List<String>?>(
+            future: _rolesFuture,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text('Rolse - ${snapshot.data!.join(',')}');
-              }
-              if (snapshot.hasError) {
-                // print(snapshot.error.toString());
-              }
-              return Container();
+              var currentUserRoles = snapshot.data;
+              return Text("Current User Roles: ${currentUserRoles ?? "Not A member"}");
             },
           ),
           const SizedBox(height: 18),
@@ -325,36 +341,36 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
               width: 260,
               child: ElevatedButton(
                 onPressed: () {
-                  if (!(amityCommunity.isJoined ?? true)) {
+                  if (!(widget.amityCommunity.isJoined ?? true)) {
                     AmitySocialClient.newCommunityRepository()
-                        .joinCommunity(amityCommunity.communityId!)
+                        .joinCommunity(widget.amityCommunity.communityId!)
                         .then((value) {})
                         .onError((error, stackTrace) {
                       ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   } else {
                     AmitySocialClient.newCommunityRepository()
-                        .leaveCommunity(amityCommunity.communityId!)
+                        .leaveCommunity(widget.amityCommunity.communityId!)
                         .then((value) {})
                         .onError((error, stackTrace) {
                       ErrorDialog.show(context, title: 'Error', message: error.toString());
                     });
                   }
                 },
-                child: Text(!(amityCommunity.isJoined ?? true) ? 'Join' : 'Leave'),
+                child: Text(!(widget.amityCommunity.isJoined ?? true) ? 'Join' : 'Leave'),
               ),
             ),
           ),
-          if (amityCommunity.hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
-              amityCommunity.isPostReviewEnabled!)
+          if (widget.amityCommunity.hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
+              widget.amityCommunity.isPostReviewEnabled!)
             Center(
               child: SizedBox(
                 width: 260,
                 child: ElevatedButton(
                   onPressed: () {
                     GoRouter.of(context).pushNamed(AppRoute.communityInReviewPost, queryParams: {
-                      'communityId': amityCommunity.communityId,
-                      'isPublic': amityCommunity.isPublic!.toString()
+                      'communityId': widget.amityCommunity.communityId,
+                      'isPublic': widget.amityCommunity.isPublic!.toString()
                     });
                   },
                   child: const Text('Review Post'),
@@ -368,15 +384,15 @@ class _CommunityProfileHeaderWidget extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     GoRouter.of(context).pushNamed(AppRoute.communityPendingPost, queryParams: {
-                      'communityId': amityCommunity.communityId,
-                      'isPublic': amityCommunity.isPublic!.toString()
+                      'communityId': widget.amityCommunity.communityId,
+                      'isPublic': widget.amityCommunity.isPublic!.toString()
                     });
                   },
                   child: const Text('Pending Post'),
                 ),
               ),
             ),
-          RawDataWidget(jsonRawData: amityCommunity.toJson()),
+          RawDataWidget(jsonRawData: widget.amityCommunity.toJson()),
         ],
       ),
     );
