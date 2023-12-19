@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/post_live_object_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/text_check_box_widget.dart';
 import 'package:go_router/go_router.dart';
@@ -93,7 +94,7 @@ class _PostRteEventScreenState extends State<PostRteEventScreen> {
                           ],
                         ),
                       ),
-                      FeedWidget(
+                      PostLiveOjectWidget(
                         amityPost: _post!,
                         communityId: widget.communityId,
                         isPublic: widget.isPublic,
