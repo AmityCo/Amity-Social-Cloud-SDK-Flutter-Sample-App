@@ -25,13 +25,11 @@ class PostLiveOjectWidget extends StatelessWidget {
       this.disableAddComment = false})
       : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     return StreamBuilder<AmityPost>(
-      stream: AmitySocialClient.newPostRepository()
-                    .getPostLiveObject(amityPost.postId!),
+      stream: AmitySocialClient.newPostRepository().live.getPost(amityPost.postId!),
       initialData: amityPost,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -274,6 +272,5 @@ class PostLiveOjectWidget extends StatelessWidget {
         return Container();
       },
     );
-  
   }
 }
