@@ -12,42 +12,66 @@ class UserPostScreen extends StatefulWidget {
 }
 
 class _UserPostScreenState extends State<UserPostScreen> {
-  late PagingController<AmityPost> _controller;
-  final amityPosts = <AmityPost>[];
+  List<AmityPost> amityPosts = <AmityPost>[];
 
+  late PostLiveCollection postLiveCollection;
   final scrollcontroller = ScrollController();
+
   bool loading = false;
+
+
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newPostRepository()
+
+    postLiveCollection = PostLiveCollection(
+      request: () => AmitySocialClient.newPostRepository()
           .getPosts()
-          .targetUser(widget.userId)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          setState(() {
-            amityPosts.clear();
-            amityPosts.addAll(_controller.loadedItems);
-          });
-        },
-      );
+          .targetUser(widget.userId).build(),
+    );
+
+    postLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityPosts = event;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
+      postLiveCollection.loadNext();
     });
 
     scrollcontroller.addListener(pagination);
+
+    // _controller = PagingController(
+    //   pageFuture: (token) => AmitySocialClient.newPostRepository()
+    //       .getPosts()
+    //       .targetUser(widget.userId)
+    //       .getPagingData(token: token, limit: GlobalConstant.pageSize),
+    //   pageSize: GlobalConstant.pageSize,
+    // )..addListener(
+    //     () {
+    //       setState(() {
+    //         amityPosts.clear();
+    //         amityPosts.addAll(_controller.loadedItems);
+    //       });
+    //     },
+    //   );
+
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   _controller.fetchNextPage();
+    // });
+
+    // scrollcontroller.addListener(pagination);
 
     super.initState();
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
-      setState(() {
-        _controller.fetchNextPage();
-      });
+    if ((scrollcontroller.position.pixels ==
+            (scrollcontroller.position.maxScrollExtent)) &&
+        postLiveCollection.hasNextPage()) {
+      postLiveCollection.loadNext();
     }
   }
 
@@ -56,16 +80,16 @@ class _UserPostScreenState extends State<UserPostScreen> {
     return Scaffold(
       appBar: widget.showAppBar ? AppBar(title: Text('User Post - ${widget.userId}')) : null,
       body: amityPosts.isEmpty
-          ? Center(
-              child: Text(_controller.error == null ? 'No Post Found' : _controller.error.toString()),
+          ? const Center(
+              child: Text('No Post Found' ),
             )
           : Column(
               children: [
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.getFirstPageRequest();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
@@ -79,7 +103,7 @@ class _UserPostScreenState extends State<UserPostScreen> {
                     ),
                   ),
                 ),
-                if (_controller.isFetching)
+                if (postLiveCollection.isFetching)
                   Container(
                     alignment: Alignment.center,
                     child: const CircularProgressIndicator(),
