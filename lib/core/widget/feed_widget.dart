@@ -144,6 +144,9 @@ class FeedWidget extends StatelessWidget {
                               'Posted On : ${(value.target as CommunityTarget).targetCommunity?.displayName ?? 'No name'} Community',
                               style: themeData.textTheme.bodySmall,
                             ),
+                          Text("LatestCommentUserName -> ${snapshot.data!.latestComments?[0].user?.displayName ?? "No Latest comment user"}" , style: themeData.textTheme.bodySmall,),
+                     Text("LatestCommentUserID -> ${snapshot.data!.latestComments?[0].userId ?? "No Latest comment user"}", style: themeData.textTheme.bodySmall,),
+                     Text("LatestCommentSize -> ${snapshot.data!.latestComments?.length ?? "0"}", style: themeData.textTheme.bodySmall,),
                         ],
                       ),
                     ),
@@ -207,6 +210,7 @@ class FeedWidget extends StatelessWidget {
                             },
                           );
                         }),
+                     
                     const SizedBox(height: 12),
                     if (!disableAddComment)
                       AddCommentWidget(
