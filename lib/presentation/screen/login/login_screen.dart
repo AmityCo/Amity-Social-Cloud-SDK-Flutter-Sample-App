@@ -111,6 +111,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 key: const Key('Login_btn_id'),
                 onPressed: () async {
                   try {
+                    // AmityCoreClient.newUserRepository();
+
                     FocusManager.instance.primaryFocus!.unfocus();
                     // Setup the Amity Option First
                     String apikey = _apiKeyTextController.text.trim();

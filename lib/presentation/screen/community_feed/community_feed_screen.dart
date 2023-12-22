@@ -20,60 +20,85 @@ class CommunityFeedScreen extends StatefulWidget {
 }
 
 class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
-  late PagingController<AmityPost> _controller;
-  final amityPosts = <AmityPost>[];
-
+  // late PagingController<AmityPost> _controller;
+  List<AmityPost> amityPosts = <AmityPost>[];
+  late PostLiveCollection postLiveCollection;
   final scrollcontroller = ScrollController();
   bool loading = false;
   AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
   final List<AmityDataType> _dataType = [];
   List<String> _tags = [];
+
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newPostRepository()
-          .getPosts()
-          .targetCommunity(widget.communityId)
-          .feedType(AmityFeedType.PUBLISHED)
-          .includeDeleted(false)
-          .types(_dataType)
-          .tags(_tags)
-          .sortBy(_sortOption)
-          .onlyParent(true)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityPosts.clear();
-              amityPosts.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
+    postLiveCollection = PostLiveCollection(
+        request: () => AmitySocialClient.newPostRepository()
+            .getPosts()
+            .targetCommunity(widget.communityId)
+            .feedType(AmityFeedType.PUBLISHED)
+            .includeDeleted(false)
+            .types(_dataType)
+            .tags(_tags)
+            .sortBy(_sortOption)
+            .onlyParent(true)
+            .build());
+
+    postLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityPosts = event;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
+      postLiveCollection.loadNext();
     });
 
     scrollcontroller.addListener(pagination);
+
+    // _controller = PagingController(
+    //   pageFuture: (token) => AmitySocialClient.newPostRepository()
+    //       .getPosts()
+    //       .targetCommunity(widget.communityId)
+    //       .feedType(AmityFeedType.PUBLISHED)
+    //       .includeDeleted(false)
+    //       .types(_dataType)
+    //       .tags(_tags)
+    //       .sortBy(_sortOption)
+    //       .onlyParent(true)
+    //       .getPagingData(token: token, limit: GlobalConstant.pageSize),
+    //   pageSize: GlobalConstant.pageSize,
+    // )..addListener(
+    //     () {
+    //       if (_controller.error == null) {
+    //         setState(() {
+    //           amityPosts.clear();
+    //           amityPosts.addAll(_controller.loadedItems);
+    //         });
+    //       } else {
+    //         //Error on pagination controller
+    //         setState(() {});
+    //         ErrorDialog.show(context,
+    //             title: 'Error', message: _controller.error.toString());
+    //       }
+    //     },
+    //   );
+
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   _controller.fetchNextPage();
+    // });
+
+    // scrollcontroller.addListener(pagination);
 
     super.initState();
   }
 
   void pagination() {
     if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
-      setState(() {
-        _controller.fetchNextPage();
-      });
+            (scrollcontroller.position.maxScrollExtent)) &&
+        postLiveCollection.hasNextPage()) {
+      postLiveCollection.loadNext();
     }
   }
 
@@ -140,8 +165,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         }
                       }
 
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.getFirstPageRequest();
                     },
                   ),
                 ),
@@ -174,8 +199,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.getFirstPageRequest();
                     },
                   ),
                 ),
@@ -193,8 +218,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         if (value.isEmpty) {
                           _tags = [];
                         }
-                        _controller.reset();
-                        _controller.fetchNextPage();
+                        postLiveCollection.reset();
+                        postLiveCollection.getFirstPageRequest();
                       });
                     },
                   ),
@@ -206,8 +231,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.getFirstPageRequest();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
@@ -224,12 +249,12 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
+                    child: postLiveCollection.isFetching
                         ? const CircularProgressIndicator()
                         : const Text('No Post'),
                   ),
           ),
-          if (_controller.isFetching && amityPosts.isNotEmpty)
+          if (postLiveCollection.isFetching && amityPosts.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
