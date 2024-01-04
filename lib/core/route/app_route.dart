@@ -137,4 +137,7 @@ class AppRoute {
 
   static const viewStream = 'viewStream';
   static const viewStreamRoute = 'viewStream';
+
+  static const getCategory = 'getCategory';
+  static const getCategoryRoute = 'getCategory/:categoryId';
 }
