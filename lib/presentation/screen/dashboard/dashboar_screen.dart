@@ -49,6 +49,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
+                    GoRouter.of(context).goNamed(AppRoute.customRanking);
+                  },
+                  child: const Text('Custom Ranking'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
                     GoRouter.of(context).goNamed(AppRoute.userFeed, params: {
                       'userId': AmityCoreClient.getCurrentUser().userId!
                     });
