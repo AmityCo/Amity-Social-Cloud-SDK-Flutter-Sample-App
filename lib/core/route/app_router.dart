@@ -9,6 +9,7 @@ import 'package:flutter_social_sample_app/presentation/screen/channel_update/cha
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_category/community_category_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
@@ -218,6 +219,11 @@ class AppRouter {
             name: AppRoute.postDetail,
             path: AppRoute.postDetailRoute,
             builder: (context, state) => PostDetailScreen(postId: state.params['postId']!),
+          ),
+          GoRoute(
+            name: AppRoute.getCategory,
+            path: AppRoute.getCategoryRoute,
+            builder: (context, state) => CommunityCategoryScreen(categoryId: state.params['categoryId']!),
           ),
           GoRoute(
             name: AppRoute.createPollPost,

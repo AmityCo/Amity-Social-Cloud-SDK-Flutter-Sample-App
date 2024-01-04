@@ -140,4 +140,8 @@ class AppRoute {
 
   static const customRanking = 'customRanking';
   static const customRankingRoute = 'customRanking';
+
+  static const getCategory = 'getCategory';
+  static const getCategoryRoute = 'getCategory/:categoryId';
+
 }
