@@ -9,6 +9,7 @@ import 'package:flutter_social_sample_app/presentation/screen/channel_update/cha
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_category/community_category_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
@@ -25,6 +26,7 @@ import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/global_feed_custom_ranking/global_feed_custom_ranking.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_user_search/global_user_search.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/live_stream_list/live_stream_list.dart';
@@ -96,6 +98,11 @@ class AppRouter {
             path: AppRoute.globalFeedRoute,
             builder: (context, state) => const GlobalFeedScreen(),
             routes: const [],
+          ),
+          GoRoute(
+            name: AppRoute.customRanking,
+            path: AppRoute.customRankingRoute,
+            builder: (context, state) => const GlobalFeedCustomRankingScreen(),
           ),
           GoRoute(
             name: AppRoute.stream,
@@ -212,6 +219,11 @@ class AppRouter {
             name: AppRoute.postDetail,
             path: AppRoute.postDetailRoute,
             builder: (context, state) => PostDetailScreen(postId: state.params['postId']!),
+          ),
+          GoRoute(
+            name: AppRoute.getCategory,
+            path: AppRoute.getCategoryRoute,
+            builder: (context, state) => CommunityCategoryScreen(categoryId: state.params['categoryId']!),
           ),
           GoRoute(
             name: AppRoute.createPollPost,

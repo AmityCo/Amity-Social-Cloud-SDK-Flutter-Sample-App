@@ -49,6 +49,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
+                    GoRouter.of(context).goNamed(AppRoute.customRanking);
+                  },
+                  child: const Text('Custom Ranking'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
                     GoRouter.of(context).goNamed(AppRoute.userFeed, params: {
                       'userId': AmityCoreClient.getCurrentUser().userId!
                     });
@@ -190,6 +197,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 //   },
                 //   child: const Text('Create Community'),
                 // ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    EditTextDialog.show(
+                      context,
+                      hintText: 'Enter Category Id',
+                      onPress: (value) {
+                        GoRouter.of(context).goNamed(AppRoute.getCategory,
+                            params: {'categoryId': value});
+                      },
+                    );
+                  },
+                  child: const Text('Get Category by Id'),
+                ),
+                
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {

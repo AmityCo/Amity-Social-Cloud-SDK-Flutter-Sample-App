@@ -68,6 +68,40 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
     scrollcontroller.addListener(pagination);
 
+    // _controller = PagingController(
+    //   pageFuture: (token) => AmitySocialClient.newPostRepository()
+    //       .getPosts()
+    //       .targetCommunity(widget.communityId)
+    //       .feedType(AmityFeedType.PUBLISHED)
+    //       .includeDeleted(false)
+    //       .types(_dataType)
+    //       .tags(_tags)
+    //       .sortBy(_sortOption)
+    //       .onlyParent(true)
+    //       .getPagingData(token: token, limit: GlobalConstant.pageSize),
+    //   pageSize: GlobalConstant.pageSize,
+    // )..addListener(
+    //     () {
+    //       if (_controller.error == null) {
+    //         setState(() {
+    //           amityPosts.clear();
+    //           amityPosts.addAll(_controller.loadedItems);
+    //         });
+    //       } else {
+    //         //Error on pagination controller
+    //         setState(() {});
+    //         ErrorDialog.show(context,
+    //             title: 'Error', message: _controller.error.toString());
+    //       }
+    //     },
+    //   );
+
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   _controller.fetchNextPage();
+    // });
+
+    // scrollcontroller.addListener(pagination);
+
     super.initState();
   }
 

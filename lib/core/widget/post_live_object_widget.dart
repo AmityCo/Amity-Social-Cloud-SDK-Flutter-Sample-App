@@ -1,28 +1,22 @@
 import 'package:amity_sdk/amity_sdk.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
-import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
-import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
-import 'package:flutter_social_sample_app/core/widget/poll_widget.dart';
-import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_post/update_post_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class FeedWidget extends StatelessWidget {
+class PostLiveOjectWidget extends StatelessWidget {
   final String? communityId;
   final bool isPublic;
   final AmityPost amityPost;
   final bool disableAction;
   final bool disableAddComment;
   // final VoidCallback onCommentCallback;
-  const FeedWidget(
+  const PostLiveOjectWidget(
       {Key? key,
       required this.amityPost,
       this.communityId,
@@ -34,9 +28,8 @@ class FeedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-
     return StreamBuilder<AmityPost>(
-      stream: amityPost.listen.stream,
+      stream: AmitySocialClient.newPostRepository().live.getPost(amityPost.postId!),
       initialData: amityPost,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -144,9 +137,6 @@ class FeedWidget extends StatelessWidget {
                               'Posted On : ${(value.target as CommunityTarget).targetCommunity?.displayName ?? 'No name'} Community',
                               style: themeData.textTheme.bodySmall,
                             ),
-                          Text("LatestCommentUserName -> ${snapshot.data!.latestComments?[0].user?.displayName ?? "No Latest comment user"}" , style: themeData.textTheme.bodySmall,),
-                     Text("LatestCommentUserID -> ${snapshot.data!.latestComments?[0].userId ?? "No Latest comment user"}", style: themeData.textTheme.bodySmall,),
-                     Text("LatestCommentSize -> ${snapshot.data!.latestComments?.length ?? "0"}", style: themeData.textTheme.bodySmall,),
                         ],
                       ),
                     ),
@@ -210,7 +200,6 @@ class FeedWidget extends StatelessWidget {
                             },
                           );
                         }),
-                     
                     const SizedBox(height: 12),
                     if (!disableAddComment)
                       AddCommentWidget(
@@ -282,309 +271,6 @@ class FeedWidget extends StatelessWidget {
         }
         return Container();
       },
-    );
-  }
-}
-
-class FeedContentWidget extends StatelessWidget {
-  final AmityPost amityPost;
-  final AmityPostData amityPostData;
-  const FeedContentWidget(
-      {Key? key, required this.amityPost, required this.amityPostData})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-
-    if (amityPostData is TextData) {
-      final data = amityPostData as TextData;
-      if (data.text != null && data.text!.isNotEmpty) {
-        return DynamicTextHighlighting(
-          text: data.text ?? '',
-          highlights: amityPost.mentionees
-                  ?.map<String>((e) => '@${e.user?.displayName ?? ''}')
-                  .toList() ??
-              [],
-          onHighlightClick: (String value) {
-            final amityUser = amityPost.mentionees!.firstWhereOrNull(
-                (element) =>
-                    element.user!.displayName == value.replaceAll('@', ''));
-            if (amityUser != null) {
-              GoRouter.of(context).pushNamed(
-                AppRoute.profile,
-                params: {
-                  'userId': amityUser.userId,
-                },
-              );
-            }
-          },
-          style: themeData.textTheme.titleMedium!,
-        );
-      }
-      return Container();
-    }
-
-    if (amityPostData is ImageData) {
-      final data = amityPostData as ImageData;
-      if (data.image != null) {
-        return SizedBox(
-          width: 100,
-          height: 100,
-          child: (data.image != null)
-              ? Image.network(
-                  data.image!.getUrl(AmityImageSize.MEDIUM),
-                  fit: BoxFit.cover,
-                )
-              : Text("MEDIA DELETED"),
-        );
-      }
-    }
-
-    if (amityPostData is VideoData) {
-      final data = amityPostData as VideoData;
-      return (data.fileId != null)? SizedBox(
-        width: 100,
-        height: 100,
-        // color: Colors.red,
-        child: (data.thumbnail != null && data.fileId != null)
-            ? Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.network(
-                      data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      onPressed: () {
-                        data.getVideo(AmityVideoQuality.HIGH).then((value) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenVideoPlayer(
-                                title: value.fileName!,
-                                url: value.fileUrl!,
-                              ),
-                            ),
-                          );
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              )
-            : Text("MEDIA DELETED"),
-      ):Container(
-              width: 20,
-              height: 20,
-              color: Colors.amber,
-            );
-    }
-
-    if (amityPostData is FileData) {
-      final data = amityPostData as FileData;
-      return (data.fileId != null)
-          ? TextButton.icon(
-              onPressed: () {
-                launch(data.fileInfo.fileName!);
-              },
-              icon: const Icon(Icons.attach_file_rounded, color: Colors.blue),
-              label: Text(
-                data.fileInfo.fileName!,
-                style:
-                    themeData.textTheme.bodyLarge!.copyWith(color: Colors.blue),
-              ),
-            )
-          : Container(
-              width: 20,
-              height: 20,
-              color: Colors.amber,
-            );
-    }
-
-    if (amityPostData is PollData) {
-      final data = amityPostData as PollData;
-      return Container(
-        // color: Colors.green,
-        child: PollWidget(data: data , createdbyUserId:  amityPost.postedUserId!,),
-      );
-    }
-
-    if (amityPostData is LiveStreamData) {
-      final data = amityPostData as LiveStreamData;
-      return Container(
-        // color: Colors.green,
-        child: Text( 'Linked Stream ID -->>>> ${data.streamId}' ?? 'No Stream ID'),
-      );
-    }
-
-    return Container(
-      color: Colors.red,
-      child: Text('>>>>> $amityPostData <<<<<<'),
-    );
-  }
-}
-
-class FeedReactionInfoWidget extends StatelessWidget {
-  final AmityPost amityPost;
-  const FeedReactionInfoWidget({Key? key, required this.amityPost})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(top: 8, bottom: 8),
-      child: Row(
-        children: [
-          TextButton.icon(
-            onPressed: () {
-              GoRouter.of(context).pushNamed(AppRoute.postReaction,
-                  params: {'postId': amityPost.postId!});
-              // amityPost.getReaction().getPagingData().then((value) {
-              //   print(value);
-              // });
-            },
-            icon: Image.asset(
-              'assets/ic_liked.png',
-              height: 18,
-              width: 18,
-            ),
-            label: Text(
-              '${amityPost.reactionCount}',
-              style: themeData.textTheme.titleMedium!
-                  .copyWith(color: Colors.black54),
-            ),
-          ),
-          const Spacer(),
-          Text(
-            '${amityPost.commentCount} Comment',
-            style: themeData.textTheme.titleMedium!
-                .copyWith(color: Colors.black54),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            '${amityPost.flagCount} Flag',
-            style: themeData.textTheme.titleMedium!
-                .copyWith(color: Colors.black54),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class FeedReactionActionWidget extends StatelessWidget {
-  final AmityPost amityPost;
-  final VoidCallback onCommentCallback;
-  FeedReactionActionWidget(
-      {Key? key, required this.amityPost, required this.onCommentCallback})
-      : super(key: key);
-  final LayerLink link = LayerLink();
-
-  @override
-  Widget build(BuildContext context) {
-    final themeData = Theme.of(context);
-    bool isFlagedByMe = amityPost.myReactions?.isNotEmpty ?? false;
-    return Container(
-      margin: const EdgeInsets.only(top: 8, bottom: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          CompositedTransformTarget(
-            link: link,
-            child: TextButton.icon(
-              onPressed: () {
-                if (isFlagedByMe) {
-                  amityPost.react().removeReaction('like').then((value) {
-                    print(value.myReactions);
-                  });
-                } else {
-                  amityPost.react().addReaction('like').then((value) {
-                    print(value.myReactions);
-                  });
-                }
-              },
-              onLongPress: () {
-                //Show more option to react
-                ReactionActionWidget.showAsOverLay(
-                  context,
-                  link,
-                  (reaction) {
-                    if (isFlagedByMe) {
-                      amityPost.react().removeReaction(reaction);
-                    } else {
-                      amityPost.react().addReaction(reaction);
-                    }
-                  },
-                );
-              },
-              icon: Image.asset(
-                isFlagedByMe ? 'assets/ic_liked.png' : 'assets/ic_like.png',
-                height: 18,
-                width: 18,
-              ),
-              label: Text(
-                'Like',
-                style: themeData.textTheme.titleMedium!.copyWith(
-                    color: Colors.black54, fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-          TextButton.icon(
-            onPressed: onCommentCallback,
-            icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
-            label: Text(
-              'Comment',
-              style: themeData.textTheme.titleMedium!
-                  .copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
-            ),
-          ),
-          Visibility(
-            visible: true,
-            child: TextButton.icon(
-              onPressed: () {
-                if (amityPost.isFlaggedByMe) {
-                  amityPost.report().unflag().then((value) {
-                    CommonSnackbar.showPositiveSnackbar(
-                        context, 'Success', 'Unflagged the Post');
-                  }).onError((error, stackTrace) {
-                    CommonSnackbar.showNagativeSnackbar(
-                        context, 'Error', error.toString());
-                  });
-                } else {
-                  amityPost.report().flag().then((value) {
-                    CommonSnackbar.showPositiveSnackbar(
-                        context, 'Success', 'Flag the Post');
-                  }).onError((error, stackTrace) {
-                    CommonSnackbar.showNagativeSnackbar(
-                        context, 'Error', error.toString());
-                  });
-                }
-              },
-              icon: amityPost.isFlaggedByMe
-                  ? const ImageIcon(
-                      AssetImage('assets/ic_flagged.png'),
-                    )
-                  : const ImageIcon(
-                      AssetImage('assets/ic_flag.png'),
-                    ),
-              // icon: Image.asset('assets/ic_comment.png'),
-              label: Text(
-                amityPost.isFlaggedByMe ? 'Falgged' : 'Flag',
-                style: themeData.textTheme.titleMedium!.copyWith(
-                    color: Colors.black54, fontWeight: FontWeight.w600),
-              ),
-            ),
-          )
-        ],
-      ),
     );
   }
 }
