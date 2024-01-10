@@ -97,6 +97,7 @@ class _UserPostScreenState extends State<UserPostScreen> {
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
+                          key: UniqueKey(),
                           amityPost: amityPost,
                         );
                       },
