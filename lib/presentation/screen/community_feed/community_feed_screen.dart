@@ -1,9 +1,8 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:get/utils.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
   const CommunityFeedScreen(
@@ -23,6 +22,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   // late PagingController<AmityPost> _controller;
   List<AmityPost> amityPosts = <AmityPost>[];
   late PostLiveCollection postLiveCollection;
+  AmityCommunity? _amityCommunity;
   final scrollcontroller = ScrollController();
   bool loading = false;
   AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
@@ -49,6 +49,17 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           amityPosts = event;
         });
       }
+    });
+
+    AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId)
+        .then((value) {
+      _amityCommunity = value;
+      _amityCommunity!
+          .subscription(AmityCommunityEvents.values[1])
+          .subscribeTopic()
+          .then((value) {})
+          .onError((error, stackTrace) {});
     });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -100,6 +111,16 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         postLiveCollection.hasNextPage()) {
       postLiveCollection.loadNext();
     }
+  }
+
+  @override
+  void dispose() {
+    _amityCommunity!
+        .subscription(AmityCommunityEvents.values[1])
+        .unsubscribeTopic()
+        .then((value) {})
+        .onError((error, stackTrace) {});
+    super.dispose();
   }
 
   @override
@@ -227,6 +248,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
               ],
             ),
           ),
+          Text("Size of posts: ${amityPosts.length}"),
           Expanded(
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
@@ -240,6 +262,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
                         return FeedWidget(
+                          key: UniqueKey(),
                           communityId: widget.communityId,
                           amityPost: amityPost,
                           isPublic: widget.isPublic,
