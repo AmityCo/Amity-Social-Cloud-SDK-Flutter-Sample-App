@@ -31,24 +31,18 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   @override
   void initState() {
-    postLiveCollection = PostLiveCollection(
-        request: () => AmitySocialClient.newPostRepository()
-            .getPosts()
-            .targetCommunity(widget.communityId)
-            .feedType(AmityFeedType.PUBLISHED)
-            .includeDeleted(false)
-            .types(_dataType)
-            .tags(_tags)
-            .sortBy(_sortOption)
-            .onlyParent(true)
-            .build());
+    
+    postLiveCollectionInit();
 
-    postLiveCollection.getStreamController().stream.listen((event) {
-      if (mounted) {
-        setState(() {
-          amityPosts = event;
-        });
-      }
+    AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId)
+        .then((value) {
+      _amityCommunity = value;
+      _amityCommunity!
+          .subscription(AmityCommunityEvents.values[1])
+          .subscribeTopic()
+          .then((value) {})
+          .onError((error, stackTrace) {});
     });
 
     AmitySocialClient.newCommunityRepository()
@@ -123,6 +117,29 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
     super.dispose();
   }
 
+  void postLiveCollectionInit(){
+    postLiveCollection = PostLiveCollection(
+        request: () => AmitySocialClient.newPostRepository()
+            .getPosts()
+            .targetCommunity(widget.communityId)
+            .feedType(AmityFeedType.PUBLISHED)
+            .includeDeleted(false)
+            .types(_dataType)
+            .tags(_tags)
+            .sortBy(_sortOption)
+            .onlyParent(true)
+            .build());
+
+    postLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityPosts = event;
+        });
+      }
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -185,7 +202,10 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _dataType.add(AmityDataType.FILE);
                         }
                       }
-
+                      // setState(() {
+                      //   amityPosts =[];
+                      // });
+                      
                       postLiveCollection.reset();
                       postLiveCollection.getFirstPageRequest();
                     },
@@ -220,6 +240,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
+                      postLiveCollectionInit();
                       postLiveCollection.reset();
                       postLiveCollection.getFirstPageRequest();
                     },
