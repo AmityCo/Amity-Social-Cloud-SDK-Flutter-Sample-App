@@ -185,7 +185,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _dataType.add(AmityDataType.FILE);
                         }
                       }
-
+                      setState(() {
+                        
+                      });
                       postLiveCollection.reset();
                       postLiveCollection.getFirstPageRequest();
                     },

@@ -355,11 +355,14 @@ class AppRouter {
         },
       ),
     ],
-    redirect: (context, state) {
+    redirect: (context, state) async {
       if (state.location != AppRoute.loginRoute) {
-        if (!AmityCoreClient.isUserLoggedIn()) {
+        if (! await AmityCoreClient.isUserLoggedIn()) {
           log('redirecting to /login');
           return AppRoute.loginRoute;
+        }else{
+          // var user = await AmityCoreClient.getLoggedInUser();
+          await AmityCoreClient.login( await  AmityCoreClient.getLoggedInUserId()).displayName(await  AmityCoreClient.getLoggedInUserDisplayName()).submit();
         }
       }
       return null;
