@@ -45,6 +45,17 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           .onError((error, stackTrace) {});
     });
 
+    AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId)
+        .then((value) {
+      _amityCommunity = value;
+      _amityCommunity!
+          .subscription(AmityCommunityEvents.values[1])
+          .subscribeTopic()
+          .then((value) {})
+          .onError((error, stackTrace) {});
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       postLiveCollection.loadNext();
     });
@@ -127,6 +138,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
       }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
