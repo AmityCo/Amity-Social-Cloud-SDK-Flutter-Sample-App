@@ -56,11 +56,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           .onError((error, stackTrace) {});
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      postLiveCollection.loadNext();
-    });
+    
 
-    scrollcontroller.addListener(pagination);
+    
 
     // _controller = PagingController(
     //   pageFuture: (token) => AmitySocialClient.newPostRepository()
@@ -127,7 +125,6 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
             .types(_dataType)
             .tags(_tags)
             .sortBy(_sortOption)
-            .onlyParent(true)
             .build());
 
     postLiveCollection.getStreamController().stream.listen((event) {
@@ -137,6 +134,13 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         });
       }
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      postLiveCollection.loadNext();
+    });
+
+    scrollcontroller.addListener(pagination);
+
   }
 
 
@@ -207,7 +211,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                       // });
                       
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
+
                     },
                   ),
                 ),
@@ -240,9 +245,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
-                      postLiveCollectionInit();
+                      
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
                     },
                   ),
                 ),
@@ -261,7 +266,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _tags = [];
                         }
                         postLiveCollection.reset();
-                        postLiveCollection.getFirstPageRequest();
+                        postLiveCollectionInit();
+
                       });
                     },
                   ),
@@ -275,7 +281,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                 ? RefreshIndicator(
                     onRefresh: () async {
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
