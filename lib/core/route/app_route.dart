@@ -24,6 +24,10 @@ class AppRoute {
   static const createPost = 'createPost';
   static const createPostRoute = '/createPost';
 
+  //Create Post Routes
+  static const createLiveStreamPost = 'createLiveStreamPost';
+  static const createLiveStreamPostRoute = '/createLiveStreamPost';
+
   //community flow routes
   static const communityList = 'communityList';
   static const communityListRoute = 'communityList';
