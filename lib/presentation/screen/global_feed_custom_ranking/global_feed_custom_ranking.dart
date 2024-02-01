@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class GlobalFeedCustomRankingScreen extends StatefulWidget {
   const GlobalFeedCustomRankingScreen({super.key});
@@ -82,8 +83,18 @@ class _GlobalFeedCustomRankingScreenState
                       itemCount: amityPosts.length,
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
-                        return FeedWidget(
-                          amityPost: amityPost,
+                        var uniqueKey = UniqueKey();
+                        return VisibilityDetector(
+                          key: uniqueKey,
+                          onVisibilityChanged: (VisibilityInfo info) { 
+                            if(info.visibleFraction == 1.0){
+                              // amityPost.analytics().markPostAsViewed();
+                            }
+                           },
+                          child: FeedWidget(
+                            key: uniqueKey,
+                            amityPost: amityPost,
+                          ),
                         );
                       },
                     ),
