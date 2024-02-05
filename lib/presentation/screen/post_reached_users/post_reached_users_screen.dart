@@ -23,8 +23,7 @@ class _PostReachedUsersScreenState extends State<PostReachedUsersScreen> {
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
-          .getViewedUsers()
-          .postId(widget.postId)
+          .getViewedUsers(viewedId: widget.postId, viewedType: AmityViewedType.POST)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
