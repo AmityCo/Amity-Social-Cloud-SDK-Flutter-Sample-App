@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_video_player/amity_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/preferences/preference_interface_impl.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:go_router/go_router.dart';
@@ -133,8 +134,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     //Login the user
                     String userId = _userIdTextController.text.trim();
                     String userDisplayName = _displayNameTextController.text.trim();
+                    // AmityCoreClient.isUserLoggedIn();
                     await AmityCoreClient.login(userId).displayName(userDisplayName).submit();
-
+                    PreferenceInterfaceImpl().setLoggedIn(true);
+                    PreferenceInterfaceImpl().setLoggedInUserDisplayName(userDisplayName);
+                    PreferenceInterfaceImpl().setLoggedInUserId(userId);
                     GoRouter.of(context).go(AppRoute.homeRoute);
                   } catch (error) {
                     CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
