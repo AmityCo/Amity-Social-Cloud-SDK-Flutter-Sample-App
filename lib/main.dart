@@ -1,6 +1,7 @@
 // import 'package:amity_sdk/flutter_application_1.dart';
 import 'dart:async';
 
+import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,19 @@ void main() async {
   }
 
   await AppServiceLocator.initServiceLocator();
+  await AmityCoreClient.setup(
+      option: AmityCoreClientOption(
+          apiKey: "b0efe90c3bdda2304d628918520c1688845889e4bc363d2c",
+          httpEndpoint: AmityRegionalHttpEndpoint(
+              AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/')
+                  .endpoint),
+          // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
+          mqttEndpoint:
+              AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co'),
+          // mqttEndpoint: AmityRegionalMqttEndpoint.SG,
+          showLogs: true),
+      sycInitialization: true,
+    );
 
   //gloabl init
   // await AmityCoreClient.setup(
@@ -53,12 +67,16 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    
+
     var keyboardVisibilityController = KeyboardVisibilityController();
     // Query
-    print('Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
+    print(
+        'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
 
     // Subscribe
-    keyboardSubscription = keyboardVisibilityController.onChange.listen((bool visible) {
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
       if (!visible) {
         UserSuggesionOverlay.instance.hideOverLay();
       }
@@ -87,13 +105,17 @@ class _MyAppState extends State<MyApp> {
         iconTheme: const IconThemeData(color: Colors.grey, size: 18),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: Colors.black, minimumSize: Size.zero,
+            foregroundColor: Colors.black,
+            minimumSize: Size.zero,
             padding: EdgeInsets.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
         ),
-        snackBarTheme: themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
-        tabBarTheme: const TabBarTheme(labelColor: Colors.black), colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(background: Colors.white),
+        snackBarTheme:
+            themeData.snackBarTheme.copyWith(backgroundColor: Colors.white),
+        tabBarTheme: const TabBarTheme(labelColor: Colors.black),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+            .copyWith(background: Colors.white),
       ),
       themeMode: ThemeMode.light,
     );

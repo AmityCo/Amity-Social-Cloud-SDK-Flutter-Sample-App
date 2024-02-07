@@ -144,4 +144,7 @@ class AppRoute {
   static const getCategory = 'getCategory';
   static const getCategoryRoute = 'getCategory/:categoryId';
 
+  static const getReachUser = 'getReachUser';
+  static const getReachUserRoute = '/getReachUser';
+
 }

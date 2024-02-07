@@ -74,6 +74,10 @@ class PostLiveOjectWidget extends StatelessWidget {
                                     const PopupMenuItem(
                                       value: 4,
                                       child: Text("RTE"),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: 5,
+                                      child: Text("Mark as Viewed"),
                                     )
                                   ];
                                 },
@@ -105,6 +109,10 @@ class PostLiveOjectWidget extends StatelessWidget {
                                           'communityId': communityId,
                                           'isPublic': isPublic.toString()
                                         });
+                                  }
+
+                                  if(index == 5){
+                                    value.analytics().markPostAsViewed();
                                   }
                                 },
                               ),
@@ -186,6 +194,25 @@ class PostLiveOjectWidget extends StatelessWidget {
                         key: UniqueKey(),
                         margin: const EdgeInsets.symmetric(horizontal: 12),
                         child: FeedReactionInfoWidget(amityPost: value)),
+                    Divider(height: .5, color: Colors.grey.shade300),
+                    const SizedBox(height: 10,),
+                    GestureDetector(
+                      onTap: () {
+                        GoRouter.of(context).pushNamed(
+                            AppRoute.getReachUser,
+                            queryParams: {
+                              'postId': value.postId!,
+                            });
+                      },
+                      child: Row(
+                        children: [
+                          Text("Impressions: ${value.impression ?? "0"}"),
+                          const SizedBox(width: 10,),
+                          Text("Reach: ${value.reach ?? "0"}"),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10,),
                     Divider(height: .5, color: Colors.grey.shade300),
                     FeedReactionActionWidget(
                         key: UniqueKey(),

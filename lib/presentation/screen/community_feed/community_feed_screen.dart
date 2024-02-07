@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
 import 'package:get/utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
   const CommunityFeedScreen(
@@ -206,10 +207,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _dataType.add(AmityDataType.FILE);
                         }
                       }
-                      // setState(() {
-                      //   amityPosts =[];
-                      // });
-                      
+                      setState(() {});
                       postLiveCollection.reset();
                       postLiveCollectionInit();
 
@@ -288,11 +286,20 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                       itemCount: amityPosts.length,
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
-                        return FeedWidget(
-                          key: UniqueKey(),
-                          communityId: widget.communityId,
-                          amityPost: amityPost,
-                          isPublic: widget.isPublic,
+                        var uniqueKey = UniqueKey();
+                        return VisibilityDetector(
+                          key: uniqueKey,
+                          onVisibilityChanged: (VisibilityInfo info) {
+                            if (info.visibleFraction > 0) {
+                              // amityPost.analytics().markPostAsViewed();
+                            }
+                          },
+                          child: FeedWidget(
+                            key: uniqueKey,
+                            communityId: widget.communityId,
+                            amityPost: amityPost,
+                            isPublic: widget.isPublic,
+                          ),
                         );
                       },
                     ),
