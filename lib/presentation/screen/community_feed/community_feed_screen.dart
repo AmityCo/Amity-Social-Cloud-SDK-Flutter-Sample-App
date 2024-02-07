@@ -32,24 +32,18 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   @override
   void initState() {
-    postLiveCollection = PostLiveCollection(
-        request: () => AmitySocialClient.newPostRepository()
-            .getPosts()
-            .targetCommunity(widget.communityId)
-            .feedType(AmityFeedType.PUBLISHED)
-            .includeDeleted(false)
-            .types(_dataType)
-            .tags(_tags)
-            .sortBy(_sortOption)
-            .onlyParent(true)
-            .build());
+    
+    postLiveCollectionInit();
 
-    postLiveCollection.getStreamController().stream.listen((event) {
-      if (mounted) {
-        setState(() {
-          amityPosts = event;
-        });
-      }
+    AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId)
+        .then((value) {
+      _amityCommunity = value;
+      _amityCommunity!
+          .subscription(AmityCommunityEvents.values[1])
+          .subscribeTopic()
+          .then((value) {})
+          .onError((error, stackTrace) {});
     });
 
     AmitySocialClient.newCommunityRepository()
@@ -63,11 +57,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           .onError((error, stackTrace) {});
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      postLiveCollection.loadNext();
-    });
+    
 
-    scrollcontroller.addListener(pagination);
+    
 
     // _controller = PagingController(
     //   pageFuture: (token) => AmitySocialClient.newPostRepository()
@@ -123,6 +115,35 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         .onError((error, stackTrace) {});
     super.dispose();
   }
+
+  void postLiveCollectionInit(){
+    postLiveCollection = PostLiveCollection(
+        request: () => AmitySocialClient.newPostRepository()
+            .getPosts()
+            .targetCommunity(widget.communityId)
+            .feedType(AmityFeedType.PUBLISHED)
+            .includeDeleted(false)
+            .types(_dataType)
+            .tags(_tags)
+            .sortBy(_sortOption)
+            .build());
+
+    postLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityPosts = event;
+        });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      postLiveCollection.loadNext();
+    });
+
+    scrollcontroller.addListener(pagination);
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -188,7 +209,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                       }
                       setState(() {});
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
+
                     },
                   ),
                 ),
@@ -221,8 +243,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
+                      
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
                     },
                   ),
                 ),
@@ -241,7 +264,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _tags = [];
                         }
                         postLiveCollection.reset();
-                        postLiveCollection.getFirstPageRequest();
+                        postLiveCollectionInit();
+
                       });
                     },
                   ),
@@ -255,7 +279,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                 ? RefreshIndicator(
                     onRefresh: () async {
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
