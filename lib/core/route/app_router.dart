@@ -23,7 +23,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_profile/
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboard_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
