@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:flutter_social_sample_app/core/preferences/preference_interface_impl.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_create/channel_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_list/channel_list_screen.dart';
@@ -383,13 +384,15 @@ class AppRouter {
     ],
     redirect: (context, state) async {
       if (state.location == AppRoute.loginRoute) {
-        if (!await AmityCoreClient.isUserLoggedIn()) {
+        if (!await PreferenceInterfaceImpl().isLoggedIn()) {
           log('redirecting to /login');
           return AppRoute.loginRoute;
         } else {
           // var user = await AmityCoreClient.getLoggedInUser();
-          await AmityCoreClient.login(await AmityCoreClient.getLoggedInUserId())
-              .displayName(await AmityCoreClient.getLoggedInUserDisplayName())
+          var userId = await PreferenceInterfaceImpl().loggedInUserId();
+          var userName = await PreferenceInterfaceImpl().loggedInUserDisplayName();
+          await AmityCoreClient.login(userId!)
+              .displayName(userName!)
               .submit();
           return AppRoute.homeRoute;
         }
