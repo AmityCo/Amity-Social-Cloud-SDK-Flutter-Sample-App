@@ -45,20 +45,6 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
           .then((value) {})
           .onError((error, stackTrace) {});
     });
-
-    AmitySocialClient.newCommunityRepository()
-        .getCommunity(widget.communityId)
-        .then((value) {
-      _amityCommunity = value;
-      _amityCommunity!
-          .subscription(AmityCommunityEvents.values[1])
-          .subscribeTopic()
-          .then((value) {})
-          .onError((error, stackTrace) {});
-    });
-
-    
-
     
 
     // _controller = PagingController(
