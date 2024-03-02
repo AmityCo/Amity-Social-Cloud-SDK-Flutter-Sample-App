@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 
 class CommentQueryScreen extends StatefulWidget {
@@ -19,8 +17,8 @@ class CommentQueryScreen extends StatefulWidget {
 }
 
 class _CommentQueryScreenState extends State<CommentQueryScreen> {
-  late PagingController<AmityComment> _controller;
-  final amityComments = <AmityComment>[];
+  List<AmityComment> amityComments = <AmityComment>[];
+  late CommentLiveCollection commentLiveCollection;
 
   final scrollcontroller = ScrollController();
   bool loading = false;
@@ -37,33 +35,24 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newCommentRepository()
-          .getComments()
-          .post(widget._postId)
-          .sortBy(_sortOption)
-          .dataTypes(dataTypes)
-          .includeDeleted(_includeDeleted)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityComments.clear();
-              amityComments.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
-            print(_controller.stacktrace);
-          }
-        },
-      );
+      commentLiveCollection = AmitySocialClient.newCommentRepository()
+            .getComments()
+            .post(widget._postId)
+            .sortBy(_sortOption)
+            .dataTypes(dataTypes)
+            .includeDeleted(_includeDeleted)
+            .getLiveCollection();
+
+    commentLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityComments = event;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
+      commentLiveCollection.loadNext();
     });
 
     scrollcontroller.addListener(pagination);
@@ -72,9 +61,9 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && commentLiveCollection.hasNextPage()) {
       setState(() {
-        _controller.fetchNextPage();
+        commentLiveCollection.loadNext();
       });
     }
   }
@@ -196,8 +185,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
               }
 
               setState(() {});
-              _controller.reset();
-              _controller.fetchNextPage();
+              commentLiveCollection.reset();
+              commentLiveCollection.loadNext();
             },
           )
         ],
@@ -208,8 +197,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
             child: amityComments.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      commentLiveCollection.reset();
+                      commentLiveCollection.loadNext();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
@@ -234,10 +223,10 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Comment'),
+                    child: commentLiveCollection.isFetching ? const CircularProgressIndicator() : const Text('No Comment'),
                   ),
           ),
-          if (_controller.isFetching && amityComments.isNotEmpty)
+          if (commentLiveCollection.isFetching && amityComments.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
@@ -323,9 +312,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                       .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
                       .metadata(metadata)
                       .send();
-
-                  /// Remove this line Post Comment Create RTE will refresh the list
-                  _controller.addAtIndex(0, _comment);
                   return;
                 } catch (error, stackTrace) {
                   if (error is AmityException) {
