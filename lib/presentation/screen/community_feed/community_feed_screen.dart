@@ -40,7 +40,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
         .then((value) {
       _amityCommunity = value;
       _amityCommunity!
-          .subscription(AmityCommunityEvents.values[1])
+          .subscription(AmityCommunityEvents.POSTS_AND_COMMENTS)
           .subscribeTopic()
           .then((value) {})
           .onError((error, stackTrace) {});

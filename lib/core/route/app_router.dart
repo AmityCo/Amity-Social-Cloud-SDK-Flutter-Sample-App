@@ -313,8 +313,10 @@ class AppRouter {
         name: AppRoute.createStory,
         path: AppRoute.createStoryRoute,
         builder: (context, state) => CreateStoryScreen(
-          userId: state.queryParams['userId'],
-          communityId: state.queryParams['communityId'],
+          targetType: AmityStoryTargetTypeExtension.enumOf(
+              state.queryParams['targetType']!),
+          targetId: state.queryParams['targetId'],
+          isVideoType: state.queryParams['isTypeVideo'] == 'true',
         ),
 
         

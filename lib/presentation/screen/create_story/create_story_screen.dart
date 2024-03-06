@@ -4,19 +4,18 @@ import 'dart:io';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
-import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
 class CreateStoryScreen extends StatefulWidget {
-  final String? userId;
-  final String? communityId;
+  final AmityStoryTargetType? targetType;
+  final String? targetId;
+  final bool isVideoType;
 
-  const CreateStoryScreen({Key? key, this.userId, this.communityId})
+  const CreateStoryScreen(
+      {Key? key, this.targetType, this.targetId, this.isVideoType = false})
       : super(key: key);
 
   @override
@@ -26,14 +25,14 @@ class CreateStoryScreen extends StatefulWidget {
 class _CreateStoryScreenState extends State<CreateStoryScreen> {
   late BuildContext _context;
   final _targetuserTextEditController = TextEditingController();
-  final _postTextEditController = TextEditingController();
-  final _metadataEditController = TextEditingController();
+  final _customTextEditController = TextEditingController();
+  final _hyperLinkEditController = TextEditingController();
+
+  List<String> list = <String>['fit', 'fill'];
+  AmityStoryImageDisplayMode amityStoryImageDisplayMode =
+      AmityStoryImageDisplayMode.FIT;
 
   List<File> files = <File>[];
-
-  bool isTextPost = true;
-  bool isImagePost = false;
-  bool isVideoPost = false;
 
   final _postTextTextFieldKey = GlobalKey();
 
@@ -41,11 +40,8 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
 
   @override
   void initState() {
-    if (widget.userId != null) {
-      _targetuserTextEditController.text = widget.userId!;
-    }
-    if (widget.communityId != null) {
-      _targetuserTextEditController.text = widget.communityId!;
+    if (widget.targetId != null) {
+      _targetuserTextEditController.text = widget.targetId!;
     }
     super.initState();
   }
@@ -53,7 +49,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    final isCommunityPost = widget.communityId != null;
+    final isCommunityPost = widget.targetId != null;
     var targetLabel = '';
     if (isCommunityPost) {
       targetLabel = 'Target community';
@@ -61,7 +57,9 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
       targetLabel = 'Target user';
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Post')),
+      appBar: AppBar(
+          title:
+              Text('Create ${widget.isVideoType ? "Video" : "Image"} Stroy')),
       body: Builder(builder: (context) {
         _context = context;
         return Container(
@@ -79,15 +77,14 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
               const SizedBox(height: 20),
               TextFormField(
                 key: _postTextTextFieldKey,
-                controller: _postTextEditController,
+                controller: _customTextEditController,
                 decoration: const InputDecoration(
-                  label: Text('Text*'),
+                  label: Text('Custom text'),
                 ),
                 onChanged: (value) {
                   UserSuggesionOverlay.instance.hideOverLay();
 
-                  if (widget.communityId == null ||
-                      widget.communityId!.isEmpty) {
+                  if (widget.targetId == null || widget.targetId!.isEmpty) {
                     UserSuggesionOverlay.instance.updateOverLay(
                         context,
                         UserSuggestionType.global,
@@ -95,20 +92,21 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                         value, (keyword, user) {
                       mentionUsers.add(user);
                       if (keyword.isNotEmpty) {
-                        final length = _postTextEditController.text.length;
-                        _postTextEditController.text =
-                            _postTextEditController.text.replaceRange(
+                        final length = _customTextEditController.text.length;
+                        _customTextEditController.text =
+                            _customTextEditController.text.replaceRange(
                                 length - keyword.length,
                                 length,
                                 user.displayName ?? '');
                       } else {
-                        _postTextEditController.text =
-                            (_postTextEditController.text + user.displayName!);
+                        _customTextEditController.text =
+                            (_customTextEditController.text +
+                                user.displayName!);
                       }
 
-                      _postTextEditController.selection =
+                      _customTextEditController.selection =
                           TextSelection.fromPosition(TextPosition(
-                              offset: _postTextEditController.text.length));
+                              offset: _customTextEditController.text.length));
                     }, postion: UserSuggestionPostion.bottom);
                   } else {
                     UserSuggesionOverlay.instance.updateOverLay(
@@ -119,105 +117,258 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                       mentionUsers.add(user);
 
                       if (keyword.isNotEmpty) {
-                        final length = _postTextEditController.text.length;
-                        _postTextEditController.text =
-                            _postTextEditController.text.replaceRange(
+                        final length = _customTextEditController.text.length;
+                        _customTextEditController.text =
+                            _customTextEditController.text.replaceRange(
                                 length - keyword.length,
                                 length,
                                 user.displayName ?? '');
                       } else {
-                        _postTextEditController.text =
-                            (_postTextEditController.text + user.displayName!);
+                        _customTextEditController.text =
+                            (_customTextEditController.text +
+                                user.displayName!);
                       }
 
-                      _postTextEditController.selection =
+                      _customTextEditController.selection =
                           TextSelection.fromPosition(TextPosition(
-                              offset: _postTextEditController.text.length));
+                              offset: _customTextEditController.text.length));
                     },
-                        communityId: widget.communityId,
+                        communityId: widget.targetId,
                         postion: UserSuggestionPostion.bottom);
                   }
                 },
               ),
               TextFormField(
-                controller: _metadataEditController,
+                controller: _hyperLinkEditController,
                 decoration: const InputDecoration(
-                  label: Text('Metadata'),
+                  label: Text('Hyperlink'),
                 ),
               ),
+              const SizedBox(height: 20),
+              if (!widget.isVideoType)
+                Row(
+                  children: [
+                    const Text('Image Display Mode'),
+                    const SizedBox(width: 20),
+                    Expanded(
+                      child: DropdownButton<String>(
+                        value: amityStoryImageDisplayMode.value,
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.blue),
+                        underline: Container(
+                          height: 2,
+                          color: Colors.blue,
+                        ),
+                        onChanged: (String? value) {
+                          // This is called when the user selects an item.
+                          setState(() {
+                            amityStoryImageDisplayMode =
+                                AmityStoryImageDisplayModeExtension.enumOf(
+                                    value!);
+                          });
+                        },
+                        items:
+                            list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                ),
               const SizedBox(height: 20),
               Column(
                 children: List.generate(files.length, (index) {
                   final file = files[index];
                   return TextButton.icon(
                       onPressed: () {},
-                      icon: Icon(isTextPost ? Icons.image : Icons.attach_file),
+                      icon: Icon(!widget.isVideoType
+                          ? Icons.image
+                          : Icons.attach_file),
                       label: Text(basename(file.path)),
                       style:
                           TextButton.styleFrom(foregroundColor: Colors.blue));
                 }),
               ),
+              const SizedBox(height: 20),
               const Spacer(),
               const SizedBox(height: 20),
-              TextButton.icon(
-                  onPressed: () async {
-                    files.clear();
+              widget.isVideoType
+                  ? TextButton.icon(
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Please Select source'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 200,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      files.clear();
+                                      final image = await ImagePicker()
+                                          .pickVideo(
+                                              source: ImageSource.gallery);
+                                      if (image != null) {
+                                        files.add(File(image.path));
+                                      }
+                                      setState(() {
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                    child: const Text('Gallery'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      files.clear();
+                                      final image = await ImagePicker()
+                                          .pickVideo(
+                                              source: ImageSource.camera);
+                                      if (image != null) {
+                                        files.add(File(image.path));
+                                      }
+                                      setState(() {
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                    child: const Text('Camera'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      files.clear();
+                                      files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                            type: FileType.custom,
-                            allowMultiple: true,
-                            allowedExtensions: ['mp4', 'mov']);
+                                      FilePickerResult? result =
+                                          await FilePicker.platform.pickFiles(
+                                              type: FileType.custom,
+                                              allowMultiple: false,
+                                              allowedExtensions: [
+                                            '3gp',
+                                            'avi',
+                                            'f4v',
+                                            'fly',
+                                            'm4v',
+                                            'mov',
+                                            'mp4',
+                                            'ogv',
+                                            '3g2',
+                                            'wmv',
+                                            'vob',
+                                            'webm',
+                                            'mkv'
+                                          ]);
 
-                    if (result != null) {
-                      files.addAll(
-                          result.paths.map((path) => File(path!)).toList());
-                    }
-                    setState(() {
-                      isTextPost = false;
-                      isImagePost = false;
-                      isVideoPost = true;
-                    });
-                  },
-                  icon: const Icon(Icons.video_file),
-                  label: const Text('Attach Video'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.blue)),
-              const SizedBox(height: 12),
-              TextButton.icon(
-                  onPressed: () async {
-                    files.clear();
-                    final ImagePicker picker = ImagePicker();
-                    // Pick an image
-                    final image = await picker.pickMultiImage();
-                    files.addAll(image.map((e) => File(e.path)).toList());
-
-                    setState(() {
-                      isTextPost = false;
-                      isImagePost = true;
-                      isVideoPost = false;
-                    });
-                  },
-                  icon: const Icon(Icons.add_a_photo),
-                  label: const Text('Attach Image'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.blue)),
+                                      if (result != null) {
+                                        files.addAll(result.paths
+                                            .map((path) => File(path!))
+                                            .toList());
+                                      }
+                                      setState(() {
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                    child: const Text('File'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'))
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.video_file),
+                      label: const Text('Attach Video'),
+                      style: TextButton.styleFrom(foregroundColor: Colors.blue))
+                  : TextButton.icon(
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Please Select source'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  width: 200,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      files.clear();
+                                      final image = await ImagePicker()
+                                          .pickImage(
+                                              source: ImageSource.gallery);
+                                      if (image != null) {
+                                        files.add(File(image.path));
+                                      }
+                                      setState(() {
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                    child: const Text('Gallery'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 200,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      files.clear();
+                                      final image = await ImagePicker()
+                                          .pickImage(
+                                              source: ImageSource.camera);
+                                      if (image != null) {
+                                        files.add(File(image.path));
+                                      }
+                                      setState(() {
+                                        Navigator.of(context).pop();
+                                      });
+                                    },
+                                    child: const Text('Camera'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cancel'))
+                            ],
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.add_a_photo),
+                      label: const Text('Attach Image'),
+                      style:
+                          TextButton.styleFrom(foregroundColor: Colors.blue)),
               const SizedBox(height: 48),
               Center(
                 child: TextButton(
                   onPressed: () async {
-                    ProgressDialog.show(
-                      context,
-                      asyncFunction: () => _createPost(context),
-                    ).then((value) {
-                      PositiveDialog.show(context,
-                          title: 'Post Created',
-                          message: 'Post Created Successfully',
-                          onPostiveCallback: () {
-                        GoRouter.of(context).pop();
-                      });
+                    _createStory(context).then((value) {
+                      // Navigator.of(context).pop();
                     }).onError((error, stackTrace) {
-                      ErrorDialog.show(context,
-                          title: 'Error', message: error.toString());
+                      print(error.toString());
+                      print(stackTrace.toString());
+                      CommonSnackbar.showNagativeSnackbar(
+                          context, 'Error', error.toString());
                     });
+                     Navigator.of(context).pop();
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -230,10 +381,10 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                     child: RichText(
                         text: TextSpan(children: [
                       const TextSpan(text: 'Create'),
-                      if (isTextPost) const TextSpan(text: ' Text'),
-                      if (isImagePost) const TextSpan(text: ' Image'),
-                      if (isVideoPost) const TextSpan(text: ' Video'),
-                      const TextSpan(text: ' Post'),
+                      (widget.isVideoType)
+                          ? const TextSpan(text: ' Video')
+                          : const TextSpan(text: ' Image'),
+                      const TextSpan(text: ' Story'),
                     ])),
                   ),
                 ),
@@ -245,75 +396,59 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
     );
   }
 
-  Future _createPost(BuildContext context) async {
+  Future _createStory(BuildContext context) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    final target = _targetuserTextEditController.text.trim();
-    final text = _postTextEditController.text.trim();
-    final isCommunityPost = widget.communityId != null;
-    // final _metadataString = _metadataEditController.text.trim();
-
-    ///Mention user logic
-    //Clean up mention user list, as user might have removed some tagged user
-    mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
-
-    final mentionedUserIds = mentionUsers.map((e) => e.userId!).toList();
-
-    final amityMentioneesMetadata = mentionUsers
-        .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-            userId: e.userId!,
-            index: text.indexOf('@${e.displayName!}'),
-            length: e.displayName!.length))
-        .toList();
-
-    Map<String, dynamic> metadata =
-        AmityMentionMetadataCreator(amityMentioneesMetadata).create();
-
-    // if (isTextPost) {
-    //   if (isCommunityPost) {
-    //     await AmitySocialClient.newPostRepository()
-    //         .createPost()
-    //         .targetCommunity(target)
-    //         .text(text)
-    //         .mentionUsers(mentionedUserIds)
-    //         .metadata(metadata)
-    //         .post();
-    //   } else {
-    //     await AmitySocialClient.newPostRepository()
-    //         .createPost()
-    //         .targetUser(target)
-    //         .text(text)
-    //         .mentionUsers(mentionedUserIds)
-    //         .metadata(metadata)
-    //         .post();
-    //   }
-    // }
-
-    if (isImagePost) {
-      if (files.isNotEmpty) {}
-
-      if (isCommunityPost) {
-        await AmitySocialClient.newStoryRepository().createImageStory(
-            targetType: AmityStoryTargetType.COMMUNITY,
-            targetId: widget.communityId!,
-            imageFile: files[0],
-            imageDisplayMode: AmityStoryImageDisplayMode.FILL);
-      }
+    if (files.isEmpty) {
+      throw Exception(
+          'Please attach a ${widget.isVideoType ? "Video" : "Image"}');
     }
 
-    if (isVideoPost) {
-      if (files.isNotEmpty) {
+    AmityStoryItem? storyItem;
 
-      }
+    if (_hyperLinkEditController.text.isNotEmpty) {
+      storyItem = HyperLink(
+          url: _hyperLinkEditController.text,
+          customText: _customTextEditController.text);
+    }
 
-      if (isCommunityPost) {
-        await AmitySocialClient.newStoryRepository().createVideoStory(
-          targetType: AmityStoryTargetType.COMMUNITY,
-          targetId: widget.communityId!,
+    if (storyItem == null) {
+      if (widget.isVideoType) {
+        return AmitySocialClient.newStoryRepository().createVideoStory(
+          targetType: widget.targetType!,
+          targetId: widget.targetId!,
           videoFile: files[0],
-        );
+          storyItems: [],
+        ).onError((error, stackTrace) {
+          CommonSnackbar.showNagativeSnackbar(
+              context, 'Error', error.toString());
+        });
+      } else {
+        return AmitySocialClient.newStoryRepository().createImageStory(
+            targetType: widget.targetType!,
+            targetId: widget.targetId!,
+            imageFile: files[0],
+            imageDisplayMode: amityStoryImageDisplayMode,
+            storyItems: []);
+      }
+    } else {
+      if (widget.isVideoType) {
+        return AmitySocialClient.newStoryRepository().createVideoStory(
+          targetType: widget.targetType!,
+          targetId: widget.targetId!,
+          videoFile: files[0],
+          storyItems: [storyItem],
+        ).onError((error, stackTrace) {
+          CommonSnackbar.showNagativeSnackbar(
+              context, 'Error', error.toString());
+        });
+      } else {
+        return AmitySocialClient.newStoryRepository().createImageStory(
+            targetType: widget.targetType!,
+            targetId: widget.targetId!,
+            imageFile: files[0],
+            imageDisplayMode: amityStoryImageDisplayMode,
+            storyItems: [storyItem]);
       }
     }
   }
-
-
 }
