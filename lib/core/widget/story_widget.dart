@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
+import 'package:video_player/video_player.dart';
 
 class StoryWidget extends StatelessWidget {
   final AmityStory story;
@@ -23,7 +25,6 @@ class StoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-
     return Stack(
       fit: StackFit.loose,
       children: [
@@ -113,7 +114,7 @@ class StoryWidget extends StatelessWidget {
                     ),
 
                     SelectableText(
-                      'Sync State -> ${story.state?.value}',
+                      'Sync State -> ${story.syncState?.value}',
                       style: themeData.textTheme.bodySmall,
                     ),
 
@@ -230,98 +231,144 @@ class StoryContentWidget extends StatelessWidget {
     }
     if (storyData is VideoStoryData) {
       final data = storyData as VideoStoryData;
-      return (data.video.hasLocalPreview != null)
-          ? (data.video.hasLocalPreview!)
-              ? FullScreenVideoPlayer(
-                  title: "StoryVideo",
-                  url: data.video.fileUrl!,
-                  isLocal: true,
-                )
-              : SizedBox(
-                  width: 100,
-                  height: 100,
-                  // color: Colors.red,
-                  child: (data.thumbnail != null && data.video.fileId != null)
-                      ? Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Image.network(
-                                data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ??
-                                    '',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FullScreenVideoPlayer(
-                                        title: data.video.fileName!,
-                                        url: data.video.fileUrl!,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.play_circle_fill_rounded,
-                                  color: Colors.white,
+      return Column(
+        children: [
+          SelectableText(
+                      'Thumbnail  -> ${data.thumbnail.fileUrl ?? 'No Thumbnail'}',
+                    ),
+          (data.video.hasLocalPreview != null)
+              ? (data.video.hasLocalPreview!)
+                  ? SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: MiniVideoPlayer(uri: data.video.getFilePath!),
+                    )
+                  : SizedBox(
+                      width: 100,
+                      height: 100,
+                      // color: Colors.red,
+                      child: (data.thumbnail != null &&
+                              data.video.fileId != null)
+                          ? Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: Image.network(
+                                    data.thumbnail
+                                            ?.getUrl(AmityImageSize.MEDIUM) ??
+                                        '',
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                            )
-                          ],
-                        )
-                      : Text("MEDIA DELETED"),
-                )
-          : (data.video != null)
-              ? SizedBox(
-                  width: 100,
-                  height: 100,
-                  // color: Colors.red,
-                  child: (data.thumbnail != null && data.video.fileId != null)
-                      ? Stack(
-                          children: [
-                            Positioned.fill(
-                              child: Image.network(
-                                data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ??
-                                    '',
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FullScreenVideoPlayer(
-                                        title: data.video.fileName!,
-                                        url: data.video.fileUrl!,
-                                      ),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FullScreenVideoPlayer(
+                                            title: data.video.fileName!,
+                                            url: data.video.fileUrl!,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.play_circle_fill_rounded,
+                                      color: Colors.white,
                                     ),
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.play_circle_fill_rounded,
-                                  color: Colors.white,
-                                ),
-                              ),
+                                  ),
+                                )
+                              ],
                             )
-                          ],
-                        )
-                      : Text("MEDIA DELETED"),
-                )
-              : Container(
-                  width: 20,
-                  height: 20,
-                  color: Colors.amber,
-                );
+                          : Text("MEDIA DELETED"),
+                    )
+              : (data.video != null)
+                  ? SizedBox(
+                      width: 100,
+                      height: 100,
+                      // color: Colors.red,
+                      child: (data.thumbnail != null &&
+                              data.video.fileId != null)
+                          ? Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: Image.network(
+                                    data.thumbnail
+                                            ?.getUrl(AmityImageSize.MEDIUM) ??
+                                        '',
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: IconButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              FullScreenVideoPlayer(
+                                            title: data.video.fileName!,
+                                            url: data.video.fileUrl!,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(
+                                      Icons.play_circle_fill_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          : Text("MEDIA DELETED"),
+                    )
+                  : Container(
+                      width: 20,
+                      height: 20,
+                      color: Colors.amber,
+                    )
+        ],
+      );
     }
     if (storyData is UnknownStoryData) {}
 
     return const Placeholder();
+  }
+}
+
+class MiniVideoPlayer extends StatefulWidget {
+  final String uri;
+  const MiniVideoPlayer({super.key, required this.uri});
+
+  @override
+  State<MiniVideoPlayer> createState() => _MiniVideoPlayerState();
+}
+
+class _MiniVideoPlayerState extends State<MiniVideoPlayer> {
+  late ChewieController chewieController;
+  @override
+  void initState() {
+    print("MiniVideoPlaye   --->      URI ${widget.uri}");
+    setUpChewie();
+    super.initState();
+  }
+
+  void setUpChewie() {
+    final videoPlayerController = VideoPlayerController.file(File(widget.uri));
+    videoPlayerController.initialize();
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Chewie(
+      controller: chewieController,
+    );
   }
 }

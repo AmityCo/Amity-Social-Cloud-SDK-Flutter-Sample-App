@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class FullScreenVideoPlayer extends StatefulWidget {
-  bool isLocal = false;
-  
-  FullScreenVideoPlayer({
+  const FullScreenVideoPlayer({
     Key? key,
     required this.title,
     required this.url,
-    this.isLocal = false,
   }) : super(key: key);
 
   final String title;
@@ -46,13 +43,7 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
   // ];
 
   Future<void> initializePlayer() async {
-    if(widget.isLocal){
-      _videoPlayerController =  VideoPlayerController.asset(widget.url);
-    }else{
-       _videoPlayerController = VideoPlayerController.network(widget.url);
-    }
-   
-    
+    _videoPlayerController = VideoPlayerController.network(widget.url);
     await Future.wait([
       _videoPlayerController.initialize(),
     ]);
