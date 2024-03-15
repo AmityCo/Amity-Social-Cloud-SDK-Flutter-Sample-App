@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 
@@ -250,23 +251,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
 
                                       FilePickerResult? result =
                                           await FilePicker.platform.pickFiles(
-                                              type: FileType.custom,
-                                              allowMultiple: false,
-                                              allowedExtensions: [
-                                            '3gp',
-                                            'avi',
-                                            'f4v',
-                                            'fly',
-                                            'm4v',
-                                            'mov',
-                                            'mp4',
-                                            'ogv',
-                                            '3g2',
-                                            'wmv',
-                                            'vob',
-                                            'webm',
-                                            'mkv'
-                                          ]);
+                                              allowMultiple: false,);
 
                                       if (result != null) {
                                         files.addAll(result.paths
@@ -365,10 +350,16 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                     }).onError((error, stackTrace) {
                       print(error.toString());
                       print(stackTrace.toString());
-                      CommonSnackbar.showNagativeSnackbar(
-                          context, 'Error', error.toString());
+                      Fluttertoast.showToast(
+                          msg: error.toString(),
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.red,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
                     });
-                     Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                   },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,

@@ -236,6 +236,9 @@ class StoryContentWidget extends StatelessWidget {
           SelectableText(
                       'Thumbnail  -> ${data.thumbnail.fileUrl ?? 'No Thumbnail'}',
                     ),
+          SelectableText(
+                      'Video Resolutions  -> ${data.video.getResolutions() ?? 'No Resolution'}',
+                    ),
           (data.video.hasLocalPreview != null)
               ? (data.video.hasLocalPreview!)
                   ? SizedBox(
