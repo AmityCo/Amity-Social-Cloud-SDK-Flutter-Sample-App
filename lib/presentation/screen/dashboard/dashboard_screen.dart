@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/preferences/preference_interface_impl.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
@@ -317,6 +318,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         .then((value) {
                       // Logout after successfully unregistering the device token
                       AmityCoreClient.logout().then((value) {
+                        PreferenceInterfaceImpl().removeAllPreference();
                         GoRouter.of(context).goNamed(AppRoute.login);
                       });
                     }).onError((error, stackTrace) {

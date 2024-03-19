@@ -5,6 +5,8 @@
    <application
         android:label="sample_app"
         android:name="${applicationName}"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:icon="@mipmap/ic_launcher">
         <activity

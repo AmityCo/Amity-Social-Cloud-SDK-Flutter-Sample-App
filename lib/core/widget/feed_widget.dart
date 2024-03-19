@@ -81,6 +81,10 @@ class FeedWidget extends StatelessWidget {
                                     const PopupMenuItem(
                                       value: 4,
                                       child: Text("RTE"),
+                                    ),
+                                    const PopupMenuItem(
+                                      value: 5,
+                                      child: Text("Mark as Viewed"),
                                     )
                                   ];
                                 },
@@ -113,6 +117,9 @@ class FeedWidget extends StatelessWidget {
                                           'isPublic': isPublic.toString()
                                         });
                                   }
+                                  if (index == 5) {
+                                    value.analytics().markPostAsViewed();
+                                  }
                                 },
                               ),
                             ],
@@ -144,9 +151,18 @@ class FeedWidget extends StatelessWidget {
                               'Posted On : ${(value.target as CommunityTarget).targetCommunity?.displayName ?? 'No name'} Community',
                               style: themeData.textTheme.bodySmall,
                             ),
-                          Text("LatestCommentUserName -> ${snapshot.data!.latestComments?[0].user?.displayName ?? "No Latest comment user"}" , style: themeData.textTheme.bodySmall,),
-                     Text("LatestCommentUserID -> ${snapshot.data!.latestComments?[0].userId ?? "No Latest comment user"}", style: themeData.textTheme.bodySmall,),
-                     Text("LatestCommentSize -> ${snapshot.data!.latestComments?.length ?? "0"}", style: themeData.textTheme.bodySmall,),
+                          Text(
+                            "LatestCommentUserName -> ${snapshot.data!.latestComments?[0].user?.displayName ?? "No Latest comment user"}",
+                            style: themeData.textTheme.bodySmall,
+                          ),
+                          Text(
+                            "LatestCommentUserID -> ${snapshot.data!.latestComments?[0].userId ?? "No Latest comment user"}",
+                            style: themeData.textTheme.bodySmall,
+                          ),
+                          Text(
+                            "LatestCommentSize -> ${snapshot.data!.latestComments?.length ?? "0"}",
+                            style: themeData.textTheme.bodySmall,
+                          ),
                         ],
                       ),
                     ),
@@ -197,6 +213,31 @@ class FeedWidget extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 12),
                         child: FeedReactionInfoWidget(amityPost: value)),
                     Divider(height: .5, color: Colors.grey.shade300),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        GoRouter.of(context).pushNamed(
+                            AppRoute.getReachUser,
+                            queryParams: {
+                              'postId': value.postId!,
+                            });
+                      },
+                      child: Row(
+                        children: [
+                          Text("Impressions: ${value.impression}"),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text("Reach: ${value.reach}"),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Divider(height: .5, color: Colors.grey.shade300),
                     FeedReactionActionWidget(
                         key: UniqueKey(),
                         amityPost: value,
@@ -210,7 +251,6 @@ class FeedWidget extends StatelessWidget {
                             },
                           );
                         }),
-                     
                     const SizedBox(height: 12),
                     if (!disableAddComment)
                       AddCommentWidget(
@@ -343,44 +383,48 @@ class FeedContentWidget extends StatelessWidget {
 
     if (amityPostData is VideoData) {
       final data = amityPostData as VideoData;
-      return (data.fileId != null)? SizedBox(
-        width: 100,
-        height: 100,
-        // color: Colors.red,
-        child: (data.thumbnail != null && data.fileId != null)
-            ? Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.network(
-                      data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: IconButton(
-                      onPressed: () {
-                        data.getVideo(AmityVideoQuality.HIGH).then((value) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => FullScreenVideoPlayer(
-                                title: value.fileName!,
-                                url: value.fileUrl!,
-                              ),
+      return (data.fileId != null)
+          ? SizedBox(
+              width: 100,
+              height: 100,
+              // color: Colors.red,
+              child: (data.thumbnail != null && data.fileId != null)
+                  ? Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.network(
+                            data.thumbnail?.getUrl(AmityImageSize.MEDIUM) ?? '',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: IconButton(
+                            onPressed: () {
+                              data
+                                  .getVideo(AmityVideoQuality.HIGH)
+                                  .then((value) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => FullScreenVideoPlayer(
+                                      title: value.fileName!,
+                                      url: value.fileUrl!,
+                                    ),
+                                  ),
+                                );
+                              });
+                            },
+                            icon: const Icon(
+                              Icons.play_circle_fill_rounded,
+                              color: Colors.white,
                             ),
-                          );
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.play_circle_fill_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              )
-            : Text("MEDIA DELETED"),
-      ):Container(
+                          ),
+                        )
+                      ],
+                    )
+                  : Text("MEDIA DELETED"),
+            )
+          : Container(
               width: 20,
               height: 20,
               color: Colors.amber,
@@ -412,7 +456,10 @@ class FeedContentWidget extends StatelessWidget {
       final data = amityPostData as PollData;
       return Container(
         // color: Colors.green,
-        child: PollWidget(data: data , createdbyUserId:  amityPost.postedUserId!,),
+        child: PollWidget(
+          data: data,
+          createdbyUserId: amityPost.postedUserId!,
+        ),
       );
     }
 
@@ -420,7 +467,8 @@ class FeedContentWidget extends StatelessWidget {
       final data = amityPostData as LiveStreamData;
       return Container(
         // color: Colors.green,
-        child: Text( 'Linked Stream ID -->>>> ${data.streamId}' ?? 'No Stream ID'),
+        child:
+            Text('Linked Stream ID -->>>> ${data.streamId}' ?? 'No Stream ID'),
       );
     }
 
