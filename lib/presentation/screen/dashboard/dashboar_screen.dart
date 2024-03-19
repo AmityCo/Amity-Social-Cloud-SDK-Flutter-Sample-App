@@ -190,6 +190,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Communities'),
                 ),
+
+
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    EditTextDialog.show(
+                      context,
+                      hintText: 'Enter Community Id',
+                      onPress: (value) {
+                        GoRouter.of(context).goNamed(AppRoute.communityDetail,
+                            params: {'communityId': value});
+                      },
+                    );
+                  },
+                  child: const Text('Get Community Live Object '),
+                ),
                 // const SizedBox(height: 20),
                 // TextButton(
                 //   onPressed: () {

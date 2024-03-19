@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityWidget extends StatelessWidget {
@@ -27,9 +28,13 @@ class CommunityWidget extends StatelessWidget {
             decoration: BoxDecoration(color: Colors.grey.withOpacity(.2)),
             child: InkWell(
               onTap: () {
-                GoRouter.of(context).goNamed(AppRoute.communityProfile,
-                    queryParams: {'communityId': value.communityId!});
-                // params: {'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'});
+              Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CommunityProfileScreen(
+                      communityId: value.communityId!,
+                    ),
+                  ),
+                );
               },
               child: Column(
                 children: [

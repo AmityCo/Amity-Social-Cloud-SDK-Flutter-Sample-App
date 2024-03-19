@@ -1,11 +1,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/community_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityListScreen extends StatefulWidget {
@@ -16,8 +14,7 @@ class CommunityListScreen extends StatefulWidget {
 }
 
 class _CommunityListScreenState extends State<CommunityListScreen> {
-  late PagingController<AmityCommunity> _controller;
-  final amityCommunities = <AmityCommunity>[];
+  var amityCommunities = <AmityCommunity>[];
 
   final scrollcontroller = ScrollController();
   bool loading = false;
@@ -32,50 +29,49 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
 
   bool _includeDelete = true;
 
+  late CommunityLiveCollection communityLiveCollection;
+
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newCommunityRepository()
-          .getCommunities()
-          .withKeyword(_keyboard.isEmpty ? null : _keyboard)
-          .sortBy(_sort)
-          .filter(_filter)
-          .tags(_tags ?? [])
-          .includeDeleted(_includeDelete)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityCommunities.clear();
-              amityCommunities.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            print(_controller.error.toString());
-            print(_controller.stacktrace.toString());
-            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
-    });
-
-    scrollcontroller.addListener(pagination);
-
+    communityLiveCollectionInit();
     super.initState();
   }
 
+    void communityLiveCollectionInit() {
+
+    communityLiveCollection = CommunityLiveCollection(
+        request: () => AmitySocialClient.newCommunityRepository()
+            .getCommunities()
+            .withKeyword(_keyboard.isEmpty ? null : _keyboard)
+            .sortBy(_sort)
+            .filter(_filter)
+            .tags(_tags ?? [])
+            .includeDeleted(_includeDelete)
+            .build());
+
+
+    communityLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityCommunities = event;
+        });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      communityLiveCollection.loadNext();
+    });
+
+    scrollcontroller.addListener(pagination);
+  }
+
   void pagination() {
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
-      setState(() {
-        _controller.fetchNextPage();
-      });
-    }
+    if ((scrollcontroller.position.pixels ==
+              scrollcontroller.position.maxScrollExtent) &&
+          communityLiveCollection.hasNextPage()) {
+        communityLiveCollection.loadNext();
+      }
   }
 
   @override
@@ -90,8 +86,8 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
               onChanged: (value) {
                 _debouncer.run(() {
                   _keyboard = value;
-                  _controller.reset();
-                  _controller.fetchNextPage();
+                  communityLiveCollection.reset();
+                  communityLiveCollectionInit();
                 });
               },
               decoration: const InputDecoration(hintText: 'Enter Keybaord'),
@@ -133,9 +129,9 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                       if (index == 3) {
                         _filter = AmityCommunityFilter.NOT_MEMBER;
                       }
-
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      
+                  communityLiveCollection.reset();
+                  communityLiveCollectionInit();
                     },
                   ),
                 ),
@@ -173,9 +169,8 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                       if (index == 3) {
                         _sort = AmityCommunitySortOption.LAST_CREATED;
                       }
-
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                  communityLiveCollection.reset();
+                  communityLiveCollectionInit();
                     },
                   ),
                 ),
@@ -188,8 +183,9 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                           onPress: (value) {
                         if (value.isNotEmpty) {
                           _tags = value.trim().split(',');
-                          _controller.reset();
-                          _controller.fetchNextPage();
+                  communityLiveCollection.reset();
+
+                  communityLiveCollectionInit();
                         }
                       });
                     },
@@ -205,8 +201,9 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                         onChanged: (value) {
                           setState(() {
                             _includeDelete = (value ?? false);
-                            _controller.reset();
-                            _controller.fetchNextPage();
+                  communityLiveCollection.reset();
+
+                  communityLiveCollectionInit();
                           });
                         },
                       ),
@@ -221,8 +218,8 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
             child: amityCommunities.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      communityLiveCollection.reset();
+                      communityLiveCollectionInit();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
@@ -244,10 +241,12 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Post'),
+                    child: communityLiveCollection.isFetching
+                        ? const CircularProgressIndicator()
+                        : const Text('No Post'),
                   ),
           ),
-          if (_controller.isFetching && amityCommunities.isNotEmpty)
+          if (amityCommunities.isNotEmpty && communityLiveCollection.isFetching)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
