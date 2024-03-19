@@ -234,11 +234,11 @@ class StoryContentWidget extends StatelessWidget {
       return Column(
         children: [
           SelectableText(
-                      'Thumbnail  -> ${data.thumbnail.fileUrl ?? 'No Thumbnail'}',
-                    ),
+            'Thumbnail  -> ${data.thumbnail.fileUrl ?? 'No Thumbnail'}',
+          ),
           SelectableText(
-                      'Video Resolutions  -> ${data.video.getResolutions() ?? 'No Resolution'}',
-                    ),
+            'Video Resolutions  -> ${data.video.getResolutions() ?? 'No Resolution'}',
+          ),
           (data.video.hasLocalPreview != null)
               ? (data.video.hasLocalPreview!)
                   ? SizedBox(
@@ -370,8 +370,18 @@ class _MiniVideoPlayerState extends State<MiniVideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Chewie(
-      controller: chewieController,
-    );
+    return chewieController != null &&
+            chewieController!.videoPlayerController.value.isInitialized
+        ? Chewie(
+            controller: chewieController!,
+          )
+        : const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+              Text('Loading'),
+            ],
+          );
   }
 }
