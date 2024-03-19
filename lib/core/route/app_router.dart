@@ -23,6 +23,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_profile/
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_story/create_story_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboard_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
@@ -305,6 +306,20 @@ class AppRouter {
           communityId: state.queryParams['communityId'],
           isPublic: state.queryParams['isPublic'] == 'true',
         ),
+
+        
+      ),
+      GoRoute(
+        name: AppRoute.createStory,
+        path: AppRoute.createStoryRoute,
+        builder: (context, state) => CreateStoryScreen(
+          targetType: AmityStoryTargetTypeExtension.enumOf(
+              state.queryParams['targetType']!),
+          targetId: state.queryParams['targetId'],
+          isVideoType: state.queryParams['isTypeVideo'] == 'true',
+        ),
+
+        
       ),
       GoRoute(
         name: AppRoute.commentList,
