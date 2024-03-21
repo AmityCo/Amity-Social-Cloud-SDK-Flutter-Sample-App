@@ -2,9 +2,11 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class UserFeedScreen extends StatefulWidget {
-  const UserFeedScreen({Key? key, required this.userId, this.showAppBar = true}) : super(key: key);
+  const UserFeedScreen({Key? key, required this.userId, this.showAppBar = true})
+      : super(key: key);
   final String userId;
   final bool showAppBar;
   @override
@@ -57,7 +59,9 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels ==
+            scrollcontroller.position.maxScrollExtent) &&
+        _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -67,7 +71,9 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.showAppBar ? AppBar(title: Text('User Feed - ${widget.userId}')) : null,
+      appBar: widget.showAppBar
+          ? AppBar(title: Text('User Feed - ${widget.userId}'))
+          : null,
       body: Column(
         children: [
           Container(
@@ -137,11 +143,13 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                       return [
                         PopupMenuItem(
                           value: 2,
-                          child: Text(AmityUserFeedSortOption.FIRST_CREATED.name),
+                          child:
+                              Text(AmityUserFeedSortOption.FIRST_CREATED.name),
                         ),
                         PopupMenuItem(
                           value: 3,
-                          child: Text(AmityUserFeedSortOption.LAST_CREATED.name),
+                          child:
+                              Text(AmityUserFeedSortOption.LAST_CREATED.name),
                         )
                       ];
                     },
@@ -178,8 +186,18 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                             itemCount: amityPosts.length,
                             itemBuilder: (context, index) {
                               final amityPost = amityPosts[index];
-                              return FeedWidget(
-                                amityPost: amityPost,
+                              var uniqueKey = UniqueKey();
+                              return VisibilityDetector(
+                                key: uniqueKey,
+                                onVisibilityChanged: (VisibilityInfo info) {
+                                  if (info.visibleFraction == 1.0) {
+                                    // amityPost.analytics().markPostAsViewed();
+                                  }
+                                },
+                                child: FeedWidget(
+                                  key: uniqueKey,
+                                  amityPost: amityPost,
+                                ),
                               );
                             },
                           )
@@ -192,7 +210,9 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                     alignment: Alignment.center,
                     child: _controller.isFetching
                         ? const CircularProgressIndicator()
-                        : Text(_controller.error == null ? 'No Post' : _controller.error.toString()),
+                        : Text(_controller.error == null
+                            ? 'No Post'
+                            : _controller.error.toString()),
                   ),
           ),
           if (_controller.isFetching && amityPosts.isNotEmpty)

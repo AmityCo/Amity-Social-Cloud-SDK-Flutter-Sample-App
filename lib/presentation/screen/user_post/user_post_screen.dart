@@ -2,6 +2,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class UserPostScreen extends StatefulWidget {
   const UserPostScreen({Key? key, required this.userId, this.showAppBar = true}) : super(key: key);
@@ -96,8 +97,18 @@ class _UserPostScreenState extends State<UserPostScreen> {
                       itemCount: amityPosts.length,
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
-                        return FeedWidget(
-                          amityPost: amityPost,
+                        var uniqueKey = UniqueKey();
+                        return VisibilityDetector(
+                          key: uniqueKey,
+                          onVisibilityChanged: (VisibilityInfo info) { 
+                            if(info.visibleFraction == 1.0){
+                              // amityPost.analytics().markPostAsViewed();
+                            }
+                           },
+                          child: FeedWidget(
+                            key: uniqueKey,
+                            amityPost: amityPost,
+                          ),
                         );
                       },
                     ),
