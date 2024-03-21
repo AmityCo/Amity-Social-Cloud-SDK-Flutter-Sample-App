@@ -45,6 +45,7 @@ import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/comment_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/community_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte_event_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/story_details/story_details_screens.dart';
 import 'package:flutter_social_sample_app/presentation/screen/stream_list/stream_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
@@ -240,6 +241,12 @@ class AppRouter {
             path: AppRoute.getCategoryRoute,
             builder: (context, state) => CommunityCategoryScreen(
                 categoryId: state.params['categoryId']!),
+          ),
+          GoRoute(
+            name: AppRoute.storyDetails,
+            path: AppRoute.storyDetailsRoute,
+            builder: (context, state) => StoryDetailsScreen(
+                storyId: state.params['storyId']!),
           ),
           GoRoute(
             name: AppRoute.createPollPost,

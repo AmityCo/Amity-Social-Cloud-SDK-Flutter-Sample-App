@@ -147,9 +147,10 @@ class AppRoute {
   static const getReachUser = 'getReachUser';
   static const getReachUserRoute = '/getReachUser';
 
-
-  //Create Post Routes
   static const createStory = 'createStory';
   static const createStoryRoute = '/createStory';
+
+  static const storyDetails = 'storyDetails';
+  static const storyDetailsRoute = 'storyDetails/:storyId';
 
 }

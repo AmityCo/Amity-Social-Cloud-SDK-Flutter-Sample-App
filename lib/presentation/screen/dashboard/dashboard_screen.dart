@@ -212,6 +212,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Get Category by Id'),
                 ),
+
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    EditTextDialog.show(
+                      context,
+                      title: "Get Story",
+                      buttonText: "Get",
+                      hintText: 'Please enter the story id',
+                      onPress: (value) {
+                        GoRouter.of(context).goNamed(AppRoute.storyDetails,
+                            params: {'storyId': value});
+                      },
+                    );
+                  },
+                  child: const Text('Get Story by Id'),
+                ),
                 
                 const SizedBox(height: 20),
                 TextButton(
