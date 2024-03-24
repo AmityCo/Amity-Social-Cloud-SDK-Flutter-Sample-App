@@ -13,175 +13,167 @@ class PollWidget extends StatefulWidget {
 }
 
 class _PollWidgetState extends State<PollWidget> {
+  AmityPoll? _poll;
   /// incase of multiple choice answer, cache the answer.
   final answerIds = <String>[];
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<AmityPoll>(
-      future: widget.data.getPoll(),
+    return StreamBuilder(
+      stream: widget.data.live.getPoll(),
+      initialData: _poll,
       builder: (context, snapshot) {
+
         if (snapshot.hasData && snapshot.data != null) {
-          final valueFuture = snapshot.data;
+          _poll = snapshot.data as AmityPoll;
+          final  value = _poll!;
+          return Container(
+            padding: const EdgeInsets.all(12),
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
+                Radius.circular(6),
+              ),
+              border: Border.all(
+                color: Colors.grey.withOpacity(.5),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: List.generate(
+                      value.answers!.length,
+                      (index) => Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: InkWell(
+                          onTap: () {
+                            /// dont allow use to vote if he already voted
+                            if (value.isVoted ?? false) {
+                              CommonSnackbar.showNagativeSnackbar(context,
+                                  'Error', 'Already voted for this poll');
+                              return;
+                            }
 
-          if (valueFuture?.isDeleted ?? false) {
-            return Container();
-          }
+                            /// dont allow user to vote if poll is already closed.
+                            if (value.isClose) {
+                              CommonSnackbar.showNagativeSnackbar(context,
+                                  'Error', 'Poll is closed already');
+                              return;
+                            }
 
-          return StreamBuilder<AmityPoll>(
-            initialData: valueFuture!,
-            stream: valueFuture.listen.stream,
-            builder: (context, snapshot) {
-              final value = snapshot.data!;
-              return Container(
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(6),
-                  ),
-                  border: Border.all(
-                    color: Colors.grey.withOpacity(.5),
+                            if (value.answerType ==
+                                AmityPollAnswerType.SINGLE) {
+                              AmitySocialClient.newPollRepository().vote(
+                                pollId: value.pollId!,
+                                answerIds: [value.answers![index].id!],
+                              ).then((value) {
+                                CommonSnackbar.showPositiveSnackbar(context,
+                                    'Success', 'Vote process successfully');
+                              }).onError((error, stackTrace) {
+                                CommonSnackbar.showNagativeSnackbar(
+                                    context, 'Error', error.toString());
+                              });
+                            } else {
+                              setState(() {});
+                              if (answerIds
+                                  .contains(value.answers![index].id!)) {
+                                answerIds.remove(value.answers![index].id!);
+                              } else {
+                                answerIds.add(value.answers![index].id!);
+                              }
+                            }
+                          },
+                          child: VoteCountWidget(
+                            title: value.answers![index].data ?? '',
+                            votePrecentile:
+                                value.answers![index].voteCount! /
+                                    value.totalVote,
+                            voteCount: value.answers![index].voteCount ?? 0,
+                            isMyVote: value.answers![index].isVotedByUser ??
+                                false,
+                            showResult:
+                                (value.isVoted ?? false) || value.isClose,
+                            isSelected: (value.answerType ==
+                                    AmityPollAnswerType.MULTIPLE) &&
+                                answerIds
+                                    .contains(value.answers![index].id),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 12),
+                Row(
                   children: [
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: List.generate(
-                          value.answers!.length,
-                          (index) => Container(
-                            margin: const EdgeInsets.symmetric(vertical: 4),
-                            child: InkWell(
-                              onTap: () {
-                                /// dont allow use to vote if he already voted
-                                if (value.isVoted ?? false) {
-                                  CommonSnackbar.showNagativeSnackbar(context,
-                                      'Error', 'Already voted for this poll');
-                                  return;
-                                }
-
-                                /// dont allow user to vote if poll is already closed.
-                                if (value.isClose) {
-                                  CommonSnackbar.showNagativeSnackbar(context,
-                                      'Error', 'Poll is closed already');
-                                  return;
-                                }
-
-                                if (value.answerType ==
-                                    AmityPollAnswerType.SINGLE) {
-                                  AmitySocialClient.newPollRepository().vote(
+                    Text(
+                        '${value.totalVote} Votes \u2022  ${value.isClose ? 'Poll Closed' : '${value.closedAt!.difference(DateTime.now().toUtc()).readableString()} left'}'),
+                    const Spacer(),
+                    if (value.answerType == AmityPollAnswerType.MULTIPLE &&
+                        !(value.isVoted ?? false))
+                      SizedBox(
+                          height: 24,
+                          child: LoadingButton(
+                              onPressed: () async {
+                                if (answerIds.isNotEmpty) {
+                                  await AmitySocialClient
+                                          .newPollRepository()
+                                      .vote(
                                     pollId: value.pollId!,
-                                    answerIds: [value.answers![index].id!],
-                                  ).then((value) {
-                                    CommonSnackbar.showPositiveSnackbar(context,
-                                        'Success', 'Vote process successfully');
+                                    answerIds: answerIds,
+                                  )
+                                      .then((value) {
+                                    CommonSnackbar.showPositiveSnackbar(
+                                        context,
+                                        'Success',
+                                        'Vote process successfully');
                                   }).onError((error, stackTrace) {
                                     CommonSnackbar.showNagativeSnackbar(
                                         context, 'Error', error.toString());
                                   });
                                 } else {
-                                  setState(() {});
-                                  if (answerIds
-                                      .contains(value.answers![index].id!)) {
-                                    answerIds.remove(value.answers![index].id!);
-                                  } else {
-                                    answerIds.add(value.answers![index].id!);
-                                  }
+                                  CommonSnackbar.showNagativeSnackbar(
+                                      context,
+                                      'Error',
+                                      'Please select Answer first');
                                 }
                               },
-                              child: VoteCountWidget(
-                                title: value.answers![index].data ?? '',
-                                votePrecentile:
-                                    value.answers![index].voteCount! /
-                                        value.totalVote,
-                                voteCount: value.answers![index].voteCount ?? 0,
-                                isMyVote: value.answers![index].isVotedByUser ??
-                                    false,
-                                showResult:
-                                    (value.isVoted ?? false) || value.isClose,
-                                isSelected: (value.answerType ==
-                                        AmityPollAnswerType.MULTIPLE) &&
-                                    answerIds
-                                        .contains(value.answers![index].id),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                              text: 'Vote')),
+                    const SizedBox(width: 12),
+                    InkWell(
+                      onTap: () {
+                        value
+                            .close()
+                            .then((value) =>
+                                CommonSnackbar.showPositiveSnackbar(context,
+                                    'Success', 'Poll Closed Succssfully'))
+                            .onError((error, stackTrace) =>
+                                CommonSnackbar.showNagativeSnackbar(
+                                    context, 'Error', error.toString()));
+                      },
+                      child: const Icon(Icons.timer_off_outlined),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Text(
-                            '${snapshot.data!.totalVote} Votes \u2022  ${snapshot.data!.isClose ? 'Poll Closed' : '${snapshot.data!.closedAt!.difference(DateTime.now().toUtc()).readableString()} left'}'),
-                        const Spacer(),
-                        if (value.answerType == AmityPollAnswerType.MULTIPLE &&
-                            !(value.isVoted ?? false))
-                          SizedBox(
-                              height: 24,
-                              child: LoadingButton(
-                                  onPressed: () async {
-                                    if (answerIds.isNotEmpty) {
-                                      await AmitySocialClient
-                                              .newPollRepository()
-                                          .vote(
-                                        pollId: value.pollId!,
-                                        answerIds: answerIds,
-                                      )
-                                          .then((value) {
-                                        CommonSnackbar.showPositiveSnackbar(
-                                            context,
-                                            'Success',
-                                            'Vote process successfully');
-                                      }).onError((error, stackTrace) {
-                                        CommonSnackbar.showNagativeSnackbar(
-                                            context, 'Error', error.toString());
-                                      });
-                                    } else {
-                                      CommonSnackbar.showNagativeSnackbar(
-                                          context,
-                                          'Error',
-                                          'Please select Answer first');
-                                    }
-                                  },
-                                  text: 'Vote')),
-                        const SizedBox(width: 12),
-                        InkWell(
-                          onTap: () {
-                            value
-                                .close()
-                                .then((value) =>
-                                    CommonSnackbar.showPositiveSnackbar(context,
-                                        'Success', 'Poll Closed Succssfully'))
-                                .onError((error, stackTrace) =>
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Error', error.toString()));
-                          },
-                          child: const Icon(Icons.timer_off_outlined),
-                        ),
-                        const SizedBox(width: 12),
-                        if(widget.createdbyUserId == AmityCoreClient.getUserId())
-                        InkWell(
-                          onTap: () {
-                            value
-                                .delete()
-                                .then((value) =>
-                                    CommonSnackbar.showPositiveSnackbar(context,
-                                        'Success', 'Poll Deleted Succssfully'))
-                                .onError((error, stackTrace) =>
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Error', error.toString()));
-                          },
-                          child: const Icon(Icons.delete),
-                        )
-                      ],
+                    const SizedBox(width: 12),
+                    if(widget.createdbyUserId == AmityCoreClient.getUserId())
+                    InkWell(
+                      onTap: () {
+                        value
+                            .delete()
+                            .then((value) =>
+                                CommonSnackbar.showPositiveSnackbar(context,
+                                    'Success', 'Poll Deleted Succssfully'))
+                            .onError((error, stackTrace) =>
+                                CommonSnackbar.showNagativeSnackbar(
+                                    context, 'Error', error.toString()));
+                      },
+                      child: const Icon(Icons.delete),
                     )
                   ],
-                ),
-              );
-            },
+                )
+              ],
+            ),
           );
         }
 
