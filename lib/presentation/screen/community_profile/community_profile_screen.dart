@@ -375,7 +375,7 @@ class _CommunityProfileHeaderWidgetState
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${widget.amityCommunity.postsCount}\n',
+                            text: '${widget.amityCommunity.getPostCount(AmityFeedType.PUBLISHED)}\n',
                             style: themeData.textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           ),
