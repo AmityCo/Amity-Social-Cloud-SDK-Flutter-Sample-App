@@ -7,7 +7,7 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
-import 'package:flutter_social_sample_app/core/widget/nested_comment_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/reply_comment_query_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_comment/update_comment_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,6 +27,7 @@ class CommentWidget extends StatefulWidget {
   final AmityComment amityComment;
   final ValueChanged<AmityComment> onReply;
   final bool disableAction;
+
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
 }
@@ -35,24 +36,10 @@ class _CommentWidgetState extends State<CommentWidget> {
   late String text;
 
   bool _viewMoreReply = false;
-  late Timer periodicTimer;
+
   @override
   void initState() {
     super.initState();
-
-    // widget.amityComment
-    //     .subscription(AmityCommentEvents.COMMENT)
-    //     .subscribeTopic()
-    //     .then((value) {
-    //   print('Post RTE subscription success');
-    // });
-
-    periodicTimer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        setState(() {});
-      },
-    );
   }
 
   @override
@@ -317,12 +304,21 @@ class _CommentWidgetState extends State<CommentWidget> {
                 if (value.childrenNumber! > 0)
                   Container(
                     margin: const EdgeInsets.only(left: 12),
-                    child: !_viewMoreReply
-                        ? InkWell(
+                    child: InkWell(
                             onTap: () {
-                              setState(() {
-                                _viewMoreReply = !_viewMoreReply;
-                              });
+                              showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Container(
+                                      child: ReplyCommentQueryWidget(
+                                        postId: widget.postId,
+                                        commentId: value.commentId!,
+                                        communityId: widget.communityId,
+                                        isPublic: widget.isPublic,
+                                      ),
+                                    );
+                                }
+                              );
                             },
                             child: Container(
                               margin: const EdgeInsets.only(top: 6),
@@ -333,33 +329,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                               ),
                             ),
                           )
-                        // : _getChildCommentWidget(context, value.latestReplies!),
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _viewMoreReply = !_viewMoreReply;
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 6),
-                                  child: Text(
-                                    '~~~~~~ Hide reply',
-                                    style: themeData.textTheme.bodySmall!
-                                        .copyWith(),
-                                  ),
-                                ),
-                              ),
-                              NestedCommentWidget(
-                                postId: widget.postId,
-                                commentId: value.commentId!,
-                                communityId: widget.communityId,
-                                isPublic: widget.isPublic,
-                              ),
-                            ],
-                          ),
                   ),
               ],
             ),
@@ -469,11 +438,5 @@ class _CommentWidgetState extends State<CommentWidget> {
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    periodicTimer.cancel();
-    super.dispose();
   }
 }
