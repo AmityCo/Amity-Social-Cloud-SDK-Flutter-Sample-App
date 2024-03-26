@@ -12,7 +12,6 @@ import 'package:flutter_social_sample_app/presentation/screen/comment_query/comm
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_category/community_category_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/community_detail_screen/community_detail_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_in_review_post_list/community_in_review_post_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_list_screen.dart';
