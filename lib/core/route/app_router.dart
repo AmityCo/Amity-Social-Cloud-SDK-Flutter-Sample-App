@@ -238,12 +238,6 @@ class AppRouter {
                 PostDetailScreen(postId: state.params['postId']!),
           ),
           GoRoute(
-            name: AppRoute.communityDetail,
-            path: AppRoute.communityDetailRoute,
-            builder: (context, state) =>
-                CommunityDetailScreen(communityId: state.params['communityId']!),
-          ),
-          GoRoute(
             name: AppRoute.getCategory,
             path: AppRoute.getCategoryRoute,
             builder: (context, state) => CommunityCategoryScreen(

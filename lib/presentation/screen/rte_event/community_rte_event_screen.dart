@@ -7,7 +7,6 @@ import 'package:flutter_social_sample_app/core/widget/community_member_widget.da
 import 'package:flutter_social_sample_app/core/widget/community_profile_info_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
-import 'package:flutter_social_sample_app/core/widget/text_check_box_widget.dart';
 
 class CommunityRteEventScreen extends StatefulWidget {
   const CommunityRteEventScreen({super.key, required this.communityId});
@@ -17,13 +16,15 @@ class CommunityRteEventScreen extends StatefulWidget {
 }
 
 class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
-  Future<AmityCommunity>? _future;
+  late Future<List<AmityCommunityMember>> _membersFuture;
+
   final eventPool = <String, bool>{};
   AmityCommunity? amityCommunity;
   @override
   void initState() {
-    _future = AmitySocialClient.newCommunityRepository().getCommunity(widget.communityId);
+    fetchCommunityMembers();
     super.initState();
+
   }
 
   @override
@@ -32,8 +33,10 @@ class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
       appBar: AppBar(
         title: const Text('Community RTE'),
       ),
-      body: FutureBuilder<AmityCommunity>(
-          future: _future,
+      body: StreamBuilder<AmityCommunity>(
+        stream: AmitySocialClient.newCommunityRepository()
+          .live
+          .getCommunity(widget.communityId),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data != null) {
               amityCommunity = snapshot.data!;
@@ -43,49 +46,91 @@ class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
                     child: Wrap(
                       children: [
                         ...List.generate(
-                          AmityCommunityEvents.values.length,
-                          (index) => TextCheckBox(
-                            title: AmityCommunityEvents.values[index].name,
-                            value: eventPool[AmityCommunityEvents.values[index].name] ?? false,
-                            onChanged: (value) {
-                              final completer = Completer();
-                              ProgressDialog.showCompleter(context, completer);
+                            AmityCommunityEvents.values.length,
+                            (index) => Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    AmityCommunityEvents.values[index].name
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    final completer = Completer();
+                                    ProgressDialog.showCompleter(
+                                        context, completer);
 
-                              eventPool[AmityCommunityEvents.values[index].name] = value ?? false;
+                                    amityCommunity!
+                                        .subscription(
+                                            AmityCommunityEvents.values[index])
+                                        .subscribeTopic()
+                                        .then((value) {
+                                      completer.complete();
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context,
+                                          'Success',
+                                          'Subscribed to ${AmityCommunityEvents.values[index].name}');
+                                      setState(() {});
+                                    }).onError((error, stackTrace) {
+                                      completer.complete();
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context,
+                                          'Error',
+                                          'Failed to subscribe to ${AmityCommunityEvents.values[index].name} $error');
+                                    });
+                                  },
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<
+                                        EdgeInsetsGeometry>(EdgeInsets.zero),
+                                  ),
+                                  child: const SizedBox(
+                                    child: Center(
+                                      child: Text(
+                                        'Sub'
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    final completer = Completer();
+                                    ProgressDialog.showCompleter(
+                                        context, completer);
 
-                              if (eventPool[AmityCommunityEvents.values[index].name] ?? false) {
-                                ///Subscribe to the event
-                                amityCommunity!
-                                    .subscription(AmityCommunityEvents.values[index])
-                                    .subscribeTopic()
-                                    .then((value) {
-                                  completer.complete();
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Subcribed to ${AmityCommunityEvents.values[index].name}');
-                                }).onError((error, stackTrace) {
-                                  completer.complete();
-                                  CommonSnackbar.showNagativeSnackbar(context, 'Error',
-                                      'Failed to subscribe to ${AmityCommunityEvents.values[index].name} $error');
-                                });
-                              } else {
-                                ///Unsubscribe to the event
-                                amityCommunity!
-                                    .subscription(AmityCommunityEvents.values[index])
-                                    .unsubscribeTopic()
-                                    .then((value) {
-                                  completer.complete();
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Unsubcribed to ${AmityCommunityEvents.values[index].name}');
-                                }).onError((error, stackTrace) {
-                                  completer.complete();
-                                  CommonSnackbar.showNagativeSnackbar(context, 'Error',
-                                      'Failed to unsubscribe to ${AmityCommunityEvents.values[index].name} $error');
-                                });
-                              }
-                              setState(() {});
-                            },
+                                    amityCommunity!
+                                        .subscription(
+                                            AmityCommunityEvents.values[index])
+                                        .unsubscribeTopic()
+                                        .then((value) {
+                                      completer.complete();
+                                      CommonSnackbar.showPositiveSnackbar(
+                                          context,
+                                          'Success',
+                                          'Unsubscribed to ${AmityCommunityEvents.values[index].name}');
+                                      setState(() {});
+                                    }).onError((error, stackTrace) {
+                                      completer.complete();
+                                      CommonSnackbar.showNagativeSnackbar(
+                                          context,
+                                          'Error',
+                                          'Failed to unsubscribe to ${AmityCommunityEvents.values[index].name} $error');
+                                    });
+                                  },
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all<
+                                        EdgeInsetsGeometry>(EdgeInsets.zero),
+                                  ),
+                                  child: const SizedBox(
+                                    child: Center(
+                                      child: Text(
+                                        'Unsub'
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        )
                       ],
                     ),
                   ),
@@ -98,10 +143,16 @@ class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
                           amityCommunity: snapshot.data!,
                         );
                       }),
+                  ElevatedButton(
+                    onPressed: () {
+                      fetchCommunityMembers();
+                    },
+                    child: const Text('Fetch Members'),
+                  ),
                   FutureBuilder<List<AmityCommunityMember>>(
                     key: UniqueKey(),
                     future:
-                        AmitySocialClient.newCommunityRepository().membership(widget.communityId).getMembers().query(),
+                        _membersFuture,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final members = snapshot.data!;
@@ -126,20 +177,18 @@ class _CommunityRteEventScreenState extends State<CommunityRteEventScreen> {
                 ],
               );
             }
-
             return const Center(
               child: CircularProgressIndicator(),
             );
-          }),
-    );
+          })
+          );
+          
   }
 
-  @override
-  void dispose() {
-    amityCommunity!.subscription(AmityCommunityEvents.values[0]).unsubscribeTopic();
-    amityCommunity!.subscription(AmityCommunityEvents.values[1]).unsubscribeTopic();
-    amityCommunity!.subscription(AmityCommunityEvents.values[2]).unsubscribeTopic();
-    amityCommunity!.subscription(AmityCommunityEvents.values[3]).unsubscribeTopic();
-    super.dispose();
+  void fetchCommunityMembers() {
+    _membersFuture = AmitySocialClient.newCommunityRepository()
+        .membership(widget.communityId)
+        .getMembers()
+        .query();
   }
 }
