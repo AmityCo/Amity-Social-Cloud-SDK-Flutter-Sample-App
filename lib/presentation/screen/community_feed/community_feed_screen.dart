@@ -1,9 +1,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/feed_widget.dart';
+import 'package:get/utils.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class CommunityFeedScreen extends StatefulWidget {
   const CommunityFeedScreen(
@@ -23,6 +23,7 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
   // late PagingController<AmityPost> _controller;
   List<AmityPost> amityPosts = <AmityPost>[];
   late PostLiveCollection postLiveCollection;
+  AmityCommunity? _amityCommunity;
   final scrollcontroller = ScrollController();
   bool loading = false;
   AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
@@ -31,31 +32,20 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
 
   @override
   void initState() {
-    postLiveCollection = PostLiveCollection(
-        request: () => AmitySocialClient.newPostRepository()
-            .getPosts()
-            .targetCommunity(widget.communityId)
-            .feedType(AmityFeedType.PUBLISHED)
-            .includeDeleted(false)
-            .types(_dataType)
-            .tags(_tags)
-            .sortBy(_sortOption)
-            .onlyParent(true)
-            .build());
+    
+    postLiveCollectionInit();
 
-    postLiveCollection.getStreamController().stream.listen((event) {
-      if (mounted) {
-        setState(() {
-          amityPosts = event;
-        });
-      }
+    AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId)
+        .then((value) {
+      _amityCommunity = value;
+      _amityCommunity!
+          .subscription(AmityCommunityEvents.POSTS_AND_COMMENTS)
+          .subscribeTopic()
+          .then((value) {})
+          .onError((error, stackTrace) {});
     });
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      postLiveCollection.loadNext();
-    });
-
-    scrollcontroller.addListener(pagination);
+    
 
     // _controller = PagingController(
     //   pageFuture: (token) => AmitySocialClient.newPostRepository()
@@ -101,6 +91,45 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
       postLiveCollection.loadNext();
     }
   }
+
+  @override
+  void dispose() {
+    _amityCommunity!
+        .subscription(AmityCommunityEvents.values[1])
+        .unsubscribeTopic()
+        .then((value) {})
+        .onError((error, stackTrace) {});
+    super.dispose();
+  }
+
+  void postLiveCollectionInit(){
+    postLiveCollection = PostLiveCollection(
+        request: () => AmitySocialClient.newPostRepository()
+            .getPosts()
+            .targetCommunity(widget.communityId)
+            .feedType(AmityFeedType.PUBLISHED)
+            .includeDeleted(false)
+            .types(_dataType)
+            .tags(_tags)
+            .sortBy(_sortOption)
+            .build());
+
+    postLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityPosts = event;
+        });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      postLiveCollection.loadNext();
+    });
+
+    scrollcontroller.addListener(pagination);
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -164,9 +193,10 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _dataType.add(AmityDataType.FILE);
                         }
                       }
-
+                      setState(() {});
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
+
                     },
                   ),
                 ),
@@ -199,8 +229,9 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                         _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
+                      
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
                     },
                   ),
                 ),
@@ -219,7 +250,8 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
                           _tags = [];
                         }
                         postLiveCollection.reset();
-                        postLiveCollection.getFirstPageRequest();
+                        postLiveCollectionInit();
+
                       });
                     },
                   ),
@@ -227,22 +259,33 @@ class _CommunityFeedScreenState extends State<CommunityFeedScreen> {
               ],
             ),
           ),
+          Text("Size of posts: ${amityPosts.length}"),
           Expanded(
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollectionInit();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
                       itemCount: amityPosts.length,
                       itemBuilder: (context, index) {
                         final amityPost = amityPosts[index];
-                        return FeedWidget(
-                          communityId: widget.communityId,
-                          amityPost: amityPost,
-                          isPublic: widget.isPublic,
+                        var uniqueKey = UniqueKey();
+                        return VisibilityDetector(
+                          key: uniqueKey,
+                          onVisibilityChanged: (VisibilityInfo info) {
+                            if (info.visibleFraction > 0) {
+                              // amityPost.analytics().markPostAsViewed();
+                            }
+                          },
+                          child: FeedWidget(
+                            key: uniqueKey,
+                            communityId: widget.communityId,
+                            amityPost: amityPost,
+                            isPublic: widget.isPublic,
+                          ),
                         );
                       },
                     ),

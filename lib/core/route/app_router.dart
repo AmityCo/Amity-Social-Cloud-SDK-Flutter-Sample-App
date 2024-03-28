@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:flutter_social_sample_app/core/preferences/preference_interface_impl.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_create/channel_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_list/channel_list_screen.dart';
@@ -22,7 +23,8 @@ import 'package:flutter_social_sample_app/presentation/screen/community_profile/
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboar_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_story/create_story_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/dashboard/dashboard_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/follower_list/follower_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
@@ -36,6 +38,7 @@ import 'package:flutter_social_sample_app/presentation/screen/my_follower_list/m
 import 'package:flutter_social_sample_app/presentation/screen/my_following_list/my_following_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/post_detail/post_detail_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/post_reached_users/post_reached_users_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_message/reaction_list_message_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
@@ -52,7 +55,7 @@ import 'package:go_router/go_router.dart';
 
 class AppRouter {
   static GoRouter router = GoRouter(
-    initialLocation: AppRoute.homeRoute,
+    initialLocation: AppRoute.loginRoute,
     routes: [
       GoRoute(
         name: AppRoute.home,
@@ -64,17 +67,20 @@ class AppRouter {
           GoRoute(
             name: AppRoute.profile,
             path: AppRoute.profileRoute,
-            builder: (context, state) => UserProfileScreen(userId: state.params['userId']!),
+            builder: (context, state) =>
+                UserProfileScreen(userId: state.params['userId']!),
             routes: [
               GoRoute(
                 name: AppRoute.followersUser,
                 path: AppRoute.followersUserRoute,
-                builder: (context, state) => FollowerListScreen(userId: state.params['userId']!),
+                builder: (context, state) =>
+                    FollowerListScreen(userId: state.params['userId']!),
               ),
               GoRoute(
                 name: AppRoute.followingsUser,
                 path: AppRoute.followingsUserRoute,
-                builder: (context, state) => FollowingListScreen(userId: state.params['userId']!),
+                builder: (context, state) =>
+                    FollowingListScreen(userId: state.params['userId']!),
               ),
               GoRoute(
                 name: AppRoute.followersMy,
@@ -120,7 +126,7 @@ class AppRouter {
             builder: (context, state) {
               AmityStream amityStream = state.extra as AmityStream;
               return ViewStream(stream: amityStream);
-              },
+            },
           ),
           GoRoute(
             name: AppRoute.communityFeed,
@@ -133,13 +139,14 @@ class AppRouter {
           GoRoute(
             name: AppRoute.communityMember,
             path: AppRoute.communityMemmberRoute,
-            builder: (context, state) => CommunityMemberScreen(communityId: state.params['communityId']!),
+            builder: (context, state) => CommunityMemberScreen(
+                communityId: state.params['communityId']!),
           ),
-          
           GoRoute(
             name: AppRoute.userFeed,
             path: AppRoute.userFeedRoute,
-            builder: (context, state) => UserFeedScreen(userId: state.params['userId']!),
+            builder: (context, state) =>
+                UserFeedScreen(userId: state.params['userId']!),
           ),
           GoRoute(
             name: AppRoute.communityList,
@@ -163,16 +170,20 @@ class AppRouter {
                     GoRoute(
                       name: AppRoute.communityInReviewPost,
                       path: AppRoute.communityInReviewPostRoute,
-                      builder: (context, state) => CommunityInReviewPostListScreen(
-                          communityId: state.queryParams['communityId']!,
-                          isPublic: state.queryParams['isPublic'] == 'true'),
+                      builder: (context, state) =>
+                          CommunityInReviewPostListScreen(
+                              communityId: state.queryParams['communityId']!,
+                              isPublic:
+                                  state.queryParams['isPublic'] == 'true'),
                     ),
                     GoRoute(
                       name: AppRoute.communityPendingPost,
                       path: AppRoute.communityPendingPostRoute,
-                      builder: (context, state) => CommunityPendingPostListScreen(
-                          communityId: state.queryParams['communityId']!,
-                          isPublic: state.queryParams['isPublic'] == 'true'),
+                      builder: (context, state) =>
+                          CommunityPendingPostListScreen(
+                              communityId: state.queryParams['communityId']!,
+                              isPublic:
+                                  state.queryParams['isPublic'] == 'true'),
                     ),
                   ]),
               GoRoute(
@@ -203,27 +214,32 @@ class AppRouter {
           GoRoute(
             name: AppRoute.postReaction,
             path: AppRoute.postReactionRoute,
-            builder: (context, state) => ReactionListPostScreen(postId: state.params['postId']!),
+            builder: (context, state) =>
+                ReactionListPostScreen(postId: state.params['postId']!),
           ),
           GoRoute(
             name: AppRoute.commentReaction,
             path: AppRoute.commentReactionRoute,
-            builder: (context, state) => ReactionListCommentScreen(commentId: state.params['commentId']!),
+            builder: (context, state) => ReactionListCommentScreen(
+                commentId: state.params['commentId']!),
           ),
           GoRoute(
             name: AppRoute.messageReaction,
             path: AppRoute.messageReactionRoute,
-            builder: (context, state) => ReactionListMessageScreen(messageId: state.params['messageId']!),
+            builder: (context, state) => ReactionListMessageScreen(
+                messageId: state.params['messageId']!),
           ),
           GoRoute(
             name: AppRoute.postDetail,
             path: AppRoute.postDetailRoute,
-            builder: (context, state) => PostDetailScreen(postId: state.params['postId']!),
+            builder: (context, state) =>
+                PostDetailScreen(postId: state.params['postId']!),
           ),
           GoRoute(
             name: AppRoute.getCategory,
             path: AppRoute.getCategoryRoute,
-            builder: (context, state) => CommunityCategoryScreen(categoryId: state.params['categoryId']!),
+            builder: (context, state) => CommunityCategoryScreen(
+                categoryId: state.params['categoryId']!),
           ),
           GoRoute(
             name: AppRoute.createPollPost,
@@ -233,7 +249,8 @@ class AppRouter {
           GoRoute(
             name: AppRoute.chat,
             path: AppRoute.chatRoute,
-            builder: (context, state) => ChatScreen(channelId: state.params['channelId']!),
+            builder: (context, state) =>
+                ChatScreen(channelId: state.params['channelId']!),
           ),
         ],
       ),
@@ -267,12 +284,14 @@ class AppRouter {
       GoRoute(
         name: AppRoute.updateChannel,
         path: AppRoute.updateChannelRoute,
-        builder: (context, state) => ChannelUpdateScreen(channelId: state.queryParams['channelId']!),
+        builder: (context, state) =>
+            ChannelUpdateScreen(channelId: state.queryParams['channelId']!),
       ),
       GoRoute(
         name: AppRoute.updateMessage,
         path: AppRoute.updateMessageRoute,
-        builder: (context, state) => MessageUpdateScreen(messageId: state.queryParams['messageId']!),
+        builder: (context, state) =>
+            MessageUpdateScreen(messageId: state.queryParams['messageId']!),
       ),
       GoRoute(
         name: AppRoute.globalUserSearch,
@@ -287,6 +306,20 @@ class AppRouter {
           communityId: state.queryParams['communityId'],
           isPublic: state.queryParams['isPublic'] == 'true',
         ),
+
+        
+      ),
+      GoRoute(
+        name: AppRoute.createStory,
+        path: AppRoute.createStoryRoute,
+        builder: (context, state) => CreateStoryScreen(
+          targetType: AmityStoryTargetTypeExtension.enumOf(
+              state.queryParams['targetType']!),
+          targetId: state.queryParams['targetId'],
+          isVideoType: state.queryParams['isTypeVideo'] == 'true',
+        ),
+
+        
       ),
       GoRoute(
         name: AppRoute.commentList,
@@ -323,6 +356,15 @@ class AppRouter {
         },
       ),
       GoRoute(
+        name: AppRoute.getReachUser,
+        path: AppRoute.getReachUserRoute,
+        builder: (context, state) {
+          return PostReachedUsersScreen(
+            postId: state.queryParams['postId']!,
+          );
+        },
+      ),
+      GoRoute(
         name: AppRoute.commentRTE,
         path: AppRoute.commentRTERoute,
         builder: (context, state) {
@@ -355,11 +397,19 @@ class AppRouter {
         },
       ),
     ],
-    redirect: (context, state) {
-      if (state.location != AppRoute.loginRoute) {
-        if (!AmityCoreClient.isUserLoggedIn()) {
+    redirect: (context, state) async {
+      if (state.location == AppRoute.loginRoute) {
+        if (!await PreferenceInterfaceImpl().isLoggedIn()) {
           log('redirecting to /login');
           return AppRoute.loginRoute;
+        } else {
+          // var user = await AmityCoreClient.getLoggedInUser();
+          var userId = await PreferenceInterfaceImpl().loggedInUserId();
+          var userName = await PreferenceInterfaceImpl().loggedInUserDisplayName();
+          await AmityCoreClient.login(userId!)
+              .displayName(userName!)
+              .submit();
+          return AppRoute.homeRoute;
         }
       }
       return null;

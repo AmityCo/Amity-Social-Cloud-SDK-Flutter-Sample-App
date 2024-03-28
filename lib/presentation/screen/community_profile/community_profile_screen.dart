@@ -9,31 +9,32 @@ import 'package:flutter_social_sample_app/presentation/screen/community_feed/com
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_banned_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/story_list/story_list_screen.dart';
 import 'package:go_router/go_router.dart';
 
 class CommunityProfileScreen extends StatefulWidget {
-  const CommunityProfileScreen({Key? key, required this.communityId}) : super(key: key);
+  const CommunityProfileScreen({Key? key, required this.communityId})
+      : super(key: key);
   final String communityId;
   @override
   State<CommunityProfileScreen> createState() => _CommunityProfileScreenState();
 }
 
-class _CommunityProfileScreenState extends State<CommunityProfileScreen> with TickerProviderStateMixin {
+class _CommunityProfileScreenState extends State<CommunityProfileScreen>
+    with TickerProviderStateMixin {
   late TabController _tabController;
   late AmityCommunity _amityCommunity;
   Future<AmityCommunity>? _future;
 
-  
-
-  GlobalKey<CommunityMemberScreenState> memberList = GlobalKey<CommunityMemberScreenState>();
+  GlobalKey<CommunityMemberScreenState> memberList =
+      GlobalKey<CommunityMemberScreenState>();
   @override
-  void initState()  {
-    _tabController = TabController(length: 3, vsync: this);
-    
+  void initState() {
+    _tabController = TabController(length: 4, vsync: this);
 
-    _future = AmitySocialClient.newCommunityRepository().getCommunity(widget.communityId);
+    _future = AmitySocialClient.newCommunityRepository()
+        .getCommunity(widget.communityId);
     super.initState();
-
   }
 
   @override
@@ -77,32 +78,40 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
             onSelected: (index) {
               if (index == 1) {
                 //Open Edit Community
-                GoRouter.of(context)
-                    .goNamed(AppRoute.updateCommunity, queryParams: {'communityId': widget.communityId});
+                GoRouter.of(context).goNamed(AppRoute.updateCommunity,
+                    queryParams: {'communityId': widget.communityId});
               }
               if (index == 2) {
                 //Delete Community
-                AmitySocialClient.newCommunityRepository().deleteCommunity(widget.communityId);
+                AmitySocialClient.newCommunityRepository()
+                    .deleteCommunity(widget.communityId);
               }
               if (index == 4) {
                 EditTextDialog.show(context,
                     title: 'Check my permission in this community',
                     hintText: 'Enter permission name', onPress: (value) {
-                  final permissions = AmityPermission.values.where((v) => v.value == value);
+                  final permissions =
+                      AmityPermission.values.where((v) => v.value == value);
 
                   if (permissions.isEmpty) {
-                    ErrorDialog.show(context, title: 'Error', message: 'permission does not exist');
+                    ErrorDialog.show(context,
+                        title: 'Error', message: 'permission does not exist');
                   } else {
                     final hasPermission =
-                        AmityCoreClient.hasPermission(permissions.first).atCommunity(widget.communityId).check();
+                        AmityCoreClient.hasPermission(permissions.first)
+                            .atCommunity(widget.communityId)
+                            .check();
                     PositiveDialog.show(context,
-                        title: 'Permission', message: 'The permission "$value" is valid = $hasPermission');
+                        title: 'Permission',
+                        message:
+                            'The permission "$value" is valid = $hasPermission');
                   }
                 });
               }
               if (index == 5) {
                 //Open RTE event for community
-                GoRouter.of(context).pushNamed(AppRoute.communityRTE, queryParams: {'communityId': widget.communityId});
+                GoRouter.of(context).pushNamed(AppRoute.communityRTE,
+                    queryParams: {'communityId': widget.communityId});
               }
             },
           ),
@@ -122,16 +131,20 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
                       return [
                         SliverToBoxAdapter(
-                          child: _CommunityProfileHeaderWidget(amityCommunity: _amityCommunity),
+                          child: _CommunityProfileHeaderWidget(
+                              amityCommunity: _amityCommunity),
                         ),
                         SliverToBoxAdapter(
                           child: DefaultTabController(
-                            length: 3,
+                            length: 4,
                             child: TabBar(
                               controller: _tabController,
                               tabs: const [
                                 Tab(
                                   text: 'Feed',
+                                ),
+                                Tab(
+                                  text: 'Stories',
                                 ),
                                 Tab(
                                   text: 'Members',
@@ -153,6 +166,12 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                           communityId: widget.communityId,
                           showAppBar: false,
                           isPublic: _amityCommunity.isPublic ?? true,
+                        ),
+                        StoryListScreen(
+                          targetType: AmityStoryTargetType.COMMUNITY,
+                          targetId: widget.communityId,
+                          amityCommunity: _amityCommunity,
+                          showAppBar: false,
                         ),
                         CommunityMemberScreen(
                           key: memberList,
@@ -189,7 +208,8 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                         onPressed: () {
                           Navigator.of(context).pop();
                           //show create post for community
-                          GoRouter.of(context).pushNamed(AppRoute.createPost, queryParams: {
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.createPost, queryParams: {
                             'communityId': _amityCommunity.communityId,
                             'isPublic': _amityCommunity.isPublic.toString(),
                           });
@@ -205,7 +225,8 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                           //show create post for community
                           Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) {
-                              return CreatePollPostScreen(communityId: widget.communityId);
+                              return CreatePollPostScreen(
+                                  communityId: widget.communityId);
                             },
                           ));
                         },
@@ -214,13 +235,66 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                     ),
                   ],
                 ),
-                actions: [ElevatedButton(onPressed: () {}, child: const Text('Cancel'))],
+                actions: [
+                  ElevatedButton(onPressed: () {}, child: const Text('Cancel'))
+                ],
+              ),
+            );
+          } else if (_tabController.index == 1) {
+            //show add member action
+            // Add Stories
+
+            showDialog(
+              context: context,
+              builder: (_) => AlertDialog(
+                title: const Text('Please Select Story Type'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          //show create post for community
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.createStory, queryParams: {
+                            'targetId': _amityCommunity.communityId,
+                            'targetType': AmityStoryTargetType.COMMUNITY.value,
+                            'isTypeVideo': false.toString()
+                          });
+                        },
+                        child: const Text('Image Story'),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          //show create post for community
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.createStory, queryParams: {
+                            'targetId': _amityCommunity.communityId,
+                            'targetType': AmityStoryTargetType.COMMUNITY.value,
+                            'isTypeVideo': true.toString()
+                          });
+                        },
+                        child: const Text('Video Story'),
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  ElevatedButton(onPressed: () {}, child: const Text('Cancel'))
+                ],
               ),
             );
           } else {
             //show add member action
-            EditTextDialog.show(context, title: 'Add Member', hintText: 'Enter Comma seperated user Ids',
-                onPress: (value) {
+            EditTextDialog.show(context,
+                title: 'Add Member',
+                hintText: 'Enter Comma seperated user Ids', onPress: (value) {
               AmitySocialClient.newCommunityRepository()
                   .membership(widget.communityId)
                   .addMembers(value.split(','))
@@ -230,7 +304,8 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
                 }
                 //
               }).onError((error, stackTrace) {
-                ErrorDialog.show(context, title: 'Error', message: error.toString());
+                ErrorDialog.show(context,
+                    title: 'Error', message: error.toString());
               });
             });
           }
@@ -242,24 +317,28 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen> with Ti
 }
 
 class _CommunityProfileHeaderWidget extends StatefulWidget {
-  const _CommunityProfileHeaderWidget({Key? key, required this.amityCommunity}) : super(key: key);
+  const _CommunityProfileHeaderWidget({Key? key, required this.amityCommunity})
+      : super(key: key);
   final AmityCommunity amityCommunity;
 
   @override
-  State<_CommunityProfileHeaderWidget> createState() => _CommunityProfileHeaderWidgetState();
+  State<_CommunityProfileHeaderWidget> createState() =>
+      _CommunityProfileHeaderWidgetState();
 }
 
-class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWidget> {
+class _CommunityProfileHeaderWidgetState
+    extends State<_CommunityProfileHeaderWidget> {
   Future<List<String>?>? _rolesFuture;
-
+  Future<int>? _postCountFuture;
   @override
   void initState() {
-    if(widget.amityCommunity.communityId!=null){
-      _rolesFuture =  AmitySocialClient.newCommunityRepository().getCurrentUserRoles(widget.amityCommunity.communityId!);
+    if (widget.amityCommunity.communityId != null) {
+      _rolesFuture = AmitySocialClient.newCommunityRepository()
+          .getCurrentUserRoles(widget.amityCommunity.communityId!);
     }
+    _postCountFuture = widget.amityCommunity.getPostCount(AmityFeedType.PUBLISHED);
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -274,11 +353,15 @@ class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWi
               Container(
                 width: 64,
                 height: 64,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: widget.amityCommunity.avatarImage?.getUrl(AmityImageSize.MEDIUM) != null
+                child: widget.amityCommunity.avatarImage
+                            ?.getUrl(AmityImageSize.MEDIUM) !=
+                        null
                     ? Image.network(
-                        widget.amityCommunity.avatarImage!.getUrl(AmityImageSize.MEDIUM),
+                        widget.amityCommunity.avatarImage!
+                            .getUrl(AmityImageSize.MEDIUM),
                         fit: BoxFit.fill,
                       )
                     : Image.asset('assets/user_placeholder.png'),
@@ -288,27 +371,64 @@ class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWi
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${widget.amityCommunity.postsCount}\n',
-                            style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                    FutureBuilder<int>(
+                      future: _postCountFuture,
+                      builder:
+                          (BuildContext context, AsyncSnapshot<int> snapshot) {
+
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        return RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    '${snapshot.data}\n',
+                                style: themeData.textTheme.titleMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                  text: 'Approved Posts',
+                                  style: themeData.textTheme.bodyMedium),
+                            ],
                           ),
-                          TextSpan(text: 'Posts', style: themeData.textTheme.bodyMedium),
-                        ],
-                      ),
+                        );
+                      },
                     ),
+
+                    RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    '${widget.amityCommunity.postsCount}\n',
+                                style: themeData.textTheme.titleMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                  text: 'Total Posts',
+                                  style: themeData.textTheme.bodyMedium),
+                            ],
+                          ),
+                        ),
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         children: [
                           TextSpan(
                             text: '${widget.amityCommunity.membersCount}\n',
-                            style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
+                            style: themeData.textTheme.titleMedium!
+                                .copyWith(fontWeight: FontWeight.bold),
                           ),
-                          TextSpan(text: 'Members', style: themeData.textTheme.bodyMedium),
+                          TextSpan(
+                              text: 'Members',
+                              style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     )
@@ -332,7 +452,8 @@ class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWi
             future: _rolesFuture,
             builder: (context, snapshot) {
               var currentUserRoles = snapshot.data;
-              return Text("Current User Roles: ${currentUserRoles ?? "Not A member"}");
+              return Text(
+                  "Current User Roles: ${currentUserRoles ?? "Not A member"}");
             },
           ),
           const SizedBox(height: 18),
@@ -346,32 +467,39 @@ class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWi
                         .joinCommunity(widget.amityCommunity.communityId!)
                         .then((value) {})
                         .onError((error, stackTrace) {
-                      ErrorDialog.show(context, title: 'Error', message: error.toString());
+                      ErrorDialog.show(context,
+                          title: 'Error', message: error.toString());
                     });
                   } else {
                     AmitySocialClient.newCommunityRepository()
                         .leaveCommunity(widget.amityCommunity.communityId!)
                         .then((value) {})
                         .onError((error, stackTrace) {
-                      ErrorDialog.show(context, title: 'Error', message: error.toString());
+                      ErrorDialog.show(context,
+                          title: 'Error', message: error.toString());
                     });
                   }
                 },
-                child: Text(!(widget.amityCommunity.isJoined ?? true) ? 'Join' : 'Leave'),
+                child: Text(!(widget.amityCommunity.isJoined ?? true)
+                    ? 'Join'
+                    : 'Leave'),
               ),
             ),
           ),
-          if (widget.amityCommunity.hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
+          if (widget.amityCommunity
+                  .hasPermission(AmityPermission.REVIEW_COMMUNITY_POST) &&
               widget.amityCommunity.isPostReviewEnabled!)
             Center(
               child: SizedBox(
                 width: 260,
                 child: ElevatedButton(
                   onPressed: () {
-                    GoRouter.of(context).pushNamed(AppRoute.communityInReviewPost, queryParams: {
-                      'communityId': widget.amityCommunity.communityId,
-                      'isPublic': widget.amityCommunity.isPublic!.toString()
-                    });
+                    GoRouter.of(context).pushNamed(
+                        AppRoute.communityInReviewPost,
+                        queryParams: {
+                          'communityId': widget.amityCommunity.communityId,
+                          'isPublic': widget.amityCommunity.isPublic!.toString()
+                        });
                   },
                   child: const Text('Review Post'),
                 ),
@@ -383,7 +511,8 @@ class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWi
                 width: 260,
                 child: ElevatedButton(
                   onPressed: () {
-                    GoRouter.of(context).pushNamed(AppRoute.communityPendingPost, queryParams: {
+                    GoRouter.of(context)
+                        .pushNamed(AppRoute.communityPendingPost, queryParams: {
                       'communityId': widget.amityCommunity.communityId,
                       'isPublic': widget.amityCommunity.isPublic!.toString()
                     });
@@ -396,5 +525,10 @@ class _CommunityProfileHeaderWidgetState extends State<_CommunityProfileHeaderWi
         ],
       ),
     );
+  }
+
+
+  Future<int> getPostCount() async {
+    return await widget.amityCommunity.getPostCount(AmityFeedType.PUBLISHED);
   }
 }
