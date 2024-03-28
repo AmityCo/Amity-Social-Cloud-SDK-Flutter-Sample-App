@@ -12,7 +12,7 @@ class AmityPostVideoCreation {
   void uploadVideo(File uploadingVideo) {
     //first, upload video
     AmityCoreClient.newFileRepository()
-        .uploadVideo(uploadingVideo)
+        .uploadVideo(uploadingVideo , feedtype: AmityContentFeedType.POST)
         .stream
         .listen((AmityUploadResult<AmityVideo> amityResult) {
       amityResult.when(
