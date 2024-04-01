@@ -183,10 +183,11 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                           onPress: (value) {
                         if (value.isNotEmpty) {
                           _tags = value.trim().split(',');
-                  communityLiveCollection.reset();
-
-                  communityLiveCollectionInit();
+                        } else {
+                          _tags = null;
                         }
+                        communityLiveCollection.reset();
+                        communityLiveCollectionInit();
                       });
                     },
                   ),
@@ -201,9 +202,9 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                         onChanged: (value) {
                           setState(() {
                             _includeDelete = (value ?? false);
-                  communityLiveCollection.reset();
+                            communityLiveCollection.reset();
 
-                  communityLiveCollectionInit();
+                            communityLiveCollectionInit();
                           });
                         },
                       ),
@@ -229,6 +230,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                         return Container(
                           margin: const EdgeInsets.all(12),
                           child: CommunityWidget(
+                            key: ValueKey(amityCommunity.communityId),
                             amityCommunity: amityCommunity,
                             // onCommentCallback: () {
                             //   // GoRouter.of(context).goNamed('commentCommunityFeed',

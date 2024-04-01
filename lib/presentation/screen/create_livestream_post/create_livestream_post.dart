@@ -217,6 +217,7 @@ class _CreateLiveStreamPostScreenState extends State<CreateLiveStreamPostScreen>
           .targetCommunity(target)
           .liveStream(steramId)
           .text(text)
+          .mentionUsers(mentionedUserIds)
           .metadata(metadata)
           .post();
     } else {
@@ -226,6 +227,7 @@ class _CreateLiveStreamPostScreenState extends State<CreateLiveStreamPostScreen>
           .targetCommunity(target)
           .liveStream(text)
           .text(text)
+          .mentionUsers(mentionedUserIds)
           .metadata(metadata)
           .post();
     }
