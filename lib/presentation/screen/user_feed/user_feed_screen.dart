@@ -14,43 +14,36 @@ class UserFeedScreen extends StatefulWidget {
 }
 
 class _UserFeedScreenState extends State<UserFeedScreen> {
-  late PagingController<AmityPost> _controller;
   final amityPosts = <AmityPost>[];
+  late PostLiveCollection postLiveCollection;
 
   final scrollcontroller = ScrollController();
   bool loading = false;
 
-  AmityUserFeedSortOption _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+  AmityPostSortOption _sortOption = AmityPostSortOption.LAST_CREATED;
   final List<AmityDataType> _dataType = [];
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newFeedRepository()
-          .getUserFeed(widget.userId)
-          // .includeDeleted(false)
-          .sortBy(_sortOption)
-          .types(_dataType)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityPosts.clear();
-              amityPosts.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            // ErrorDialog.show(context,
-            //     title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
+    postLiveCollection = AmitySocialClient.newPostRepository()
+    .getPosts()
+    .targetUser(widget.userId)
+    .sortBy(_sortOption)
+      .sortBy(_sortOption)
+      .types(_dataType)
+      .getLiveCollection();
+
+    postLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityPosts.clear();
+          amityPosts.addAll(event);
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
+      postLiveCollection.loadNext();
     });
 
     scrollcontroller.addListener(pagination);
@@ -61,9 +54,9 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
   void pagination() {
     if ((scrollcontroller.position.pixels ==
             scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+        postLiveCollection.hasNextPage()) {
       setState(() {
-        _controller.fetchNextPage();
+        postLiveCollection.loadNext();
       });
     }
   }
@@ -131,8 +124,8 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                         }
                       }
 
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.loadNext();
                     },
                   ),
                 ),
@@ -159,14 +152,14 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                     ),
                     onSelected: (index) {
                       if (index == 2) {
-                        _sortOption = AmityUserFeedSortOption.FIRST_CREATED;
+                        _sortOption = AmityPostSortOption.FIRST_CREATED;
                       }
                       if (index == 3) {
-                        _sortOption = AmityUserFeedSortOption.LAST_CREATED;
+                        _sortOption = AmityPostSortOption.LAST_CREATED;
                       }
 
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.loadNext();
                     },
                   ),
                 ),
@@ -177,11 +170,10 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
             child: amityPosts.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      postLiveCollection.reset();
+                      postLiveCollection.loadNext();
                     },
-                    child: _controller.error == null
-                        ? ListView.builder(
+                    child: ListView.builder(
                             controller: scrollcontroller,
                             itemCount: amityPosts.length,
                             itemBuilder: (context, index) {
@@ -201,21 +193,15 @@ class _UserFeedScreenState extends State<UserFeedScreen> {
                               );
                             },
                           )
-                        : Container(
-                            alignment: Alignment.center,
-                            child: Text(_controller.error.toString()),
-                          ),
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
+                    child: postLiveCollection.isFetching
                         ? const CircularProgressIndicator()
-                        : Text(_controller.error == null
-                            ? 'No Post'
-                            : _controller.error.toString()),
+                        : Text('No Post'),
                   ),
           ),
-          if (_controller.isFetching && amityPosts.isNotEmpty)
+          if (postLiveCollection.isFetching && amityPosts.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
