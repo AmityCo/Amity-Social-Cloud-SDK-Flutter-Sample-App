@@ -29,7 +29,7 @@ class ReactionWidget extends StatelessWidget {
           const SizedBox(
             width: 12,
           ),
-          Text(reaction.userDisplayName!)
+          Text(reaction.userDisplayName ?? "")
         ],
       ),
     );
