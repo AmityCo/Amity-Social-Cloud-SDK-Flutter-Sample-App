@@ -14,39 +14,29 @@ class ReactionListCommentScreen extends StatefulWidget {
 }
 
 class _ReactionListCommentScreenState extends State<ReactionListCommentScreen> {
-  late PagingController<AmityReaction> _controller;
-  final amityReactions = <AmityReaction>[];
+
+  List<AmityReaction> amityReactions = <AmityReaction>[];
+  late ReactionLiveCollection reactionLiveCollection;
 
   final scrollcontroller = ScrollController();
   bool loading = false;
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newCommentRepository()
-          .getReaction(commentId: widget.commentId)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityReactions.clear();
-              amityReactions.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            print(_controller.error.toString());
-            print(_controller.stacktrace.toString());
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
+    reactionLiveCollection = AmitySocialClient.newCommentRepository()
+        .getReaction(commentId: widget.commentId)
+        .getLiveCollection();
+
+    reactionLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityReactions = event;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
+      reactionLiveCollection.loadNext();
     });
 
     scrollcontroller.addListener(pagination);
@@ -57,9 +47,9 @@ class _ReactionListCommentScreenState extends State<ReactionListCommentScreen> {
   void pagination() {
     if ((scrollcontroller.position.pixels ==
             scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+        reactionLiveCollection.hasNextPage()) {
       setState(() {
-        _controller.fetchNextPage();
+        reactionLiveCollection.loadNext();
       });
     }
   }
@@ -74,8 +64,8 @@ class _ReactionListCommentScreenState extends State<ReactionListCommentScreen> {
             child: amityReactions.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      reactionLiveCollection.reset();
+                      reactionLiveCollection.loadNext();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
@@ -94,12 +84,12 @@ class _ReactionListCommentScreenState extends State<ReactionListCommentScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
+                    child: reactionLiveCollection.isFetching
                         ? const CircularProgressIndicator()
                         : const Text('No Post'),
                   ),
           ),
-          if (_controller.isFetching && amityReactions.isNotEmpty)
+          if (reactionLiveCollection.isFetching && amityReactions.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
