@@ -13,7 +13,8 @@ import 'package:go_router/go_router.dart';
 
 class CommentWidget extends StatefulWidget {
   const CommentWidget(
-    this.postId,
+    this.referenceType,
+    this.referenceId,
     this.amityComment,
     this.onReply, {
     Key? key,
@@ -21,7 +22,8 @@ class CommentWidget extends StatefulWidget {
     required this.isPublic,
     this.disableAction = false,
   }) : super(key: key);
-  final String postId;
+  final String referenceType;
+  final String referenceId;
   final String? communityId;
   final bool? isPublic;
   final AmityComment amityComment;
@@ -160,7 +162,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                     ? Column(
                         children: [
                           (value.target is CommunityCommentTarget)
-
                               ? Container(
                                   child: Row(
                                     children: [
@@ -353,7 +354,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 ),
                               ),
                               NestedCommentWidget(
-                                postId: widget.postId,
+                                referenceId: widget.referenceId,
+                                referenceType: widget.referenceType,
                                 commentId: value.commentId!,
                                 communityId: widget.communityId,
                                 isPublic: widget.isPublic,
@@ -442,7 +444,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                   GoRouter.of(context)
                       .pushNamed(AppRoute.commentRTE, queryParams: {
                     'commentId': value.commentId,
-                    'postId': widget.postId,
+                    'referenceType': widget.referenceType,
+                    'referenceId': widget.referenceId,
                     'communityId': widget.communityId,
                     'isPublic': widget.isPublic.toString()
                   });
@@ -451,7 +454,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                   GoRouter.of(context).pushNamed(
                     AppRoute.commentListReply,
                     queryParams: {
-                      'postId': widget.postId,
+                      'referenceType': widget.referenceType,
+                      'referenceId': widget.referenceId,
                       'parentId': value.commentId,
                       'communityId': widget.communityId,
                       'isPublic': widget.isPublic.toString()

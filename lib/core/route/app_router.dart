@@ -333,7 +333,8 @@ class AppRouter {
         path: AppRoute.commentListRoute,
         builder: (context, state) {
           return CommentQueryScreen(
-            state.queryParams['postId']!,
+            referenceType: state.queryParams['referenceType']!,
+            referenceId: state.queryParams['referenceId']!,
             communityId: state.queryParams['communityId'],
             isPublic: state.queryParams['isPublic'] == 'true',
           );
@@ -344,8 +345,9 @@ class AppRouter {
         path: AppRoute.commentListReplyRoute,
         builder: (context, state) {
           return CommentQueryReplyScreen(
-            state.queryParams['postId']!,
-            state.queryParams['parentId']!,
+            state.queryParams['referenceType']!,
+            state.queryParams['referenceId']!,
+            state.queryParams['parentCommentId']!,
             communityId: state.queryParams['communityId'],
             isPublic: state.queryParams['isPublic'] == 'true',
           );
@@ -377,7 +379,8 @@ class AppRouter {
         builder: (context, state) {
           return CommentRteEventScreen(
             commentId: state.queryParams['commentId']!,
-            postId: state.queryParams['postId']!,
+            referenceType: state.queryParams['referenceType']!,
+            referenceId: state.queryParams['referenceId']!,
             communityId: state.queryParams['communityId'],
             isPublic: state.queryParams['isPublic'] == 'true',
           );

@@ -7,8 +7,9 @@ import 'package:go_router/go_router.dart';
 
 class CommentRteEventScreen extends StatefulWidget {
   const CommentRteEventScreen(
-      {super.key, required this.postId, required this.commentId, this.communityId, this.isPublic = false});
-  final String postId;
+      {super.key, required this.referenceType,required this.referenceId, required this.commentId, this.communityId, this.isPublic = false});
+  final String referenceType;
+  final String referenceId;
   final String? communityId;
   final bool isPublic;
   final String commentId;
@@ -83,7 +84,8 @@ class _CommentRteEventScreenState extends State<CommentRteEventScreen> {
                         ),
                       ),
                       CommentWidget(
-                        widget.postId,
+                        widget.referenceType,
+                        widget.referenceId,
                         _comment!,
                         (value) {},
                         communityId: widget.communityId,

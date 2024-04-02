@@ -7,12 +7,14 @@ import 'package:flutter_social_sample_app/core/widget/comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 
 class CommentQueryReplyScreen extends StatefulWidget {
-  const CommentQueryReplyScreen(this._postId, this._parentCommentId,
+  const CommentQueryReplyScreen( this.referenceType,
+       this.referenceId, this._parentCommentId,
       {Key? key, this.communityId, this.isPublic = false})
       : super(key: key);
   final String? communityId;
   final bool isPublic;
-  final String _postId;
+  final String referenceType;
+  final String referenceId;
   final String _parentCommentId;
   @override
   State<CommentQueryReplyScreen> createState() => _CommentQueryReplyScreenState();
@@ -33,10 +35,11 @@ class _CommentQueryReplyScreenState extends State<CommentQueryReplyScreen> {
 
   @override
   void initState() {
-    _controller = PagingController(
+    if(widget.referenceType == 'post'){
+      _controller = PagingController(
       pageFuture: (token) => AmitySocialClient.newCommentRepository()
           .getComments()
-          .post(widget._postId)
+          .post(widget.referenceId)
           .parentId(widget._parentCommentId)
           .sortBy(_sortOption)
           .dataTypes(dataTypes)
@@ -58,6 +61,34 @@ class _CommentQueryReplyScreenState extends State<CommentQueryReplyScreen> {
           }
         },
       );
+    }else if(widget.referenceType == "story"){
+      _controller = PagingController(
+      pageFuture: (token) => AmitySocialClient.newCommentRepository()
+          .getComments()
+          .story(widget.referenceId)
+          .parentId(widget._parentCommentId)
+          .sortBy(_sortOption)
+          .dataTypes(dataTypes)
+          .includeDeleted(_includeDeleted)
+          .getPagingData(token: token, limit: GlobalConstant.pageSize),
+      pageSize: GlobalConstant.pageSize,
+    )..addListener(
+        () {
+          if (_controller.error == null) {
+            setState(() {
+              amityComments.clear();
+              amityComments.addAll(_controller.loadedItems);
+            });
+          } else {
+            //Error on pagination controller
+            setState(() {});
+            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
+            print(_controller.stacktrace);
+          }
+        },
+      );
+    }
+
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
@@ -215,7 +246,8 @@ class _CommentQueryReplyScreenState extends State<CommentQueryReplyScreen> {
                       itemBuilder: (context, index) {
                         final amityComment = amityComments[index];
                         return CommentWidget(
-                          widget._postId,
+                          widget.referenceType,
+                          widget.referenceId,
                           amityComment,
                           (value) {
                             // setState(() {

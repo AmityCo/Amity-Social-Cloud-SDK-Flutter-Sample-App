@@ -3,11 +3,15 @@ import 'dart:io';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
+import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
+import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 
 class StoryWidget extends StatelessWidget {
@@ -161,9 +165,60 @@ class StoryWidget extends StatelessWidget {
                         storyData: story.data!,
                       ),
                     const SizedBox(height: 8),
+                    FeedReactionActionWidget(amityStory: story, onCommentCallback: () {
+                      GoRouter.of(context).pushNamed(
+                            AppRoute.commentList,
+                            queryParams: {
+                              'referenceType': 'story',
+                              'referenceId': story.storyId!,
+                              'communityId': story.targetId,
+                              'isPublic': true.toString()
+                            },
+                          );
+                    }),
                   ],
                 ),
               ),
+
+               AddCommentWidget(
+                        AmityCoreClient.getCurrentUser(),
+                        (text, user, attachments) {
+                          final mentionUsers = <AmityUser>[];
+
+                          mentionUsers.clear();
+                          mentionUsers.addAll(user);
+
+                          //Clean up mention user list, as user might have removed some tagged user
+                          mentionUsers.removeWhere((element) =>
+                              !text.contains(element.displayName!));
+
+                          final amityMentioneesMetadata = mentionUsers
+                              .map<AmityUserMentionMetadata>((e) =>
+                                  AmityUserMentionMetadata(
+                                      userId: e.userId!,
+                                      index: text.indexOf('@${e.displayName!}'),
+                                      length: e.displayName!.length))
+                              .toList();
+
+                          Map<String, dynamic> metadata =
+                              AmityMentionMetadataCreator(
+                                      amityMentioneesMetadata)
+                                  .create();
+
+                          AmitySocialClient.newCommentRepository().createComment().story(story.storyId!)
+                              .create()
+                              .text(text)
+                              .mentionUsers(mentionUsers
+                                  .map<String>((e) => e.userId!)
+                                  .toList())
+                              .metadata(metadata)
+                              .send();
+                        },
+                        communityId: targetId,
+                        isPublic: true,
+                      ),
+                  
+
             ],
           ),
         ),
@@ -385,3 +440,115 @@ class _MiniVideoPlayerState extends State<MiniVideoPlayer> {
           );
   }
 }
+
+
+
+class FeedReactionActionWidget extends StatelessWidget {
+  final AmityStory amityStory;
+  final VoidCallback onCommentCallback;
+  FeedReactionActionWidget(
+      {Key? key, required this.amityStory, required this.onCommentCallback})
+      : super(key: key);
+  final LayerLink link = LayerLink();
+
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
+    bool isFlagedByMe = amityStory.myReactions?.isNotEmpty ?? false;
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          CompositedTransformTarget(
+            link: link,
+            child: TextButton.icon(
+              onPressed: () {
+                if (isFlagedByMe) {
+                  AmitySocialClient.newReactionRepository().removeReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), 'like').then((value) {
+                    print(value.myReactions);
+                  });
+                } else {
+                  AmitySocialClient.newReactionRepository().addReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), 'like').then((value) {
+                    print(value.myReactions);
+                  });
+                }
+              },
+              onLongPress: () {
+                //Show more option to react
+                ReactionActionWidget.showAsOverLay(
+                  context,
+                  link,
+                  (reaction) {
+                    if (isFlagedByMe) {
+                      AmitySocialClient.newReactionRepository().removeReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), reaction);
+                    } else {
+                      AmitySocialClient.newReactionRepository().addReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), reaction);
+                    }
+                  },
+                );
+              },
+              icon: Image.asset(
+                isFlagedByMe ? 'assets/ic_liked.png' : 'assets/ic_like.png',
+                height: 18,
+                width: 18,
+              ),
+              label: Text(
+                'Like',
+                style: themeData.textTheme.titleMedium!.copyWith(
+                    color: Colors.black54, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+          TextButton.icon(
+            onPressed: onCommentCallback,
+            icon: const ImageIcon(AssetImage('assets/ic_comment.png')),
+            label: Text(
+              'Comment',
+              style: themeData.textTheme.titleMedium!
+                  .copyWith(color: Colors.black54, fontWeight: FontWeight.w600),
+            ),
+          ),
+          // Visibility(
+          //   visible: true,
+          //   child: TextButton.icon(
+          //     onPressed: () {
+          //       if (amityStory.isFlaggedByMe) {
+          //         amityPost.report().unflag().then((value) {
+          //           CommonSnackbar.showPositiveSnackbar(
+          //               context, 'Success', 'Unflagged the Post');
+          //         }).onError((error, stackTrace) {
+          //           CommonSnackbar.showNagativeSnackbar(
+          //               context, 'Error', error.toString());
+          //         });
+          //       } else {
+          //         amityStory.report().flag().then((value) {
+          //           CommonSnackbar.showPositiveSnackbar(
+          //               context, 'Success', 'Flag the Post');
+          //         }).onError((error, stackTrace) {
+          //           CommonSnackbar.showNagativeSnackbar(
+          //               context, 'Error', error.toString());
+          //         });
+          //       }
+          //     },
+          //     icon: amityPost.isFlaggedByMe
+          //         ? const ImageIcon(
+          //             AssetImage('assets/ic_flagged.png'),
+          //           )
+          //         : const ImageIcon(
+          //             AssetImage('assets/ic_flag.png'),
+          //           ),
+          //     // icon: Image.asset('assets/ic_comment.png'),
+          //     label: Text(
+          //       amityPost.isFlaggedByMe ? 'Falgged' : 'Flag',
+          //       style: themeData.textTheme.titleMedium!.copyWith(
+          //           color: Colors.black54, fontWeight: FontWeight.w600),
+          //     ),
+          //   ),
+          // )
+        ],
+      ),
+    );
+  }
+}
+

@@ -10,10 +10,17 @@ import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 
 class CommentQueryScreen extends StatefulWidget {
-  const CommentQueryScreen(this._postId, {Key? key, this.communityId, this.isPublic = false}) : super(key: key);
+  const CommentQueryScreen(
+      {required this.referenceType,
+      required this.referenceId,
+      Key? key,
+      this.communityId,
+      this.isPublic = false})
+      : super(key: key);
   final String? communityId;
   final bool isPublic;
-  final String _postId;
+  final String referenceType;
+  final String referenceId;
   @override
   State<CommentQueryScreen> createState() => _CommentQueryScreenState();
 }
@@ -37,30 +44,59 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newCommentRepository()
-          .getComments()
-          .post(widget._postId)
-          .sortBy(_sortOption)
-          .dataTypes(dataTypes)
-          .includeDeleted(_includeDeleted)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityComments.clear();
-              amityComments.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            ErrorDialog.show(context, title: 'Error', message: _controller.error.toString());
-            print(_controller.stacktrace);
-          }
-        },
-      );
+    if (widget.referenceType == 'post') {
+      _controller = PagingController(
+        pageFuture: (token) => AmitySocialClient.newCommentRepository()
+            .getComments()
+            .post(widget.referenceId)
+            .sortBy(_sortOption)
+            .dataTypes(dataTypes)
+            .includeDeleted(_includeDeleted)
+            .getPagingData(token: token, limit: GlobalConstant.pageSize),
+        pageSize: GlobalConstant.pageSize,
+      )..addListener(
+          () {
+            if (_controller.error == null) {
+              setState(() {
+                amityComments.clear();
+                amityComments.addAll(_controller.loadedItems);
+              });
+            } else {
+              //Error on pagination controller
+              setState(() {});
+              ErrorDialog.show(context,
+                  title: 'Error', message: _controller.error.toString());
+              print(_controller.stacktrace);
+            }
+          },
+        );
+    } else if (widget.referenceType == 'story') {
+      _controller = PagingController(
+        pageFuture: (token) => AmitySocialClient.newCommentRepository()
+            .getComments()
+            .story(widget.referenceId)
+            .sortBy(_sortOption)
+            .dataTypes(dataTypes)
+            .includeDeleted(_includeDeleted)
+            .getPagingData(token: token, limit: GlobalConstant.pageSize),
+        pageSize: GlobalConstant.pageSize,
+      )..addListener(
+          () {
+            if (_controller.error == null) {
+              setState(() {
+                amityComments.clear();
+                amityComments.addAll(_controller.loadedItems);
+              });
+            } else {
+              //Error on pagination controller
+              setState(() {});
+              ErrorDialog.show(context,
+                  title: 'Error', message: _controller.error.toString());
+              print(_controller.stacktrace);
+            }
+          },
+        );
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
@@ -72,7 +108,9 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
+    if ((scrollcontroller.position.pixels ==
+            scrollcontroller.position.maxScrollExtent) &&
+        _controller.hasMoreItems) {
       setState(() {
         _controller.fetchNextPage();
       });
@@ -161,26 +199,32 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
               }
 
               if (index1 == 3) {
-                dataTypes = AmityCommentDataTypeFilter.exact(dataTypes: [AmityDataType.TEXT]);
+                dataTypes = AmityCommentDataTypeFilter.exact(
+                    dataTypes: [AmityDataType.TEXT]);
               }
 
               if (index1 == 4) {
-                dataTypes = AmityCommentDataTypeFilter.exact(dataTypes: [AmityDataType.IMAGE]);
+                dataTypes = AmityCommentDataTypeFilter.exact(
+                    dataTypes: [AmityDataType.IMAGE]);
               }
               if (index1 == 11) {
-                dataTypes = AmityCommentDataTypeFilter.exact(dataTypes: [AmityDataType.TEXT, AmityDataType.IMAGE]);
+                dataTypes = AmityCommentDataTypeFilter.exact(
+                    dataTypes: [AmityDataType.TEXT, AmityDataType.IMAGE]);
               }
 
               if (index1 == 5) {
-                dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.TEXT]);
+                dataTypes = AmityCommentDataTypeFilter.any(
+                    dataTypes: [AmityDataType.TEXT]);
               }
 
               if (index1 == 6) {
-                dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.IMAGE]);
+                dataTypes = AmityCommentDataTypeFilter.any(
+                    dataTypes: [AmityDataType.IMAGE]);
               }
 
               if (index1 == 12) {
-                dataTypes = AmityCommentDataTypeFilter.any(dataTypes: [AmityDataType.IMAGE, AmityDataType.TEXT]);
+                dataTypes = AmityCommentDataTypeFilter.any(
+                    dataTypes: [AmityDataType.IMAGE, AmityDataType.TEXT]);
               }
 
               if (index1 == 7) {
@@ -218,7 +262,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                       itemBuilder: (context, index) {
                         final amityComment = amityComments[index];
                         return CommentWidget(
-                          widget._postId,
+                          widget.referenceType,
+                          widget.referenceId,
                           amityComment,
                           (value) {
                             setState(() {
@@ -234,7 +279,9 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Comment'),
+                    child: _controller.isFetching
+                        ? const CircularProgressIndicator()
+                        : const Text('No Comment'),
                   ),
           ),
           if (_controller.isFetching && amityComments.isNotEmpty)
@@ -278,21 +325,30 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                   mentionUsers.addAll(user);
 
                   //Clean up mention user list, as user might have removed some tagged user
-                  mentionUsers.removeWhere((element) => !text.contains(element.displayName!));
+                  mentionUsers.removeWhere(
+                      (element) => !text.contains(element.displayName!));
 
                   final amityMentioneesMetadata = mentionUsers
-                      .map<AmityUserMentionMetadata>((e) => AmityUserMentionMetadata(
-                          userId: e.userId!, index: text.indexOf('@${e.displayName!}'), length: e.displayName!.length))
+                      .map<AmityUserMentionMetadata>((e) =>
+                          AmityUserMentionMetadata(
+                              userId: e.userId!,
+                              index: text.indexOf('@${e.displayName!}'),
+                              length: e.displayName!.length))
                       .toList();
 
-                  Map<String, dynamic> metadata = AmityMentionMetadataCreator(amityMentioneesMetadata).create();
+                  Map<String, dynamic> metadata =
+                      AmityMentionMetadataCreator(amityMentioneesMetadata)
+                          .create();
 
                   List<CommentImageAttachment> amityImages = [];
                   if (attachments.isNotEmpty) {
                     for (var element in attachments) {
-                      final image =
-                          await waitForUploadComplete(AmityCoreClient.newFileRepository().uploadImage(element).stream);
-                      amityImages.add(CommentImageAttachment(fileId: image.fileId!));
+                      final image = await waitForUploadComplete(
+                          AmityCoreClient.newFileRepository()
+                              .uploadImage(element)
+                              .stream);
+                      amityImages
+                          .add(CommentImageAttachment(fileId: image.fileId!));
                     }
                   }
 
@@ -303,7 +359,8 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                         .create()
                         .attachments(amityImages)
                         .text(text)
-                        .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
+                        .mentionUsers(
+                            mentionUsers.map<String>((e) => e.userId!).toList())
                         .metadata(metadata)
                         .send();
 
@@ -314,24 +371,48 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                     return;
                   }
 
-                  final _comment = await AmitySocialClient.newCommentRepository()
-                      .createComment()
-                      .post(widget._postId)
-                      .create()
-                      .attachments(amityImages)
-                      .text(text)
-                      .mentionUsers(mentionUsers.map<String>((e) => e.userId!).toList())
-                      .metadata(metadata)
-                      .send();
+                  if (widget.referenceType == "post") {
+                    final _comment =
+                        await AmitySocialClient.newCommentRepository()
+                            .createComment()
+                            .post(widget.referenceId)
+                            .create()
+                            .attachments(amityImages)
+                            .text(text)
+                            .mentionUsers(mentionUsers
+                                .map<String>((e) => e.userId!)
+                                .toList())
+                            .metadata(metadata)
+                            .send();
 
-                  /// Remove this line Post Comment Create RTE will refresh the list
-                  _controller.addAtIndex(0, _comment);
+                    /// Remove this line Post Comment Create RTE will refresh the list
+                    _controller.addAtIndex(0, _comment);
+                  } else if (widget.referenceType == "story") {
+                    final _comment =
+                        await AmitySocialClient.newCommentRepository()
+                            .createComment()
+                            .story(widget.referenceId)
+                            .create()
+                            .attachments(amityImages)
+                            .text(text)
+                            .mentionUsers(mentionUsers
+                                .map<String>((e) => e.userId!)
+                                .toList())
+                            .metadata(metadata)
+                            .send();
+
+                    /// Remove this line Post Comment Create RTE will refresh the list
+                    _controller.addAtIndex(0, _comment);
+                  }
+
                   return;
                 } catch (error, stackTrace) {
                   if (error is AmityException) {
-                    CommonSnackbar.showNagativeSnackbar(context, 'Error', '$error\n${error.data}');
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', '$error\n${error.data}');
                   } else {
-                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
                   }
                 } finally {
                   completer.complete();
