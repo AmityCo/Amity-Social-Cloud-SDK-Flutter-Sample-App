@@ -387,7 +387,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       for (final _file in files) {
         final uploadCompleter = Completer();
         AmityCoreClient.newFileRepository()
-            .uploadVideo(_file)
+            .uploadVideo(_file, feedtype: AmityContentFeedType.POST)
             .stream
             .listen((event) {
           uploadInfoStream.add(UploadInfo(_file.path, event));
