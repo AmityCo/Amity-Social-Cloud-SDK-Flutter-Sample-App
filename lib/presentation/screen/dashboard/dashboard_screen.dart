@@ -191,6 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Communities'),
                 ),
+
                 // const SizedBox(height: 20),
                 // TextButton(
                 //   onPressed: () {

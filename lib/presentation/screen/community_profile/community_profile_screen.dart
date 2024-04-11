@@ -233,6 +233,21 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         child: const Text('Poll Post'),
                       ),
                     ),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          //show create post for community
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.createLiveStreamPost, queryParams: {
+                            'communityId': _amityCommunity.communityId,
+                            'isPublic': _amityCommunity.isPublic.toString(),
+                          });
+                        },
+                        child: const Text('LiveStream Post'),
+                      ),
+                    ),
                   ],
                 ),
                 actions: [

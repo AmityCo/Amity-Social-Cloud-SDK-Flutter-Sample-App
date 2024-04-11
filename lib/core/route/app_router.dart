@@ -21,6 +21,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_member/c
 import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_livestream_post/create_livestream_post.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_story/create_story_screen.dart';
@@ -320,6 +321,15 @@ class AppRouter {
         ),
 
         
+      ),
+      GoRoute(
+        name: AppRoute.createLiveStreamPost,
+        path: AppRoute.createLiveStreamPostRoute,
+        builder: (context, state) => CreateLiveStreamPostScreen(
+          userId: state.queryParams['userId'],
+          communityId: state.queryParams['communityId'],
+          isPublic: state.queryParams['isPublic'] == 'true',
+        ),
       ),
       GoRoute(
         name: AppRoute.commentList,
