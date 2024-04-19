@@ -57,6 +57,16 @@ class StoryWidget extends StatelessWidget {
                                 enabled: true,
                                 child: Text("Delete (Soft)"),
                               ),
+                              const PopupMenuItem(
+                                value: 2,
+                                enabled: true,
+                                child: Text("Mark Story as Viewed"),
+                              ),
+                              const PopupMenuItem(
+                                value: 3,
+                                enabled: true,
+                                child: Text("Mark Story as Clicked"),
+                              ),
                             ];
                           },
                           child: const Icon(
@@ -84,6 +94,9 @@ class StoryWidget extends StatelessWidget {
                                     context, 'Error', error.toString());
                               });
                             }
+
+                            if (index == 2) {}
+                            if (index == 3) {}
                           },
                         ),
                       ],
@@ -164,7 +177,15 @@ class StoryWidget extends StatelessWidget {
                         story: story,
                         storyData: story.data!,
                       ),
-                    const SizedBox(height: 8),
+                    Divider(height: .5, color: Colors.grey.shade300),
+                    Container(
+                        key: UniqueKey(),
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        child: FeedReactionInfoWidget(amityStory: story)),
+                    Divider(height: .5, color: Colors.grey.shade300),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     FeedReactionActionWidget(amityStory: story, onCommentCallback: () {
                       GoRouter.of(context).pushNamed(
                             AppRoute.commentList,
@@ -443,6 +464,56 @@ class _MiniVideoPlayerState extends State<MiniVideoPlayer> {
 
 
 
+class FeedReactionInfoWidget extends StatelessWidget {
+  final AmityStory amityStory;
+  const FeedReactionInfoWidget({Key? key, required this.amityStory})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final themeData = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(top: 8, bottom: 8),
+      child: Row(
+        children: [
+          TextButton.icon(
+            onPressed: () {
+              GoRouter.of(context).pushNamed(AppRoute.storyReaction,
+                  params: {'storyId': amityStory.storyId!});
+              // amityPost.getReaction().getPagingData().then((value) {
+              //   print(value);
+              // });
+            },
+            icon: Image.asset(
+              'assets/ic_liked.png',
+              height: 18,
+              width: 18,
+            ),
+            label: Text(
+              '${amityStory.reactionCount}',
+              style: themeData.textTheme.titleMedium!
+                  .copyWith(color: Colors.black54),
+            ),
+          ),
+          const Spacer(),
+          Text(
+            '${amityStory.commentCount} Comment',
+            style: themeData.textTheme.titleMedium!
+                .copyWith(color: Colors.black54),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            '${amityStory.flagCount} Flag',
+            style: themeData.textTheme.titleMedium!
+                .copyWith(color: Colors.black54),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+
 class FeedReactionActionWidget extends StatelessWidget {
   final AmityStory amityStory;
   final VoidCallback onCommentCallback;
@@ -454,7 +525,7 @@ class FeedReactionActionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
-    bool isFlagedByMe = amityStory.myReactions?.isNotEmpty ?? false;
+    bool isFlagedByMe = amityStory.myReactions.isNotEmpty;
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       child: Row(

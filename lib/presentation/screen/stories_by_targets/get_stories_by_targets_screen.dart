@@ -3,23 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/story_widget.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class StoryListScreen extends StatefulWidget {
-  final AmityStoryTargetType targetType;
-  final String targetId;
+class GetStoriesByTargetsScreen extends StatefulWidget {
+  final String targets;
   final bool showAppBar;
-  final AmityCommunity amityCommunity;
-  const StoryListScreen(
-      {super.key,
-      required this.targetType,
-      required this.targetId,
-      this.showAppBar = true,
-      required this.amityCommunity});
+  const GetStoriesByTargetsScreen({
+    super.key,
+    required this.targets,
+    this.showAppBar = true,
+  });
 
   @override
-  State<StoryListScreen> createState() => _StoryListScreenState();
+  State<GetStoriesByTargetsScreen> createState() =>
+      _GetStoriesByTargetsScreenState();
 }
 
-class _StoryListScreenState extends State<StoryListScreen> {
+class _GetStoriesByTargetsScreenState extends State<GetStoriesByTargetsScreen> {
+  List<StoryTargetSearchInfo> storyTargetSearchInfos = [];
   List<AmityStory> amityStories = <AmityStory>[];
   // late StoryLive
   late StoryLiveCollection storyLiveCollection;
@@ -28,58 +27,27 @@ class _StoryListScreenState extends State<StoryListScreen> {
 
   @override
   void initState() {
+    var splitTargets = widget.targets.split(',');
+    print("splitTargets: $splitTargets");
+    for (var target in splitTargets) {
+      var splitedTarget = target.split('/');
+      print("splitedTarget: $splitedTarget");
+      storyTargetSearchInfos.add(StoryTargetSearchInfo(
+          targetType: AmityStoryTargetTypeExtension.enumOf(splitedTarget[0]),
+          targetId: splitedTarget[1]));
+    }
     storyLiveCollectionInit();
-    widget.amityCommunity
-        .subscription(AmityCommunityEvents.STORIES_AND_COMMENTS)
-        .subscribeTopic()
-        .then((value) {})
-        .onError((error, stackTrace) {});
-
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    widget.amityCommunity
-        .subscription(AmityCommunityEvents.STORIES_AND_COMMENTS)
-        .unsubscribeTopic()
-        .then((value) {})
-        .onError((error, stackTrace) {});
-    super.dispose();
-  }
-
-  void storyLiveCollectionInit() {
-    storyLiveCollection = StoryLiveCollection(
-        request:  ()=> AmitySocialClient.newStoryRepository()
-            .getActiveStories(
-                targetId: widget.targetId,
-                targetType: widget.targetType,
-                orderBy: _sortOption)
-            .build());
-
-    storyLiveCollection.getStreamController().stream.listen((event) {
-      if (mounted) {
-        setState(() {
-          amityStories = event;
-        });
-      }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      storyLiveCollection.getData();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: widget.showAppBar
-          ? AppBar(
-              title: Text('${widget.targetType.value} - ${widget.targetId}'))
+          ? AppBar(title: const Text('Get Stories By Targets Screen'))
           : null,
       body: Column(
         children: [
-          Text("Size of posts: ${amityStories.length}"),
           Container(
             padding: const EdgeInsets.all(8),
             child: PopupMenuButton(
@@ -134,9 +102,9 @@ class _StoryListScreenState extends State<StoryListScreen> {
                           child: StoryWidget(
                             key: uniqueKey,
                             story: amityStory,
-                            disableAction: false ,
-                            targetType: widget.targetType,
-                            targetId: widget.targetId,
+                            disableAction: false,
+                            targetType: amityStory.targetType!,
+                            targetId: amityStory.targetId!,
                           ),
                         );
                       },
@@ -157,5 +125,25 @@ class _StoryListScreenState extends State<StoryListScreen> {
         ],
       ),
     );
+  }
+
+  void storyLiveCollectionInit() {
+    storyLiveCollection = StoryLiveCollection(
+        request: () => AmitySocialClient.newStoryRepository()
+            .getStoriesByTargets(
+                targets: storyTargetSearchInfos, orderBy: _sortOption)
+            .build());
+
+    storyLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityStories = event;
+        });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      storyLiveCollection.getData();
+    });
   }
 }

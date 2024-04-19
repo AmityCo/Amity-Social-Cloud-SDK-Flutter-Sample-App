@@ -39,13 +39,16 @@ import 'package:flutter_social_sample_app/presentation/screen/my_following_list/
 import 'package:flutter_social_sample_app/presentation/screen/my_pending_follower_list/my_pending_follower_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/post_detail/post_detail_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/post_reached_users/post_reached_users_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/reaction_list/reaction_list_story_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_comment/reaction_list_comment_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_message/reaction_list_message_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/reaction_list_post/reaction_list_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/comment_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/community_rte_event_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/rte_event/post_rte_event_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/stories_by_targets/get_stories_by_targets_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/story_details/story_details_screens.dart';
+import 'package:flutter_social_sample_app/presentation/screen/story_targets_by_targets%20/targets_by_targets_screens.dart';
 import 'package:flutter_social_sample_app/presentation/screen/stream_list/stream_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
@@ -219,6 +222,12 @@ class AppRouter {
                 ReactionListPostScreen(postId: state.params['postId']!),
           ),
           GoRoute(
+            name: AppRoute.storyReaction,
+            path: AppRoute.storyReactionRoute,
+            builder: (context, state) =>
+                ReactionListStoryScreen(referenceId: state.params['storyId']!),
+          ),
+          GoRoute(
             name: AppRoute.commentReaction,
             path: AppRoute.commentReactionRoute,
             builder: (context, state) => ReactionListCommentScreen(
@@ -247,6 +256,25 @@ class AppRouter {
             path: AppRoute.storyDetailsRoute,
             builder: (context, state) => StoryDetailsScreen(
                 storyId: state.params['storyId']!),
+          ),
+          GoRoute(
+            name: AppRoute.storyByTargets,
+            path: AppRoute.storyByTargetsRoute,
+            builder: (context, state) {
+
+               return GetStoriesByTargetsScreen(
+                targets: state.params['targets']!);
+            }
+          ),
+
+          GoRoute(
+            name: AppRoute.storytargetsByTargets,
+            path: AppRoute.storytargetsByTargetsRoute,
+            builder: (context, state) {
+
+               return GetStoryTargetsByTargets(
+                targets: state.params['targets']!);
+            }
           ),
           GoRoute(
             name: AppRoute.createPollPost,

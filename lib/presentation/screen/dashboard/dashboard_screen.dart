@@ -229,6 +229,41 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Get Story by Id'),
                 ),
+
+
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    EditTextDialog.show(
+                      context,
+                      title: "Get Stories By Targets",
+                      buttonText: "Get",
+                      hintText: 'community/commnuityId1,community/commnuityId2',
+                      onPress: (value) {
+                        GoRouter.of(context).goNamed(AppRoute.storyByTargets,
+                            params: {'targets': value});
+                      },
+                    );
+                  },
+                  child: const Text('Get Stories By Targets'),
+                ),
+
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    EditTextDialog.show(
+                      context,
+                      title: "Get StoryTargets By Targets",
+                      buttonText: "Get",
+                      hintText: 'community/commnuityId1,community/commnuityId2',
+                      onPress: (value) {
+                        GoRouter.of(context).goNamed(AppRoute.storytargetsByTargets,
+                            params: {'targets': value});
+                      },
+                    );
+                  },
+                  child: const Text('Get Story targets By Targets'),
+                ),
                 
                 const SizedBox(height: 20),
                 TextButton(
