@@ -67,6 +67,11 @@ class StoryWidget extends StatelessWidget {
                                 enabled: true,
                                 child: Text("Mark Story as Clicked"),
                               ),
+                              const PopupMenuItem(
+                                value: 2,
+                                enabled: true,
+                                child: Text("Subscribe RTE"),
+                              ),
                             ];
                           },
                           child: const Icon(
@@ -95,8 +100,15 @@ class StoryWidget extends StatelessWidget {
                               });
                             }
 
-                            if (index == 2) {}
-                            if (index == 3) {}
+                            if (index == 2) {
+                              story.analytics().markAsSeen();
+                            }
+                            if (index == 3) {
+                              story.analytics().markLinkAsClicked();
+                            }
+                            if (index == 4) {
+                              story.subscription();
+                            }
                           },
                         ),
                       ],
@@ -186,8 +198,37 @@ class StoryWidget extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    FeedReactionActionWidget(amityStory: story, onCommentCallback: () {
-                      GoRouter.of(context).pushNamed(
+                    GestureDetector(
+                      onTap: () {
+                        // GoRouter.of(context).pushNamed(
+                        //     AppRoute.getReachUser,
+                        //     queryParams: {
+                        //       'postId': value.postId!,
+                        //     });
+                      },
+                      child: Row(
+                        children: [
+                          Text("Impressions: ${story.impression}"),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text("Reach: ${story.reach}"),
+                        ],
+                      ),
+                    ),
+                    Divider(height: .5, color: Colors.grey.shade300),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text("Is Seen: ${story.isSeen() ? 'Yes' : 'No'}"),
+                    Divider(height: .5, color: Colors.grey.shade300),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    FeedReactionActionWidget(
+                        amityStory: story,
+                        onCommentCallback: () {
+                          GoRouter.of(context).pushNamed(
                             AppRoute.commentList,
                             queryParams: {
                               'referenceType': 'story',
@@ -196,50 +237,47 @@ class StoryWidget extends StatelessWidget {
                               'isPublic': true.toString()
                             },
                           );
-                    }),
+                        }),
                   ],
                 ),
               ),
+              AddCommentWidget(
+                AmityCoreClient.getCurrentUser(),
+                (text, user, attachments) {
+                  final mentionUsers = <AmityUser>[];
 
-               AddCommentWidget(
-                        AmityCoreClient.getCurrentUser(),
-                        (text, user, attachments) {
-                          final mentionUsers = <AmityUser>[];
+                  mentionUsers.clear();
+                  mentionUsers.addAll(user);
 
-                          mentionUsers.clear();
-                          mentionUsers.addAll(user);
+                  //Clean up mention user list, as user might have removed some tagged user
+                  mentionUsers.removeWhere(
+                      (element) => !text.contains(element.displayName!));
 
-                          //Clean up mention user list, as user might have removed some tagged user
-                          mentionUsers.removeWhere((element) =>
-                              !text.contains(element.displayName!));
+                  final amityMentioneesMetadata = mentionUsers
+                      .map<AmityUserMentionMetadata>((e) =>
+                          AmityUserMentionMetadata(
+                              userId: e.userId!,
+                              index: text.indexOf('@${e.displayName!}'),
+                              length: e.displayName!.length))
+                      .toList();
 
-                          final amityMentioneesMetadata = mentionUsers
-                              .map<AmityUserMentionMetadata>((e) =>
-                                  AmityUserMentionMetadata(
-                                      userId: e.userId!,
-                                      index: text.indexOf('@${e.displayName!}'),
-                                      length: e.displayName!.length))
-                              .toList();
+                  Map<String, dynamic> metadata =
+                      AmityMentionMetadataCreator(amityMentioneesMetadata)
+                          .create();
 
-                          Map<String, dynamic> metadata =
-                              AmityMentionMetadataCreator(
-                                      amityMentioneesMetadata)
-                                  .create();
-
-                          AmitySocialClient.newCommentRepository().createComment().story(story.storyId!)
-                              .create()
-                              .text(text)
-                              .mentionUsers(mentionUsers
-                                  .map<String>((e) => e.userId!)
-                                  .toList())
-                              .metadata(metadata)
-                              .send();
-                        },
-                        communityId: targetId,
-                        isPublic: true,
-                      ),
-                  
-
+                  AmitySocialClient.newCommentRepository()
+                      .createComment()
+                      .story(story.storyId!)
+                      .create()
+                      .text(text)
+                      .mentionUsers(
+                          mentionUsers.map<String>((e) => e.userId!).toList())
+                      .metadata(metadata)
+                      .send();
+                },
+                communityId: targetId,
+                isPublic: true,
+              ),
             ],
           ),
         ),
@@ -462,8 +500,6 @@ class _MiniVideoPlayerState extends State<MiniVideoPlayer> {
   }
 }
 
-
-
 class FeedReactionInfoWidget extends StatelessWidget {
   final AmityStory amityStory;
   const FeedReactionInfoWidget({Key? key, required this.amityStory})
@@ -513,7 +549,6 @@ class FeedReactionInfoWidget extends StatelessWidget {
   }
 }
 
-
 class FeedReactionActionWidget extends StatelessWidget {
   final AmityStory amityStory;
   final VoidCallback onCommentCallback;
@@ -536,11 +571,21 @@ class FeedReactionActionWidget extends StatelessWidget {
             child: TextButton.icon(
               onPressed: () {
                 if (isFlagedByMe) {
-                  AmitySocialClient.newReactionRepository().removeReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), 'like').then((value) {
+                  AmitySocialClient.newReactionRepository()
+                      .removeReaction(
+                          AmityStoryReactionReference(
+                              referenceId: amityStory.storyId!),
+                          'like')
+                      .then((value) {
                     print(value.myReactions);
                   });
                 } else {
-                  AmitySocialClient.newReactionRepository().addReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), 'like').then((value) {
+                  AmitySocialClient.newReactionRepository()
+                      .addReaction(
+                          AmityStoryReactionReference(
+                              referenceId: amityStory.storyId!),
+                          'like')
+                      .then((value) {
                     print(value.myReactions);
                   });
                 }
@@ -552,9 +597,15 @@ class FeedReactionActionWidget extends StatelessWidget {
                   link,
                   (reaction) {
                     if (isFlagedByMe) {
-                      AmitySocialClient.newReactionRepository().removeReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), reaction);
+                      AmitySocialClient.newReactionRepository().removeReaction(
+                          AmityStoryReactionReference(
+                              referenceId: amityStory.storyId!),
+                          reaction);
                     } else {
-                      AmitySocialClient.newReactionRepository().addReaction(AmityStoryReactionReference(referenceId: amityStory.storyId!), reaction);
+                      AmitySocialClient.newReactionRepository().addReaction(
+                          AmityStoryReactionReference(
+                              referenceId: amityStory.storyId!),
+                          reaction);
                     }
                   },
                 );
@@ -622,4 +673,3 @@ class FeedReactionActionWidget extends StatelessWidget {
     );
   }
 }
-
