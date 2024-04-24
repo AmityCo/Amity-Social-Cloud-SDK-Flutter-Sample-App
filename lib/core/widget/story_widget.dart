@@ -220,8 +220,8 @@ class StoryWidget extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    Text("Is Seen: ${story.isSeen() ? 'Yes' : 'No'}"),
-                    Divider(height: .5, color: Colors.grey.shade300),
+                    // Text("Is Seen: ${story.isSeen() ? 'Yes' : 'No'}"),
+                    // Divider(height: .5, color: Colors.grey.shade300),
                     const SizedBox(
                       height: 10,
                     ),
