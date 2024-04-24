@@ -240,6 +240,21 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         child: const Text('Poll Post'),
                       ),
                     ),
+                    SizedBox(
+                      width: 200,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          //show create post for community
+                          GoRouter.of(context)
+                              .pushNamed(AppRoute.createLiveStreamPost, queryParams: {
+                            'communityId': _amityCommunity.communityId,
+                            'isPublic': _amityCommunity.isPublic.toString(),
+                          });
+                        },
+                        child: const Text('LiveStream Post'),
+                      ),
+                    ),
                   ],
                 ),
                 actions: [
@@ -336,13 +351,14 @@ class _CommunityProfileHeaderWidget extends StatefulWidget {
 class _CommunityProfileHeaderWidgetState
     extends State<_CommunityProfileHeaderWidget> {
   Future<List<String>?>? _rolesFuture;
-
+  Future<int>? _postCountFuture;
   @override
   void initState() {
     if (widget.amityCommunity.communityId != null) {
       _rolesFuture = AmitySocialClient.newCommunityRepository()
           .getCurrentUserRoles(widget.amityCommunity.communityId!);
     }
+    _postCountFuture = widget.amityCommunity.getPostCount(AmityFeedType.PUBLISHED);
     super.initState();
   }
 
@@ -377,21 +393,52 @@ class _CommunityProfileHeaderWidgetState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '${widget.amityCommunity.postsCount}\n',
-                            style: themeData.textTheme.titleMedium!
-                                .copyWith(fontWeight: FontWeight.bold),
+                    FutureBuilder<int>(
+                      future: _postCountFuture,
+                      builder:
+                          (BuildContext context, AsyncSnapshot<int> snapshot) {
+
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        return RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    '${snapshot.data}\n',
+                                style: themeData.textTheme.titleMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                  text: 'Approved Posts',
+                                  style: themeData.textTheme.bodyMedium),
+                            ],
                           ),
-                          TextSpan(
-                              text: 'Posts',
-                              style: themeData.textTheme.bodyMedium),
-                        ],
-                      ),
+                        );
+                      },
                     ),
+
+                    RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text:
+                                    '${widget.amityCommunity.postsCount}\n',
+                                style: themeData.textTheme.titleMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                  text: 'Total Posts',
+                                  style: themeData.textTheme.bodyMedium),
+                            ],
+                          ),
+                        ),
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
@@ -500,5 +547,10 @@ class _CommunityProfileHeaderWidgetState
         ],
       ),
     );
+  }
+
+
+  Future<int> getPostCount() async {
+    return await widget.amityCommunity.getPostCount(AmityFeedType.PUBLISHED);
   }
 }

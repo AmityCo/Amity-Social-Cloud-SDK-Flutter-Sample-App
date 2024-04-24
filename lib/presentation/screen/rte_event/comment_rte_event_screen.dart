@@ -22,10 +22,10 @@ class _CommentRteEventScreenState extends State<CommentRteEventScreen> {
 
   final eventPool = <String, bool>{};
 
-  late Future<AmityComment> _amityCommentFuture;
+  late Stream<AmityComment> _amityCommentFuture;
   @override
   void initState() {
-    _amityCommentFuture = AmitySocialClient.newCommentRepository().getComment(commentId: widget.commentId);
+    _amityCommentFuture = AmitySocialClient.newCommentRepository().live.getComment(widget.commentId);
 
     super.initState();
   }
@@ -48,8 +48,8 @@ class _CommentRteEventScreenState extends State<CommentRteEventScreen> {
           title: const Text('Subscribe Comment'),
         ),
         body: Container(
-          child: FutureBuilder(
-            future: _amityCommentFuture,
+          child: StreamBuilder(
+            stream: _amityCommentFuture,
             initialData: _comment,
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data != null) {
