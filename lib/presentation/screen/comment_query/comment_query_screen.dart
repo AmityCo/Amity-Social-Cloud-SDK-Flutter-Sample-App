@@ -44,66 +44,22 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
   void initState() {
 
     if (widget.referenceType == 'post') {
-      _controller = PagingController(
-        pageFuture: (token) => AmitySocialClient.newCommentRepository()
+      commentLiveCollection = AmitySocialClient.newCommentRepository()
             .getComments()
             .post(widget.referenceId)
             .sortBy(_sortOption)
             .dataTypes(dataTypes)
             .includeDeleted(_includeDeleted)
-            .getPagingData(token: token, limit: GlobalConstant.pageSize),
-        pageSize: GlobalConstant.pageSize,
-      )..addListener(
-          () {
-            if (_controller.error == null) {
-              setState(() {
-                amityComments.clear();
-                amityComments.addAll(_controller.loadedItems);
-              });
-            } else {
-              //Error on pagination controller
-              setState(() {});
-              ErrorDialog.show(context,
-                  title: 'Error', message: _controller.error.toString());
-              print(_controller.stacktrace);
-            }
-          },
-        );
+            .getLiveCollection();
     } else if (widget.referenceType == 'story') {
-      _controller = PagingController(
-        pageFuture: (token) => AmitySocialClient.newCommentRepository()
+      commentLiveCollection = AmitySocialClient.newCommentRepository()
             .getComments()
             .story(widget.referenceId)
             .sortBy(_sortOption)
             .dataTypes(dataTypes)
             .includeDeleted(_includeDeleted)
-            .getPagingData(token: token, limit: GlobalConstant.pageSize),
-        pageSize: GlobalConstant.pageSize,
-      )..addListener(
-          () {
-            if (_controller.error == null) {
-              setState(() {
-                amityComments.clear();
-                amityComments.addAll(_controller.loadedItems);
-              });
-            } else {
-              //Error on pagination controller
-              setState(() {});
-              ErrorDialog.show(context,
-                  title: 'Error', message: _controller.error.toString());
-              print(_controller.stacktrace);
-            }
-          },
-        );
-    }
-
-      commentLiveCollection = AmitySocialClient.newCommentRepository()
-            .getComments()
-            .post(widget._postId)
-            .sortBy(_sortOption)
-            .dataTypes(dataTypes)
-            .includeDeleted(_includeDeleted)
             .getLiveCollection();
+    }
 
     commentLiveCollection.getStreamController().stream.listen((event) {
       if (mounted) {
@@ -123,10 +79,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
   }
 
   void pagination() {
-
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
 
     if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && commentLiveCollection.hasNextPage()) {
 
@@ -299,10 +251,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                 : Container(
                     alignment: Alignment.center,
 
-                    child: _controller.isFetching
-                        ? const CircularProgressIndicator()
-                        : const Text('No Comment'),
-
                     child: commentLiveCollection.isFetching ? const CircularProgressIndicator() : const Text('No Comment'),
 
                   ),
@@ -408,9 +356,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                                 .toList())
                             .metadata(metadata)
                             .send();
-
-                    /// Remove this line Post Comment Create RTE will refresh the list
-                    _controller.addAtIndex(0, _comment);
                   } else if (widget.referenceType == "story") {
                     final _comment =
                         await AmitySocialClient.newCommentRepository()
@@ -424,9 +369,7 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
                                 .toList())
                             .metadata(metadata)
                             .send();
-
-                    /// Remove this line Post Comment Create RTE will refresh the list
-                    _controller.addAtIndex(0, _comment);
+      
                   }
 
                   return;

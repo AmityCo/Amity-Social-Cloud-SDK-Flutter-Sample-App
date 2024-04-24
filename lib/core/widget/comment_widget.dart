@@ -312,7 +312,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 builder: (BuildContext context) {
                                   return Container(
                                       child: ReplyCommentQueryWidget(
-                                        postId: widget.postId,
+                                        referenceId: widget.referenceId,
+                                        referenceType: widget.referenceType,
                                         commentId: value.commentId!,
                                         communityId: widget.communityId,
                                         isPublic: widget.isPublic,
@@ -332,34 +333,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                           )
 
                         // : _getChildCommentWidget(context, value.latestReplies!),
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _viewMoreReply = !_viewMoreReply;
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(top: 6),
-                                  child: Text(
-                                    '~~~~~~ Hide reply',
-                                    style: themeData.textTheme.bodySmall!
-                                        .copyWith(),
-                                  ),
-                                ),
-                              ),
-                              NestedCommentWidget(
-                                referenceId: widget.referenceId,
-                                referenceType: widget.referenceType,
-                                commentId: value.commentId!,
-                                communityId: widget.communityId,
-                                isPublic: widget.isPublic,
-                              ),
-                            ],
-                          ),
-                  ),
+                        
+                  )
               ],
             ),
           ),
