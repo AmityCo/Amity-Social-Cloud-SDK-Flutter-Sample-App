@@ -245,7 +245,8 @@ class FeedWidget extends StatelessWidget {
                           GoRouter.of(context).pushNamed(
                             AppRoute.commentList,
                             queryParams: {
-                              'postId': value.postId!,
+                              'referenceType' : 'post',
+                              'referenceId': value.postId!,
                               'communityId': communityId,
                               'isPublic': isPublic.toString()
                             },

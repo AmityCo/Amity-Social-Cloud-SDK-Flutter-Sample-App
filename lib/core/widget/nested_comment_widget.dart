@@ -10,12 +10,14 @@ import 'package:go_router/go_router.dart';
 class NestedCommentWidget extends StatefulWidget {
   const NestedCommentWidget(
       {Key? key,
-      required this.postId,
+      required this.referenceType,
+      required this.referenceId,
       required this.commentId,
       required this.communityId,
       this.isPublic = false})
       : super(key: key);
-  final String postId;
+  final String referenceType;
+  final String referenceId;
   final String commentId;
 
   final String? communityId;
@@ -31,29 +33,57 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newCommentRepository()
-          .getComments()
-          .post(widget.postId)
-          .parentId(widget.commentId)
-          .sortBy(AmityCommentSortOption.LAST_CREATED)
-          .getPagingData(token: token, limit: 5),
-      pageSize: 5,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              nestedCommentList.clear();
-              nestedCommentList.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
+
+    if(widget.referenceType == 'post'){
+      _controller = PagingController(
+        pageFuture: (token) => AmitySocialClient.newCommentRepository()
+            .getComments()
+            .post(widget.referenceId)
+            .parentId(widget.commentId)
+            .sortBy(AmityCommentSortOption.LAST_CREATED)
+            .getPagingData(token: token, limit: 5),
+        pageSize: 5,
+      )..addListener(
+          () {
+            if (_controller.error == null) {
+              setState(() {
+                nestedCommentList.clear();
+                nestedCommentList.addAll(_controller.loadedItems);
+              });
+            } else {
+              //Error on pagination controller
+              setState(() {});
+              ErrorDialog.show(context,
+                  title: 'Error', message: _controller.error.toString());
+            }
+          },
+        );
+    }else if(widget.referenceType == 'story'){
+      _controller = PagingController(
+        pageFuture: (token) => AmitySocialClient.newCommentRepository()
+            .getComments()
+            .story(widget.referenceId)
+            .parentId(widget.commentId)
+            .sortBy(AmityCommentSortOption.LAST_CREATED)
+            .getPagingData(token: token, limit: 5),
+        pageSize: 5,
+      )..addListener(
+          () {
+            if (_controller.error == null) {
+              setState(() {
+                nestedCommentList.clear();
+                nestedCommentList.addAll(_controller.loadedItems);
+              });
+            } else {
+              //Error on pagination controller
+              setState(() {});
+              ErrorDialog.show(context,
+                  title: 'Error', message: _controller.error.toString());
+            }
+          },
+        );
+    }
+
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _controller.fetchNextPage();
@@ -170,7 +200,6 @@ class _NestedCommentWidgetState extends State<NestedCommentWidget> {
                                           children: [
                                             (value.target
                                                     is CommunityCommentTarget)
-
                                                 ? Container(
                                                     child: Row(
                                                       crossAxisAlignment:

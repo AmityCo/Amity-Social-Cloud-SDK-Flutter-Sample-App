@@ -84,6 +84,9 @@ class AppRoute {
   static const postReaction = 'postReaction';
   static const postReactionRoute = 'postReaction/:postId';
 
+  static const storyReaction = 'storyReaction';
+  static const storyReactionRoute = 'storyReaction/:storyId';
+
   static const commentReaction = 'commentReaction';
   static const commentReactionRoute = 'commentReaction/:commentId';
 
@@ -151,9 +154,16 @@ class AppRoute {
   static const getReachUser = 'getReachUser';
   static const getReachUserRoute = '/getReachUser';
 
-
-  //Create Post Routes
   static const createStory = 'createStory';
   static const createStoryRoute = '/createStory';
+
+  static const storyDetails = 'storyDetails';
+  static const storyDetailsRoute = 'storyDetails/:storyId';
+
+  static const storyByTargets = 'storyByTargets';
+  static const storyByTargetsRoute = 'storyByTargets/:targets';
+
+  static const storytargetsByTargets = 'storyTargetsByTargets';
+  static const storytargetsByTargetsRoute = 'storyTargetsByTargets/:targets';
 
 }

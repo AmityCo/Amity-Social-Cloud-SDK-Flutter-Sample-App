@@ -5,6 +5,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/raw_data_widget.dart';
+import 'package:flutter_social_sample_app/core/widget/story_target_widget.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_feed/community_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_banned_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
@@ -133,6 +134,12 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                         SliverToBoxAdapter(
                           child: _CommunityProfileHeaderWidget(
                               amityCommunity: _amityCommunity),
+                        ),
+                        SliverToBoxAdapter(
+                          child: StoryTargetWidget(
+                            targetType: AmityStoryTargetType.COMMUNITY,
+                            targetId: widget.communityId,
+                          ),
                         ),
                         SliverToBoxAdapter(
                           child: DefaultTabController(

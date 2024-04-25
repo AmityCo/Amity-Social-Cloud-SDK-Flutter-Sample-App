@@ -29,7 +29,8 @@ class PostLiveOjectWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     return StreamBuilder<AmityPost>(
-      stream: AmitySocialClient.newPostRepository().live.getPost(amityPost.postId!),
+      stream:
+          AmitySocialClient.newPostRepository().live.getPost(amityPost.postId!),
       initialData: amityPost,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -111,7 +112,7 @@ class PostLiveOjectWidget extends StatelessWidget {
                                         });
                                   }
 
-                                  if(index == 5){
+                                  if (index == 5) {
                                     value.analytics().markPostAsViewed();
                                   }
                                 },
@@ -195,24 +196,29 @@ class PostLiveOjectWidget extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(horizontal: 12),
                         child: FeedReactionInfoWidget(amityPost: value)),
                     Divider(height: .5, color: Colors.grey.shade300),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     GestureDetector(
                       onTap: () {
-                        GoRouter.of(context).pushNamed(
-                            AppRoute.getReachUser,
-                            queryParams: {
-                              'postId': value.postId!,
-                            });
+                        GoRouter.of(context)
+                            .pushNamed(AppRoute.getReachUser, queryParams: {
+                          'postId': value.postId!,
+                        });
                       },
                       child: Row(
                         children: [
                           Text("Impressions: ${value.impression ?? "0"}"),
-                          const SizedBox(width: 10,),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           Text("Reach: ${value.reach ?? "0"}"),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Divider(height: .5, color: Colors.grey.shade300),
                     FeedReactionActionWidget(
                         key: UniqueKey(),
@@ -221,7 +227,8 @@ class PostLiveOjectWidget extends StatelessWidget {
                           GoRouter.of(context).pushNamed(
                             AppRoute.commentList,
                             queryParams: {
-                              'postId': value.postId!,
+                              'referenceType': 'post',
+                              'referenceId': value.postId!,
                               'communityId': communityId,
                               'isPublic': isPublic.toString()
                             },
