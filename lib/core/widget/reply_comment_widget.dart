@@ -277,7 +277,7 @@ class ReplyCommentWidget extends StatelessWidget {
                                       AmityCoreClient.getUserId())
                                     const PopupMenuItem(
                                       value: 3,
-                                      enabled: false,
+                                      enabled: true,
                                       child: Text("Delete (Hard)"),
                                     ),
                                   PopupMenuItem(
@@ -307,6 +307,10 @@ class ReplyCommentWidget extends StatelessWidget {
                                 }
                                 if (index1 == 2) {
                                   value.delete();
+                                }
+
+                                if (index1 == 3) {
+                                  value.delete(hardDelete: true);
                                 }
                                 if (index1 == 4) {
                                   if (value.isFlaggedByMe) {

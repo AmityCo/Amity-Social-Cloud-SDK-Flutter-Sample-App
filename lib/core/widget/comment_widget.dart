@@ -355,7 +355,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   if (user.userId == AmityCoreClient.getUserId())
                     const PopupMenuItem(
                       value: 3,
-                      enabled: false,
+                      enabled: true,
                       child: Text("Delete (Hard)"),
                     ),
                   PopupMenuItem(
@@ -390,6 +390,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                 }
                 if (index1 == 2) {
                   value.delete();
+                }
+                if (index1 == 3) {
+                  value.delete(hardDelete: true);
                 }
                 if (index1 == 4) {
                   if (value.isFlaggedByMe) {
