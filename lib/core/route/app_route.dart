@@ -166,4 +166,8 @@ class AppRoute {
   static const storytargetsByTargets = 'storyTargetsByTargets';
   static const storytargetsByTargetsRoute = 'storyTargetsByTargets/:targets';
 
+
+  static const globalStoryTargets = 'globalStoryTargets';
+  static const globalStoryTargetsRoute = 'globalStoryTargets';
+
 }

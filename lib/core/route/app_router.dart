@@ -30,6 +30,7 @@ import 'package:flutter_social_sample_app/presentation/screen/follower_list/foll
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed_custom_ranking/global_feed_custom_ranking.dart';
+import 'package:flutter_social_sample_app/presentation/screen/global_story_targets/get_global_story_target_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_user_search/global_user_search.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/live_stream_list/live_stream_list.dart';
@@ -277,6 +278,18 @@ class AppRouter {
                 targets: state.params['targets']!);
             }
           ),
+
+
+          GoRoute(
+            name: AppRoute.globalStoryTargets,
+            path: AppRoute.globalStoryTargetsRoute,
+            builder: (context, state) {
+
+               return const GlobalStoryTargetScreen();
+            }
+          ),
+
+
           GoRoute(
             name: AppRoute.createPollPost,
             path: AppRoute.createPollPostRoute,
@@ -407,7 +420,8 @@ class AppRouter {
         path: AppRoute.getReachUserRoute,
         builder: (context, state) {
           return PostReachedUsersScreen(
-            postId: state.queryParams['postId']!,
+            referenceId: state.queryParams['referenceId']!,
+            referenceType: state.queryParams['referenceType']!,
           );
         },
       ),

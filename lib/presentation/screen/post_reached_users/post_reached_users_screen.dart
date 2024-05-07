@@ -4,10 +4,11 @@ import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 
 class PostReachedUsersScreen extends StatefulWidget {
-  final String postId;
+  final String referenceId;
+  final String referenceType;
   final bool showAppBar;
   const PostReachedUsersScreen(
-      {super.key, this.showAppBar = true, required this.postId});
+      {super.key, this.showAppBar = true, required this.referenceId ,required this. referenceType});
 
   @override
   State<PostReachedUsersScreen> createState() => _PostReachedUsersScreenState();
@@ -23,7 +24,7 @@ class _PostReachedUsersScreenState extends State<PostReachedUsersScreen> {
   void initState() {
     _controller = PagingController(
       pageFuture: (token) => AmityCoreClient.newUserRepository()
-          .getViewedUsers(viewedId: widget.postId, viewedType: AmityViewedType.POST)
+          .getViewedUsers(viewedId: widget.referenceId, viewedType: AmityViewedTypeExtension.enumOf(widget.referenceType))
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -88,10 +89,12 @@ class _PostReachedUsersScreenState extends State<PostReachedUsersScreen> {
                     return ListTile(
                       title: Text(amityUser.displayName ?? ''),
                       subtitle: Text(amityUser.userId ?? ''),
-                      leading: CircleAvatar(
+                      leading:
+                      (amityUser.avatarUrl!=null) ? 
+                       CircleAvatar(
                         backgroundImage:
-                            NetworkImage(amityUser.avatarUrl ?? ''),
-                      ),
+                            NetworkImage(amityUser.avatarUrl!),
+                      ): const CircleAvatar(backgroundImage : AssetImage('assets/user_placeholder.png')),
                     );
                   }),
         ),

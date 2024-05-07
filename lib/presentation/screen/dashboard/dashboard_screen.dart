@@ -249,6 +249,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Text('Get Stories By Targets'),
                 ),
 
+
+
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).goNamed(AppRoute.globalStoryTargets,);
+                  },
+                  child: const Text('Get Global Story Targets'),
+                ),
+
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
