@@ -41,11 +41,11 @@ class _GlobalStoryTargetScreenState extends State<GlobalStoryTargetScreen> {
     });
 
     scrollcontroller.addListener(pagination);
-
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels == (scrollcontroller.position.maxScrollExtent)) &&
+    if ((scrollcontroller.position.pixels ==
+            (scrollcontroller.position.maxScrollExtent)) &&
         liveCollection.hasNextPage()) {
       liveCollection.loadNext();
     }
@@ -136,9 +136,7 @@ class _GlobalStoryTargetScreenState extends State<GlobalStoryTargetScreen> {
                             }
                           },
                           child: StoryTargetInfo(
-                            key: uniqueKey,
-                            amityStorytarget: storyTarget
-                          ),
+                              key: uniqueKey, amityStorytarget: storyTarget),
                         );
                       },
                     ),
@@ -155,7 +153,6 @@ class _GlobalStoryTargetScreenState extends State<GlobalStoryTargetScreen> {
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
             )
-        
         ],
       ),
     );

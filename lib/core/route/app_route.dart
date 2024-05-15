@@ -166,8 +166,16 @@ class AppRoute {
   static const storytargetsByTargets = 'storyTargetsByTargets';
   static const storytargetsByTargetsRoute = 'storyTargetsByTargets/:targets';
 
-
   static const globalStoryTargets = 'globalStoryTargets';
   static const globalStoryTargetsRoute = 'globalStoryTargets';
+
+  static const validateURL = 'validateURL';
+  static const validateURLRoute = 'validateURL';
+
+  static const validateText = 'validateText';
+  static const validateTextRoute = 'validateText';
+
+  static const communitNotificationSerttings = 'communitNotificationSerttings';
+  static const communitNotificationSerttingsRoute = '/communitNotificationSerttings';
 
 }

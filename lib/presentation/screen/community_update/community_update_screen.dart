@@ -28,6 +28,7 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
 
   bool _isPublic = false;
   bool _isPostReviewEnable = false;
+  bool _isCommentOnStoryEnable = false;
 
   // bool setValue = false;
 
@@ -45,6 +46,7 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
 
         _isPublic = value.isPublic ?? false;
         _isPostReviewEnable = value.isPostReviewEnabled ?? false;
+        _isCommentOnStoryEnable = value.allowCommentInStory??false;
 
         _catsEditController.text =
             (value.categories ?? []).map((e) => e!.categoryId).join(',');
@@ -110,6 +112,17 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Post Review Enable'),
+                ),
+                CheckboxListTile(
+                  value: _isCommentOnStoryEnable,
+                  onChanged: (value) {
+                    setState(() {
+                      _isCommentOnStoryEnable = value!;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Comment on Story Enable'),
                 ),
                 SizedBox(
                   height: 80,
@@ -193,13 +206,17 @@ class _CommunityUpdateScreenState extends State<CommunityUpdateScreen> {
       print('metadata decode failed');
     }
 
+    AmityCommunityStorySettings storySettings = AmityCommunityStorySettings();
+    storySettings.allowComment = _isCommentOnStoryEnable;
+
     final communityCreator = AmitySocialClient.newCommunityRepository()
         .updateCommunity(widget.communityId)
         .displayName(name)
         .description(des)
         .metadata(metadata)
         .isPublic(_isPublic)
-        .isPostReviewEnabled(_isPostReviewEnable);
+        .storySettings(storySettings)
+        .postSetting(_isPostReviewEnable ? AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED :AmityCommunityPostSettings.ANYONE_CAN_POST );
 
     if (_catsEditController.text.isNotEmpty) {
       communityCreator.categoryIds(_catsEditController.text.trim().split(','));

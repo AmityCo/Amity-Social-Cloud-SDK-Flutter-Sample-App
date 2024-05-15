@@ -276,7 +276,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Text('Get Story targets By Targets'),
                 ),
                 
+
                 const SizedBox(height: 20),
+
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context)
+                        .goNamed(AppRoute.validateURL);
+                  },
+                  child: const Text('Validate URL'),
+                ),
+                const SizedBox(height: 20),
+
+
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context)
+                        .goNamed(AppRoute.validateText);
+                  },
+                  child: const Text('Validate Text'),
+                ),
+                const SizedBox(height: 20),
+
+
+
                 TextButton(
                   onPressed: () {
                     GoRouter.of(context)

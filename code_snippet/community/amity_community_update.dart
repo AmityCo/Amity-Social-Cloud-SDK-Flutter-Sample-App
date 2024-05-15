@@ -16,7 +16,7 @@ class AmityCommunityUpdate {
         .tags(['tag1', 'tag2'])
         .categoryIds(['categoryId1', 'categoryId2'])
         .isPublic(false)
-        .isPostReviewEnabled(false)
+        .postSetting(AmityCommunityPostSettings.ANYONE_CAN_POST)
         .metadata({'updateKey': 'updateValue'})
         .update()
         .then((value) => {
