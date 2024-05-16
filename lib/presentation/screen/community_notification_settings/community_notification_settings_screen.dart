@@ -95,8 +95,28 @@ class _CommunityNotificationSettingsScreenState
 
                             if (currentEvent is StoryCommentCreated) {
                               title = "Story Comment";
-                              currentEvent.rolesFilter;
                             }
+
+                            if (currentEvent is PostCreated) {
+                              title = "Post Created";
+                            }
+
+                            if (currentEvent is PostReacted) {
+                              title = "Post Reacted";
+                            }
+
+                            if (currentEvent is CommentCreated) {
+                              title = "Comment Created";
+                            }
+
+                            if (currentEvent is CommentReacted) {
+                              title = "Comment Reacted";
+                            }
+
+                            if (currentEvent is CommentReplied) {
+                              title = "Comment Replied";
+                            }
+                            
                             return ListTile(
                               title: Text(title),
                               subtitle: Text(fliterSelected),
@@ -220,7 +240,126 @@ class _CommunityNotificationSettingsScreenState
                                   communityNotificationModifier
                                       .add(storyCommentModifier);
                                 }
+
+                                if (element is PostCreated) {
+                                  late CommunityNotificationModifier
+                                      postCreatedModifier;
+
+                                  if (element.rolesFilter is All) {
+                                    postCreatedModifier =
+                                        PostCreated.enable(All());
+                                  }
+                                  if (element.rolesFilter is Only) {
+                                    postCreatedModifier =
+                                        PostCreated.enable(
+                                            Only(modRoles));
+                                  }
+                                  if (element.rolesFilter is Not) {
+                                    postCreatedModifier =
+                                        PostCreated.disable();
+                                  }
+
+                                  communityNotificationModifier
+                                      .add(postCreatedModifier);
+                                }
+
+
+                                if (element is PostReacted) {
+                                  late CommunityNotificationModifier
+                                      postReacteModifier;
+
+                                  if (element.rolesFilter is All) {
+                                    postReacteModifier =
+                                        PostReacted.enable(All());
+                                  }
+                                  if (element.rolesFilter is Only) {
+                                    postReacteModifier =
+                                        PostReacted.enable(
+                                            Only(modRoles));
+                                  }
+                                  if (element.rolesFilter is Not) {
+                                    postReacteModifier =
+                                        PostReacted.disable();
+                                  }
+
+                                  communityNotificationModifier
+                                      .add(postReacteModifier);
+                                }
+
+
+                                if (element is CommentCreated) {
+                                  late CommunityNotificationModifier
+                                      commentCreatedModifier;
+
+                                  if (element.rolesFilter is All) {
+                                    commentCreatedModifier =
+                                        CommentCreated.enable(All());
+                                  }
+                                  if (element.rolesFilter is Only) {
+                                    commentCreatedModifier =
+                                        CommentCreated.enable(
+                                            Only(modRoles));
+                                  }
+                                  if (element.rolesFilter is Not) {
+                                    commentCreatedModifier =
+                                        CommentCreated.disable();
+                                  }
+
+                                  communityNotificationModifier
+                                      .add(commentCreatedModifier);
+                                }
+
+
+                                if (element is CommentReacted) {
+                                  late CommunityNotificationModifier
+                                      commentReactedModifier;
+
+                                  if (element.rolesFilter is All) {
+                                    commentReactedModifier =
+                                        CommentReacted.enable(All());
+                                  }
+                                  if (element.rolesFilter is Only) {
+                                    commentReactedModifier =
+                                        CommentReacted.enable(
+                                            Only(modRoles));
+                                  }
+                                  if (element.rolesFilter is Not) {
+                                    commentReactedModifier =
+                                        CommentReacted.disable();
+                                  }
+
+                                  communityNotificationModifier
+                                      .add(commentReactedModifier);
+                                }
+
+
+                                if (element is CommentReplied) {
+                                  late CommunityNotificationModifier
+                                      commentRepliedModifier;
+
+                                  if (element.rolesFilter is All) {
+                                    commentRepliedModifier =
+                                        CommentReplied.enable(All());
+                                  }
+                                  if (element.rolesFilter is Only) {
+                                    commentRepliedModifier =
+                                        CommentReplied.enable(
+                                            Only(modRoles));
+                                  }
+                                  if (element.rolesFilter is Not) {
+                                    commentRepliedModifier =
+                                        CommentReplied.disable();
+                                  }
+
+                                  communityNotificationModifier
+                                      .add(commentRepliedModifier);
+                                }
+
+
                               });
+
+
+                              
 
                               await AmityCoreClient()
                                   .notifications()
