@@ -144,19 +144,33 @@ class _GlobalFeedScreenState extends State<GlobalFeedScreen> {
                       controller: scrollcontroller,
                       itemCount: amityPosts.length,
                       itemBuilder: (context, index) {
-                        final amityPost = amityPosts[index];
                         var uniqueKey = UniqueKey();
-                        return VisibilityDetector(
-                          key: uniqueKey,
-                          onVisibilityChanged: (VisibilityInfo info) { 
-                            if(info.visibleFraction == 1.0){
-                              // amityPost.analytics().markPostAsViewed();
+                        return StreamBuilder<AmityPost>(
+                          stream: AmitySocialClient.newPostRepository()
+                              .getPostStream(amityPosts[index].postId!)
+                              .stream,
+                          initialData: amityPosts[index],
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return const Text('Error');
                             }
-                           },
-                          child: FeedWidget(
-                            key: uniqueKey,
-                            amityPost: amityPost,
-                          ),
+
+                            if (snapshot.hasData) {
+                              if (snapshot.data != null) {
+                                return FeedWidget(
+                                  key: uniqueKey,
+                                  amityPost: snapshot.data!,
+                                );
+                              } else {
+                                return FeedWidget(
+                                    key: uniqueKey,
+                                    amityPost: amityPosts[index]);
+                              }
+                            } else {
+                              return FeedWidget(
+                                  key: uniqueKey, amityPost: amityPosts[index]);
+                            }
+                          },
                         );
                       },
                     ),

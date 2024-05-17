@@ -18,14 +18,15 @@ import 'package:url_launcher/url_launcher.dart';
 class FeedWidget extends StatelessWidget {
   final String? communityId;
   final bool isPublic;
-  final AmityPost amityPost;
+  AmityPost amityPost;
   final bool disableAction;
   final bool disableAddComment;
-  // final VoidCallback onCommentCallback;
-  const FeedWidget(
+  Function(AmityPost)? onLikePressed;
+  FeedWidget(
       {Key? key,
       required this.amityPost,
       this.communityId,
+      this.onLikePressed,
       this.isPublic = false,
       this.disableAction = false,
       this.disableAddComment = false})
@@ -239,6 +240,11 @@ class FeedWidget extends StatelessWidget {
                     ),
                     Divider(height: .5, color: Colors.grey.shade300),
                     FeedReactionActionWidget(
+                      onLikePressed: (){
+                        if(onLikePressed!=null){
+                          onLikePressed!(value);
+                        }
+                      },
                         key: UniqueKey(),
                         amityPost: value,
                         onCommentCallback: () {
@@ -321,7 +327,7 @@ class FeedWidget extends StatelessWidget {
             ],
           );
         }
-        return Container();
+        return Container( child: Text("no Post"),);
       },
     );
   }
@@ -532,8 +538,9 @@ class FeedReactionInfoWidget extends StatelessWidget {
 class FeedReactionActionWidget extends StatelessWidget {
   final AmityPost amityPost;
   final VoidCallback onCommentCallback;
+  Function? onLikePressed;
   FeedReactionActionWidget(
-      {Key? key, required this.amityPost, required this.onCommentCallback})
+      {Key? key, required this.amityPost, required this.onCommentCallback , this.onLikePressed})
       : super(key: key);
   final LayerLink link = LayerLink();
 
@@ -553,10 +560,17 @@ class FeedReactionActionWidget extends StatelessWidget {
                 if (isFlagedByMe) {
                   amityPost.react().removeReaction('like').then((value) {
                     print(value.myReactions);
+                    if(onLikePressed != null){
+                      onLikePressed!();
+                    }
+                    
                   });
                 } else {
                   amityPost.react().addReaction('like').then((value) {
                     print(value.myReactions);
+                    if(onLikePressed != null){
+                      onLikePressed!();
+                    }
                   });
                 }
               },

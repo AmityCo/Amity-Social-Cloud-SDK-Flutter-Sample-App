@@ -15,7 +15,7 @@ class _StoryTargetWidgetState extends State<StoryTargetWidget> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<AmityStoryTarget>(
-        stream: AmitySocialClient.newStoryRepository().live.getStoryTaregt(targetType: widget.targetType, storyId: widget.targetId),
+        stream: AmitySocialClient.newStoryRepository().live.getStoryTaregt(targetType: widget.targetType, targetId: widget.targetId),
         builder: (context, snapshot) {
           print("StoryTargetWidget ${snapshot.data?.getSyncingStoriesCount()}");
           if (snapshot.hasData) {
