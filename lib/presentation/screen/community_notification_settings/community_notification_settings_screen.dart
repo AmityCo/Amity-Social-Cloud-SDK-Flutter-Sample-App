@@ -1,6 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
+import 'package:path/path.dart';
 
 class CommunityNotificationSettingsScreen extends StatefulWidget {
   final String communityId;
@@ -50,8 +51,10 @@ class _CommunityNotificationSettingsScreenState
               print("snapshot.data: ${snapshot.data!.events ?? "No Data"}");
 
               if (snapshot.data != null) {
-                currentSettings = snapshot.data;
-
+                if (currentSettings == null) {
+                  print("newValue: Data set For the firstTime");
+                  currentSettings = snapshot.data;
+                }
                 return Container(
                   child: Column(
                     children: [
@@ -70,83 +73,122 @@ class _CommunityNotificationSettingsScreenState
                         child: ListView.builder(
                           itemCount: currentSettings!.events!.length,
                           itemBuilder: (context, index) {
-                            var currentEvent = currentSettings!.events![index];
                             var fliterSelected = "";
 
-                            if (currentEvent.rolesFilter is All) {
+                            if (currentSettings!.events![index].rolesFilter
+                                is All) {
                               fliterSelected = "Everyone";
                             }
 
-                            if (currentEvent.rolesFilter is Only) {
-                              fliterSelected = "Selected";
+                            if (currentSettings!.events![index].rolesFilter
+                                is Only) {
+                              fliterSelected = "With Roles";
                             }
 
-                            if (currentEvent.rolesFilter is Not) {
-                              fliterSelected = "None ";
+                            if (currentSettings!.events![index].isEnabled ==
+                                false) {
+                              fliterSelected = "None";
                             }
 
                             var title = "";
-                            if (currentEvent is StoryCreated) {
+                            if (currentSettings!.events![index]
+                                is StoryCreated) {
                               title = "Story Created";
                             }
-                            if (currentEvent is StoryReacted) {
+                            if (currentSettings!.events![index]
+                                is StoryReacted) {
                               title = "Story Reacted";
                             }
 
-                            if (currentEvent is StoryCommentCreated) {
+                            if (currentSettings!.events![index]
+                                is StoryCommentCreated) {
                               title = "Story Comment";
                             }
 
-                            if (currentEvent is PostCreated) {
+                            if (currentSettings!.events![index]
+                                is PostCreated) {
                               title = "Post Created";
                             }
 
-                            if (currentEvent is PostReacted) {
+                            if (currentSettings!.events![index]
+                                is PostReacted) {
                               title = "Post Reacted";
                             }
 
-                            if (currentEvent is CommentCreated) {
+                            if (currentSettings!.events![index]
+                                is CommentCreated) {
                               title = "Comment Created";
                             }
 
-                            if (currentEvent is CommentReacted) {
+                            if (currentSettings!.events![index]
+                                is CommentReacted) {
                               title = "Comment Reacted";
                             }
 
-                            if (currentEvent is CommentReplied) {
+                            if (currentSettings!.events![index]
+                                is CommentReplied) {
                               title = "Comment Replied";
                             }
-                            
+
                             return ListTile(
                               title: Text(title),
                               subtitle: Text(fliterSelected),
-                              trailing: DropdownButton<String>(
-                                value: currentEvent.rolesFilter is All
-                                    ? "Everyone"
-                                    : currentEvent.rolesFilter is Only
-                                        ? "With Roles"
-                                        : "None",
-                                items: <String>[
-                                  'Everyone',
-                                  'With Roles',
-                                  'None'
-                                ].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    currentEvent.rolesFilter =
-                                        newValue == "Everyone"
-                                            ? All()
-                                            : newValue == "With Roles"
-                                                ? Only(modRoles)
-                                                : Not(AmityRoles());
-                                  });
-                                },
-                              ),
+                              trailing: (currentSettings!
+                                          .events![index].isNetworkEnabled ==
+                                      false)
+                                  ? const Text("Network Disabled")
+                                  : DropdownButton<String>(
+                                      value: currentSettings!
+                                                  .events![index].isEnabled ==
+                                              false
+                                          ? "None"
+                                          : currentSettings!.events![index]
+                                                  .rolesFilter is All
+                                              ? "Everyone"
+                                              : currentSettings!.events![index]
+                                                      .rolesFilter is Only
+                                                  ? "With Roles"
+                                                  : "None",
+                                      items: <String>[
+                                        'Everyone',
+                                        'With Roles',
+                                        'None'
+                                      ].map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          fliterSelected = newValue!;
+
+                                          switch (newValue) {
+                                            case "Everyone":
+                                              currentSettings!.events![index]
+                                                  .isEnabled = true;
+                                              currentSettings!.events![index]
+                                                  .rolesFilter = All();
+
+                                              break;
+                                            case "With Roles":
+                                              currentSettings!.events![index]
+                                                  .isEnabled = true;
+                                              currentSettings!.events![index]
+                                                  .rolesFilter = Only(modRoles);
+                                              break;
+                                            case "None":
+                                              currentSettings!.events![index]
+                                                  .isEnabled = false;
+                                              currentSettings!.events![index]
+                                                      .rolesFilter =
+                                                  Not(AmityRoles());
+                                              break;
+                                          }
+                                        });
+                                      },
+                                    ),
                             );
                           },
                         ),
@@ -185,19 +227,21 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     storyCreatedModifier =
-                                        StoryCreated.enable(All());
+                                        StoryCreated.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     storyCreatedModifier =
                                         StoryCreated.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
                                     storyCreatedModifier =
                                         StoryCreated.disable();
                                   }
-
-                                  communityNotificationModifier
-                                      .add(storyCreatedModifier);
+                                  if (element.isNetworkEnabled) {
+                                    communityNotificationModifier
+                                        .add(storyCreatedModifier);
+                                  }
                                 }
                                 if (element is StoryReacted) {
                                   late CommunityNotificationModifier
@@ -205,19 +249,22 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     storyReactedModifier =
-                                        StoryReacted.enable(All());
+                                        StoryReacted.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     storyReactedModifier =
                                         StoryReacted.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
                                     storyReactedModifier =
                                         StoryReacted.disable();
                                   }
 
-                                  communityNotificationModifier
-                                      .add(storyReactedModifier);
+                                  if (element.isNetworkEnabled) {
+                                    communityNotificationModifier
+                                        .add(storyReactedModifier);
+                                  }
                                 }
                                 if (element is StoryCommentCreated) {
                                   late CommunityNotificationModifier
@@ -225,20 +272,23 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     storyCommentModifier =
-                                        StoryCommentCreated.enable(All());
+                                        StoryCommentCreated.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     storyCommentModifier =
                                         StoryCommentCreated.enable(
                                             Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
                                     storyCommentModifier =
                                         StoryCommentCreated.disable();
                                   }
 
-                                  communityNotificationModifier
-                                      .add(storyCommentModifier);
+                                  if (element.isNetworkEnabled) {
+                                    communityNotificationModifier
+                                        .add(storyCommentModifier);
+                                  }
                                 }
 
                                 if (element is PostCreated) {
@@ -247,22 +297,22 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     postCreatedModifier =
-                                        PostCreated.enable(All());
+                                        PostCreated.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     postCreatedModifier =
-                                        PostCreated.enable(
-                                            Only(modRoles));
+                                        PostCreated.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
-                                    postCreatedModifier =
-                                        PostCreated.disable();
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
+                                    postCreatedModifier = PostCreated.disable();
                                   }
-
-                                  communityNotificationModifier
+                                  if(element.isNetworkEnabled){
+                                    communityNotificationModifier
                                       .add(postCreatedModifier);
+                                  }
+                                  
                                 }
-
 
                                 if (element is PostReacted) {
                                   late CommunityNotificationModifier
@@ -270,22 +320,23 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     postReacteModifier =
-                                        PostReacted.enable(All());
+                                        PostReacted.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     postReacteModifier =
-                                        PostReacted.enable(
-                                            Only(modRoles));
+                                        PostReacted.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
-                                    postReacteModifier =
-                                        PostReacted.disable();
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
+                                    postReacteModifier = PostReacted.disable();
                                   }
 
-                                  communityNotificationModifier
+                                  if(element.isNetworkEnabled){
+                                    communityNotificationModifier
                                       .add(postReacteModifier);
-                                }
+                                  }
 
+                                }
 
                                 if (element is CommentCreated) {
                                   late CommunityNotificationModifier
@@ -293,22 +344,24 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     commentCreatedModifier =
-                                        CommentCreated.enable(All());
+                                        CommentCreated.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     commentCreatedModifier =
-                                        CommentCreated.enable(
-                                            Only(modRoles));
+                                        CommentCreated.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
                                     commentCreatedModifier =
                                         CommentCreated.disable();
                                   }
 
-                                  communityNotificationModifier
+                                  if(element.isNetworkEnabled){
+                                    communityNotificationModifier
                                       .add(commentCreatedModifier);
-                                }
+                                  }
 
+                                }
 
                                 if (element is CommentReacted) {
                                   late CommunityNotificationModifier
@@ -316,22 +369,23 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     commentReactedModifier =
-                                        CommentReacted.enable(All());
+                                        CommentReacted.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     commentReactedModifier =
-                                        CommentReacted.enable(
-                                            Only(modRoles));
+                                        CommentReacted.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
                                     commentReactedModifier =
                                         CommentReacted.disable();
                                   }
 
-                                  communityNotificationModifier
+                                  if(element.isNetworkEnabled){
+                                    communityNotificationModifier
                                       .add(commentReactedModifier);
+                                  }
                                 }
-
 
                                 if (element is CommentReplied) {
                                   late CommunityNotificationModifier
@@ -339,27 +393,23 @@ class _CommunityNotificationSettingsScreenState
 
                                   if (element.rolesFilter is All) {
                                     commentRepliedModifier =
-                                        CommentReplied.enable(All());
+                                        CommentReplied.enable(null);
                                   }
                                   if (element.rolesFilter is Only) {
                                     commentRepliedModifier =
-                                        CommentReplied.enable(
-                                            Only(modRoles));
+                                        CommentReplied.enable(Only(modRoles));
                                   }
-                                  if (element.rolesFilter is Not) {
+                                  if (element.rolesFilter is Not ||
+                                      element.isEnabled == false) {
                                     commentRepliedModifier =
                                         CommentReplied.disable();
                                   }
-
-                                  communityNotificationModifier
+                                  if(element.isNetworkEnabled){
+                                    communityNotificationModifier
                                       .add(commentRepliedModifier);
+                                  }
                                 }
-
-
                               });
-
-
-                              
 
                               await AmityCoreClient()
                                   .notifications()
@@ -381,7 +431,9 @@ class _CommunityNotificationSettingsScreenState
                             }
                           }
                         },
-                        child: isloading? const CircularProgressIndicator() : const Text("Save Settings"),
+                        child: isloading
+                            ? const CircularProgressIndicator()
+                            : const Text("Save Settings"),
                       )
                     ],
                   ),
