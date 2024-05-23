@@ -283,6 +283,7 @@ class AppRouter {
           ),
 
 
+
           GoRoute(
             name: AppRoute.globalStoryTargets,
             path: AppRoute.globalStoryTargetsRoute,
@@ -309,7 +310,6 @@ class AppRouter {
                return const ValidateUrlScreen();
             }
           ),
-
 
           GoRoute(
             name: AppRoute.createPollPost,
