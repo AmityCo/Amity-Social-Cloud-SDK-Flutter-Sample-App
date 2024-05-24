@@ -18,6 +18,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_list/com
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_recommend_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_list/community_trending_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_member/community_member_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/community_notification_settings/community_notification_settings_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
@@ -30,6 +31,7 @@ import 'package:flutter_social_sample_app/presentation/screen/follower_list/foll
 import 'package:flutter_social_sample_app/presentation/screen/following_list/following_list_screend.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed/global_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_feed_custom_ranking/global_feed_custom_ranking.dart';
+import 'package:flutter_social_sample_app/presentation/screen/global_story_targets/get_global_story_target_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/global_user_search/global_user_search.dart';
 import 'package:flutter_social_sample_app/presentation/screen/landing/landing_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/live_stream_list/live_stream_list.dart';
@@ -55,6 +57,8 @@ import 'package:flutter_social_sample_app/presentation/screen/token_exchange/tok
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_profile/user_profile_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/validate_text/validate_text_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/validate_urls/Validate_URL_Screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/view_stream/view_stream.dart';
 import 'package:go_router/go_router.dart';
 
@@ -277,6 +281,36 @@ class AppRouter {
                 targets: state.params['targets']!);
             }
           ),
+
+
+
+          GoRoute(
+            name: AppRoute.globalStoryTargets,
+            path: AppRoute.globalStoryTargetsRoute,
+            builder: (context, state) {
+
+               return const GlobalStoryTargetScreen();
+            }
+          ),
+
+          GoRoute(
+            name: AppRoute.validateText,
+            path: AppRoute.validateTextRoute,
+            builder: (context, state) {
+
+               return const ValidateTextScreen();
+            }
+          ),
+
+          GoRoute(
+            name: AppRoute.validateURL,
+            path: AppRoute.validateURLRoute,
+            builder: (context, state) {
+
+               return const ValidateUrlScreen();
+            }
+          ),
+
           GoRoute(
             name: AppRoute.createPollPost,
             path: AppRoute.createPollPostRoute,
@@ -407,7 +441,8 @@ class AppRouter {
         path: AppRoute.getReachUserRoute,
         builder: (context, state) {
           return PostReachedUsersScreen(
-            postId: state.queryParams['postId']!,
+            referenceId: state.queryParams['referenceId']!,
+            referenceType: state.queryParams['referenceType']!,
           );
         },
       ),
@@ -437,6 +472,16 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        name: AppRoute.communitNotificationSerttings,
+        path: AppRoute.communitNotificationSerttingsRoute,
+        builder: (context, state) {
+          return CommunityNotificationSettingsScreen(
+            communityId: state.queryParams['communityId']!,
+          );
+        },
+      ),
+
       GoRoute(
         name: AppRoute.userBlock,
         path: AppRoute.userBlockRoute,

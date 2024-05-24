@@ -200,11 +200,12 @@ class StoryWidget extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // GoRouter.of(context).pushNamed(
-                        //     AppRoute.getReachUser,
-                        //     queryParams: {
-                        //       'postId': value.postId!,
-                        //     });
+                        GoRouter.of(context).pushNamed(
+                            AppRoute.getReachUser,
+                            queryParams: {
+                              'referenceId': story.storyId!,
+                              'referenceType': "story"
+                            });
                       },
                       child: Row(
                         children: [
@@ -220,8 +221,8 @@ class StoryWidget extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    // Text("Is Seen: ${story.isSeen() ? 'Yes' : 'No'}"),
-                    // Divider(height: .5, color: Colors.grey.shade300),
+                    Text("Is Seen: ${story.isSeen() ? 'Yes' : 'No'}"),
+                    Divider(height: .5, color: Colors.grey.shade300),
                     const SizedBox(
                       height: 10,
                     ),

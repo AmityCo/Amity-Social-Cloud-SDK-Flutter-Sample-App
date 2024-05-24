@@ -69,6 +69,11 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
                   value: 5,
                   enabled: true,
                   child: Text("RTE"),
+                ),
+                PopupMenuItem(
+                  value: 6,
+                  enabled: true,
+                  child: Text("Notification Settings"),
                 )
               ];
             },
@@ -112,6 +117,12 @@ class _CommunityProfileScreenState extends State<CommunityProfileScreen>
               if (index == 5) {
                 //Open RTE event for community
                 GoRouter.of(context).pushNamed(AppRoute.communityRTE,
+                    queryParams: {'communityId': widget.communityId});
+              }
+
+              if (index == 6) {
+                //Open RTE event for community
+                GoRouter.of(context).pushNamed(AppRoute.communitNotificationSerttings,
                     queryParams: {'communityId': widget.communityId});
               }
             },
@@ -352,6 +363,7 @@ class _CommunityProfileHeaderWidgetState
     extends State<_CommunityProfileHeaderWidget> {
   Future<List<String>?>? _rolesFuture;
   Future<int>? _postCountFuture;
+  bool canManageStories = false;
   @override
   void initState() {
     if (widget.amityCommunity.communityId != null) {
@@ -359,12 +371,16 @@ class _CommunityProfileHeaderWidgetState
           .getCurrentUserRoles(widget.amityCommunity.communityId!);
     }
     _postCountFuture = widget.amityCommunity.getPostCount(AmityFeedType.PUBLISHED);
+    canManageStories = AmityCoreClient.hasPermission(AmityPermission.MANAGE_COMMUNITY_STORY)
+                                    .atCommunity(widget.amityCommunity.communityId!)
+                                    .check();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
+    
     return Container(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -478,6 +494,10 @@ class _CommunityProfileHeaderWidgetState
                   "Current User Roles: ${currentUserRoles ?? "Not A member"}");
             },
           ),
+          const SizedBox(height: 18),
+
+          Text("Can MANAGE_COMMUNITY_STORIES  --> ${canManageStories ? "YES" : "NO"}"),
+
           const SizedBox(height: 18),
           Center(
             child: SizedBox(

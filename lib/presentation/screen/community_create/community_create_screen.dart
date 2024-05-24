@@ -33,6 +33,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
   bool _isPublic = true;
   bool _isPostReviewEnable = false;
+  bool _isCommentOnStoryEnable = true;
 
   XFile? _avatar;
 
@@ -148,6 +149,19 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Post Review Enable'),
                 ),
+
+                CheckboxListTile(
+                  value: _isCommentOnStoryEnable,
+                  onChanged: (value) {
+                    setState(() {
+                      _isCommentOnStoryEnable = value!;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Comment on Story Enable'),
+                ),
+
                 SizedBox(
                   height: 80,
                   child: TextFormField(
@@ -247,13 +261,19 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
       print('metadata decode failed');
     }
 
+    AmityCommunityStorySettings storySettings = AmityCommunityStorySettings();
+    storySettings.allowComment = _isCommentOnStoryEnable;
+    
+
     final communityCreator = AmitySocialClient.newCommunityRepository()
         .createCommunity(name)
         .description(des)
         .metadata(metadata)
         .isPublic(_isPublic)
-        .isPostReviewEnabled(_isPostReviewEnable);
+        .storySettings(storySettings)
+        .postSetting( _isPostReviewEnable ? AmityCommunityPostSettings.ADMIN_REVIEW_POST_REQUIRED :AmityCommunityPostSettings.ANYONE_CAN_POST );
 
+    
     if (_catsEditController.text.isNotEmpty) {
       communityCreator.categoryIds(_catsEditController.text.trim().split(',').map((e) => e.trim()).toList());
     }

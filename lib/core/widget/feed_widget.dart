@@ -221,7 +221,8 @@ class FeedWidget extends StatelessWidget {
                         GoRouter.of(context).pushNamed(
                             AppRoute.getReachUser,
                             queryParams: {
-                              'postId': value.postId!,
+                              'referenceId': value.postId!,
+                              'referenceType': "post"
                             });
                       },
                       child: Row(
