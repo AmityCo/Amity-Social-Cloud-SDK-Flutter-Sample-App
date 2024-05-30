@@ -34,6 +34,7 @@ class FeedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
+    
 
     return StreamBuilder<AmityPost>(
       stream: amityPost.listen.stream,
@@ -147,10 +148,20 @@ class FeedWidget extends StatelessWidget {
                               style: themeData.textTheme.bodySmall,
                             ),
                           if (value.target is CommunityTarget)
+                          
                             Text(
                               'Posted On : ${(value.target as CommunityTarget).targetCommunity?.displayName ?? 'No name'} Community',
                               style: themeData.textTheme.bodySmall,
                             ),
+
+                            (value.target as CommunityTarget).postedCommunityMember!=null?
+
+                            Text(
+                              'Poster Roles On : ${(value.target as CommunityTarget).postedCommunityMember?.roles ?? 'No Roles'} in Community',
+                              style: themeData.textTheme.bodySmall,
+                            ): const SizedBox() ,
+
+
                           Text(
                             "LatestCommentUserName -> ${snapshot.data!.latestComments?[0].user?.displayName ?? "No Latest comment user"}",
                             style: themeData.textTheme.bodySmall,
