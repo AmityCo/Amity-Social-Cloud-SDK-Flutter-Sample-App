@@ -101,19 +101,6 @@ class AdWidget extends StatelessWidget {
           ],
         ),
       ),
-      // child: Column(
-      //   mainAxisSize: MainAxisSize.min,
-      //   crossAxisAlignment:CrossAxisAlignment.start,
-      //   children: [
-      //     // Expanded(
-      //     //   child: AdvertiserRowWidget(
-      //     //       advertiserId: amityAd.advertiserId ?? '',
-      //     //       companyName: amityAd.advertiser?.companyName,
-      //     //       advertiserAvatar: amityAd.advertiser?.avatar),
-      //     // ),
-      //     const SizedBox(width: 18),
-
-      //   ],
     );
   }
 }
