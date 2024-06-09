@@ -181,4 +181,6 @@ class AppRoute {
   static const adsList = 'adsList';
   static const adsListRoute = '/adsList';
 
+  static const adsSettings = 'adsSettings';
+  static const adsSettingsRoute = '/adsSettings';
 }

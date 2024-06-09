@@ -375,10 +375,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Gloabl User Search'),
                 ),
+                 const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(AppRoute.adsSettings);
+                  },
+                  child: const Text('Ads Settings'),
+                ),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.adsList);
+                    GoRouter.of(context).pushNamed(AppRoute.adsList);
                   },
                   child: const Text('Ads List'),
                 ),

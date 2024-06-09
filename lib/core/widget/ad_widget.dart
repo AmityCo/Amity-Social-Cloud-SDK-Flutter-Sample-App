@@ -58,46 +58,42 @@ class AdWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  
+                  Container(
+                    margin: const EdgeInsets.all(4),
+                    color: Colors.blueGrey.withOpacity(.25),
+                    width: 130,
+                    height: 130,
+                    child: (amityAd.image1_1 != null)
+                        ? Image.network(
+                            amityAd.image1_1!.getUrl(AmityImageSize.MEDIUM),
+                            fit: BoxFit.cover,
+                          )
+                        : const Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              "1:1 Ad image is not available",
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                  ),
+                  Container(
+                      margin: const EdgeInsets.all(4),
+                      color: Colors.blueGrey.withOpacity(.25),
+                      width: 130,
+                      height: 130,
+                      child: (amityAd.image9_16 != null)
+                          ? Image.network(
+                              amityAd.image9_16!.getUrl(AmityImageSize.MEDIUM),
+                              fit: BoxFit.fitWidth,
+                            )
+                          : const Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "9:16 Ad image is not available",
+                                textAlign: TextAlign.center,
+                              ),
+                            ))
                 ]),
-            // InkWell(
-            //   onTap: () async {
-            //     if (amityAd.image1_1 != null) {
-            //       await launchUrl(Uri.parse(
-            //           amityAd.image1_1!.getUrl(AmityImageSize.FULL)));
-            //     }
-            //   },
-            //   child: Text(
-            //       'Image 1:1 - ${amityAd.image1_1?.getUrl(AmityImageSize.FULL) ?? 'N/A'}',
-            //       style: const TextStyle(
-            //           fontSize: 14,
-            //           fontWeight: FontWeight.w400,
-            //           color: Colors.blueAccent)),
-            // ),
-            // InkWell(
-            //   onTap: () async {
-            //     if (amityAd.image9_16 != null) {
-            //       await launchUrl(Uri.parse(
-            //           amityAd.image9_16!.getUrl(AmityImageSize.FULL)));
-            //     }
-            //   },
-            //   child: Text(
-            //       'Image 9:16 - ${amityAd.image9_16?.getUrl(AmityImageSize.FULL) ?? 'N/A'}',
-            //       style: const TextStyle(
-            //           fontSize: 14,
-            //           fontWeight: FontWeight.w400,
-            //           color: Colors.blueAccent)),
-            // ),
-            // InkWell(
-            //   onTap: () async {
-            //     if (amityAd.callToActionUrl != null) {
-            //       await launchUrl(Uri.parse(amityAd.callToActionUrl!));
-            //     }
-            //   },
-            //   child: Text(
-            //       'Call to Action - ${amityAd.image9_16?.getUrl(AmityImageSize.FULL) ?? 'N/A'}',
-            //       style: themeData.textTheme.titleMedium),
-            // ),
           ],
         ),
       ),
