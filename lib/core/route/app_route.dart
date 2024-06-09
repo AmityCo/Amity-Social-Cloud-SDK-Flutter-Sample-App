@@ -178,5 +178,7 @@ class AppRoute {
   static const communitNotificationSerttings = 'communitNotificationSerttings';
   static const communitNotificationSerttingsRoute = '/communitNotificationSerttings';
 
+  static const adsList = 'adsList';
+  static const adsListRoute = '/adsList';
 
 }

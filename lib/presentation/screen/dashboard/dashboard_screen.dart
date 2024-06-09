@@ -7,6 +7,7 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
+import 'package:get/utils.dart';
 import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -231,7 +232,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: const Text('Get Story by Id'),
                 ),
 
-
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
@@ -252,7 +252,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context).goNamed(AppRoute.globalStoryTargets,);
+                    GoRouter.of(context).goNamed(
+                      AppRoute.globalStoryTargets,
+                    );
                   },
                   child: const Text('Get Global Story Targets'),
                 ),
@@ -266,37 +268,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       buttonText: "Get",
                       hintText: 'community/commnuityId1,community/commnuityId2',
                       onPress: (value) {
-                        GoRouter.of(context).goNamed(AppRoute.storytargetsByTargets,
+                        GoRouter.of(context).goNamed(
+                            AppRoute.storytargetsByTargets,
                             params: {'targets': value});
                       },
                     );
                   },
                   child: const Text('Get Story targets By Targets'),
                 ),
-                
 
                 const SizedBox(height: 20),
 
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context)
-                        .goNamed(AppRoute.validateURL);
+                    GoRouter.of(context).goNamed(AppRoute.validateURL);
                   },
                   child: const Text('Validate URL'),
                 ),
                 const SizedBox(height: 20),
 
-
                 TextButton(
                   onPressed: () {
-                    GoRouter.of(context)
-                        .goNamed(AppRoute.validateText);
+                    GoRouter.of(context).goNamed(AppRoute.validateText);
                   },
                   child: const Text('Validate Text'),
                 ),
                 const SizedBox(height: 20),
-
-
 
                 TextButton(
                   onPressed: () {
@@ -378,6 +375,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Gloabl User Search'),
                 ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).goNamed(AppRoute.adsList);
+                  },
+                  child: const Text('Ads List'),
+                ),
+                const SizedBox(height: 20),
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {
