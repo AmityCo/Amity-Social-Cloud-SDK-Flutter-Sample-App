@@ -20,6 +20,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+
+    FirebaseMessaging.onMessage.listen((event) {
+      event.notification?.body;
+      print('onMessage: $event');
+    });
+  
   }
 
   @override

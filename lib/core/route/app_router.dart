@@ -9,6 +9,7 @@ import 'package:flutter_social_sample_app/presentation/screen/channel_profile/ch
 import 'package:flutter_social_sample_app/presentation/screen/channel_update/channel_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/comment_query_pagination/comment_query_pagination_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_category/community_category_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
@@ -404,7 +405,7 @@ class AppRouter {
         name: AppRoute.commentList,
         path: AppRoute.commentListRoute,
         builder: (context, state) {
-          return CommentQueryScreen(
+          return CommentQueryPaginationScreen(
             referenceType: state.queryParams['referenceType']!,
             referenceId: state.queryParams['referenceId']!,
             communityId: state.queryParams['communityId'],

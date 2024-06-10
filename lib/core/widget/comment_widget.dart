@@ -431,7 +431,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     queryParams: {
                       'referenceType': widget.referenceType,
                       'referenceId': widget.referenceId,
-                      'parentId': value.commentId,
+                      'parentCommentId': value.commentId,
                       'communityId': widget.communityId,
                       'isPublic': widget.isPublic.toString()
                     },
