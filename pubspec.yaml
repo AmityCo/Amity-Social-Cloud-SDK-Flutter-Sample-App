@@ -1,6 +1,7 @@
 name: flutter_social_sample_app
 description: Demonstrates how to use the flutter_application_1 plugin.
-version: 1.1.45+60
+version: 1.1.46+61
+
 
 
 environment:
