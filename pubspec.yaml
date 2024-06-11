@@ -3,6 +3,7 @@ description: Demonstrates how to use the flutter_application_1 plugin.
 version: 1.1.46+61
 
 
+
 environment:
   sdk: ">=3.0.0 <4.0.0"
 

@@ -15,6 +15,23 @@ class ReactionWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: reaction.creator?.avatarUrl != null
+                ? Image.network(
+                    reaction.creator!.avatarUrl!,
+                    fit: BoxFit.fill,
+                  )
+                : Image.asset('assets/user_placeholder.png'),
+          ),
+          const SizedBox(
+            width: 12,
+          ),
+          Expanded(child: Text(reaction.creator?.displayName ?? "")),
+          Container(
             width: 42,
             height: 42,
             padding: const EdgeInsets.all(10),
@@ -25,11 +42,7 @@ class ReactionWidget extends StatelessWidget {
                 reaction.reactionName!,
               ),
             ),
-          ),
-          const SizedBox(
-            width: 12,
-          ),
-          Text(reaction.userDisplayName ?? "")
+          )
         ],
       ),
     );
