@@ -130,6 +130,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(height: 20),
                 TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).goNamed(AppRoute.createCustomPost);
+                  },
+                  child: const Text('Create Custom Post'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
                   onPressed: () async {
                     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
