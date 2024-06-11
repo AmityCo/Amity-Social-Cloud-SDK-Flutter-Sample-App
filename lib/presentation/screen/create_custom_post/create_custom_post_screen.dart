@@ -44,7 +44,7 @@ class _CreateCustomPostScreenState extends State<CreateCustomPostScreen> {
 
                 final amityPost = await AmitySocialClient.newPostRepository()
                     .createPost()
-                    .targetMe()
+                    .targetUser(target)
                     .custom('amity.custom', customData)
                     .post();
 
