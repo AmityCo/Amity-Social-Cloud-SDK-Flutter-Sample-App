@@ -482,6 +482,15 @@ class FeedContentWidget extends StatelessWidget {
       );
     }
 
+     if (amityPostData is CustomData) {
+      final data = amityPostData as CustomData;
+      return Container(
+        // color: Colors.green,
+        child:
+            Text('Custom post content -->>>> ${data.rawData}'),
+      );
+    }
+
     return Container(
       color: Colors.red,
       child: Text('>>>>> $amityPostData <<<<<<'),
