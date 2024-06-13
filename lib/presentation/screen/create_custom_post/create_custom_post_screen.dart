@@ -30,7 +30,7 @@ class _CreateCustomPostScreenState extends State<CreateCustomPostScreen> {
             onPressed: () async {
               try {
                 FocusManager.instance.primaryFocus?.unfocus();
-                final target = _targetUserTextEditController.text.trim();
+                final target = _targetUserTextEditController.text;
                 final key = _keyTextController.text.trim();
                 final value = _valueTextController.text.trim();
 
