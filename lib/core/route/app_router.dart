@@ -23,6 +23,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_notifica
 import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_custom_post/create_custom_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_livestream_post/create_livestream_post.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
@@ -317,6 +318,13 @@ class AppRouter {
             path: AppRoute.createPollPostRoute,
             builder: (context, state) => const CreatePollPostScreen(),
           ),
+
+           GoRoute(
+            name: AppRoute.createCustomPost,
+            path: AppRoute.createCustomPostRoute,
+            builder: (context, state) => const CreateCustomPostScreen(),
+          ),
+
           GoRoute(
             name: AppRoute.chat,
             path: AppRoute.chatRoute,

@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/extension/date_extension.dart';
 import 'package:flutter_social_sample_app/core/widget/add_comment_widget.dart';
-import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
 import 'package:flutter_social_sample_app/core/widget/poll_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/reaction_action_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/shadow_container_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/user_profile_info_row_widget.dart';
+import 'package:flutter_social_sample_app/presentation/screen/update_post/update_custom_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/update_post/update_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/video_player/full_screen_video_player.dart';
 import 'package:go_router/go_router.dart';
@@ -94,15 +94,28 @@ class FeedWidget extends StatelessWidget {
                                 ),
                                 onSelected: (index) {
                                   if (index == 1) {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => UpdatePostScreen(
-                                          amityPost: value,
-                                          communityId: communityId,
-                                          isPublic: isPublic,
+                                    if (value.data is CustomData) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UpdateCustomPostScreen(
+                                                  amityPost: value),
                                         ),
-                                      ),
-                                    );
+                                      );
+
+                                    } else {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              UpdatePostScreen(
+                                            amityPost: value,
+                                            communityId: communityId,
+                                            isPublic: isPublic,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   }
                                   if (index == 2) {
                                     value.delete();
@@ -479,6 +492,15 @@ class FeedContentWidget extends StatelessWidget {
         // color: Colors.green,
         child:
             Text('Linked Stream ID -->>>> ${data.streamId}' ?? 'No Stream ID'),
+      );
+    }
+
+     if (amityPostData is CustomData) {
+      final data = amityPostData as CustomData;
+      return Container(
+        // color: Colors.green,
+        child:
+            Text('Custom post content -->>>> ${data.rawData}'),
       );
     }
 
