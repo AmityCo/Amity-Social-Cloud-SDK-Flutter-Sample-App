@@ -33,13 +33,11 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
 
   @override
   void initState() {
-
     communityLiveCollectionInit();
     super.initState();
   }
 
-    void communityLiveCollectionInit() {
-
+  void communityLiveCollectionInit() {
     communityLiveCollection = CommunityLiveCollection(
         request: () => AmitySocialClient.newCommunityRepository()
             .getCommunities()
@@ -50,7 +48,6 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
             .includeDeleted(_includeDelete)
             .build());
 
-
     communityLiveCollection.getStreamController().stream.listen((event) {
       if (mounted) {
         setState(() {
@@ -59,19 +56,16 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
       }
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      communityLiveCollection.loadNext();
-    });
-
     scrollcontroller.addListener(pagination);
   }
 
   void pagination() {
     if ((scrollcontroller.position.pixels ==
-              scrollcontroller.position.maxScrollExtent) &&
-          communityLiveCollection.hasNextPage()) {
-        communityLiveCollection.loadNext();
-      }
+            scrollcontroller.position.maxScrollExtent) &&
+        communityLiveCollection.hasNextPage()) {
+          print("TriggerPagination");
+      communityLiveCollection.loadNext();
+    }
   }
 
   @override
@@ -86,134 +80,141 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
               onChanged: (value) {
                 _debouncer.run(() {
                   _keyboard = value;
-                  communityLiveCollection.reset();
-                  communityLiveCollectionInit();
                 });
               },
               decoration: const InputDecoration(hintText: 'Enter Keybaord'),
             ),
           ),
-          Container(
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: PopupMenuButton(
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                          value: 1,
-                          child: Text(AmityCommunityFilter.ALL.name),
-                        ),
-                        PopupMenuItem(
-                          value: 2,
-                          child: Text(AmityCommunityFilter.MEMBER.name),
-                        ),
-                        PopupMenuItem(
-                          value: 3,
-                          child: Text(AmityCommunityFilter.NOT_MEMBER.name),
-                        )
-                      ];
-                    },
-                    child: const Icon(
-                      Icons.filter_alt_rounded,
-                      size: 18,
-                    ),
-                    onSelected: (index) {
-                      if (index == 1) {
-                        _filter = AmityCommunityFilter.ALL;
-                      }
-                      if (index == 2) {
-                        _filter = AmityCommunityFilter.MEMBER;
-                      }
-                      if (index == 3) {
-                        _filter = AmityCommunityFilter.NOT_MEMBER;
-                      }
-                      
-                  communityLiveCollection.reset();
-                  communityLiveCollectionInit();
-                    },
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        value: 1,
+                        child: Text(AmityCommunityFilter.ALL.name),
+                      ),
+                      PopupMenuItem(
+                        value: 2,
+                        child: Text(AmityCommunityFilter.MEMBER.name),
+                      ),
+                      PopupMenuItem(
+                        value: 3,
+                        child: Text(AmityCommunityFilter.NOT_MEMBER.name),
+                      )
+                    ];
+                  },
+                  child: const Icon(
+                    Icons.filter_alt_rounded,
+                    size: 18,
                   ),
+                  onSelected: (index) {
+                    if (index == 1) {
+                      _filter = AmityCommunityFilter.ALL;
+                    }
+                    if (index == 2) {
+                      _filter = AmityCommunityFilter.MEMBER;
+                    }
+                    if (index == 3) {
+                      _filter = AmityCommunityFilter.NOT_MEMBER;
+                    }
+                  },
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: PopupMenuButton(
-                    itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-
-                          child: Text(AmityCommunitySortOption.DISPLAY_NAME.name),
-                          value: 1,
-                        ),
-                        PopupMenuItem(
-                          child: Text(AmityCommunitySortOption.FIRST_CREATED.name),
-                          value: 2,
-                        ),
-                        PopupMenuItem(
-                          child: Text(AmityCommunitySortOption.LAST_CREATED.name),
-                          value: 3,
-                        )
-                      ];
-                    },
-                    child: const Icon(
-                      Icons.sort_rounded,
-                      size: 18,
-                    ),
-                    onSelected: (index) {
-                      if (index == 1) {
-                        _sort = AmityCommunitySortOption.DISPLAY_NAME;
-                      }
-                      if (index == 2) {
-                        _sort = AmityCommunitySortOption.FIRST_CREATED;
-                      }
-                      if (index == 3) {
-                        _sort = AmityCommunitySortOption.LAST_CREATED;
-                      }
-                  communityLiveCollection.reset();
-                  communityLiveCollectionInit();
-                    },
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: PopupMenuButton(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        value: 1,
+                        child:
+                            Text(AmityCommunitySortOption.DISPLAY_NAME.name),
+                      ),
+                      PopupMenuItem(
+                        value: 2,
+                        child:
+                            Text(AmityCommunitySortOption.FIRST_CREATED.name),
+                      ),
+                      PopupMenuItem(
+                        value: 3,
+                        child:
+                            Text(AmityCommunitySortOption.LAST_CREATED.name),
+                      )
+                    ];
+                  },
+                  child: const Icon(
+                    Icons.sort_rounded,
+                    size: 18,
                   ),
+                  onSelected: (index) {
+                    if (index == 1) {
+                      _sort = AmityCommunitySortOption.DISPLAY_NAME;
+                    }
+                    if (index == 2) {
+                      _sort = AmityCommunitySortOption.FIRST_CREATED;
+                    }
+                    if (index == 3) {
+                      _sort = AmityCommunitySortOption.LAST_CREATED;
+                    }
+                  },
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: InkWell(
-                    child: const Icon(Icons.tag, size: 18),
-                    onTap: () {
-                      EditTextDialog.show(context, title: 'Enter tags, separate by comma', hintText: 'type tags here',
-                          onPress: (value) {
-                        if (value.isNotEmpty) {
-                          _tags = value.trim().split(',');
-                        } else {
-                          _tags = null;
-                        }
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: InkWell(
+                  child: const Icon(Icons.tag, size: 18),
+                  onTap: () {
+                    EditTextDialog.show(context,
+                        title: 'Enter tags, separate by comma',
+                        hintText: 'type tags here', onPress: (value) {
+                      if (value.isNotEmpty) {
+                        _tags = value.trim().split(',');
+                      } else {
+                        _tags = null;
+                      }
+                    });
+                  },
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Checkbox(
+                      value: _includeDelete,
+                      onChanged: (value) {
+                        setState(() {
+                          _includeDelete = (value ?? false);
+                        });
+                      },
+                    ),
+                    const Text('Include Delete')
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
                         communityLiveCollection.reset();
                         communityLiveCollectionInit();
-                      });
-                    },
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Checkbox(
-                        value: _includeDelete,
-                        onChanged: (value) {
-                          setState(() {
-                            _includeDelete = (value ?? false);
-                            communityLiveCollection.reset();
-
-                            communityLiveCollectionInit();
-                          });
-                        },
+                        communityLiveCollection.loadNext();
+                      },
+                      child: const Text(
+                        "Query",
                       ),
-                      const Text('Include Delete')
-                    ],
-                  ),
-                )
-              ],
-            ),
+                    )
+                  ],
+                ),
+              )
+            ],
           ),
           Expanded(
             child: amityCommunities.isNotEmpty
@@ -221,6 +222,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                     onRefresh: () async {
                       communityLiveCollection.reset();
                       communityLiveCollectionInit();
+                      communityLiveCollection.loadNext();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
