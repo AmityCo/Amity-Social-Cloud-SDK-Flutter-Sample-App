@@ -766,7 +766,7 @@ class AmityMessageContentWidget extends StatelessWidget {
                   onPressed: () {},
                   icon: const Icon(Icons.attach_file_rounded),
                   label: Text(
-                    data.file!.getFilePath!.split('/').last,
+                    data.file?.getFilePath?.split('/').last ?? data.file?.getUrl ?? "",
                   ),
                 )
               : Container(
