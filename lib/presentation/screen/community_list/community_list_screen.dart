@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
@@ -14,7 +16,9 @@ class CommunityListScreen extends StatefulWidget {
 }
 
 class _CommunityListScreenState extends State<CommunityListScreen> {
-  var amityCommunities = <AmityCommunity>[];
+  // var amityCommunities = <AmityCommunity>[];
+  final List<AmityCommunity> _amityCommunities = [];
+  final List<AmityCommunity> _amityCommunitiesForFeed = [];
 
   final scrollcontroller = ScrollController();
   bool loading = false;
@@ -35,6 +39,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
   void initState() {
 
     communityLiveCollectionInit();
+    initMyCommunity();
     super.initState();
   }
 
@@ -51,18 +56,51 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
             .build());
 
 
-    communityLiveCollection.getStreamController().stream.listen((event) {
-      if (mounted) {
-        setState(() {
-          amityCommunities = event;
-        });
-      }
-    });
+    // communityLiveCollection.getStreamController().stream.listen((event) {
+    //   if (mounted) {
+    //     setState(() {
+    //       amityCommunities = event;
+    //     });
+    //   }
+    // });
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       communityLiveCollection.loadNext();
     });
 
+    scrollcontroller.addListener(pagination);
+  }
+
+  Future<void> initMyCommunity([String? keyword]) async {
+    final repository = AmitySocialClient.newCommunityRepository()
+        .getCommunities()
+        .filter(AmityCommunityFilter.MEMBER)
+        .includeDeleted(false);
+    if (keyword != null && keyword.isNotEmpty) {
+      repository.withKeyword(
+          keyword); // Add keyword filtering only if keyword is provided and not empty
+    }
+    communityLiveCollection = repository.getLiveCollection(pageSize: 20);
+    communityLiveCollection.getStreamController().stream.listen((event) {
+      print("getStreamController");
+      _amityCommunitiesForFeed.clear();
+      _amityCommunitiesForFeed.addAll(event);
+
+      _amityCommunities.clear();
+      _amityCommunities.addAll(event);
+
+      setState(() {
+        
+      });
+
+    }).onError((error, stackTrace) {
+      log("error:${error.error.toString()}");
+      // await AmityDialog().showAlertErrorDialog(
+      //     title: "Error!",
+      //     message: _communityController.error.toString());
+    });
+
+    scrollcontroller.removeListener(() {});
     scrollcontroller.addListener(pagination);
   }
 
@@ -216,7 +254,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
             ),
           ),
           Expanded(
-            child: amityCommunities.isNotEmpty
+            child: _amityCommunities.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
                       communityLiveCollection.reset();
@@ -224,9 +262,9 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
-                      itemCount: amityCommunities.length,
+                      itemCount: _amityCommunities.length,
                       itemBuilder: (context, index) {
-                        final amityCommunity = amityCommunities[index];
+                        final amityCommunity = _amityCommunities[index];
                         return Container(
                           margin: const EdgeInsets.all(12),
                           child: CommunityWidget(
@@ -248,7 +286,7 @@ class _CommunityListScreenState extends State<CommunityListScreen> {
                         : const Text('No Post'),
                   ),
           ),
-          if (amityCommunities.isNotEmpty && communityLiveCollection.isFetching)
+          if (_amityCommunities.isNotEmpty && communityLiveCollection.isFetching)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),

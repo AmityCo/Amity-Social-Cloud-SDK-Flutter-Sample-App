@@ -87,6 +87,11 @@ class ChannelMemberInfoRowWidget extends StatelessWidget {
                           textAlign: TextAlign.start,
                         ),
                         Text(
+                          'isDeleted - ${value.isDeleted ?? false}',
+                          style: themeData.textTheme.bodySmall,
+                          textAlign: TextAlign.start,
+                        ),
+                        Text(
                           'Flag Count - ${value.user?.flagCount ?? 0}',
                           style: themeData.textTheme.bodySmall,
                           textAlign: TextAlign.start,

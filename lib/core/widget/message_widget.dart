@@ -134,7 +134,7 @@ class MessageWidget extends StatelessWidget {
                           Text(
 
                             value.createdAt?.toLocal().toIso8601String() ?? DateTime.now().toLocal().toIso8601String(),
-                            style: themeData.textTheme.caption!.copyWith(),
+                            style: themeData.textTheme.bodySmall!.copyWith(),
 
                           ),
                           const SizedBox(width: 12),
@@ -394,7 +394,7 @@ class MessageWidget extends StatelessWidget {
                                     child: Text(
 
                                       value.reactions!.getCount('like').toString(),
-                                      style: themeData.textTheme.caption!.copyWith(fontSize: 14),
+                                      style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
 
                                     ),
                                   ),
@@ -442,7 +442,7 @@ class MessageWidget extends StatelessWidget {
                                     child: Text(
 
                                       value.reactions!.getCount('like').toString(),
-                                      style: themeData.textTheme.caption!.copyWith(fontSize: 14),
+                                      style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
 
                                     ),
                                   ),
@@ -488,7 +488,7 @@ class MessageWidget extends StatelessWidget {
                                 children: [
                                   Text(
                                     value.reactions!.getCount('love').toString(),
-                                    style: themeData.textTheme.caption!.copyWith(fontSize: 14),
+                                    style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
                                   ),
                                   const SizedBox(width: 2),
                                   Image.asset(
@@ -532,7 +532,7 @@ class MessageWidget extends StatelessWidget {
                                 children: [
                                   Text(
                                     value.reactions!.getCount('love').toString(),
-                                    style: themeData.textTheme.caption!.copyWith(fontSize: 14),
+                                    style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
                                   ),
                                   const SizedBox(width: 2),
                                   Image.asset(
