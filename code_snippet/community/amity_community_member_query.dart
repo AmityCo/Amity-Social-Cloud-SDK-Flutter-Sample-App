@@ -29,6 +29,7 @@ class AmityCommunityMemberQuery {
           .getMembers()
           .filter(filter)
           .sortBy(sortOption)
+          .includeDeleted(false) // optional to filter deleted users from the result
           .roles([
         'community-moderator'
       ]) //optional to query specific members by roles
