@@ -16,34 +16,24 @@ class ChannelWidget extends StatelessWidget {
         child: Text('Channel Deleted - ${amityChannel.channelId}'),
       );
     }
-    return StreamBuilder<AmityChannel>(
-      stream: amityChannel.listen.stream,
-      initialData: amityChannel,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final value = snapshot.data!;
-          return Container(
+    return Container(
             decoration: BoxDecoration(color: Colors.grey.withOpacity(.2)),
             child: InkWell(
               onTap: () {
                 GoRouter.of(context).pushNamed(AppRoute.channelProfile,
-                    params: {'channelId': value.channelId!});
+                    params: {'channelId': amityChannel.channelId!});
                 // params: {'communityId': 'f5a99abc1f275df3f4259b6ca0e3cb15'});
               },
               child: Column(
                 children: [
                   _ChannelInfoWidget(
-                    amityChannel: value,
+                    amityChannel: amityChannel,
                   ),
                   const Divider(),
                 ],
               ),
             ),
           );
-        }
-        return Container();
-      },
-    );
   }
 }
 
