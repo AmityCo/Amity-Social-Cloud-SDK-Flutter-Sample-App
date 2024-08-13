@@ -87,6 +87,10 @@ class _ChannelInfoWidget extends StatelessWidget {
                   'last Activity: ${amityChannel.lastActivity?.toIso8601String() ?? 'NaN'}',
                   style: themeData.textTheme.bodySmall,
                 ),
+                Text(
+                  'isDeleted: ${amityChannel.isDeleted ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
                 SelectableText(
                   'Channel ID : ${amityChannel.channelId ?? 'NaN'}',
                   style: themeData.textTheme.bodySmall,
