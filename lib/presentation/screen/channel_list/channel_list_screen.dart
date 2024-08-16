@@ -1,11 +1,9 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/channel_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class ChannelListScreen extends StatefulWidget {
@@ -16,8 +14,8 @@ class ChannelListScreen extends StatefulWidget {
 }
 
 class _ChannelListScreenState extends State<ChannelListScreen> {
-  late PagingController<AmityChannel> _controller;
-  final amityCommunities = <AmityChannel>[];
+  late ChannelLiveCollection _channelLiveCollection;
+  List<AmityChannel> amityChannels = <AmityChannel>[];
 
   final scrollcontroller = ScrollController();
   bool loading = false;
@@ -34,53 +32,51 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmityChatClient.newChannelRepository()
-          .getChannels()
-          .withKeyword(_keyboard.isEmpty ? null : _keyboard)
-          .sortBy(_sort)
-          .filter(_filter)
-          .types(_type)
-          .includingTags(_tags ?? [])
-          .excludingTags(_excludingTags ?? [])
-          .includeDeleted(false)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amityCommunities.clear();
-              amityCommunities.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            print(_controller.error.toString());
-            print(_controller.stacktrace.toString());
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
-    });
-
+    resetLiveCollection(isReset: false);
     scrollcontroller.addListener(pagination);
-
     super.initState();
   }
 
   void pagination() {
     if ((scrollcontroller.position.pixels ==
             scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
+        _channelLiveCollection.hasNextPage()) {
       setState(() {
-        _controller.fetchNextPage();
+         _channelLiveCollection.loadNext();
       });
     }
+  }
+
+  void resetLiveCollection({ bool isReset = true }) async {
+    if (isReset) {
+      _channelLiveCollection.getStreamController().stream;
+      setState(() {
+        amityChannels = [];
+      });
+    }
+
+    _channelLiveCollection = AmityChatClient.newChannelRepository()
+      .getChannels()
+      .withKeyword(_keyboard.isEmpty ? null : _keyboard)
+      .sortBy(_sort)
+      .filter(_filter)
+      .types(_type)
+      .includingTags(_tags ?? [])
+      .excludingTags(_excludingTags ?? [])
+      .includeDeleted(false)
+      .getLiveCollection();
+
+    _channelLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityChannels = event;
+        });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _channelLiveCollection.loadNext();
+    }); 
   }
 
   @override
@@ -95,8 +91,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
               onChanged: (value) {
                 _debouncer.run(() {
                   _keyboard = value;
-                  _controller.reset();
-                  _controller.fetchNextPage();
+                  resetLiveCollection();
                 });
               },
               decoration: const InputDecoration(hintText: 'Enter Keybaord'),
@@ -128,7 +123,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                       Icons.filter_alt_rounded,
                       size: 18,
                     ),
-                    onSelected: (index) {
+                    onSelected: (index) async {
                       if (index == 1) {
                         _filter = AmityChannelFilter.ALL;
                       }
@@ -138,9 +133,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                       if (index == 3) {
                         _filter = AmityChannelFilter.NOT_MEMBER;
                       }
-
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      resetLiveCollection();
                     },
                   ),
                 ),
@@ -214,9 +207,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                           _type.add(AmityChannelType.CONVERSATION);
                         }
                       }
-
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      resetLiveCollection();
                     },
                   ),
                 ),
@@ -240,9 +231,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                       if (index == 1) {
                         _sort = AmityChannelSortOption.LAST_ACTIVITY;
                       }
-
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      resetLiveCollection();
                     },
                   ),
                 ),
@@ -260,8 +249,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                         if (value.isEmpty) {
                           _tags = [];
                         }
-                        _controller.reset();
-                        _controller.fetchNextPage();
+                        resetLiveCollection();
                       });
                     },
                   ),
@@ -280,8 +268,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                         if (value.isEmpty) {
                           _excludingTags = [];
                         }
-                        _controller.reset();
-                        _controller.fetchNextPage();
+                        resetLiveCollection();
                       });
                     },
                   ),
@@ -290,17 +277,16 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
             ),
           ),
           Expanded(
-            child: amityCommunities.isNotEmpty
+            child: amityChannels.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      resetLiveCollection();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,
-                      itemCount: amityCommunities.length,
+                      itemCount: amityChannels.length,
                       itemBuilder: (context, index) {
-                        final amityChannel = amityCommunities[index];
+                        final amityChannel = amityChannels[index];
                         return Container(
                           margin: const EdgeInsets.all(12),
                           child: ChannelWidget(
@@ -316,12 +302,12 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
+                    child: _channelLiveCollection.isFetching
                         ? const CircularProgressIndicator()
                         : const Text('No Post'),
                   ),
           ),
-          if (_controller.isFetching && amityCommunities.isNotEmpty)
+          if (_channelLiveCollection.isFetching && amityChannels.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),

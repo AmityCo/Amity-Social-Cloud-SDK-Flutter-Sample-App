@@ -8,7 +8,6 @@ import 'package:flutter_social_sample_app/presentation/screen/channel_list/chann
 import 'package:flutter_social_sample_app/presentation/screen/channel_profile/channel_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_update/channel_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_pagination/comment_query_pagination_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_category/community_category_screen.dart';
@@ -505,12 +504,14 @@ class AppRouter {
           log('redirecting to /login');
           return AppRoute.loginRoute;
         } else {
-          // var user = await AmityCoreClient.getLoggedInUser();
           var userId = await PreferenceInterfaceImpl().loggedInUserId();
           var userName = await PreferenceInterfaceImpl().loggedInUserDisplayName();
-          await AmityCoreClient.login(userId!)
+          // Delaying the login for 5 seconds to simulate the login process
+          Future.delayed(const Duration(seconds: 5), () { 
+            AmityCoreClient.login(userId!)
               .displayName(userName!)
               .submit();
+          });
           return AppRoute.homeRoute;
         }
       }

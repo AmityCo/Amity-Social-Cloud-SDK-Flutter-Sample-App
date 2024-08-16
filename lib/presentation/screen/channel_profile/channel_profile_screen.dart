@@ -84,20 +84,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                               ),
                               const PopupMenuItem(
                                 value: 2,
-                                child: Text("Delete (Soft)"),
-                              ),
-                              const PopupMenuItem(
-                                value: 3,
-                                enabled: false,
-                                child: Text("Delete (Hard)"),
-                              ),
-                              const PopupMenuItem(
-                                value: 4,
                                 enabled: true,
                                 child: Text("Check my permission"),
                               ),
                               PopupMenuItem(
-                                value: 5,
+                                value: 3,
                                 child: Text((_amityChannel.isMuted ?? false)
                                     ? 'Unmute'
                                     : 'Mute'),
@@ -116,11 +107,6 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                                   queryParams: {'channelId': widget.channelId});
                             }
                             if (index == 2) {
-                              //Delete Channel
-                              // AmitySocialClient.newChannelRepository()
-                              //     .deleteChannel(widget.channelId);
-                            }
-                            if (index == 4) {
                               EditTextDialog.show(context,
                                   title:
                                       'Check my permission in this community',
@@ -145,7 +131,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                                 }
                               });
                             }
-                            if (index == 5) {
+                            if (index == 3) {
                               ///Mute/Unmute Channel
                               if (_amityChannel.isMuted ?? false) {
                                 AmityChatClient.newChannelRepository()
