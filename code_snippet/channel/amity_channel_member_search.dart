@@ -15,6 +15,7 @@ class AmityChannelMemberSearch {
       pageFuture: (token) => AmityChatClient.newChannelRepository()
           .membership(channelId)
           .searchMembers(keyword)
+          .includeDeleted(false) // optional to filter deleted users from the result
           .getPagingData(token: token, limit: 20),
       pageSize: 20,
     )..addListener(

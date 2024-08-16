@@ -27,6 +27,8 @@ class ChannelMemberScreenState extends State<ChannelMemberScreen> {
 
   String _keyboard = '';
 
+  bool _includeDeleted = false;
+
   final _debouncer = Debouncer(milliseconds: 500);
 
   @override
@@ -35,6 +37,7 @@ class ChannelMemberScreenState extends State<ChannelMemberScreen> {
       pageFuture: (token) => AmityChatClient.newChannelRepository()
           .membership(widget.channelId)
           .searchMembers(_keyboard)
+          .includeDeleted(_includeDeleted)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -106,6 +109,31 @@ class ChannelMemberScreenState extends State<ChannelMemberScreen> {
                 });
               },
               decoration: const InputDecoration(hintText: 'Enter Keybaord'),
+            ),
+          ),
+          Container(
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Checkbox(
+                        value: _includeDeleted,
+                        onChanged: (value) {
+                          setState(() {
+                            _includeDeleted = (value ?? false);
+                            _controller.reset();
+                            _controller.fetchNextPage();
+                          });
+                        },
+                      ),
+                      const Text('Include Deleted')
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
           Expanded(

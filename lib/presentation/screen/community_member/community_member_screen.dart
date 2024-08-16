@@ -27,6 +27,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
 
   AmityCommunityMembershipFilter _filter = AmityCommunityMembershipFilter.MEMBER;
   AmityCommunityMembershipSortOption _sort = AmityCommunityMembershipSortOption.LAST_CREATED;
+  bool _includeDeleted = false;
   @override
   void initState() {
     _controller = PagingController(
@@ -35,6 +36,7 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
           .searchMembers(_keyboard)
           .filter(_filter)
           .sortBy(_sort)
+          .includeDeleted(_includeDeleted)
           .getPagingData(token: token, limit: GlobalConstant.pageSize),
       pageSize: GlobalConstant.pageSize,
     )..addListener(
@@ -181,6 +183,25 @@ class CommunityMemberScreenState extends State<CommunityMemberScreen> {
                     },
                   ),
                 ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Checkbox(
+                        value: _includeDeleted,
+                        onChanged: (value) {
+                          setState(() {
+                            _includeDeleted = (value ?? false);
+                            _controller.reset();
+                            _controller.fetchNextPage();
+                          });
+                        },
+                      ),
+                      const Text('Include Deleted')
+                    ],
+                  ),
+                )
               ],
             ),
           ),
