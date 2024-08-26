@@ -103,6 +103,9 @@ class AppRoute {
   static const createPollPost = 'createPollPost';
   static const createPollPostRoute = 'createPollPost';
 
+  static const createCustomPost = 'createCustomPost';
+  static const createCustomPostRoute = 'createCustomPost';
+
   static const chat = 'chat';
   static const chatRoute = 'chatRoute/:channelId';
 

@@ -11,13 +11,6 @@ class CommunityWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (amityCommunity.isDeleted ?? false) {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: Colors.grey.withOpacity(.05)),
-        child: Text('Community Deleted - ${amityCommunity.communityId}'),
-      );
-    }
     return StreamBuilder<AmityCommunity>(
       stream: amityCommunity.listen.stream,
       initialData: amityCommunity,
@@ -112,6 +105,10 @@ class _CommunityInfoWidget extends StatelessWidget {
                 ),
                 Text(
                   'Public: ${amityCommunity.isPublic}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
+                  'isDeleted: ${amityCommunity.isDeleted}',
                   style: themeData.textTheme.bodySmall,
                 ),
               ],

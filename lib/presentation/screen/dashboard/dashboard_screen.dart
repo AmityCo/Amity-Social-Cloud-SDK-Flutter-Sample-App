@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+
+    FirebaseMessaging.onMessage.listen((event) {
+      event.notification?.body;
+      print('onMessage: $event');
+    });
+  
   }
 
   @override
@@ -122,6 +129,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     GoRouter.of(context).goNamed(AppRoute.createPollPost);
                   },
                   child: const Text('Create Poll Post'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).goNamed(AppRoute.createCustomPost);
+                  },
+                  child: const Text('Create Custom Post'),
                 ),
                 const SizedBox(height: 20),
                 TextButton(
@@ -332,8 +346,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 TextButton(
                   onPressed: () {
                     EditTextDialog.show(context,
-                        hintText: 'Enter Channel Name',
-                        buttonText: 'Join', onPress: (value) {
+                        title: 'Go to Chat Screen',
+                        hintText: 'Enter Channel ID',
+                        buttonText: 'Submit', onPress: (value) {
                       GoRouter.of(context)
                           .goNamed(AppRoute.chat, params: {'channelId': value});
                     });
@@ -344,9 +359,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 TextButton(
                   onPressed: () {
                     EditTextDialog.show(context,
-                        hintText: 'Enter Channel Name',
+                        title: 'Get Channel',
+                        hintText: 'Enter Channel ID',
                         // defString: 'live200',
-                        buttonText: 'Join', onPress: (value) {
+                        buttonText: 'Submit', onPress: (value) {
                       GoRouter.of(context).pushNamed(AppRoute.channelProfile,
                           params: {'channelId': value});
                       // AmityChatClient.newChannelRepository().getChannel(value);

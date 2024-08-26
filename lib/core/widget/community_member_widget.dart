@@ -88,6 +88,11 @@ class _CommunityMemberInfoRowWidget extends StatelessWidget {
                         style: themeData.textTheme.bodySmall,
                         textAlign: TextAlign.start,
                       ),
+                      Text(
+                        'isDeleted - ${value.isDeleted ?? false}',
+                        style: themeData.textTheme.bodySmall,
+                        textAlign: TextAlign.start,
+                      ),
                     ],
                   ),
                 ),

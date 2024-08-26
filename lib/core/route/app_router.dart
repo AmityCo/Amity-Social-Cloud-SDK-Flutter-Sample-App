@@ -10,7 +10,7 @@ import 'package:flutter_social_sample_app/presentation/screen/channel_list/chann
 import 'package:flutter_social_sample_app/presentation/screen/channel_profile/channel_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_update/channel_update_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/chat/chat_screen.dart';
-import 'package:flutter_social_sample_app/presentation/screen/comment_query/comment_query_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/comment_query_pagination/comment_query_pagination_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/comment_query_reply/comment_query_reply_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_category/community_category_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_create/community_create_screen.dart';
@@ -24,6 +24,7 @@ import 'package:flutter_social_sample_app/presentation/screen/community_notifica
 import 'package:flutter_social_sample_app/presentation/screen/community_pending_post/community_pending_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_profile/community_profile_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/community_update/community_update_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/create_custom_post/create_custom_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_livestream_post/create_livestream_post.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_poll_post/create_poll_post_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/create_post/create_post_screen.dart';
@@ -318,6 +319,13 @@ class AppRouter {
             path: AppRoute.createPollPostRoute,
             builder: (context, state) => const CreatePollPostScreen(),
           ),
+
+           GoRoute(
+            name: AppRoute.createCustomPost,
+            path: AppRoute.createCustomPostRoute,
+            builder: (context, state) => const CreateCustomPostScreen(),
+          ),
+
           GoRoute(
             name: AppRoute.chat,
             path: AppRoute.chatRoute,
@@ -406,7 +414,7 @@ class AppRouter {
         name: AppRoute.commentList,
         path: AppRoute.commentListRoute,
         builder: (context, state) {
-          return CommentQueryScreen(
+          return CommentQueryPaginationScreen(
             referenceType: state.queryParams['referenceType']!,
             referenceId: state.queryParams['referenceId']!,
             communityId: state.queryParams['communityId'],
@@ -514,12 +522,14 @@ class AppRouter {
           log('redirecting to /login');
           return AppRoute.loginRoute;
         } else {
-          // var user = await AmityCoreClient.getLoggedInUser();
           var userId = await PreferenceInterfaceImpl().loggedInUserId();
           var userName = await PreferenceInterfaceImpl().loggedInUserDisplayName();
-          await AmityCoreClient.login(userId!)
+          // Delaying the login for 5 seconds to simulate the login process
+          Future.delayed(const Duration(seconds: 5), () { 
+            AmityCoreClient.login(userId!)
               .displayName(userName!)
               .submit();
+          });
           return AppRoute.homeRoute;
         }
       }

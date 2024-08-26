@@ -67,27 +67,27 @@ class AmityUserInfoWidget extends StatelessWidget {
                         ),
                         // Text(
                         //   'roles - $rolesText',
-                        //   style: _themeData.textTheme.caption,
+                        //   style: _themeData.textTheme.bodySmall,
                         //   textAlign: TextAlign.start,
                         // ),
                         // Text(
                         //   'permissions - $permissionText',
-                        //   style: _themeData.textTheme.caption,
+                        //   style: _themeData.textTheme.bodySmall,
                         //   textAlign: TextAlign.start,
                         // ),
                         // Text(
                         //   'isBanned - ${value.isBanned ?? false}',
-                        //   style: _themeData.textTheme.caption,
+                        //   style: _themeData.textTheme.bodySmall,
                         //   textAlign: TextAlign.start,
                         // ),
                         // Text(
                         //   'isMuted - ${value.isMuted ?? false}',
-                        //   style: _themeData.textTheme.caption,
+                        //   style: _themeData.textTheme.bodySmall,
                         //   textAlign: TextAlign.start,
                         // ),
                         // Text(
                         //   'Flag Count - ${value.flagCount ?? 0}',
-                        //   style: _themeData.textTheme.caption,
+                        //   style: _themeData.textTheme.bodySmall,
                         //   textAlign: TextAlign.start,
                         // ),
                       ],
