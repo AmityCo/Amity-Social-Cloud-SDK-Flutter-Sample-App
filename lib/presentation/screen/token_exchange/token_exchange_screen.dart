@@ -73,8 +73,7 @@ class _TokenExchangeScreenState extends State<TokenExchangeScreen> {
                     });
                   },
                   style: TextButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white, backgroundColor: Colors.blue,
                     padding: const EdgeInsets.all(12),
                   ),
                   child: Container(
