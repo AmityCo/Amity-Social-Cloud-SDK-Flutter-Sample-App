@@ -28,7 +28,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_keyboard_visibility: ^5.4.0
-  gallery_saver: ^2.3.2
   get: ^4.6.3
   go_router: ^5.2.4
   image_picker: ^0.8.4+10
