@@ -6,8 +6,9 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/message_widget.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key, required this.channelId}) : super(key: key);
+  const ChatScreen({Key? key, required this.channelId , required this.channelName}) : super(key: key);
   final String channelId;
+  final String channelName;
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
@@ -67,6 +68,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text( widget.channelName),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(

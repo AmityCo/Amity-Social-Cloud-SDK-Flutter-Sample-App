@@ -327,8 +327,11 @@ class AppRouter {
           GoRoute(
             name: AppRoute.chat,
             path: AppRoute.chatRoute,
-            builder: (context, state) =>
-                ChatScreen(channelId: state.params['channelId']!),
+            builder: (context, state) {
+              print("ChannelId: ${state.params['channelId']} -  ChannelName: ${state.params['channelName']}");
+              return ChatScreen(channelId: state.params['channelId']! , channelName: state.params['channelName']!,);
+            }
+                ,
           ),
         ],
       ),

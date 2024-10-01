@@ -5,18 +5,17 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_member/channel_member_banned_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_member/channel_member_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/sub_channel/sub_channel_list.dart';
 import 'package:go_router/go_router.dart';
 
 class ChannelProfileScreen extends StatefulWidget {
-  const ChannelProfileScreen({Key? key, required this.channelId})
-      : super(key: key);
+  const ChannelProfileScreen({Key? key, required this.channelId}) : super(key: key);
   final String channelId;
   @override
   State<ChannelProfileScreen> createState() => _ChannelProfileScreenState();
 }
 
-class _ChannelProfileScreenState extends State<ChannelProfileScreen>
-    with TickerProviderStateMixin {
+class _ChannelProfileScreenState extends State<ChannelProfileScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   late AmityChannel _amityChannel;
   Future<AmityChannel>? _future;
@@ -25,10 +24,9 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
 
-    _future =
-        AmityChatClient.newChannelRepository().getChannel(widget.channelId);
+    _future = AmityChatClient.newChannelRepository().getChannel(widget.channelId);
     super.initState();
   }
 
@@ -53,23 +51,21 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                           onPressed: () {
                             ///Mute/Unmute Channel
                             if (_amityChannel.isMuted ?? false) {
-                              AmityChatClient.newChannelRepository()
-                                  .unMuteChannel(widget.channelId);
+                              AmityChatClient.newChannelRepository().unMuteChannel(widget.channelId);
                             } else {
-                              AmityChatClient.newChannelRepository()
-                                  .muteChannel(widget.channelId);
+                              AmityChatClient.newChannelRepository().muteChannel(widget.channelId);
                             }
                           },
                           icon: Icon(
-                            ((_amityChannel.isMuted ?? false)
-                                ? Icons.volume_off_rounded
-                                : Icons.volume_up_rounded),
+                            ((_amityChannel.isMuted ?? false) ? Icons.volume_off_rounded : Icons.volume_up_rounded),
                           ),
                         ),
                         IconButton(
                           onPressed: () {
-                            GoRouter.of(context).pushNamed(AppRoute.chat,
-                                params: {'channelId': widget.channelId});
+                            GoRouter.of(context).pushNamed(AppRoute.chat, params: {
+                              'channelId': widget.channelId,
+                              'channelName': _amityChannel.displayName!,
+                            });
                           },
                           icon: const Icon(
                             Icons.mark_unread_chat_alt_outlined,
@@ -89,9 +85,11 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                               ),
                               PopupMenuItem(
                                 value: 3,
-                                child: Text((_amityChannel.isMuted ?? false)
-                                    ? 'Unmute'
-                                    : 'Mute'),
+                                child: Text((_amityChannel.isMuted ?? false) ? 'Unmute' : 'Mute'),
+                              ),
+                              const PopupMenuItem(
+                                value: 4,
+                                child: Text("Create Channel"),
                               ),
                             ];
                           },
@@ -102,23 +100,14 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                           onSelected: (index) {
                             if (index == 1) {
                               //Open Edit Channel
-                              GoRouter.of(context).pushNamed(
-                                  AppRoute.updateChannel,
-                                  queryParams: {'channelId': widget.channelId});
+                              GoRouter.of(context).pushNamed(AppRoute.updateChannel, queryParams: {'channelId': widget.channelId});
                             }
                             if (index == 2) {
-                              EditTextDialog.show(context,
-                                  title:
-                                      'Check my permission in this community',
-                                  hintText: 'Enter permission name',
-                                  onPress: (value) {
-                                final permissions = AmityPermission.values
-                                    .where((v) => v.value == value);
+                              EditTextDialog.show(context, title: 'Check my permission in this community', hintText: 'Enter permission name', onPress: (value) {
+                                final permissions = AmityPermission.values.where((v) => v.value == value);
 
                                 if (permissions.isEmpty) {
-                                  ErrorDialog.show(context,
-                                      title: 'Error',
-                                      message: 'permission does not exist');
+                                  ErrorDialog.show(context, title: 'Error', message: 'permission does not exist');
                                 } else {
                                   // final hasPermission =
                                   //     AmityCoreClient.hasPermission(permissions.first)
@@ -134,12 +123,27 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                             if (index == 3) {
                               ///Mute/Unmute Channel
                               if (_amityChannel.isMuted ?? false) {
-                                AmityChatClient.newChannelRepository()
-                                    .unMuteChannel(widget.channelId);
+                                AmityChatClient.newChannelRepository().unMuteChannel(widget.channelId);
                               } else {
-                                AmityChatClient.newChannelRepository()
-                                    .muteChannel(widget.channelId);
+                                AmityChatClient.newChannelRepository().muteChannel(widget.channelId);
                               }
+                            }
+
+                            if (index == 4) {
+                              EditTextDialog.show(context, title: 'Create New Sub Channel', hintText: 'Enter New Channel Name', buttonText: 'Create', onPress: (value) {
+                                AmitySocialClient.newSubChannelRepository().createSubChannel(widget.channelId, value).then((value) {
+                                  const snackBar = SnackBar(
+                                    backgroundColor: Colors.green,
+                                    content: Text(
+                                      'Sub Channel Created',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                }).onError((error, stackTrace) {
+                                  ErrorDialog.show(context, title: 'Error', message: error.toString());
+                                });
+                              });
                             }
                           },
                         ),
@@ -149,8 +153,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                       headerSliverBuilder: (context, innerBoxIsScrolled) {
                         return [
                           SliverToBoxAdapter(
-                            child: _ChannelProfileHeaderWidget(
-                                amityChannel: _amityChannel),
+                            child: _ChannelProfileHeaderWidget(amityChannel: _amityChannel),
                           ),
                           SliverToBoxAdapter(
                             child: DefaultTabController(
@@ -163,6 +166,9 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                                   ),
                                   Tab(
                                     text: 'Banned Members',
+                                  ),
+                                  Tab(
+                                    text: 'SubChannel',
                                   )
                                 ],
                               ),
@@ -184,6 +190,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
                             channelId: widget.channelId,
                             showAppBar: false,
                           ),
+                          SubChannelList(channelId: widget.channelId),
                           // ChannelFeedScreen(
                           //     channelId: widget.channelId, showAppBar: false),
                           // memberScreen,
@@ -201,18 +208,13 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //show add member action
-          EditTextDialog.show(context,
-              title: 'Add Channel Member',
-              hintText: 'Enter Comma seperated user Ids', onPress: (value) {
-            AmityChatClient.newChannelRepository()
-                .addMembers(_amityChannel.channelId!, value.split(','))
-                .then((value) {
-                  if (memberList.currentState != null) {
-                  memberList.currentState!.refreshList();
-                }
+          EditTextDialog.show(context, title: 'Add Channel Member', hintText: 'Enter Comma seperated user Ids', onPress: (value) {
+            AmityChatClient.newChannelRepository().addMembers(_amityChannel.channelId!, value.split(',')).then((value) {
+              if (memberList.currentState != null) {
+                memberList.currentState!.refreshList();
+              }
             }).onError((error, stackTrace) {
-              ErrorDialog.show(context,
-                  title: 'Error', message: error.toString());
+              ErrorDialog.show(context, title: 'Error', message: error.toString());
             });
           });
         },
@@ -223,8 +225,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen>
 }
 
 class _ChannelProfileHeaderWidget extends StatelessWidget {
-  const _ChannelProfileHeaderWidget({Key? key, required this.amityChannel})
-      : super(key: key);
+  const _ChannelProfileHeaderWidget({Key? key, required this.amityChannel}) : super(key: key);
   final AmityChannel amityChannel;
   @override
   Widget build(BuildContext context) {
@@ -240,16 +241,14 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
               Container(
                 width: 64,
                 height: 64,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.withOpacity(.3)),
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child:
-                    amityChannel.avatar?.getUrl(AmityImageSize.MEDIUM) != null
-                        ? Image.network(
-                            amityChannel.avatar!.getUrl(AmityImageSize.MEDIUM),
-                            fit: BoxFit.fill,
-                          )
-                        : Image.asset('assets/user_placeholder.png'),
+                child: amityChannel.avatar?.getUrl(AmityImageSize.MEDIUM) != null
+                    ? Image.network(
+                        amityChannel.avatar!.getUrl(AmityImageSize.MEDIUM),
+                        fit: BoxFit.fill,
+                      )
+                    : Image.asset('assets/user_placeholder.png'),
               ),
               const SizedBox(width: 18),
               Expanded(
@@ -262,12 +261,9 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityChannel.messageCount}\n',
-                            style: themeData.textTheme.titleMedium!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          TextSpan(
-                              text: 'Messages',
-                              style: themeData.textTheme.bodyMedium),
+                          TextSpan(text: 'Messages', style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     ),
@@ -277,12 +273,9 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '${amityChannel.memberCount}\n',
-                            style: themeData.textTheme.titleMedium!
-                                .copyWith(fontWeight: FontWeight.bold),
+                            style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          TextSpan(
-                              text: 'Members',
-                              style: themeData.textTheme.bodyMedium),
+                          TextSpan(text: 'Members', style: themeData.textTheme.bodyMedium),
                         ],
                       ),
                     )
@@ -333,9 +326,7 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           FutureBuilder<AmityChannelMember>(
-              future: AmityChatClient.newChannelRepository()
-                  .membership(amityChannel.channelId!)
-                  .getMyMembership(),
+              future: AmityChatClient.newChannelRepository().membership(amityChannel.channelId!).getMyMembership(),
               builder: (context, snapshot) {
                 final amityChannelMember = snapshot.data;
                 if (snapshot.hasData) {
@@ -344,29 +335,17 @@ class _ChannelProfileHeaderWidget extends StatelessWidget {
                       width: 260,
                       child: ElevatedButton(
                         onPressed: () {
-                          if (amityChannelMember!.membership ==
-                              AmityMembershipType.NONE) {
-                            AmityChatClient.newChannelRepository()
-                                .joinChannel(amityChannel.channelId!)
-                                .then((value) {})
-                                .onError((error, stackTrace) {
-                              ErrorDialog.show(context,
-                                  title: 'Error', message: error.toString());
+                          if (amityChannelMember!.membership == AmityMembershipType.NONE) {
+                            AmityChatClient.newChannelRepository().joinChannel(amityChannel.channelId!).then((value) {}).onError((error, stackTrace) {
+                              ErrorDialog.show(context, title: 'Error', message: error.toString());
                             });
                           } else {
-                            AmityChatClient.newChannelRepository()
-                                .leaveChannel(amityChannel.channelId!)
-                                .then((value) {})
-                                .onError((error, stackTrace) {
-                              ErrorDialog.show(context,
-                                  title: 'Error', message: error.toString());
+                            AmityChatClient.newChannelRepository().leaveChannel(amityChannel.channelId!).then((value) {}).onError((error, stackTrace) {
+                              ErrorDialog.show(context, title: 'Error', message: error.toString());
                             });
                           }
                         },
-                        child: Text(amityChannelMember!.membership ==
-                                AmityMembershipType.NONE
-                            ? 'Join'
-                            : 'Leave'),
+                        child: Text(amityChannelMember!.membership == AmityMembershipType.NONE ? 'Join' : 'Leave'),
                       ),
                     ),
                   );

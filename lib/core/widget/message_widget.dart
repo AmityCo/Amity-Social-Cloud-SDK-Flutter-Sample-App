@@ -651,7 +651,7 @@ class AmityMessageContentWidget extends StatelessWidget {
     final data = amityMessage.data;
     if (data is MessageTextData) {
       return DynamicTextHighlighting(
-        text: data.text!,
+        text: data.text ?? "No Text",
         highlights: amityMessage.metadata == null
             ? []
             : [
@@ -700,53 +700,50 @@ class AmityMessageContentWidget extends StatelessWidget {
     }
 
     if (data is MessageImageData) {
-      return Column(
+      return data.image==null ? Text("Can't get Image") : Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           (data.image!.hasLocalPreview !=null)?
-          Container(
-            // color: Colors.red,
-            child: SizedBox(
-              width: 100,
-              height: 100,
-              child: data.image!.hasLocalPreview!
-                  ? Image.file(
-                      File(data.image!.getFilePath!),
-                      fit: BoxFit.cover,
-                    )
-                  : Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Image.network(
-                            data.image!.getUrl(AmityImageSize.MEDIUM),
-                            fit: BoxFit.cover,
+          SizedBox(
+            width: 100,
+            height: 100,
+            child: data.image!.hasLocalPreview!
+                ? Image.file(
+                    File(data.image!.getFilePath!),
+                    fit: BoxFit.cover,
+                  )
+                : Stack(
+                    children: [
+                      Positioned.fill(
+                        child: Image.network(
+                          data.image!.getUrl(AmityImageSize.MEDIUM),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
+                          child: InkWell(
+                            child: const Icon(
+                              Icons.download,
+                              color: Colors.white,
+                            ),
+                            onTap: () async {
+                              String fileName = await MobileDownloadService()
+                                  .download(url: data.image!.getUrl(AmityImageSize.MEDIUM));
+          
+                              print(fileName);
+          
+                              CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Image Save $fileName');
+                            },
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            margin: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
-                            child: InkWell(
-                              child: const Icon(
-                                Icons.download,
-                                color: Colors.white,
-                              ),
-                              onTap: () async {
-                                String fileName = await MobileDownloadService()
-                                    .download(url: data.image!.getUrl(AmityImageSize.MEDIUM));
-
-                                print(fileName);
-
-                                CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Image Save $fileName');
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-            ),
+                      )
+                    ],
+                  ),
           ) : Container(width: 30 , height: 30, color: Colors.amber,),
           if (data.caption != null && data.caption!.isNotEmpty)
             Text(
@@ -758,66 +755,71 @@ class AmityMessageContentWidget extends StatelessWidget {
     }
 
     if (data is MessageFileData) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          (data.file?.hasLocalPreview!=null)
-              ? TextButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.attach_file_rounded),
-                  label: Text(
-                    data.file?.getFilePath?.split('/').last ?? data.file?.getUrl ?? "",
-                  ),
-                )
-              : Container(
-                  color: Colors.grey.shade300,
-                  child: ListTile(
-                    leading: const Icon(Icons.attach_file_rounded),
-                    title: Text(
-                      data.file!.fileName!,
+      return Container(
+        height: 100,
+        width: double.infinity,
+        child:data.file==null ? Text("Can't get File") :Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            (data.file?.hasLocalPreview!=null)
+                ? TextButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.attach_file_rounded),
+                    label: Text(
+                      data.file?.getFilePath?.split('/').last ?? data.file?.getUrl ?? "",
                     ),
-                    trailing: Container(
-                      padding: const EdgeInsets.all(4),
-                      margin: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
-                      child: InkWell(
-                        child: const Icon(
-                          Icons.download,
-                          color: Colors.white,
-                        ),
-                        onTap: () async {
-                          String fileName = await MobileDownloadService().download(url: data.file!.getUrl!);
-
-                          print(fileName);
-                        },
+                  )
+                : Container(
+                    width: double.infinity,
+                    color: Colors.grey.shade300,
+                    child: ListTile(
+                      leading: const Icon(Icons.attach_file_rounded),
+                      title: Text(
+                        data.file!.fileName!,
                       ),
+                      trailing: Container(
+                        padding: const EdgeInsets.all(4),
+                        margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
+                        child: InkWell(
+                          child: const Icon(
+                            Icons.download,
+                            color: Colors.white,
+                          ),
+                          onTap: () async {
+                            String fileName = await MobileDownloadService().download(url: data.file!.getUrl!);
+        
+                            print(fileName);
+                          },
+                        ),
+                      ),
+                      // tileColor: Colors.red,
+                      // focusColor: Colors.red,
+                      // selectedColor: Colors.red,
                     ),
-                    // tileColor: Colors.red,
-                    // focusColor: Colors.red,
-                    // selectedColor: Colors.red,
                   ),
-                ),
-          // TextButton.icon(
-          //     onPressed: () {},
-          //     icon: const Icon(Icons.attach_file_rounded),
-          //     label: Text(
-          //       data.file.getUrl.split('/').last,
-          //     ),
-          //     style: TextButton.styleFrom(
-          //       padding: const EdgeInsets.all(12),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(12),
-          //       ),
-          //       primary: Colors.black,
-          //       backgroundColor: Colors.grey.shade300,
-          //     ),
-          //   ),
-          if (data.caption != null && data.caption!.isNotEmpty)
-            Text(
-              '${data.caption}',
-              style: themeData.textTheme.bodyMedium,
-            ),
-        ],
+            // TextButton.icon(
+            //     onPressed: () {},
+            //     icon: const Icon(Icons.attach_file_rounded),
+            //     label: Text(
+            //       data.file.getUrl.split('/').last,
+            //     ),
+            //     style: TextButton.styleFrom(
+            //       padding: const EdgeInsets.all(12),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(12),
+            //       ),
+            //       primary: Colors.black,
+            //       backgroundColor: Colors.grey.shade300,
+            //     ),
+            //   ),
+            if (data.caption != null && data.caption!.isNotEmpty)
+              Text(
+                '${data.caption}',
+                style: themeData.textTheme.bodyMedium,
+              ),
+          ],
+        ),
       );
     }
 

@@ -38,7 +38,7 @@ dependencies:
   permission_handler: ^10.3.0
   fluttertoast: ^8.2.4
   universal_html: ^2.2.3
-  url_launcher: ^6.2.3
+  url_launcher: ^6.3.0
   uuid: ^4.3.3
   video_player: ^2.3.0
   visibility_detector: ^0.4.0+2
