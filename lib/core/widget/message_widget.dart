@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:amity_sdk/amity_sdk.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/utils/download_service.dart';
@@ -12,6 +10,7 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/progress_dialog_widget.dart';
 import 'package:flutter_social_sample_app/core/widget/dynamic_text_highlighting.dart';
+import 'package:get/utils.dart';
 import 'package:go_router/go_router.dart';
 
 class MessageWidget extends StatelessWidget {
@@ -73,10 +72,10 @@ class MessageWidget extends StatelessWidget {
 
         AmityChatClient.newMessageRepository().getMessage(message.messageId!).then((value) {
           completer.complete();
-          PositiveDialog.show(context, title: 'Message View', message: value.toString().replaceAll(',', ', \n\n'));
+          (context.mounted) ? PositiveDialog.show(context, title: 'Message View', message: value.toString().replaceAll(',', ', \n\n')) : null;
         }).onError((error, stackTrace) {
           completer.completeError(error!);
-          CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
+          (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()) : null;
         });
       },
       onLongPress: () {
@@ -132,10 +131,8 @@ class MessageWidget extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-
                             value.createdAt?.toLocal().toIso8601String() ?? DateTime.now().toLocal().toIso8601String(),
                             style: themeData.textTheme.bodySmall!.copyWith(),
-
                           ),
                           const SizedBox(width: 12),
                           Text(
@@ -190,21 +187,18 @@ class MessageWidget extends StatelessWidget {
                     if (message.isFlaggedByMe) {
                       message.unflag().then((value) {
                         completer.complete();
-                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged');
+                        (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged') : null;
                       }).onError((error, stackTrace) {
                         completer.completeError(error!, stackTrace);
-
-                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - ${error}');
+                        (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - $error') : null;
                       });
                     } else {
                       message.flag().then((value) {
                         completer.complete();
-                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged');
+                        (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged') : null;
                       }).onError((error, stackTrace) {
                         completer.completeError(error!, stackTrace);
-
-                        CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - ${error}');
-
+                        (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - $error') : null;
                       });
                     }
                   },
@@ -213,10 +207,7 @@ class MessageWidget extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 6),
                     decoration: BoxDecoration(border: Border.all(color: Colors.grey, width: 1)),
                     child: Row(
-                      children: [
-                        Icon(value.isFlaggedByMe ? Icons.flag_rounded : Icons.flag_outlined),
-                        if ((value.flagCount ?? 0) > 0) Text('${value.flagCount}')
-                      ],
+                      children: [Icon(value.isFlaggedByMe ? Icons.flag_rounded : Icons.flag_outlined), if ((value.flagCount ?? 0) > 0) Text('${value.flagCount}')],
                     ),
                   ),
                 ),
@@ -262,17 +253,14 @@ class MessageWidget extends StatelessWidget {
                       case 1:
                         if (message.data is MessageTextData) {
                           /// Update Message
-                          GoRouter.of(context)
-                              .pushNamed(AppRoute.updateMessage, queryParams: {'messageId': message.messageId!});
+                          GoRouter.of(context).pushNamed(AppRoute.updateMessage, queryParams: {'messageId': message.messageId!});
                         }
                         break;
                       case 2:
                         message.delete().then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Deleted');
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Deleted') : null;
                         }).onError((error, stackTrace) {
-
-                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Delete Error - ${error}');
-
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Delete Error - $error') : null;
                         });
 
                         /// Delete Message
@@ -280,40 +268,32 @@ class MessageWidget extends StatelessWidget {
                       case 3:
                         if (message.isFlaggedByMe) {
                           message.unflag().then((value) {
-                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged');
+                            (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged') : null;
                           }).onError((error, stackTrace) {
-
-                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - ${error}');
-
+                            (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflag Error - $error') : null;
                           });
                         } else {
                           message.flag().then((value) {
-                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged');
+                            (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged') : null;
                           }).onError((error, stackTrace) {
-
-                            CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - ${error}');
-
+                            (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flag Error - $error') : null;
                           });
                         }
                         break;
                       case 4:
                         UserRepository().report(message.userId!).flag().then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged User');
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Flagged User') : null;
                         }).onError((error, stackTrace) {
-
-                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'flagged Error - ${error}');
-
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'flagged Error - $error') : null;
                         });
 
                         /// Delete Message
                         break;
                       case 5:
                         UserRepository().report(message.userId!).unflag().then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged User');
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged User') : null;
                         }).onError((error, stackTrace) {
-
-                          CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged Error - ${error}');
-
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Unflagged Error - $error') : null;
                         });
 
                         /// Delete Message
@@ -327,9 +307,9 @@ class MessageWidget extends StatelessWidget {
                           onPress: (value) {
                             if (value.isNotEmpty) {
                               message.upate().tags(value.split(',')).update().then((value) {
-                                CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag Updated');
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag Updated') : null;
                               }).onError((error, stackTrace) {
-                                CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag message Error - $error');
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag message Error - $error') : null;
                               });
                             } else {
                               CommonSnackbar.showNagativeSnackbar(context, 'Tags', 'Please enter tags');
@@ -350,202 +330,186 @@ class MessageWidget extends StatelessWidget {
             Positioned.fill(
               child: Align(
                 alignment: Alignment.bottomRight,
-                child: Container(
-                  // color: Colors.red,
-                  child: InkWell(
-                    onLongPress: () {
-                      GoRouter.of(context)
-                          .pushNamed(AppRoute.messageReaction, params: {'messageId': message.messageId!});
-                    },
-                    child: Stack(
-                      // mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (value.reactions!.getCount('like') > 0)
-                          Container(
-                            // width: 36,
-                            // height: 36,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue.shade100,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 1,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                message.react().removeReaction('like').then((value) {
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Reaction Removed Successfully');
-                                }).onError(
-                                  (error, stackTrace) {
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
-                                  },
-                                );
-                              },
-                              icon: Row(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    child: Text(
-
-                                      value.reactions!.getCount('like').toString(),
-                                      style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
-
-                                    ),
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Image.asset(
-                                    'assets/ic_liked.png',
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                ],
+                child: InkWell(
+                  onLongPress: () {
+                    GoRouter.of(context).pushNamed(AppRoute.messageReaction, params: {'messageId': message.messageId!});
+                  },
+                  child: Stack(
+                    // mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (value.reactions!.getCount('like') > 0)
+                        Container(
+                          // width: 36,
+                          // height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.blue.shade100,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 1,
+                                spreadRadius: 1,
                               ),
-                            ),
+                            ],
                           ),
-                        if (value.reactions!.getCount('Like') > 0)
-                          Container(
-                            // width: 36,
-                            // height: 36,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue.shade100,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 1,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                message.react().removeReaction('like').then((value) {
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Reaction Removed Successfully');
-                                }).onError(
-                                  (error, stackTrace) {
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
-                                  },
-                                );
-                              },
-                              icon: Row(
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    child: Text(
-
-                                      value.reactions!.getCount('like').toString(),
-                                      style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
-
-                                    ),
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Image.asset(
-                                    'assets/ic_liked.png',
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        if (value.reactions!.getCount('love') > 0)
-                          Container(
-                            // width: 36,
-                            // height: 36,
-                            margin: const EdgeInsets.only(left: 30),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue.shade100,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 1,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                message.react().removeReaction('love').then((value) {
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Reaction Removed Successfully');
-                                }).onError(
-                                  (error, stackTrace) {
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
-                                  },
-                                );
-                              },
-                              icon: Row(
-                                children: [
-                                  Text(
-                                    value.reactions!.getCount('love').toString(),
+                          child: IconButton(
+                            onPressed: () {
+                              message.react().removeReaction('like').then((value) {
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Removed Successfully') : null;
+                              }).onError(
+                                (error, stackTrace) {
+                                  (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Fail', 'Reaction Removed Failed ${error.toString()}') : null;
+                                },
+                              );
+                            },
+                            icon: Row(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    value.reactions!.getCount('like').toString(),
                                     style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
                                   ),
-                                  const SizedBox(width: 2),
-                                  Image.asset(
-                                    'assets/ic_heart.png',
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        if (value.reactions!.getCount('Love') > 0)
-                          Container(
-                            // width: 36,
-                            // height: 36,
-                            margin: const EdgeInsets.only(left: 30),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.blue.shade100,
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 1,
-                                  spreadRadius: 1,
+                                ),
+                                const SizedBox(width: 2),
+                                Image.asset(
+                                  'assets/ic_liked.png',
+                                  height: 20,
+                                  width: 20,
                                 ),
                               ],
                             ),
-                            child: IconButton(
-                              onPressed: () {
-                                message.react().removeReaction('love').then((value) {
-                                  CommonSnackbar.showPositiveSnackbar(
-                                      context, 'Success', 'Reaction Removed Successfully');
-                                }).onError(
-                                  (error, stackTrace) {
-                                    CommonSnackbar.showNagativeSnackbar(
-                                        context, 'Fail', 'Reaction Removed Failed ${error.toString()}');
-                                  },
-                                );
-                              },
-                              icon: Row(
-                                children: [
-                                  Text(
-                                    value.reactions!.getCount('love').toString(),
+                          ),
+                        ),
+                      if (value.reactions!.getCount('Like') > 0)
+                        Container(
+                          // width: 36,
+                          // height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.blue.shade100,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              message.react().removeReaction('like').then((value) {
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Removed Successfully') : null;
+                              }).onError(
+                                (error, stackTrace) {
+                                  (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Fail', 'Reaction Removed Failed ${error.toString()}') : null;
+                                },
+                              );
+                            },
+                            icon: Row(
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  child: Text(
+                                    value.reactions!.getCount('like').toString(),
                                     style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
                                   ),
-                                  const SizedBox(width: 2),
-                                  Image.asset(
-                                    'assets/ic_heart.png',
-                                    height: 20,
-                                    width: 20,
-                                  ),
-                                ],
-                              ),
+                                ),
+                                const SizedBox(width: 2),
+                                Image.asset(
+                                  'assets/ic_liked.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                              ],
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                      if (value.reactions!.getCount('love') > 0)
+                        Container(
+                          // width: 36,
+                          // height: 36,
+                          margin: const EdgeInsets.only(left: 30),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.blue.shade100,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              message.react().removeReaction('love').then((value) {
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Removed Successfully') : null;
+                              }).onError(
+                                (error, stackTrace) {
+                                  (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Fail', 'Reaction Removed Failed ${error.toString()}') : null;
+                                },
+                              );
+                            },
+                            icon: Row(
+                              children: [
+                                Text(
+                                  value.reactions!.getCount('love').toString(),
+                                  style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
+                                ),
+                                const SizedBox(width: 2),
+                                Image.asset(
+                                  'assets/ic_heart.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      if (value.reactions!.getCount('Love') > 0)
+                        Container(
+                          // width: 36,
+                          // height: 36,
+                          margin: const EdgeInsets.only(left: 30),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.blue.shade100,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 1,
+                                spreadRadius: 1,
+                              ),
+                            ],
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              message.react().removeReaction('love').then((value) {
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Removed Successfully') : null;
+                              }).onError(
+                                (error, stackTrace) {
+                                  (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Fail', 'Reaction Removed Failed ${error.toString()}') : null;
+                                },
+                              );
+                            },
+                            icon: Row(
+                              children: [
+                                Text(
+                                  value.reactions!.getCount('love').toString(),
+                                  style: themeData.textTheme.bodySmall!.copyWith(fontSize: 14),
+                                ),
+                                const SizedBox(width: 2),
+                                Image.asset(
+                                  'assets/ic_heart.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -574,16 +538,14 @@ class MessageWidget extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {
                       if (myReaction.contains('like')) {
-                        CommonSnackbar.showNagativeSnackbar(
-                            context, 'Error', 'You already have like reaction on this message');
+                        CommonSnackbar.showNagativeSnackbar(context, 'Error', 'You already have like reaction on this message');
                       } else {
                         Navigator.of(context).pop();
                         message.react().addReaction('like').then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Added Successfully - like');
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Added Successfully - like') : null;
                         }).onError(
                           (error, stackTrace) {
-                            CommonSnackbar.showNagativeSnackbar(
-                                context, 'Fail', 'Reaction Added Failed ${error.toString()} - like');
+                            (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Fail', 'Reaction Added Failed ${error.toString()} - like') : null;
                           },
                         );
                       }
@@ -604,16 +566,14 @@ class MessageWidget extends StatelessWidget {
                   child: IconButton(
                     onPressed: () {
                       if (myReaction.contains('love')) {
-                        CommonSnackbar.showNagativeSnackbar(
-                            context, 'Error', 'You already have love reaction on this message');
+                        CommonSnackbar.showNagativeSnackbar(context, 'Error', 'You already have love reaction on this message');
                       } else {
                         Navigator.of(context).pop();
                         message.react().addReaction('love').then((value) {
-                          CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Added Successfully - love');
+                          (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Reaction Added Successfully - love') : null;
                         }).onError(
                           (error, stackTrace) {
-                            CommonSnackbar.showNagativeSnackbar(
-                                context, 'Fail', 'Reaction Added Failed ${error.toString()} - love');
+                            (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Fail', 'Reaction Added Failed ${error.toString()} - love') : null;
                           },
                         );
                       }
@@ -652,40 +612,17 @@ class AmityMessageContentWidget extends StatelessWidget {
     if (data is MessageTextData) {
       return DynamicTextHighlighting(
         text: data.text ?? "No Text",
-        highlights: amityMessage.metadata == null
-            ? []
-            : [
-                ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
-                    .getMentionedUsers()
-                    .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
-                    .toList(),
-                ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
-                    .getMentionedChannels()
-                    .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
-                    .toList()
-              ],
+        highlights: amityMessage.metadata == null ? [] : [...AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers().map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1)).toList(), ...AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedChannels().map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1)).toList()],
         style: themeData.textTheme.bodyMedium!.copyWith(),
         onHighlightClick: (value) {
           if (value.toLowerCase().contains('all')) {
-            final temp = AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers();
-            log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
-                .getMentionedUsers()
-                .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
-                .toList()
-                .toString());
-            log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
-                .getMentionedChannels()
-                .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
-                .toList()
-                .toString());
+            // final temp = AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers();
+            log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers().map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1)).toList().toString());
+            log(AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedChannels().map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1)).toList().toString());
             CommonSnackbar.showPositiveSnackbar(context, 'Click', 'Click on @all show channel profile');
           } else {
-            print(AmityMentionMetadataGetter(metadata: amityMessage.metadata!)
-                .getMentionedUsers()
-                .map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1))
-                .toList());
-            final amityUser = amityMessage.mentionees!
-                .firstWhereOrNull((element) => element.user!.displayName == value.replaceAll('@', ''));
+            // print(AmityMentionMetadataGetter(metadata: amityMessage.metadata!).getMentionedUsers().map<String>((e) => data.text!.substring(e.index, e.index + e.length + 1)).toList());
+            final amityUser = amityMessage.mentionees!.firstWhereOrNull((element) => element.user!.displayName == value.replaceAll('@', ''));
             if (amityUser != null) {
               GoRouter.of(context).pushNamed(
                 AppRoute.profile,
@@ -700,126 +637,133 @@ class AmityMessageContentWidget extends StatelessWidget {
     }
 
     if (data is MessageImageData) {
-      return data.image==null ? Text("Can't get Image") : Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          (data.image!.hasLocalPreview !=null)?
-          SizedBox(
-            width: 100,
-            height: 100,
-            child: data.image!.hasLocalPreview!
-                ? Image.file(
-                    File(data.image!.getFilePath!),
-                    fit: BoxFit.cover,
-                  )
-                : Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Image.network(
-                          data.image!.getUrl(AmityImageSize.MEDIUM),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          margin: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
-                          child: InkWell(
-                            child: const Icon(
-                              Icons.download,
-                              color: Colors.white,
-                            ),
-                            onTap: () async {
-                              String fileName = await MobileDownloadService()
-                                  .download(url: data.image!.getUrl(AmityImageSize.MEDIUM));
-          
-                              print(fileName);
-          
-                              CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Image Save $fileName');
-                            },
-                          ),
-                        ),
+      return data.image == null
+          ? const Text("Can't get Image")
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                (data.image!.hasLocalPreview != null)
+                    ? SizedBox(
+                        width: 100,
+                        height: 100,
+                        child: data.image!.hasLocalPreview!
+                            ? Image.file(
+                                File(data.image!.getFilePath!),
+                                fit: BoxFit.cover,
+                              )
+                            : Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Image.network(
+                                      data.image!.getUrl(AmityImageSize.MEDIUM),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      margin: const EdgeInsets.all(4),
+                                      decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
+                                      child: InkWell(
+                                        child: const Icon(
+                                          Icons.download,
+                                          color: Colors.white,
+                                        ),
+                                        onTap: () async {
+                                          String fileName = await MobileDownloadService().download(url: data.image!.getUrl(AmityImageSize.MEDIUM));
+
+                                          print(fileName);
+
+                                          CommonSnackbar.showPositiveSnackbar(context, 'Success', 'Image Save $fileName');
+                                        },
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
                       )
-                    ],
+                    : Container(
+                        width: 30,
+                        height: 30,
+                        color: Colors.amber,
+                      ),
+                if (data.caption != null && data.caption!.isNotEmpty)
+                  Text(
+                    '${data.caption}',
+                    style: themeData.textTheme.bodyMedium,
                   ),
-          ) : Container(width: 30 , height: 30, color: Colors.amber,),
-          if (data.caption != null && data.caption!.isNotEmpty)
-            Text(
-              '${data.caption}',
-              style: themeData.textTheme.bodyMedium,
-            ),
-        ],
-      );
+              ],
+            );
     }
 
     if (data is MessageFileData) {
-      return Container(
+      return SizedBox(
         height: 100,
         width: double.infinity,
-        child:data.file==null ? Text("Can't get File") :Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            (data.file?.hasLocalPreview!=null)
-                ? TextButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.attach_file_rounded),
-                    label: Text(
-                      data.file?.getFilePath?.split('/').last ?? data.file?.getUrl ?? "",
-                    ),
-                  )
-                : Container(
-                    width: double.infinity,
-                    color: Colors.grey.shade300,
-                    child: ListTile(
-                      leading: const Icon(Icons.attach_file_rounded),
-                      title: Text(
-                        data.file!.fileName!,
-                      ),
-                      trailing: Container(
-                        padding: const EdgeInsets.all(4),
-                        margin: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
-                        child: InkWell(
-                          child: const Icon(
-                            Icons.download,
-                            color: Colors.white,
+        child: data.file == null
+            ? const Text("Can't get File")
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  (data.file?.hasLocalPreview != null)
+                      ? TextButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.attach_file_rounded),
+                          label: Text(
+                            data.file?.getFilePath?.split('/').last ?? data.file?.getUrl ?? "",
                           ),
-                          onTap: () async {
-                            String fileName = await MobileDownloadService().download(url: data.file!.getUrl!);
-        
-                            print(fileName);
-                          },
+                        )
+                      : Container(
+                          width: double.infinity,
+                          color: Colors.grey.shade300,
+                          child: ListTile(
+                            leading: const Icon(Icons.attach_file_rounded),
+                            title: Text(
+                              data.file!.fileName!,
+                            ),
+                            trailing: Container(
+                              padding: const EdgeInsets.all(4),
+                              margin: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.black.withOpacity(.3)),
+                              child: InkWell(
+                                child: const Icon(
+                                  Icons.download,
+                                  color: Colors.white,
+                                ),
+                                onTap: () async {
+                                  // String fileName = await MobileDownloadService().download(url: data.file!.getUrl!);
+                                  // print(fileName);
+                                },
+                              ),
+                            ),
+                            // tileColor: Colors.red,
+                            // focusColor: Colors.red,
+                            // selectedColor: Colors.red,
+                          ),
                         ),
-                      ),
-                      // tileColor: Colors.red,
-                      // focusColor: Colors.red,
-                      // selectedColor: Colors.red,
+                  // TextButton.icon(
+                  //     onPressed: () {},
+                  //     icon: const Icon(Icons.attach_file_rounded),
+                  //     label: Text(
+                  //       data.file.getUrl.split('/').last,
+                  //     ),
+                  //     style: TextButton.styleFrom(
+                  //       padding: const EdgeInsets.all(12),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(12),
+                  //       ),
+                  //       primary: Colors.black,
+                  //       backgroundColor: Colors.grey.shade300,
+                  //     ),
+                  //   ),
+                  if (data.caption != null && data.caption!.isNotEmpty)
+                    Text(
+                      '${data.caption}',
+                      style: themeData.textTheme.bodyMedium,
                     ),
-                  ),
-            // TextButton.icon(
-            //     onPressed: () {},
-            //     icon: const Icon(Icons.attach_file_rounded),
-            //     label: Text(
-            //       data.file.getUrl.split('/').last,
-            //     ),
-            //     style: TextButton.styleFrom(
-            //       padding: const EdgeInsets.all(12),
-            //       shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.circular(12),
-            //       ),
-            //       primary: Colors.black,
-            //       backgroundColor: Colors.grey.shade300,
-            //     ),
-            //   ),
-            if (data.caption != null && data.caption!.isNotEmpty)
-              Text(
-                '${data.caption}',
-                style: themeData.textTheme.bodyMedium,
+                ],
               ),
-          ],
-        ),
       );
     }
 

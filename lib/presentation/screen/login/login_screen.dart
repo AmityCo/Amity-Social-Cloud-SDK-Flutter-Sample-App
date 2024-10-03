@@ -32,11 +32,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // STAGING Server
     _userIdTextController.text = 'victimAndroid';
     _displayNameTextController.text = 'Victim Android';
-    _apiKeyTextController.text =
-        'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    _serverUrlTextController.text =
-        AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/')
-            .endpoint;
+    _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
 
     // //STAGING Server
     // _userIdTextController.text = 'sara';
@@ -124,35 +121,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     await AmityCoreClient.setup(
                       option: AmityCoreClientOption(
                           apiKey: apikey,
-                          httpEndpoint: AmityRegionalHttpEndpoint(
-                              _serverUrlTextController.text),
+                          httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
                           // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
-                          mqttEndpoint: AmityRegionalMqttEndpoint.custom(
-                              'ssq.staging.amity.co'),
+                          mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co'),
                           // mqttEndpoint: AmityRegionalMqttEndpoint.SG,
                           showLogs: true),
                       sycInitialization: true,
                     );
 
-                    AmityStreamPlayerClient.setup(
-                        AmityCoreClient.getConfiguration());
+                    AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration());
 
                     //Login the user
                     String userId = _userIdTextController.text.trim();
-                    String userDisplayName =
-                        _displayNameTextController.text.trim();
+                    String userDisplayName = _displayNameTextController.text.trim();
                     // AmityCoreClient.isUserLoggedIn();
-                    await AmityCoreClient.login(userId)
-                        .displayName(userDisplayName)
-                        .submit();
+                    await AmityCoreClient.login(userId).displayName(userDisplayName).submit();
                     PreferenceInterfaceImpl().setLoggedIn(true);
-                    PreferenceInterfaceImpl()
-                        .setLoggedInUserDisplayName(userDisplayName);
+                    PreferenceInterfaceImpl().setLoggedInUserDisplayName(userDisplayName);
                     PreferenceInterfaceImpl().setLoggedInUserId(userId);
-                    GoRouter.of(context).go(AppRoute.homeRoute);
+                    (context.mounted) ? GoRouter.of(context).go(AppRoute.homeRoute) : null;
                   } catch (error) {
-                    CommonSnackbar.showNagativeSnackbar(
-                        context, 'Error', error.toString());
+                    (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()) : null;
                   }
                 },
                 style: TextButton.styleFrom(

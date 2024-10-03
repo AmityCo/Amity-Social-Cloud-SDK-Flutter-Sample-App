@@ -1,12 +1,6 @@
 import 'package:amity_sdk/amity_sdk.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
-import 'package:flutter_social_sample_app/core/route/app_route.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/subchannel_item_widget.dart';
-import 'package:go_router/go_router.dart';
 
 class SubChannelList extends StatefulWidget {
   final String channelId;
@@ -17,58 +11,47 @@ class SubChannelList extends StatefulWidget {
 }
 
 class _SubChannelListState extends State<SubChannelList> {
-  late PagingController<AmitySubChannel> _controller;
-  final amitySubChannels = <AmitySubChannel>[];
+  late SubChannelLiveCollection subChannelLiveCollection;
+  List<AmitySubChannel> amitySubChannels = <AmitySubChannel>[];
 
   final scrollcontroller = ScrollController();
   bool loading = false;
 
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmitySocialClient.newSubChannelRepository()
-      .getSubchannel()
-      .channelId(widget.channelId)
-      .excludeMainSubChannel(true)
-      .includeDeleted(true)
-      .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            setState(() {
-              amitySubChannels.clear();
-              amitySubChannels.addAll(_controller.loadedItems);
-            });
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            print(_controller.stacktrace);
-            ErrorDialog.show(context, title: 'Error', message: '${_controller.error}\n${_controller.stacktrace}');
-          }
-        },
-      );
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
-    });
-
-    scrollcontroller.addListener(pagination);
-
+    subChannelLiveCollectionInit();
     super.initState();
   }
 
+  void subChannelLiveCollectionInit() {
+    subChannelLiveCollection = SubChannelLiveCollection(
+      request: () => AmitySocialClient.newSubChannelRepository().getSubChannels().channelId(widget.channelId).excludeMainSubChannel(true).includeDeleted(false).build(),
+    );
+
+    subChannelLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amitySubChannels = event;
+        });
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      subChannelLiveCollection.loadNext();
+    });
+
+    scrollcontroller.addListener(pagination);
+  }
+
   void pagination() {
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && _controller.hasMoreItems) {
-      setState(() {
-        _controller.fetchNextPage();
-      });
+    if ((scrollcontroller.position.pixels == (scrollcontroller.position.maxScrollExtent)) && subChannelLiveCollection.hasNextPage()) {
+      subChannelLiveCollection.loadNext();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
         width: double.infinity,
         height: double.infinity,
         child: Column(
@@ -77,36 +60,26 @@ class _SubChannelListState extends State<SubChannelList> {
               child: amitySubChannels.isNotEmpty
                   ? RefreshIndicator(
                       onRefresh: () async {
-                        _controller.reset();
-                        _controller.fetchNextPage();
+                        subChannelLiveCollection.reset();
+                        subChannelLiveCollection.getFirstPageRequest();
                       },
                       child: ListView.builder(
                         controller: scrollcontroller,
                         itemCount: amitySubChannels.length,
                         itemBuilder: (context, index) {
                           final amitySubChannel = amitySubChannels[index];
+                          print('amitySubChannel.path: ${amitySubChannel.path}');
                           var uniqueKey = UniqueKey();
-                          return SubChannelItemWidget( key: uniqueKey , subChannel: amitySubChannel);
-                          
-                          // ListTile(
-                          //   onTap: () {
-                          //     GoRouter.of(context).pushNamed(AppRoute.chat, params: {
-                          //       'channelId': amitySubChannel.subChannelId!,
-                          //       'channelName': amitySubChannel.displayName!,
-                          //     });
-                          //   },
-                          //   key: uniqueKey,
-                          //   title: Text("${amitySubChannel.displayName}"),
-                          // );
+                          return SubChannelItemWidget(key: uniqueKey, subChannel: amitySubChannel);
                         },
                       ),
                     )
                   : Container(
                       alignment: Alignment.center,
-                      child: _controller.isFetching ? const CircularProgressIndicator() : const Text('No Global Post'),
+                      child: subChannelLiveCollection.isFetching ? const CircularProgressIndicator() : const Text('No Global Post'),
                     ),
             ),
-            if (_controller.isFetching && amitySubChannels.isNotEmpty)
+            if (subChannelLiveCollection.isFetching && amitySubChannels.isNotEmpty)
               Container(
                 alignment: Alignment.center,
                 child: const CircularProgressIndicator(),
