@@ -231,7 +231,7 @@ class _ChannelCreateScreenState extends State<ChannelCreateScreen> {
         } else {
           builder = AmityChatClient.newChannelRepository().createChannel().communityType().withDisplayName(name);
 
-          if (channeld.isEmpty) channeld = const Uuid().v4();
+          // if (channeld.isEmpty) channeld = const Uuid().v4();
           builder.channelId(channeld);
         }
         break;

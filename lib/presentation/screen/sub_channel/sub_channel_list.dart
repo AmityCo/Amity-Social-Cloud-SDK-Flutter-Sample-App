@@ -16,6 +16,8 @@ class _SubChannelListState extends State<SubChannelList> {
 
   final scrollcontroller = ScrollController();
   bool loading = false;
+  bool _includeDeleted = false;
+  bool _excludeGeneral = true;
 
   @override
   void initState() {
@@ -25,7 +27,7 @@ class _SubChannelListState extends State<SubChannelList> {
 
   void subChannelLiveCollectionInit() {
     subChannelLiveCollection = SubChannelLiveCollection(
-      request: () => AmitySocialClient.newSubChannelRepository().getSubChannels().channelId(widget.channelId).excludeMainSubChannel(true).includeDeleted(false).build(),
+      request: () => AmitySocialClient.newSubChannelRepository().getSubChannels().channelId(widget.channelId).excludeMainSubChannel(_excludeGeneral).includeDeleted(_includeDeleted).build(),
     );
 
     subChannelLiveCollection.getStreamController().stream.listen((event) {
@@ -56,6 +58,47 @@ class _SubChannelListState extends State<SubChannelList> {
         height: double.infinity,
         child: Column(
           children: [
+            Row(
+              children: [
+                Row(
+                  children: [
+                    const Text('Exclude General'),
+                    Checkbox(
+                      value: _excludeGeneral,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _excludeGeneral = value!;
+                          subChannelLiveCollection.reset();
+                          subChannelLiveCollectionInit();
+                          subChannelLiveCollection.getFirstPageRequest();
+                        });
+                      },
+                      activeColor: Colors.green, // Change the color when checked
+                      checkColor: Colors.white, // Change the check mark color
+                    ),
+                  ],
+                ),
+
+                Row(
+                  children: [
+                    const Text('Include Deleted'),
+                    Checkbox(
+                      value: _includeDeleted,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _includeDeleted = value!;
+                          subChannelLiveCollection.reset();
+                          subChannelLiveCollectionInit();
+                          subChannelLiveCollection.getFirstPageRequest();
+                        });
+                      },
+                      activeColor: Colors.green, // Change the color when checked
+                      checkColor: Colors.white, // Change the check mark color
+                    ),
+                  ],
+                )
+              ],
+            ),
             Expanded(
               child: amitySubChannels.isNotEmpty
                   ? RefreshIndicator(
@@ -69,6 +112,7 @@ class _SubChannelListState extends State<SubChannelList> {
                         itemBuilder: (context, index) {
                           final amitySubChannel = amitySubChannels[index];
                           print('amitySubChannel.path: ${amitySubChannel.path}');
+
                           var uniqueKey = UniqueKey();
                           return SubChannelItemWidget(key: uniqueKey, subChannel: amitySubChannel);
                         },
@@ -76,7 +120,7 @@ class _SubChannelListState extends State<SubChannelList> {
                     )
                   : Container(
                       alignment: Alignment.center,
-                      child: subChannelLiveCollection.isFetching ? const CircularProgressIndicator() : const Text('No Global Post'),
+                      child: subChannelLiveCollection.isFetching ? const CircularProgressIndicator() : const Text('No Sub Channel'),
                     ),
             ),
             if (subChannelLiveCollection.isFetching && amitySubChannels.isNotEmpty)

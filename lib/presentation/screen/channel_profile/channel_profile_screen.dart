@@ -89,7 +89,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen> with Ticker
                               ),
                               const PopupMenuItem(
                                 value: 4,
-                                child: Text("Create Channel"),
+                                child: Text("Create Sub Channel"),
                               ),
                             ];
                           },

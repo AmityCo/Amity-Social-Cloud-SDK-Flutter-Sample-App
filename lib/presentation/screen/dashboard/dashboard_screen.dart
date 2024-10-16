@@ -373,6 +373,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   },
                   child: const Text('Get Channel'),
                 ),
+
+
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    EditTextDialog.show(context,
+                        title: 'Get Sub Channel',
+                        hintText: 'Enter Sub Channel ID',
+                        // defString: 'live200',
+                        buttonText: 'Submit', onPress: (value) {
+                      GoRouter.of(context).pushNamed(AppRoute.subChannelProfile,
+                          params: {'subChannelId': value});
+                      // AmityChatClient.newChannelRepository().getChannel(value);
+                    });
+                  },
+                  child: const Text('Get Sub Channel'),
+                ),
+
+
                 const SizedBox(height: 20),
                 TextButton(
                   onPressed: () {

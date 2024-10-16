@@ -196,13 +196,14 @@ class SubChannelItemWidget extends StatelessWidget {
                   ],
                 ),
                 subChannel.isDeleted ?? false
-                    ? Expanded(
+                    ? Positioned.fill(
                         child: Container(
-                          padding: const EdgeInsets.all(4),
-                          color: Colors.red,
-                          child: Text(
-                            'Deleted',
-                            style: themeData.textTheme.titleLarge?.copyWith(color: Colors.white),
+                          color: Colors.grey.withOpacity(0.5),
+                          child: Center(
+                            child: Text(
+                              'Deleted',
+                              style: themeData.textTheme.titleLarge?.copyWith(color: Colors.red),
+                            ),
                           ),
                         ),
                       )
