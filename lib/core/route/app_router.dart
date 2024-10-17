@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter_social_sample_app/core/preferences/preference_interface_impl.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
+import 'package:flutter_social_sample_app/presentation/screen/ads/ads_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/ads/ads_settings_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_create/channel_create_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_list/channel_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/channel_profile/channel_profile_screen.dart';
@@ -508,6 +510,22 @@ class AppRouter {
         path: AppRoute.userBlockRoute,
         builder: (context, state) {
           return const UserBlockedListScreen();
+        },
+      ),
+
+      GoRoute(
+        name: AppRoute.adsList,
+        path: AppRoute.adsListRoute,
+        builder: (context, state) {
+          return const AdsListScreen();
+        },
+      ),
+    
+      GoRoute(
+        name: AppRoute.adsSettings,
+        path: AppRoute.adsSettingsRoute,
+        builder: (context, state) {
+          return const AdsSettingsScreen();
         },
       ),
     ],
