@@ -184,6 +184,7 @@ class MessageWidget extends StatelessWidget {
                   onTap: () {
                     final completer = Completer();
                     ProgressDialog.showCompleter(context, completer);
+                    print("Flagged by me - ${message.isFlaggedByMe}");
                     if (message.isFlaggedByMe) {
                       message.unflag().then((value) {
                         completer.complete();
