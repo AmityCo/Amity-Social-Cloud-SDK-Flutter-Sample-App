@@ -17,7 +17,7 @@ class _SubChannelListState extends State<SubChannelList> {
   final scrollcontroller = ScrollController();
   bool loading = false;
   bool _includeDeleted = false;
-  bool _excludeGeneral = true;
+  bool _excludeGeneral = false;
 
   @override
   void initState() {

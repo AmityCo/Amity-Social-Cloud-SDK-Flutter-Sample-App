@@ -244,6 +244,7 @@ class MessageWidget extends StatelessWidget {
                         value: 6,
                         child: Text('Tags'),
                       ),
+                      
                     ];
                   },
                   onSelected: (value) {
@@ -312,8 +313,12 @@ class MessageWidget extends StatelessWidget {
                               }).onError((error, stackTrace) {
                                 (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag message Error - $error') : null;
                               });
-                            } else {
-                              CommonSnackbar.showNagativeSnackbar(context, 'Tags', 'Please enter tags');
+                            }else {
+                              message.upate().tags([]).update().then((value) {
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag Updated') : null;
+                              }).onError((error, stackTrace) {
+                                (context.mounted) ? CommonSnackbar.showPositiveSnackbar(context, 'Message', 'Tag message Error - $error') : null;
+                              });
                             }
                           },
                         );

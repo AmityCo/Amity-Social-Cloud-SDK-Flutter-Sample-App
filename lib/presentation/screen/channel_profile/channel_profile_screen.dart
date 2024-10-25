@@ -131,6 +131,10 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen> with Ticker
 
                             if (index == 4) {
                               EditTextDialog.show(context, title: 'Create New Sub Channel', hintText: 'Enter New Channel Name', buttonText: 'Create', onPress: (value) {
+                                if(value.trim().isEmpty){
+                                  ErrorDialog.show(context, title: 'Error', message: 'Channel Name cannot be empty');
+                                  return;
+                                }
                                 AmitySocialClient.newSubChannelRepository().createSubChannel(widget.channelId, value).then((value) {
                                   const snackBar = SnackBar(
                                     backgroundColor: Colors.green,

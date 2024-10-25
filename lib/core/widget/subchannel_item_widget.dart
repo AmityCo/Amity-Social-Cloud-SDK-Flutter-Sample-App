@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/common_snackbar.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
+import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:go_router/go_router.dart';
 
 class SubChannelItemWidget extends StatelessWidget {
@@ -112,6 +113,10 @@ class SubChannelItemWidget extends StatelessWidget {
                                     context,
                                     hintText: 'Enter new Display Name',
                                     onPress: (value) {
+                                      if (value.trim().isEmpty) {
+                                        ErrorDialog.show(context, title: 'Error', message: 'Channel Name cannot be empty');
+                                        return;
+                                      }
                                       AmitySocialClient.newSubChannelRepository()
                                           .updateeditSubChannelSubChannel(
                                             subChannelId: subChannel.subChannelId!,
