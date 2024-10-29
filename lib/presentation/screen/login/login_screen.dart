@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:amity_video_player/amity_video_player.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_sample_app/core/preferences/preference_interface_impl.dart';
 import 'package:flutter_social_sample_app/core/route/app_route.dart';
@@ -21,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _displayNameTextController = TextEditingController();
   final _apiKeyTextController = TextEditingController();
   final _serverUrlTextController = TextEditingController();
+  final _mqttUrlTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     //DEV Server
@@ -32,11 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
     // STAGING Server
     _userIdTextController.text = 'victimAndroid';
     _displayNameTextController.text = 'Victim Android';
-    _apiKeyTextController.text =
-        'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
-    _serverUrlTextController.text =
-        AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/')
-            .endpoint;
+    _apiKeyTextController.text = 'b0efe90c3bdda2304d628918520c1688845889e4bc363d2c';
+    _serverUrlTextController.text = AmityRegionalHttpEndpoint.custom('https://api.staging.amity.co/').endpoint;
+    _mqttUrlTextController.text = AmityRegionalMqttEndpoint.custom('ssq.staging.amity.co').endpoint;
 
     // //STAGING Server
     // _userIdTextController.text = 'sara';
@@ -110,6 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   label: Text('Server url'),
                 ),
               ),
+              const SizedBox(height: 24),
+              TextFormField(
+                key: const Key('mqtt_url_txtip'),
+                controller: _mqttUrlTextController,
+                decoration: const InputDecoration(
+                  label: Text('Mqtt url'),
+                ),
+              ),
               const SizedBox(height: 48),
               TextButton(
                 key: const Key('Login_btn_id'),
@@ -124,35 +128,28 @@ class _LoginScreenState extends State<LoginScreen> {
                     await AmityCoreClient.setup(
                       option: AmityCoreClientOption(
                           apiKey: apikey,
-                          httpEndpoint: AmityRegionalHttpEndpoint(
-                              _serverUrlTextController.text),
+                          httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
+                          socketEndpoint: AmityRegionalSocketEndpoint(_serverUrlTextController.text),
                           // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
-                          mqttEndpoint: AmityRegionalMqttEndpoint.custom(
-                              'ssq.staging.amity.co'),
+                          mqttEndpoint: AmityRegionalMqttEndpoint.custom(_mqttUrlTextController.text),
                           // mqttEndpoint: AmityRegionalMqttEndpoint.SG,
                           showLogs: true),
                       sycInitialization: true,
                     );
 
-                    AmityStreamPlayerClient.setup(
-                        AmityCoreClient.getConfiguration());
+                    AmityStreamPlayerClient.setup(AmityCoreClient.getConfiguration());
 
                     //Login the user
                     String userId = _userIdTextController.text.trim();
-                    String userDisplayName =
-                        _displayNameTextController.text.trim();
+                    String userDisplayName = _displayNameTextController.text.trim();
                     // AmityCoreClient.isUserLoggedIn();
-                    await AmityCoreClient.login(userId)
-                        .displayName(userDisplayName)
-                        .submit();
+                    await AmityCoreClient.login(userId).displayName(userDisplayName).submit();
                     PreferenceInterfaceImpl().setLoggedIn(true);
-                    PreferenceInterfaceImpl()
-                        .setLoggedInUserDisplayName(userDisplayName);
+                    PreferenceInterfaceImpl().setLoggedInUserDisplayName(userDisplayName);
                     PreferenceInterfaceImpl().setLoggedInUserId(userId);
-                    GoRouter.of(context).go(AppRoute.homeRoute);
+                    (context.mounted) ? GoRouter.of(context).go(AppRoute.homeRoute) : null;
                   } catch (error) {
-                    CommonSnackbar.showNagativeSnackbar(
-                        context, 'Error', error.toString());
+                    (context.mounted) ? CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString()) : null;
                   }
                 },
                 style: TextButton.styleFrom(

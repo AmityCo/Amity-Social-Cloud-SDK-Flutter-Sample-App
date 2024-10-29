@@ -107,10 +107,13 @@ class AppRoute {
   static const createCustomPostRoute = 'createCustomPost';
 
   static const chat = 'chat';
-  static const chatRoute = 'chatRoute/:channelId';
+  static const chatRoute = 'chatRoute/:channelId/:channelName';
 
   static const channelProfile = 'channelProfile';
   static const channelProfileRoute = '/channelProfile/:channelId';
+
+  static const subChannelProfile = 'subChannelProfile';
+  static const subChannelProfileRoute = '/subChannelProfile/:subChannelId';
 
   static const channelList = 'channelList';
   static const channelListRoute = '/channelList';

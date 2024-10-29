@@ -562,6 +562,7 @@ class FeedReactionActionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
     bool isFlagedByMe = amityStory.myReactions.isNotEmpty;
+    print("Reaction Event: isFallgedByMe $isFlagedByMe");
     return Container(
       margin: const EdgeInsets.only(top: 8, bottom: 8),
       child: Row(
@@ -578,7 +579,6 @@ class FeedReactionActionWidget extends StatelessWidget {
                               referenceId: amityStory.storyId!),
                           'like')
                       .then((value) {
-                    print(value.myReactions);
                   });
                 } else {
                   AmitySocialClient.newReactionRepository()
@@ -587,7 +587,6 @@ class FeedReactionActionWidget extends StatelessWidget {
                               referenceId: amityStory.storyId!),
                           'like')
                       .then((value) {
-                    print(value.myReactions);
                   });
                 }
               },

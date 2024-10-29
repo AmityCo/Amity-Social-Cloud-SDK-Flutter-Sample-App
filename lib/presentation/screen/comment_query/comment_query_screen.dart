@@ -26,27 +26,20 @@ class CommentQueryScreen extends StatefulWidget {
 class _CommentQueryScreenState extends State<CommentQueryScreen> {
   List<AmityComment> amityComments = <AmityComment>[];
   late CommentLiveCollection commentLiveCollection;
-
   final scrollcontroller = ScrollController();
   bool loading = false;
-
   AmityComment? _replyToComment;
-
   AmityCommentSortOption _sortOption = AmityCommentSortOption.LAST_CREATED;
-
   final mentionUsers = <AmityUser>[];
-
   AmityCommentDataTypeFilter? dataTypes;
-
   bool _includeDeleted = false;
-
   @override
   void initState() {
-
     if (widget.referenceType == 'post') {
       commentLiveCollection = AmitySocialClient.newCommentRepository()
             .getComments()
             .post(widget.referenceId)
+            .parentId(null)
             .sortBy(_sortOption)
             .dataTypes(dataTypes)
             .includeDeleted(_includeDeleted)
@@ -60,7 +53,6 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
             .includeDeleted(_includeDeleted)
             .getLiveCollection();
     }
-
     commentLiveCollection.getStreamController().stream.listen((event) {
       if (mounted) {
         setState(() {
@@ -68,19 +60,16 @@ class _CommentQueryScreenState extends State<CommentQueryScreen> {
         });
       }
     });
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       commentLiveCollection.loadNext();
     });
-
     scrollcontroller.addListener(pagination);
-
     super.initState();
   }
 
   void pagination() {
-
-    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) && commentLiveCollection.hasNextPage()) {
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent) 
+    && commentLiveCollection.hasNextPage()) {
 
       setState(() {
         commentLiveCollection.loadNext();

@@ -56,6 +56,7 @@ import 'package:flutter_social_sample_app/presentation/screen/stories_by_targets
 import 'package:flutter_social_sample_app/presentation/screen/story_details/story_details_screens.dart';
 import 'package:flutter_social_sample_app/presentation/screen/story_targets_by_targets%20/targets_by_targets_screens.dart';
 import 'package:flutter_social_sample_app/presentation/screen/stream_list/stream_list_screen.dart';
+import 'package:flutter_social_sample_app/presentation/screen/sub_channel/get_sub_channel.dart';
 import 'package:flutter_social_sample_app/presentation/screen/token_exchange/token_exchange_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_blocked_list/user_blocked_list_screen.dart';
 import 'package:flutter_social_sample_app/presentation/screen/user_feed/user_feed_screen.dart';
@@ -329,8 +330,11 @@ class AppRouter {
           GoRoute(
             name: AppRoute.chat,
             path: AppRoute.chatRoute,
-            builder: (context, state) =>
-                ChatScreen(channelId: state.params['channelId']!),
+            builder: (context, state) {
+              print("ChannelId: ${state.params['channelId']} -  ChannelName: ${state.params['channelName']}");
+              return ChatScreen(channelId: state.params['channelId']! , channelName: state.params['channelName']!,);
+            }
+                ,
           ),
         ],
       ),
@@ -349,6 +353,15 @@ class AppRouter {
         path: AppRoute.channelProfileRoute,
         builder: (context, state) => ChannelProfileScreen(
           channelId: state.params['channelId']!,
+        ),
+      ),
+
+
+      GoRoute(
+        name: AppRoute.subChannelProfile,
+        path: AppRoute.subChannelProfileRoute,
+        builder: (context, state) => GetSubChannelScreen(
+          subChannelId: state.params['subChannelId']!,
         ),
       ),
       GoRoute(
