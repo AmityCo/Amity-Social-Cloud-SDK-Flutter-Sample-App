@@ -1,9 +1,7 @@
 import 'package:amity_sdk/amity_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_social_sample_app/core/constant/global_constant.dart';
 import 'package:flutter_social_sample_app/core/utils/debouncer.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/amity_user_info_widget.dart';
-import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 
 class GlobalUserSearch extends StatefulWidget {
   const GlobalUserSearch({Key? key, this.showAppBar = true}) : super(key: key);
@@ -13,8 +11,8 @@ class GlobalUserSearch extends StatefulWidget {
 }
 
 class _GlobalUserSearchState extends State<GlobalUserSearch> {
-  late PagingController<AmityUser> _controller;
-  final amityUsers = <AmityUser>[];
+  late UserLiveCollection _userLiveCollection;
+  List<AmityUser> amityUsers = <AmityUser>[];
 
   final scrollcontroller = ScrollController();
   bool loading = false;
@@ -26,54 +24,15 @@ class _GlobalUserSearchState extends State<GlobalUserSearch> {
   AmityUserSortOption _sort = AmityUserSortOption.DISPLAY;
   @override
   void initState() {
-    _controller = PagingController(
-      pageFuture: (token) => AmityCoreClient.newUserRepository()
-          .searchUserByDisplayName(_keyword)
-          .sortBy(_sort)
-          .getPagingData(token: token, limit: GlobalConstant.pageSize),
-      pageSize: GlobalConstant.pageSize,
-    )..addListener(
-        () {
-          if (_controller.error == null) {
-            if (mounted) {
-              setState(() {
-                amityUsers.clear();
-                amityUsers.addAll(_controller.loadedItems);
-              });
-            }
-          } else {
-            //Error on pagination controller
-            setState(() {});
-            ErrorDialog.show(context,
-                title: 'Error', message: _controller.error.toString());
-          }
-        },
-      );
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _controller.fetchNextPage();
-    });
-
+    resetLiveCollection(isReset: false);
     scrollcontroller.addListener(pagination);
-
     super.initState();
   }
 
-  // void addMembers(List<AmityChannelMember> members) {
-  //   _controller.addAll(members);
-  // }
-
-  // void removeMembers(List<String> userIds) {
-  //   _controller.removeWhere((member) => userIds.contains(member.userId));
-  // }
-
   void pagination() {
-    if ((scrollcontroller.position.pixels ==
-            scrollcontroller.position.maxScrollExtent) &&
-        _controller.hasMoreItems) {
-      setState(() {
-        _controller.fetchNextPage();
-      });
+    if ((scrollcontroller.position.pixels == scrollcontroller.position.maxScrollExtent)
+      && _userLiveCollection.hasNextPage()) {
+        _userLiveCollection.loadNext();
     }
   }
 
@@ -92,8 +51,7 @@ class _GlobalUserSearchState extends State<GlobalUserSearch> {
               onChanged: (value) {
                 _debouncer.run(() {
                   _keyword = value;
-                  _controller.reset();
-                  _controller.fetchNextPage();
+                  resetLiveCollection();
                 });
               },
               decoration: const InputDecoration(hintText: 'Enter Keybaord'),
@@ -134,9 +92,7 @@ class _GlobalUserSearchState extends State<GlobalUserSearch> {
                     if (index == 3) {
                       _sort = AmityUserSortOption.LAST_CREATED;
                     }
-
-                    _controller.reset();
-                    _controller.fetchNextPage();
+                    resetLiveCollection();
                   },
                 ),
               ),
@@ -146,8 +102,7 @@ class _GlobalUserSearchState extends State<GlobalUserSearch> {
             child: amityUsers.isNotEmpty
                 ? RefreshIndicator(
                     onRefresh: () async {
-                      _controller.reset();
-                      _controller.fetchNextPage();
+                      resetLiveCollection();
                     },
                     child: ListView.builder(
                       physics: const AlwaysScrollableScrollPhysics(),
@@ -163,12 +118,12 @@ class _GlobalUserSearchState extends State<GlobalUserSearch> {
                   )
                 : Container(
                     alignment: Alignment.center,
-                    child: _controller.isFetching
+                    child: _userLiveCollection.isFetching
                         ? const CircularProgressIndicator()
                         : const Text('No Members'),
                   ),
           ),
-          if (_controller.isFetching && amityUsers.isNotEmpty)
+          if (_userLiveCollection.isFetching && amityUsers.isNotEmpty)
             Container(
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
@@ -176,6 +131,38 @@ class _GlobalUserSearchState extends State<GlobalUserSearch> {
         ],
       ),
     );
+  }
+
+  void resetLiveCollection({ bool isReset = true }) async {
+    if (isReset) {
+      _userLiveCollection.getStreamController().close();
+      setState(() {
+        amityUsers = [];
+      });
+    }
+
+    _userLiveCollection = AmityCoreClient.newUserRepository()
+      .searchUserByDisplayName(_keyword)
+      .sortBy(_sort)
+      .getLiveCollection();
+
+    _userLiveCollection.getStreamController().stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          amityUsers = event;
+        });
+      }
+    });
+
+    _userLiveCollection.observeLoadingState().listen((event) {
+      if (mounted) {
+        setState(() {
+          loading = event;
+        });
+      }
+    });
+
+    _userLiveCollection.loadNext();
   }
 
   // void _muteMember(BuildContext context, AmityChannelMember member) {
