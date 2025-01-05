@@ -29,11 +29,13 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
   AmityChannelSortOption _sort = AmityChannelSortOption.LAST_ACTIVITY;
   List<String>? _tags;
   List<String>? _excludingTags;
+  bool? isPushNotifiable;
 
   @override
   void initState() {
     resetLiveCollection(isReset: false);
     scrollcontroller.addListener(pagination);
+    fetchNotificationSettings();
     super.initState();
   }
 
@@ -45,6 +47,14 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
          _channelLiveCollection.loadNext();
       });
     }
+  }
+
+  void fetchNotificationSettings() async {
+    final settings = await AmityNotification().user().getSettings();
+    final chatModuleSetting = settings.events?.whereType<Chat>().firstOrNull;
+    setState(() {
+      isPushNotifiable = (settings.isEnabled ?? true) && (chatModuleSetting?.isEnabled ?? true);
+    });
   }
 
   void resetLiveCollection({ bool isReset = true }) async {
@@ -85,6 +95,12 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
       appBar: AppBar(title: const Text('Channel List ')),
       body: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            width: double.infinity,
+            color: Colors.grey[200],
+            child: Text("chat.push_notification.enable: ${isPushNotifiable ?? "unknown"}"),
+          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: TextFormField(
@@ -304,7 +320,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
                     alignment: Alignment.center,
                     child: _channelLiveCollection.isFetching
                         ? const CircularProgressIndicator()
-                        : const Text('No Post'),
+                        : const Text('No channel found'),
                   ),
           ),
           if (_channelLiveCollection.isFetching && amityChannels.isNotEmpty)
