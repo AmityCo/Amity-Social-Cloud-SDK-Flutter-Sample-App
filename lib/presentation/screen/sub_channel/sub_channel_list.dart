@@ -70,7 +70,7 @@ class _SubChannelListState extends State<SubChannelList> {
                           _excludeGeneral = value!;
                           subChannelLiveCollection.reset();
                           subChannelLiveCollectionInit();
-                          subChannelLiveCollection.getFirstPageRequest();
+                          subChannelLiveCollection.loadNext();
                         });
                       },
                       activeColor: Colors.green, // Change the color when checked
@@ -89,7 +89,7 @@ class _SubChannelListState extends State<SubChannelList> {
                           _includeDeleted = value!;
                           subChannelLiveCollection.reset();
                           subChannelLiveCollectionInit();
-                          subChannelLiveCollection.getFirstPageRequest();
+                          subChannelLiveCollection.loadNext();
                         });
                       },
                       activeColor: Colors.green, // Change the color when checked
@@ -104,7 +104,7 @@ class _SubChannelListState extends State<SubChannelList> {
                   ? RefreshIndicator(
                       onRefresh: () async {
                         subChannelLiveCollection.reset();
-                        subChannelLiveCollection.getFirstPageRequest();
+                        subChannelLiveCollection.loadNext();
                       },
                       child: ListView.builder(
                         controller: scrollcontroller,
