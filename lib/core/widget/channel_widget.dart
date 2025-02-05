@@ -47,7 +47,9 @@ class _ChannelInfoWidget extends StatelessWidget {
     final themeData = Theme.of(context);
     final messagePreview = amityChannel.messagePreview;
     String messagePreviewText = '';
-    if (messagePreview?.dataType == AmityMessageDataType.TEXT) {
+    if (messagePreview?.isDeleted == true) {
+      messagePreviewText = 'Deleted ${messagePreview?.dataType?.name?.toLowerCase() ?? ""} message';
+    } else if (messagePreview?.dataType == AmityMessageDataType.TEXT) {
       messagePreviewText = (messagePreview?.data as MessageTextData?)?.text ?? 'Nan';
     } else if (messagePreview?.dataType == AmityMessageDataType.IMAGE) {
       messagePreviewText = 'Image message';

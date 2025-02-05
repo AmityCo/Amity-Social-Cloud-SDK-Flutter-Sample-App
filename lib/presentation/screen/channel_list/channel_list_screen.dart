@@ -14,7 +14,7 @@ class ChannelListScreen extends StatefulWidget {
 }
 
 class _ChannelListScreenState extends State<ChannelListScreen> {
-  late ChannelLiveCollection _channelLiveCollection;
+  late LiveCollection<AmityChannel> _channelLiveCollection;
   List<AmityChannel> amityChannels = <AmityChannel>[];
 
   final scrollcontroller = ScrollController();
