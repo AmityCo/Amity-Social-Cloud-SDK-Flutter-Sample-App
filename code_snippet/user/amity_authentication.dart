@@ -1,4 +1,5 @@
 import 'package:amity_sdk/amity_sdk.dart';
+import 'package:amity_sdk/src/core/session/token/access_token_renewal.dart';
 
 class AmityAuthentication {
   /* begin_sample_code
@@ -8,10 +9,21 @@ class AmityAuthentication {
     description: Flutter login example
     */
   void login() async {
-    await AmityCoreClient.login('userId')
+    
+    await AmityCoreClient.login('userId', sessionHandler: (AccessTokenRenewal renewal) {
+      // Handle token renewal
+
+    })
         .displayName('userDisplayName')
         .submit();
   }
   /* end_sample_code */
 
+}
+
+class A extends SessionHandler {
+  @override
+  void sessionWillRenewAccessToken(AccessTokenRenewal renewal) {
+    // TODO: implement sessionWillRenewAccessToken
+  }
 }
