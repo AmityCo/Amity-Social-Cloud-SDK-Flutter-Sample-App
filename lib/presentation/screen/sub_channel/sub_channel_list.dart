@@ -27,7 +27,7 @@ class _SubChannelListState extends State<SubChannelList> {
 
   void subChannelLiveCollectionInit() {
     subChannelLiveCollection = SubChannelLiveCollection(
-      request: () => AmitySocialClient.newSubChannelRepository().getSubChannels().channelId(widget.channelId).excludeMainSubChannel(_excludeGeneral).includeDeleted(_includeDeleted).build(),
+      request: () => AmityChatClient.newSubChannelRepository().getSubChannels().channelId(widget.channelId).excludeMainSubChannel(_excludeGeneral).includeDeleted(_includeDeleted).build(),
     );
 
     subChannelLiveCollection.getStreamController().stream.listen((event) {

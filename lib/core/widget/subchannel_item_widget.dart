@@ -65,7 +65,7 @@ class SubChannelItemWidget extends StatelessWidget {
                             onSelected: (value) {
                               switch (value) {
                                 case 0:
-                                  AmitySocialClient.newSubChannelRepository()
+                                  AmityChatClient.newSubChannelRepository()
                                       .softDeleteSubChannel(subChannelId: subChannel.subChannelId!)
                                       .then(
                                         (value) => (context.mounted)
@@ -87,7 +87,7 @@ class SubChannelItemWidget extends StatelessWidget {
                                       );
                                   break;
                                 case 1:
-                                  AmitySocialClient.newSubChannelRepository()
+                                  AmityChatClient.newSubChannelRepository()
                                       .hardDeleteSubChannel(subChannelId: subChannel.subChannelId!)
                                       .then(
                                         (value) => (context.mounted)
@@ -117,7 +117,7 @@ class SubChannelItemWidget extends StatelessWidget {
                                         ErrorDialog.show(context, title: 'Error', message: 'Channel Name cannot be empty');
                                         return;
                                       }
-                                      AmitySocialClient.newSubChannelRepository()
+                                      AmityChatClient.newSubChannelRepository()
                                           .updateeditSubChannelSubChannel(
                                             subChannelId: subChannel.subChannelId!,
                                             displayName: value,

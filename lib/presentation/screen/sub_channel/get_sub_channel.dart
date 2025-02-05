@@ -16,7 +16,7 @@ class GetSubChannelScreen extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         child: StreamBuilder<AmitySubChannel>(
-          stream: AmitySocialClient.newSubChannelRepository().live.getSubChannel(subChannelId),
+          stream: AmityChatClient.newSubChannelRepository().live.getSubChannel(subChannelId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final value = snapshot.data!;

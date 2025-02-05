@@ -135,7 +135,7 @@ class _ChannelProfileScreenState extends State<ChannelProfileScreen> with Ticker
                                   ErrorDialog.show(context, title: 'Error', message: 'Channel Name cannot be empty');
                                   return;
                                 }
-                                AmitySocialClient.newSubChannelRepository().createSubChannel(widget.channelId, value).then((value) {
+                                AmityChatClient.newSubChannelRepository().createSubChannel(widget.channelId, value).then((value) {
                                   const snackBar = SnackBar(
                                     backgroundColor: Colors.green,
                                     content: Text(
