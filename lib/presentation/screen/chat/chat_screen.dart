@@ -55,6 +55,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
     scrollcontroller.addListener(pagination);
 
+    subscribeToChannelIfNeeded(widget.channelId);
+
     super.initState();
   }
 
@@ -62,6 +64,26 @@ class _ChatScreenState extends State<ChatScreen> {
     if ((scrollcontroller.position.pixels >= (scrollcontroller.position.maxScrollExtent - 100)) &&
         messageLiveCollection.hasNextPage()) {
       messageLiveCollection.loadNext();
+    }
+  }
+
+  void subscribeToChannelIfNeeded(String channelId) async {
+    AmityChannel? channel;
+    try {
+      channel = await AmityChatClient.newChannelRepository().getChannel(channelId);
+    } catch (e) {
+      channel = null;
+    }
+    if (channel != null && channel.amityChannelType == AmityChannelType.LIVE) {
+      AmitySubChannel? subChannel;
+      try {
+        subChannel = await AmityChatClient.newSubChannelRepository().getSubChannel(subChannelId: channelId);
+      } catch (e) {
+        subChannel = null;
+      }
+      if (subChannel != null) {
+        subChannel.subscription().subscribeTopic();
+      }
     }
   }
 

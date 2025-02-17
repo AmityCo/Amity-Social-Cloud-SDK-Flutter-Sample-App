@@ -90,7 +90,7 @@ class _UserPostScreenState extends State<UserPostScreen> {
                   child: RefreshIndicator(
                     onRefresh: () async {
                       postLiveCollection.reset();
-                      postLiveCollection.getFirstPageRequest();
+                      postLiveCollection.loadNext();
                     },
                     child: ListView.builder(
                       controller: scrollcontroller,

@@ -45,6 +45,19 @@ class _ChannelInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
+    final messagePreview = amityChannel.messagePreview;
+    String messagePreviewText = '';
+    if (messagePreview?.isDeleted == true) {
+      messagePreviewText = 'Deleted ${messagePreview?.dataType?.name?.toLowerCase() ?? ""} message';
+    } else if (messagePreview?.dataType == AmityMessageDataType.TEXT) {
+      messagePreviewText = (messagePreview?.data as MessageTextData?)?.text ?? 'Nan';
+    } else if (messagePreview?.dataType == AmityMessageDataType.IMAGE) {
+      messagePreviewText = 'Image message';
+    } else if (messagePreview?.dataType == AmityMessageDataType.FILE) {
+      messagePreviewText = 'File message';
+    } else if (messagePreview?.dataType == AmityMessageDataType.VIDEO) {
+      messagePreviewText = 'Video message';
+    }
     return Container(
       padding: const EdgeInsets.all(8),
       child: Row(
@@ -89,6 +102,26 @@ class _ChannelInfoWidget extends StatelessWidget {
                 ),
                 Text(
                   'isDeleted: ${amityChannel.isDeleted ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
+                  'latestMessageId: ${amityChannel.messagePreview?.messagePreviewId ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
+                  'latestMessage: ${messagePreviewText ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
+                  'senderId: ${messagePreview?.userId ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
+                  'sender: ${messagePreview?.user?.displayName ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
+                  'fromSubChannel: ${messagePreview?.subChannelId ?? 'NaN'}',
                   style: themeData.textTheme.bodySmall,
                 ),
                 SelectableText(
