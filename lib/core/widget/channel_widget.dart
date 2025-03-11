@@ -105,6 +105,10 @@ class _ChannelInfoWidget extends StatelessWidget {
                   style: themeData.textTheme.bodySmall,
                 ),
                 Text(
+                  'unread: ${amityChannel.unreadCount ?? 'NaN'}',
+                  style: themeData.textTheme.bodySmall,
+                ),
+                Text(
                   'latestMessageId: ${amityChannel.messagePreview?.messagePreviewId ?? 'NaN'}',
                   style: themeData.textTheme.bodySmall,
                 ),

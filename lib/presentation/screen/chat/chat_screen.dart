@@ -6,7 +6,9 @@ import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.da
 import 'package:flutter_social_sample_app/core/widget/message_widget.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key, required this.channelId , required this.channelName}) : super(key: key);
+  const ChatScreen(
+      {Key? key, required this.channelId, required this.channelName})
+      : super(key: key);
   final String channelId;
   final String channelName;
   @override
@@ -61,23 +63,28 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void pagination() {
-    if ((scrollcontroller.position.pixels >= (scrollcontroller.position.maxScrollExtent - 100)) &&
+    if ((scrollcontroller.position.pixels >=
+            (scrollcontroller.position.maxScrollExtent - 100)) &&
         messageLiveCollection.hasNextPage()) {
       messageLiveCollection.loadNext();
     }
   }
 
   void subscribeToChannelIfNeeded(String channelId) async {
+    final repo = AmityChatClient.newChannelRepository();
+    await repo.startReading(widget.channelId);
     AmityChannel? channel;
     try {
-      channel = await AmityChatClient.newChannelRepository().getChannel(channelId);
+      channel =
+          await AmityChatClient.newChannelRepository().getChannel(channelId);
     } catch (e) {
       channel = null;
     }
     if (channel != null && channel.amityChannelType == AmityChannelType.LIVE) {
       AmitySubChannel? subChannel;
       try {
-        subChannel = await AmityChatClient.newSubChannelRepository().getSubChannel(subChannelId: channelId);
+        subChannel = await AmityChatClient.newSubChannelRepository()
+            .getSubChannel(subChannelId: channelId);
       } catch (e) {
         subChannel = null;
       }
@@ -91,7 +98,15 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text( widget.channelName),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            final repo = AmityChatClient.newChannelRepository();
+            repo.stopReading(widget.channelId);
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(widget.channelName),
       ),
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -273,8 +288,9 @@ class _ChatScreenState extends State<ChatScreen> {
                   late AmityMessageCreator messageBuilder;
 
                   if (value.message != null) {
-                    messageBuilder =
-                        AmityChatClient.newMessageRepository().createMessage(widget.channelId).text(value.message!);
+                    messageBuilder = AmityChatClient.newMessageRepository()
+                        .createMessage(widget.channelId)
+                        .text(value.message!);
                   }
 
                   if (value.image != null) {
@@ -293,24 +309,31 @@ class _ChatScreenState extends State<ChatScreen> {
 
                   if (value.amityMentionMetadata != null) {
                     /// Clean up mention data, since user could have deleted some mention
-                    value.amityMentionMetadata!
-                        .removeWhere((element) => !value.message!.contains(element.displayName ?? ''));
+                    value.amityMentionMetadata!.removeWhere((element) =>
+                        !value.message!.contains(element.displayName ?? ''));
 
                     /// Rearrange the indexing
-                    final amityMentioneesMetadata = value.amityMentionMetadata!.map<AmityMentionMetadata>((e) {
-                      return e.amityMentionMetaData(value.message!.indexOf('@${e.displayName!}'));
+                    final amityMentioneesMetadata = value.amityMentionMetadata!
+                        .map<AmityMentionMetadata>((e) {
+                      return e.amityMentionMetaData(
+                          value.message!.indexOf('@${e.displayName!}'));
                     }).toList();
 
-                    messageBuilder.metadata(AmityMentionMetadataCreator(amityMentioneesMetadata).create());
+                    messageBuilder.metadata(
+                        AmityMentionMetadataCreator(amityMentioneesMetadata)
+                            .create());
 
                     /// Calculate the mention data
                     final userIds = <String>[];
-                    for (MentionData amityMention in value.amityMentionMetadata!) {
+                    for (MentionData amityMention
+                        in value.amityMentionMetadata!) {
                       ///Check if we have channel mention and add mention channel
-                      if (amityMention.mentionType == AmityMentionType.CHANNEL.value) {
+                      if (amityMention.mentionType ==
+                          AmityMentionType.CHANNEL.value) {
                         messageBuilder.mentionChannel();
                       }
-                      if (amityMention.mentionType == AmityMentionType.USER.value) {
+                      if (amityMention.mentionType ==
+                          AmityMentionType.USER.value) {
                         userIds.add(amityMention.userId!);
                       }
                     }
@@ -324,7 +347,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (replyToMessage != null) {
                     messageBuilder.parentId(replyToMessage!.messageId);
                   }
-                  if(value.tags != null){
+                  if (value.tags != null) {
                     messageBuilder.tags(value.tags!);
                   }
                   messageBuilder.send().then((value) {
@@ -335,7 +358,8 @@ class _ChatScreenState extends State<ChatScreen> {
                   }).onError((error, stackTrace) {
                     print(error.toString());
                     print(stackTrace.toString());
-                    CommonSnackbar.showNagativeSnackbar(context, 'Error', error.toString());
+                    CommonSnackbar.showNagativeSnackbar(
+                        context, 'Error', error.toString());
                   });
                   return;
                 },

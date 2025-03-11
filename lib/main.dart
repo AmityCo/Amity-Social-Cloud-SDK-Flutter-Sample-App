@@ -5,7 +5,7 @@ import 'package:amity_sdk/amity_sdk.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:flutter_keyboard_visibility_temp_fork/flutter_keyboard_visibility_temp_fork.dart';
 import 'package:flutter_social_sample_app/core/route/app_router.dart';
 import 'package:flutter_social_sample_app/core/service_locator/service_locator.dart';
 import 'package:flutter_social_sample_app/core/widget/user_suggestion_overlay.dart';

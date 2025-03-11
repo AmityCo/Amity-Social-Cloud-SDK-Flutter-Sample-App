@@ -50,11 +50,13 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
   }
 
   void fetchNotificationSettings() async {
-    final settings = await AmityNotification().user().getSettings();
-    final chatModuleSetting = settings.events?.whereType<Chat>().firstOrNull;
-    setState(() {
-      isPushNotifiable = (settings.isEnabled ?? true) && (chatModuleSetting?.isEnabled ?? true);
-    });
+    final archives = await AmityChatClient.newChannelRepository().getArchivedChannels();
+    print(">>>>>>>>>ui:archives: ${archives}");
+    // final settings = await AmityNotification().user().getSettings();
+    // final chatModuleSetting = settings.events?.whereType<Chat>().firstOrNull;
+    // setState(() {
+    //   isPushNotifiable = (settings.isEnabled ?? true) && (chatModuleSetting?.isEnabled ?? true);
+    // });
   }
 
   void resetLiveCollection({ bool isReset = true }) async {
@@ -74,6 +76,7 @@ class _ChannelListScreenState extends State<ChannelListScreen> {
       .includingTags(_tags ?? [])
       .excludingTags(_excludingTags ?? [])
       .includeDeleted(false)
+      .excludeArchives(true)
       .getLiveCollection();
 
     _channelLiveCollection.getStreamController().stream.listen((event) {

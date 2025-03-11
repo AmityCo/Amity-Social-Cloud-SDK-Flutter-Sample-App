@@ -118,6 +118,9 @@ class AppRoute {
   static const channelList = 'channelList';
   static const channelListRoute = '/channelList';
 
+  static const archivedChannelList = 'archivedChannelList';
+  static const archivedChannelListRoute = '/archivedChannelList';
+
   static const createChannel = 'createChannel';
   static const createChannelRoute = '/createChannel';
 

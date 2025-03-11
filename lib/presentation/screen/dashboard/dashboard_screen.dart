@@ -8,7 +8,6 @@ import 'package:flutter_social_sample_app/core/route/app_route.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/edit_text_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/error_dialog.dart';
 import 'package:flutter_social_sample_app/core/widget/dialog/positive_dialog.dart';
-import 'package:get/utils.dart';
 import 'package:go_router/go_router.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -423,6 +422,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     GoRouter.of(context).pushNamed(AppRoute.adsList);
                   },
                   child: const Text('Ads List'),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).pushNamed(AppRoute.archivedChannelList);
+                  },
+                  child: const Text('Archived Channel List'),
                 ),
                 const SizedBox(height: 20),
                 const SizedBox(height: 20),
