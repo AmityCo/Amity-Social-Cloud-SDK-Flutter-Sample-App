@@ -129,10 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       option: AmityCoreClientOption(
                           apiKey: apikey,
                           httpEndpoint: AmityRegionalHttpEndpoint(_serverUrlTextController.text),
-                          socketEndpoint: AmityRegionalSocketEndpoint(_serverUrlTextController.text),
-                          // mqttEndpoint: AmityRegionalMqttEndpoint.custom('ssq.dev.amity.co'),
                           mqttEndpoint: AmityRegionalMqttEndpoint.custom(_mqttUrlTextController.text),
-                          // mqttEndpoint: AmityRegionalMqttEndpoint.SG,
                           showLogs: true),
                       sycInitialization: true,
                     );
