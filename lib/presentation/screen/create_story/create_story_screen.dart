@@ -250,7 +250,7 @@ class _CreateStoryScreenState extends State<CreateStoryScreen> {
                                       files.clear();
 
                                       FilePickerResult? result =
-                                          await FilePicker.platform.pickFiles(
+                                          await FilePicker.pickFiles(
                                               allowMultiple: false,);
 
                                       if (result != null) {

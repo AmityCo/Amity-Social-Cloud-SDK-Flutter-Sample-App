@@ -152,7 +152,7 @@ class _AddMessageWidgetState extends State<AddMessageWidget>
                       FocusManager.instance.primaryFocus!.unfocus();
 
                       FilePickerResult? result =
-                          await FilePicker.platform.pickFiles();
+                          await FilePicker.pickFiles();
 
                       if (result != null) {
                         setState(() {

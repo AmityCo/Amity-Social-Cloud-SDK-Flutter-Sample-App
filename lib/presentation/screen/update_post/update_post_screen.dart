@@ -233,7 +233,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform.pickFiles(allowMultiple: true);
+                    FilePickerResult? result = await FilePicker.pickFiles(allowMultiple: true);
 
                     if (result != null) {
                       files.addAll(result.paths.map((path) => File(path!)).toList());
@@ -254,7 +254,7 @@ class _UpdatePostScreenState extends State<UpdatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform
+                    FilePickerResult? result = await FilePicker
                         .pickFiles(type: FileType.custom, allowMultiple: true, allowedExtensions: ['mp4', 'mov']);
 
                     if (result != null) {

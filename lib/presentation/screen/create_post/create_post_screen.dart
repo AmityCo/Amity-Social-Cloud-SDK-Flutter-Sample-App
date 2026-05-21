@@ -169,7 +169,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform
+                    FilePickerResult? result = await FilePicker
                         .pickFiles(allowMultiple: true);
 
                     if (result != null) {
@@ -191,7 +191,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   onPressed: () async {
                     files.clear();
 
-                    FilePickerResult? result = await FilePicker.platform
+                    FilePickerResult? result = await FilePicker
                         .pickFiles(
                             type: FileType.custom,
                             allowMultiple: true,
